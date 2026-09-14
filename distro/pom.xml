@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>org.openmrs.distro</groupId>
-    <artifactId>pihmalawi</artifactId>
+    <artifactId>pihmalawi-distro</artifactId>
     <packaging>jar</packaging>
     <name>PIH Malawi EMR Distribution</name>
     <description>Distro project for PIH Malawi EMR</description>
