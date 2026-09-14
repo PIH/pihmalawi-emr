@@ -1,7 +1,8 @@
 # PIH Malawi Content Package
 
-This module defines the PIH Malawi-specific [OpenMRS Initializer](https://github.com/mekomsolutions/openmrs-module-initializer)
-configuration. At build time, the contents of `configuration/` are assembled into a zip artifact
+This module defines the PIH Malawi-specific configuration for both the OpenMRS backend
+([Initializer](https://github.com/mekomsolutions/openmrs-module-initializer)) and the O3/SPA
+frontend. At build time, the contents of `configuration/` are assembled into a zip artifact
 published as `org.pih.openmrs:pihmalawi-content`.
 
 ## Configuration Structure
