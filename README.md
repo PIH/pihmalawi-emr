@@ -48,12 +48,10 @@ for more information on each supported command and configuration option.
 > [!NOTE]
 > Unlike the other PIH `-emr` distributions, this repo has no multi-profile `PIH_CONFIG` setup —
 > there is only one configuration, so `distro/openmrs-distro.properties` declares no
-> `property.pih.config.*` prompt at all. The `openmrs-sdk` CLI still requires `PIH_CONFIG` to be
-> set for `create` regardless (it's a blanket requirement in the tool, shared across every distro
-> it supports) — the value itself is never read by anything for this repo, so any placeholder works.
+> `property.pih.config.*` prompt at all. `PIH_CONFIG` is optional in the `openmrs-sdk` CLI —
+> just leave it unset here.
 
 ```bash
-PIH_CONFIG=malawi \
 openmrs-sdk create <server-id>
 ```
 
@@ -62,7 +60,6 @@ one might have an existing MySQL Docker container named `mysql56` exposing port 
 To use this container instead, simply add the appropriate additional environment variables as documented in the README:
 
 ```bash
-PIH_CONFIG=malawi \
 DB_CONTAINER=mysql56 \
 DB_PORT=3308 \
 DB_PASSWORD=password \
@@ -94,6 +91,35 @@ runs on a plain `mvn clean install` — there is currently no lighter config-onl
 openmrs-sdk update-config <server-id>
 ```
 
+### Using Docker
+
+For the CI configuration profile, an example environment file is provided in the repo root to get started quickly.
+Because this file is found in the distribution repository, it is assumed that this is checked out on your machine, and
+that `openmrs-docker` commands are running from the root of the distribution repository — it sets `DISTRO_SOURCE_DIR`
+to this location. If you're using it as an example for running elsewhere, you may need to change or remove that.
+
+To use the example environment file for `neno-ci` to get up and running with a new instance:
+
+```bash
+source neno-ci.env
+openmrs-docker create neno-ci
+openmrs-docker neno-ci initialize # Optional, but speeds up initial startup
+openmrs-docker neno-ci start
+openmrs-docker neno-ci wait  # Tails logs until OpenMRS is ready, then exits
+```
+
+Once created, day-to-day commands only need the instance name:
+
+```bash
+openmrs-docker neno-ci stop
+openmrs-docker neno-ci logs
+openmrs-docker neno-ci destroy
+```
+
+> [!NOTE]
+> This repo has no `OPENMRS_PIH_CONFIG` value to set — `PIH_CONFIG`/`OPENMRS_PIH_CONFIG` are
+> optional in both `openmrs-sdk` and `openmrs-docker`, so `neno-ci.env` simply doesn't set one.
+
 ## CI and Publishing
 
 CI is handled by GitHub Actions. On every push to `master`, the
@@ -102,13 +128,16 @@ CI is handled by GitHub Actions. On every push to `master`, the
 1. Builds and publishes Maven artifacts to [OpenMRS's JFrog repository](https://openmrs.jfrog.io/artifactory/modules-pih)
    — `org.openmrs.module:pihmalawi-api`, `org.openmrs.module:pihmalawi-omod`,
    `org.pih.openmrs:pihmalawi-content`, and `org.pih.openmrs:pihmalawi-distro`.
-2. Applies the newly-published distribution to the `neno-ci` CI server via a self-hosted GitHub
+2. Builds and pushes a Docker image to Docker Hub at
+   [`partnersinhealth/pihmalawi-emr`](https://hub.docker.com/r/partnersinhealth/pihmalawi-emr),
+   tagged with both `latest` and the Maven project version.
+3. Applies the newly-published distribution to the `neno-ci` CI server via a self-hosted GitHub
    Actions runner (see the `mirebalais-puppet` repo for the actual Puppet-driven deploy mechanics).
+
+A separate [Build seeded images](.github/workflows/build-seeded-images.yml) workflow runs nightly
+and publishes a pre-initialized seed image to Docker Hub as
+`partnersinhealth/pihmalawi-emr-seed-malawi` (this distro has no per-site config, so one seed
+covers every instance), so `openmrs-docker initialize` can skip the normal first-boot setup.
 
 A separate [Release new version](.github/workflows/release-to-openmrs-jfrog.yml) workflow can be
 triggered manually (`workflow_dispatch`) to cut a numbered release.
-
----
-
-Docker-based local development (`openmrs-docker`, environment files, seeded images) is not yet set
-up for this repository — that will be addressed as a separate piece of work.
