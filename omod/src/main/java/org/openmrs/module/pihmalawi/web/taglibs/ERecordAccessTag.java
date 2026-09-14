@@ -13,6 +13,7 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.pihmalawi.Utils;
@@ -29,6 +30,7 @@ public class ERecordAccessTag extends BodyTagSupport {
 	private boolean readonly = false;
 	private String programWorkflowStates;
 	private Integer patientIdentifierType;
+	private String patientIdentifierTypeName;
 
 	public int doStartTag() throws JspException {
 		JspWriter o = pageContext.getOut();
@@ -44,11 +46,12 @@ public class ERecordAccessTag extends BodyTagSupport {
 				release();
 				return SKIP_BODY;
 			}
+			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierTypeName(), getPatientIdentifierType());
 			List<ProgramWorkflowState> stateList = Helper.getProgramWorkflowStatesFromCsvIds(programWorkflowStates);
 			if (!Helper.isInProgramWorkflowState(p, stateList)) {
 				o.write("Not available: Inactive program state");
 			} else {
-				if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+				if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 					o.write("Not available: No identifier");
 				} else {
 					// if (!hasIdentifierForEnrollmentLocation(p,
@@ -74,7 +77,7 @@ public class ERecordAccessTag extends BodyTagSupport {
 				if (!Helper.isInProgramWorkflowState(p, stateList)) {
 					o.write(createViewCardHtmlTag(p, f, initial,
 							"Readonly: Inactive program state"));
-				} else if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+				} else if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 					o.write(createViewCardHtmlTag(p, f, initial,
 							"Readonly: No identifier"));
 				} else
@@ -163,6 +166,7 @@ public class ERecordAccessTag extends BodyTagSupport {
 		encounterTypeId = null;
 		readonly = false;
 		patientIdentifierType = null;
+		patientIdentifierTypeName = null;
 		programWorkflowStates = null;
 
 		return EVAL_PAGE;
@@ -214,5 +218,13 @@ public class ERecordAccessTag extends BodyTagSupport {
 
 	public void setPatientIdentifierType(Integer patientIdentifierType) {
 		this.patientIdentifierType = patientIdentifierType;
+	}
+
+	public String getPatientIdentifierTypeName() {
+		return patientIdentifierTypeName;
+	}
+
+	public void setPatientIdentifierTypeName(String patientIdentifierTypeName) {
+		this.patientIdentifierTypeName = patientIdentifierTypeName;
 	}
 }

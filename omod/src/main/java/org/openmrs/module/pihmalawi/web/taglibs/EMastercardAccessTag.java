@@ -9,6 +9,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
@@ -50,6 +51,7 @@ public class EMastercardAccessTag extends BodyTagSupport {
 	private boolean readonly = false;
 	private String programWorkflowStates;
 	private Integer patientIdentifierType;
+	private String patientIdentifierTypeName;
 	private boolean includeAppointmentInfo = true;
 	private String condition=null;
 	private String conditionAnswer=null;
@@ -87,6 +89,8 @@ public class EMastercardAccessTag extends BodyTagSupport {
 				return SKIP_BODY;
 			}
 
+			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierTypeName(), getPatientIdentifierType());
+
             // Ensure no more than one initial encounter is found
 			List<Encounter> initials = Utils.getEncounters(p, initialEncounterType);
 			if (initials.size() > 1) {
@@ -111,10 +115,10 @@ public class EMastercardAccessTag extends BodyTagSupport {
                 } else if (!Helper.isInProgramWorkflowState(p, stateList)) {
 					o.write("Not available: Inactive program state (" + f.getName() + ")");
 				} else {
-					if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+					if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 						o.write("Not available: No identifier (" + f.getName() + ")");
 					} else {
-						if (!Helper.hasIdentifierForEnrollmentLocation(p, getPatientIdentifierType(), programWorkflows)) {
+						if (!Helper.hasIdentifierForEnrollmentLocation(p, resolvedPatientIdentifierType, programWorkflows)) {
 							o.write("Not available: No identifier for current enrollment location (" + f.getName() + ")");
 						} else {
 							if (conditionConcept !=null && conditionConceptAnswers !=null && (conditionConceptAnswers.size() > 0) && !Helper.hasCondition(p, conditionConcept, conditionConceptAnswers)) {
@@ -152,12 +156,12 @@ public class EMastercardAccessTag extends BodyTagSupport {
 					release();
 					return SKIP_BODY;
 				}
-				if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+				if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 					o.write(createViewCardHtmlTag(p, f, initials.get(0), "Readonly: No identifier"));
 					release();
 					return SKIP_BODY;
 				}
-				if (!Helper.hasIdentifierForEnrollmentLocation(p, getPatientIdentifierType(), programWorkflows)) {
+				if (!Helper.hasIdentifierForEnrollmentLocation(p, resolvedPatientIdentifierType, programWorkflows)) {
 					o.write(createViewCardHtmlTag(p, f, initials.get(0), "Readonly: No identifier for current enrollment location"));
 					release();
 					return SKIP_BODY;
@@ -392,6 +396,7 @@ public class EMastercardAccessTag extends BodyTagSupport {
         followupEncounterTypeName = null;
 		readonly = false;
 		patientIdentifierType = null;
+		patientIdentifierTypeName = null;
 		programWorkflowStates = null;
 		condition = null;
 		conditionAnswer = null;
@@ -489,6 +494,14 @@ public class EMastercardAccessTag extends BodyTagSupport {
 
 	public void setPatientIdentifierType(Integer patientIdentifierType) {
 		this.patientIdentifierType = patientIdentifierType;
+	}
+
+	public String getPatientIdentifierTypeName() {
+		return patientIdentifierTypeName;
+	}
+
+	public void setPatientIdentifierTypeName(String patientIdentifierTypeName) {
+		this.patientIdentifierTypeName = patientIdentifierTypeName;
 	}
 
 	public boolean isIncludeAppointmentInfo() {

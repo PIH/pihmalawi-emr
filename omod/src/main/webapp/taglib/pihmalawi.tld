@@ -58,6 +58,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>patientIdentifierTypeName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>programWorkflowStates</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -156,6 +161,11 @@
 		</attribute>
 		<attribute>
 			<name>patientIdentifierType</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>patientIdentifierTypeName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
