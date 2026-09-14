@@ -8,7 +8,7 @@ The following are variables which can be modified:
 serverId = malawi
 database = openmrs_neno
 source code = ~/workspace
-module name = pihmalawi for openmrs-module-pihmalawi
+module name = pihmalawi for pihmalawi-emr
 ```
 ### Linux instructions 
 
@@ -67,7 +67,7 @@ source *name of openmrs neno database*.sql
    - mkdir workspace
    - cd workspace
 2. Get PIH Malawi module from git
-   - git clone https://github.com/PIH/openmrs-module-pihmalawi.git pihmalawi
+   - git clone https://github.com/PIH/pihmalawi-emr.git pihmalawi
 3. Install the PIH Malawi omod in your local maven repo
     - from the directory you have PIH Malawi checked out build the pihmalawi distribution:
     ```
