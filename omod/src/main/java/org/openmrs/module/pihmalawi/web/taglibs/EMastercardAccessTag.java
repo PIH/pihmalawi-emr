@@ -90,6 +90,11 @@ public class EMastercardAccessTag extends BodyTagSupport {
 			}
 
 			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierTypeName(), getPatientIdentifierType());
+			if (resolvedPatientIdentifierType == null && (StringUtils.isNotBlank(getPatientIdentifierTypeName()) || getPatientIdentifierType() != null)) {
+				o.write("Not available: Wrong configuration");
+				release();
+				return SKIP_BODY;
+			}
 
             // Ensure no more than one initial encounter is found
 			List<Encounter> initials = Utils.getEncounters(p, initialEncounterType);

@@ -7,6 +7,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
@@ -47,6 +48,11 @@ public class ERecordAccessTag extends BodyTagSupport {
 				return SKIP_BODY;
 			}
 			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierTypeName(), getPatientIdentifierType());
+			if (resolvedPatientIdentifierType == null && (StringUtils.isNotBlank(getPatientIdentifierTypeName()) || getPatientIdentifierType() != null)) {
+				o.write("Not available: Wrong configuration");
+				release();
+				return SKIP_BODY;
+			}
 			List<ProgramWorkflowState> stateList = Helper.getProgramWorkflowStatesFromCsvIds(programWorkflowStates);
 			if (!Helper.isInProgramWorkflowState(p, stateList)) {
 				o.write("Not available: Inactive program state");
