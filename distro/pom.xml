@@ -12,81 +12,69 @@
     <name>PIH Malawi EMR Distribution</name>
     <description>Distro project for PIH Malawi EMR</description>
 
-    <profiles>
-        <profile>
-            <id>distribution</id>
-            <activation>
-                <property>
-                    <name>buildDistro</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            
-            <build>
-                <plugins>
+    <build>
+        <plugins>
 
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>openmrs-distro.properties</include>
+                            </includes>
+                        </resource>
+                    </resources>
+                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </configuration>
+            </plugin>
+            <!-- Use the SDK to retrieve the war, modules, and owas -->
+            <plugin>
+                <groupId>org.openmrs.maven.plugins</groupId>
+                <artifactId>openmrs-sdk-maven-plugin</artifactId>
+                <version>6.9.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>build-distro</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>build-distro</goal>
+                        </goals>
                         <configuration>
-                            <propertiesEncoding>UTF-8</propertiesEncoding>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>openmrs-distro.properties</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <distro>${basedir}/openmrs-distro.properties</distro>
+                            <dir>${project.build.directory}/distro</dir>
+                            <bundled>false</bundled>
                         </configuration>
-                    </plugin>
-                    <!-- Use the SDK to retrieve the war, modules, and owas -->
-                    <plugin>
-                        <groupId>org.openmrs.maven.plugins</groupId>
-                        <artifactId>openmrs-sdk-maven-plugin</artifactId>
-                        <version>6.9.0-SNAPSHOT</version>
-                        <executions>
-                            <execution>
-                                <id>build-distro</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>build-distro</goal>
-                                </goals>
-                                <configuration>
-                                    <distro>${basedir}/openmrs-distro.properties</distro>
-                                    <dir>${project.build.directory}/distro</dir>
-                                    <bundled>false</bundled>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    </execution>
+                </executions>
+            </plugin>
 
-                    <!-- Assemble omods, owas, spas, etc into a zip file -->
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.3.0</version>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+            <!-- Assemble omods, owas, spas, etc into a zip file -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>${basedir}/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <repositories>
         <repository>
