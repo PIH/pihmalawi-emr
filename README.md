@@ -71,7 +71,7 @@ source *name of openmrs neno database*.sql
 3. Install the PIH Malawi omod in your local maven repo
     - from the directory you have PIH Malawi checked out build the pihmalawi distribution:
     ```
-    mvn clean install -DskipTests -Pdistribution
+    mvn clean install -DskipTests -Pdistro-zip
     ```
 4. Setup SDK
    - mvn openmrs-sdk:setup -DserverId=malawi 
@@ -87,13 +87,13 @@ source *name of openmrs neno database*.sql
    - From the repo root, build the distro properties and push configuration only to the running
      server (replace `malawi` with your server id):
    ```
-   mvn clean install -Pdistribution -DbuildDistro=true
+   mvn clean install -DskipTests
    mvn openmrs-sdk:deploy -Ddistro=distro/target/classes/openmrs-distro.properties -DserverId=malawi -DconfigOnly=true
    ```
    Note: this is slower than the old `configuration/install.sh` (it resolves the full distro, not
-   just configuration), because `distro/pom.xml`'s `build-distro` execution and its
-   properties-filtering step share the same Maven phase. A lighter config-only refresh is a
-   possible future improvement, not part of this change.
+   just configuration) — `distro/pom.xml`'s `build-distro` execution always runs on a plain
+   `mvn clean install`, producing the filtered `openmrs-distro.properties` the second command reads.
+   A lighter config-only refresh is a possible future improvement, not part of this change.
 
 6. Run SDK
    - mvn openmrs-sdk:run -DserverId=malawi
