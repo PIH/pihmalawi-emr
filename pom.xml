@@ -32,7 +32,7 @@
 	<modules>
 		<module>api</module>
 		<module>omod</module>
-		<module>configuration</module>
+		<module>content</module>
         <module>distro</module>
 	</modules>
 
