@@ -38,27 +38,49 @@ Component versions are defined in `distro/pom.xml` and resolved into `distro/ope
 Developers can use the OpenMRS SDK to set up, update, and run local OpenMRS instances.
 All normal [OpenMRS SDK](https://wiki.openmrs.org/display/docs/OpenMRS+SDK) commands are supported.
 
+One can also use the `openmrs-sdk` command supplied by the [`openmrs-contrib-distro-tools`](https://github.com/PIH/openmrs-contrib-distro-tools) CLI if that is more convenient.
+Follow the installation instructions in that repo first if you wish to use this command.
+Consult the [`openmrs-contrib-distro-tools` README](https://github.com/PIH/openmrs-contrib-distro-tools/README.md)
+for more information on each supported command and configuration option.
+
 #### Setting up a new SDK server
 
+> [!NOTE]
+> Unlike the other PIH `-emr` distributions, this repo has no multi-profile `PIH_CONFIG` setup —
+> there is only one configuration, so `distro/openmrs-distro.properties` declares no
+> `property.pih.config.*` prompt at all. The `openmrs-sdk` CLI still requires `PIH_CONFIG` to be
+> set for `create` regardless (it's a blanket requirement in the tool, shared across every distro
+> it supports) — the value itself is never read by anything for this repo, so any placeholder works.
+
 ```bash
-mvn openmrs-sdk:setup -DserverId=<server-id> -Ddistro=org.pih.openmrs:pihmalawi-distro:<version> \
-  -DdbUri=jdbc:mysql://localhost:3306/<database-name> -DdbUser=openmrs -DdbPassword=openmrs
+PIH_CONFIG=malawi \
+openmrs-sdk create <server-id>
 ```
 
-See `pom.xml` for the current project version. Omit `-DdbUri`/`-DdbUser`/`-DdbPassword` to be
-prompted interactively instead.
+Many developers maintain their own MySQL Docker container into which they maintain their various SDK servers.  For example,
+one might have an existing MySQL Docker container named `mysq56` exposing port 3308, and with a root password of `password`.
+To use this container instead, simply add the appropriate additional environment variables as documented in the README:
+
+```bash
+PIH_CONFIG=malawi \
+DB_CONTAINER=mysql56 \
+DB_PORT=3308 \
+DB_PASSWORD=password \
+openmrs-sdk create <server-id>
+```
 
 #### Running an SDK server
 
+This is just a thin wrapper around the native OpenMRS SDK maven command:
+
 ```bash
-mvn openmrs-sdk:run -DserverId=<server-id>
+openmrs-sdk run <server-id>
 ```
 
 #### Updating a server with the latest distribution (war, modules, config, frontend)
 
 ```bash
-mvn clean install -DskipTests
-mvn openmrs-sdk:deploy -Ddistro=distro/target/classes/openmrs-distro.properties -DserverId=<server-id>
+openmrs-sdk update <server-id>
 ```
 
 #### Updating only the configuration of a server
@@ -69,8 +91,7 @@ distro rather than just configuration, since `distro/pom.xml`'s `build-distro` e
 runs on a plain `mvn clean install` — there is currently no lighter config-only build step.
 
 ```bash
-mvn clean install -DskipTests
-mvn openmrs-sdk:deploy -Ddistro=distro/target/classes/openmrs-distro.properties -DserverId=<server-id> -DconfigOnly=true
+openmrs-sdk update-config <server-id>
 ```
 
 ## CI and Publishing
