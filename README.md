@@ -45,12 +45,6 @@ for more information on each supported command and configuration option.
 
 #### Setting up a new SDK server
 
-> [!NOTE]
-> Unlike the other PIH `-emr` distributions, this repo has no multi-profile `PIH_CONFIG` setup —
-> there is only one configuration, so `distro/openmrs-distro.properties` declares no
-> `property.pih.config.*` prompt at all. `PIH_CONFIG` is optional in the `openmrs-sdk` CLI —
-> just leave it unset here.
-
 ```bash
 openmrs-sdk create <server-id>
 ```
@@ -116,10 +110,6 @@ openmrs-docker neno-ci logs
 openmrs-docker neno-ci destroy
 ```
 
-> [!NOTE]
-> This repo has no `OPENMRS_PIH_CONFIG` value to set — `PIH_CONFIG`/`OPENMRS_PIH_CONFIG` are
-> optional in both `openmrs-sdk` and `openmrs-docker`, so `neno-ci.env` simply doesn't set one.
-
 ## CI and Publishing
 
 CI is handled by GitHub Actions. On every push to `master`, the
@@ -134,10 +124,7 @@ CI is handled by GitHub Actions. On every push to `master`, the
 3. Applies the newly-published distribution to the `neno-ci` CI server via a self-hosted GitHub
    Actions runner (see the `mirebalais-puppet` repo for the actual Puppet-driven deploy mechanics).
 
-A separate [Build seeded images](.github/workflows/build-seeded-images.yml) workflow runs nightly
-and publishes a pre-initialized seed image to Docker Hub as
-`partnersinhealth/pihmalawi-emr-seed-malawi` (this distro has no per-site config, so one seed
-covers every instance), so `openmrs-docker initialize` can skip the normal first-boot setup.
+A separate [Build seeded images](.github/workflows/build-seeded-images.yml) workflow runs nightly and publishes a pre-initialized seed image to Docker Hub as
+`partnersinhealth/pihmalawi-emr-seed-malawi`
 
-A separate [Release new version](.github/workflows/release-to-openmrs-jfrog.yml) workflow can be
-triggered manually (`workflow_dispatch`) to cut a numbered release.
+A separate [Release new version](.github/workflows/release-to-openmrs-jfrog.yml) workflow can be triggered manually (`workflow_dispatch`) to cut a numbered release.
