@@ -560,8 +560,11 @@ With:
 
 - [ ] **Step 7: Verify no raw numeric metadata-id attributes remain**
 
-Run: `cd /home/mseaton/code/github/pih/pihmalawi-emr && grep -nE 'formId="[0-9]|initialEncounterTypeId="[0-9]|followupEncounterTypeId="[0-9]|patientIdentifierType="[0-9]|programWorkflowStates="[0-9]|initialStateIds="[0-9]|(^|[^a-zA-Z])stateIds="[0-9]|terminalStateIds="[0-9]' omod/src/main/webapp/portlets/malawiPatientDashboard.jsp`
-Expected: no output (no matches).
+Run: `cd /home/mseaton/code/github/pih/pihmalawi-emr && grep -noE '(formId|initialEncounterTypeId|followupEncounterTypeId|patientIdentifierType|programWorkflowStates|initialStateIds|stateIds|terminalStateIds)="[0-9,]+"' omod/src/main/webapp/portlets/malawiPatientDashboard.jsp`
+Expected: no output (no matches). (Corrected 2026-09-14 after final review: the original pattern here
+matched any value merely *starting* with a digit, which false-positives on most UUIDs, e.g.
+`programWorkflowStates="6687fa7c-..."`. This corrected pattern only matches a value that is *entirely*
+digits/commas — which a UUID never is — so it can't false-positive on a correctly-converted line.)
 
 - [ ] **Step 8: Compile the omod module (JSPs aren't compiled by Maven here, but confirms nothing else broke)**
 

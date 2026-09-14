@@ -103,15 +103,20 @@ produces the complete, checked-in inventory.
 
 ## Phasing (decided 2026-09-14)
 
-Work is split into two phases:
+Work is split into two phases. **Revised 2026-09-14 (later same day, repo owner correction):** only
+htmlforms needs the concept-mapping-bootstrap effort — a handful of specific, individually-enumerable
+concept references (13 global properties, 3 `DataConverter` classes) can be resolved by UUID directly
+right now, without waiting on that bootstrap, since resolving a small fixed set of UUIDs from a safe
+metadata extract doesn't require the bulk "give every concept a mapping" work at all.
 
-- **Phase 1 (this plan targets first)**: everything *except* htmlforms and concept-identity
-  mappings — portlets/taglibs, non-concept reports/misc findings.
-- **Phase 2 (separate, later)**: htmlforms `conceptId`/macro conversion, the core-owned
-  `concept.*`/`dashboard.header.showConcept` GPs, and the 3 concept-based `DataConverter` classes
-  (`ObsValueBooleanYesNoConverter`, `PregnantLactatingConverter`, `TbStatusConverter`) — all of these
-  depend on the parallel effort to give every concept a `PIH Malawi:<production concept_id>` SAME-AS
-  reference-term mapping (see below), which is out of scope for this plan.
+- **Phase 1**: portlets/taglibs (`docs/superpowers/plans/2026-09-14-mlw1846-phase1-portlets-taglibs.md`)
+  *plus* the global-property/DataConverter concept fixups
+  (`docs/superpowers/plans/2026-09-14-mlw1846-phase1-gp-and-converters.md`) — everything whose
+  concept references are few enough to resolve individually by UUID.
+- **Phase 2 (separate, later)**: htmlforms `conceptId`/macro conversion only — this is the one
+  category that touches enough distinct, less-enumerable concepts (23+ files, plus a second,
+  separate copy under `omod/.../resources/htmlforms`) that it needs the full per-concept SAME-AS
+  reference-term mapping bootstrap (see below) rather than one-off UUID lookups.
 
 **Why the split works cleanly**: a full non-concept audit (below) found that `gp.xml` has *zero*
 non-concept metadata-ID findings (every remaining numeric value is a count/limit/duration, e.g.
@@ -124,7 +129,7 @@ used to build a SQL string at query time from an already name/uuid-resolved obje
 literal). So Phase 1's real scope is the portlets/taglibs category (plus documenting, not fixing,
 the two already-known dead-code items below).
 
-**Concept SAME-AS mapping strategy (Phase 2, noted here for context)**: rather than resolving each
+**Concept SAME-AS mapping strategy (Phase 2 / htmlforms only, noted here for context)**: rather than resolving each
 hardcoded `conceptId` to its current UUID directly, every concept gets a stable `SAME-AS` mapping to
 a `PIH Malawi` reference term whose code is the string form of that concept's *production*
 `concept_id` (e.g. concept_id `5089` in production → mapping `PIH Malawi:5089`, looked up via
@@ -243,16 +248,29 @@ it works once.
 
 ## Work breakdown (staged PRs)
 
-**Phase 1** (this plan targets — see `docs/superpowers/plans/2026-09-14-mlw1846-phase1-portlets-taglibs.md`):
-1. Portlet/taglib Java + JSP fixes (`Helper`, `EMastercardAccessTag`, `QuickProgramsTag`,
-   `malawiPatientDashboard.jsp`) — the only category with real Phase 1 findings.
-2. Documentation-only note on `MigrateViralLoadAndEIDTestResultsTask` and the unused
-   `ERecordAccessTag` (both dead/unwired code, not functionally fixed here).
+**Phase 1** (both plans below; each PR gets its own review and can be reverted independently):
+1. Portlet/taglib Java + JSP fixes — `docs/superpowers/plans/2026-09-14-mlw1846-phase1-portlets-taglibs.md`
+   (`Helper`, `EMastercardAccessTag`, `QuickProgramsTag`, `malawiPatientDashboard.jsp`). `ERecordAccessTag`
+   received the same functional fix as `EMastercardAccessTag` for consistency and to keep the module
+   compiling against `Helper`'s new signatures — it remains genuinely unused (no JSP references the
+   `eRecordAccess` tag), so this is dead-but-correct surface area, not a documentation-only note.
+   `MigrateViralLoadAndEIDTestResultsTask` remains untouched, documentation-only (still the separate,
+   pre-existing MLW-1839 repo-owner decision to make).
+2. Global-property/DataConverter concept fixups — `docs/superpowers/plans/2026-09-14-mlw1846-phase1-gp-and-converters.md`
+   (13 core-owned `concept.*` GPs via a new Initializer-style startup step; the 3 concept-based
+   `DataConverter` classes switched to compare by UUID).
 
-**Phase 2** (separate plan, later, depends on the concept SAME-AS mapping effort):
-3. Concept reference-term mapping bootstrap (parallel/separate effort, not part of either plan).
-4. Global properties fixup (new Initializer-style loader + CSV) for the core-owned `concept.*` GPs.
-5. htmlforms `conceptId`/macro conversion (both directories, once their relationship is resolved).
-6. The 3 concept-based `DataConverter` fixes.
+**Phase 2** (separate plan, later, depends on the concept SAME-AS mapping bootstrap):
+3. Concept reference-term mapping bootstrap (parallel/separate effort, not part of either Phase 1 plan).
+4. htmlforms `conceptId`/macro conversion (both directories, once their relationship is resolved).
 
-Each PR gets its own review and can be reverted independently.
+**Newly discovered, not yet planned (found during Phase 1's final review, 2026-09-14)**: the same
+`malawiPatientDashboard.jsp` also resolves encounter types by raw primary key via core/legacyui's
+`<openmrs:forEachEncounter type="9">`-style tag (`type="9"` for `ART_INITIAL`, `"24"`/`"17"` elsewhere)
+— the *same* metadata the Phase 1 portlets/taglibs plan just converted to name-based lookups
+everywhere else in this file, just via a different, older tag that has no name/UUID-accepting
+alternative (confirmed: `ForEachEncounterTag` in `legacyui-omod` compares raw `encounterTypeId` with
+no other option). Deliberately left unconverted in the Phase 1 plan (out of scope, needs either a
+JSP-side lookup or a replacement tag, not a one-line fix) but was missed by this spec's original
+audit claim to cover "every JSP/fragment... for taglib attributes carrying a metadata identifier" —
+recorded here for a follow-up ticket, not fixed as part of either current plan.
