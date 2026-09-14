@@ -26,20 +26,18 @@ public class ERecordAccessTag extends BodyTagSupport {
 	private final Log log = LogFactory.getLog(getClass());
 
 	private Integer patientId;
-	private Integer formId;
-	private Integer encounterTypeId;
+	private String form;
+	private String encounterType;
 	private boolean readonly = false;
 	private String programWorkflowStates;
-	private Integer patientIdentifierType;
-	private String patientIdentifierTypeName;
+	private String patientIdentifierType;
 
 	public int doStartTag() throws JspException {
 		JspWriter o = pageContext.getOut();
 
 		Patient p = Context.getPatientService().getPatient(getPatientId());
-		Form f = Context.getFormService().getForm(getFormId());
-		EncounterType initialEncounterType = Context.getEncounterService()
-				.getEncounterType(getencounterTypeId());
+		Form f = Helper.getForm(getForm());
+		EncounterType initialEncounterType = Helper.getEncounterType(getEncounterType());
 
 		try {
 			if (f == null || initialEncounterType == null) {
@@ -47,8 +45,8 @@ public class ERecordAccessTag extends BodyTagSupport {
 				release();
 				return SKIP_BODY;
 			}
-			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierTypeName(), getPatientIdentifierType());
-			if (resolvedPatientIdentifierType == null && (StringUtils.isNotBlank(getPatientIdentifierTypeName()) || getPatientIdentifierType() != null)) {
+			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierType());
+			if (resolvedPatientIdentifierType == null && StringUtils.isNotBlank(getPatientIdentifierType())) {
 				o.write("Not available: Wrong configuration");
 				release();
 				return SKIP_BODY;
@@ -168,11 +166,10 @@ public class ERecordAccessTag extends BodyTagSupport {
 
 	public int doEndTag() {
 		patientId = null;
-		formId = null;
-		encounterTypeId = null;
+		form = null;
+		encounterType = null;
 		readonly = false;
 		patientIdentifierType = null;
-		patientIdentifierTypeName = null;
 		programWorkflowStates = null;
 
 		return EVAL_PAGE;
@@ -186,20 +183,20 @@ public class ERecordAccessTag extends BodyTagSupport {
 		this.patientId = patientId;
 	}
 
-	public Integer getFormId() {
-		return formId;
+	public String getForm() {
+		return form;
 	}
 
-	public void setFormId(Integer formId) {
-		this.formId = formId;
+	public void setForm(String form) {
+		this.form = form;
 	}
 
-	public Integer getencounterTypeId() {
-		return encounterTypeId;
+	public String getEncounterType() {
+		return encounterType;
 	}
 
-	public void setencounterTypeId(Integer encounterTypeId) {
-		this.encounterTypeId = encounterTypeId;
+	public void setEncounterType(String encounterType) {
+		this.encounterType = encounterType;
 	}
 
 	public boolean isReadonly() {
@@ -218,19 +215,11 @@ public class ERecordAccessTag extends BodyTagSupport {
 		this.programWorkflowStates = programWorkflowStates;
 	}
 
-	public Integer getPatientIdentifierType() {
+	public String getPatientIdentifierType() {
 		return patientIdentifierType;
 	}
 
-	public void setPatientIdentifierType(Integer patientIdentifierType) {
+	public void setPatientIdentifierType(String patientIdentifierType) {
 		this.patientIdentifierType = patientIdentifierType;
-	}
-
-	public String getPatientIdentifierTypeName() {
-		return patientIdentifierTypeName;
-	}
-
-	public void setPatientIdentifierTypeName(String patientIdentifierTypeName) {
-		this.patientIdentifierTypeName = patientIdentifierTypeName;
 	}
 }

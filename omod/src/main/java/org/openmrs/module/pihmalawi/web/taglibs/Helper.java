@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -175,16 +177,43 @@ public class Helper {
 	}
 
 	/**
-	 * @return the PatientIdentifierType matching the given name if non-blank and found, otherwise the
-	 * PatientIdentifierType matching the given id, otherwise null
+	 * @return the Form matching the given value as a UUID first, then as a name, otherwise null
 	 */
-	public static PatientIdentifierType getPatientIdentifierType(String name, Integer id) {
-		PatientIdentifierType pit = null;
-		if (StringUtils.isNotBlank(name)) {
-			pit = Context.getPatientService().getPatientIdentifierTypeByName(name);
+	public static Form getForm(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
 		}
-		if (pit == null && id != null) {
-			pit = Context.getPatientService().getPatientIdentifierType(id);
+		Form f = Context.getFormService().getFormByUuid(uuidOrName);
+		if (f == null) {
+			f = Context.getFormService().getForm(uuidOrName);
+		}
+		return f;
+	}
+
+	/**
+	 * @return the EncounterType matching the given value as a UUID first, then as a name, otherwise null
+	 */
+	public static EncounterType getEncounterType(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
+		}
+		EncounterType et = Context.getEncounterService().getEncounterTypeByUuid(uuidOrName);
+		if (et == null) {
+			et = Context.getEncounterService().getEncounterType(uuidOrName);
+		}
+		return et;
+	}
+
+	/**
+	 * @return the PatientIdentifierType matching the given value as a UUID first, then as a name, otherwise null
+	 */
+	public static PatientIdentifierType getPatientIdentifierType(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
+		}
+		PatientIdentifierType pit = Context.getPatientService().getPatientIdentifierTypeByUuid(uuidOrName);
+		if (pit == null) {
+			pit = Context.getPatientService().getPatientIdentifierTypeByName(uuidOrName);
 		}
 		return pit;
 	}

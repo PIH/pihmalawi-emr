@@ -18,32 +18,17 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>formId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-        <attribute>
-            <name>formName</name>
+            <name>form</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-		<attribute>
-			<name>initialEncounterTypeId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
         <attribute>
-            <name>initialEncounterTypeName</name>
+            <name>initialEncounterType</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-		<attribute>
-			<name>followupEncounterTypeId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
         <attribute>
-            <name>followupEncounterTypeName</name>
+            <name>followupEncounterType</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -54,11 +39,6 @@
 		</attribute>
 		<attribute>
 			<name>patientIdentifierType</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>patientIdentifierTypeName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -94,32 +74,17 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>formId</name>
+			<name>form</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>formName</name>
+			<name>initialEncounterType</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>initialEncounterTypeId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>initialEncounterTypeName</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>followupEncounterTypeId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>followupEncounterTypeName</name>
+			<name>followupEncounterType</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -145,12 +110,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>formId</name>
+			<name>form</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>encounterTypeId</name>
+			<name>encounterType</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -161,11 +126,6 @@
 		</attribute>
 		<attribute>
 			<name>patientIdentifierType</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>patientIdentifierTypeName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
