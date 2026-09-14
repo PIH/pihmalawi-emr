@@ -58,7 +58,7 @@ openmrs-sdk create <server-id>
 ```
 
 Many developers maintain their own MySQL Docker container into which they maintain their various SDK servers.  For example,
-one might have an existing MySQL Docker container named `mysq56` exposing port 3308, and with a root password of `password`.
+one might have an existing MySQL Docker container named `mysql56` exposing port 3308, and with a root password of `password`.
 To use this container instead, simply add the appropriate additional environment variables as documented in the README:
 
 ```bash
