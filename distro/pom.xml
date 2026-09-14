@@ -2,72 +2,93 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.openmrs.module</groupId>
-        <artifactId>pihmalawi</artifactId>
+        <groupId>org.pih.openmrs</groupId>
+        <artifactId>pihmalawi-emr</artifactId>
         <version>9.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openmrs.distro</groupId>
-    <artifactId>pihmalawi</artifactId>
+    <artifactId>pihmalawi-distro</artifactId>
     <packaging>jar</packaging>
     <name>PIH Malawi EMR Distribution</name>
     <description>Distro project for PIH Malawi EMR</description>
 
+    <properties>
+        <frontendVersion>1.42.0-SNAPSHOT</frontendVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>pihmalawi-omod</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.pih.openmrs</groupId>
+            <artifactId>pihmalawi-content</artifactId>
+            <version>${project.parent.version}</version>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.pih.openmrs</groupId>
+            <artifactId>openmrs-frontend-pihemr</artifactId>
+            <version>${frontendVersion}</version>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Add the openmrs-distro.properties file into the artifact jar and apply variable replacements -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>openmrs-distro.properties</include>
+                            </includes>
+                        </resource>
+                    </resources>
+                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- Use the SDK to retrieve all artifacts defined in openmrs-distro.properties -->
+            <plugin>
+                <groupId>org.openmrs.maven.plugins</groupId>
+                <artifactId>openmrs-sdk-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-distro</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>build-distro</goal>
+                        </goals>
+                        <configuration>
+                            <distro>${project.build.directory}/classes/openmrs-distro.properties</distro>
+                            <dir>${project.build.directory}/distro</dir>
+                            <skipDockerCompose>true</skipDockerCompose>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
-            <id>distribution</id>
-            <activation>
-                <property>
-                    <name>buildDistro</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            
+            <id>distro-zip</id>
             <build>
                 <plugins>
-
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <configuration>
-                            <propertiesEncoding>UTF-8</propertiesEncoding>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>openmrs-distro.properties</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                        </configuration>
-                    </plugin>
-                    <!-- Use the SDK to retrieve the war, modules, and owas -->
-                    <plugin>
-                        <groupId>org.openmrs.maven.plugins</groupId>
-                        <artifactId>openmrs-sdk-maven-plugin</artifactId>
-                        <version>4.3.0</version>
-                        <executions>
-                            <execution>
-                                <id>build-distro</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>build-distro</goal>
-                                </goals>
-                                <configuration>
-                                    <distro>${basedir}/openmrs-distro.properties</distro>
-                                    <dir>${project.build.directory}/distro</dir>
-                                    <bundled>false</bundled>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Assemble omods, owas, spas, etc into a zip file -->
+                    <!-- Assemble artifacts into a zip artifact -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.3.0</version>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>

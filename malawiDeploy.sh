@@ -8,7 +8,7 @@ if [ -z ${SERVER_ID} ]; then
 fi
 
 git pull
-mvn clean install -Pdistribution -DskipTests
+mvn clean install -DskipTests
 pushd distro/target/distro/web
 mvn openmrs-sdk:deploy -DserverId=${SERVER_ID}
 popd

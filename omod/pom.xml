@@ -1,20 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openmrs.module</groupId>
-		<artifactId>pihmalawi</artifactId>
+		<groupId>org.pih.openmrs</groupId>
+		<artifactId>pihmalawi-emr</artifactId>
 		<version>9.2.0-SNAPSHOT</version>
 	</parent>
 
+	<groupId>org.openmrs.module</groupId>
 	<artifactId>pihmalawi-omod</artifactId>
 	<packaging>jar</packaging>
 	<name>PIH Malawi Customizations OMOD</name>
 	<description>OpenMRS module project for PIH Malawi Customizations</description>
 
+	<properties>
+		<!-- The module's own identity, independent of the parent reactor's coordinates -->
+		<MODULE_ID>pihmalawi</MODULE_ID>
+		<MODULE_NAME>PIH Malawi</MODULE_NAME>
+		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
+		<MODULE_PACKAGE>org.openmrs.module.pihmalawi</MODULE_PACKAGE>
+	</properties>
+
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-api</artifactId>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>pihmalawi-api</artifactId>
 			<version>${project.parent.version}</version>
             <scope>compile</scope>
 		</dependency>
@@ -72,10 +81,216 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>authentication-api</artifactId>
+			<version>${authenticationVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>authenticationui-api</artifactId>
+			<version>${authenticationuiVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appui-api</artifactId>
+            <version>${appuiVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>calculation-api</artifactId>
+            <version>${calculationVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api</artifactId>
+            <version>${emrapiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api</artifactId>
+            <version>${emrapiVersion}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api</artifactId>
+            <version>${eventVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>fhir2-api</artifactId>
+			<version>${fhir2Version}</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentry-api</artifactId>
+            <version>${htmlformentryVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentryui-api</artifactId>
+            <version>${htmlformentryuiVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>idgen-api</artifactId>
+            <version>${idgenVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>initializer-api</artifactId>
+			<version>${initializerVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>initializer-api-2.2</artifactId>
+			<version>${initializerVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>initializer-api-2.3</artifactId>
+			<version>${initializerVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>metadatamapping-api</artifactId>
+            <version>${metadatamappingVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>namephonetics-api</artifactId>
+            <version>${namephoneticsVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>reporting-api</artifactId>
+			<version>${reportingVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>reporting-api</artifactId>
+			<version>${reportingVersion}</version>
+			<type>jar</type>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api</artifactId>
+			<version>${serializationxstreamVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>spa</artifactId>
+			<version>${spaVersion}</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uiframework-api</artifactId>
+			<version>${uiframeworkVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appframework-api</artifactId>
+            <version>${appframeworkVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<version>${openMRSVersion}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<version>${openMRSVersion}</version>
+			<type>jar</type>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.test</groupId>
+			<artifactId>openmrs-test</artifactId>
+			<version>${openMRSVersion}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>org.openmrs.contrib</groupId>
+            <artifactId>testutils</artifactId>
+            <version>${testutilsVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>legacyui-api</artifactId>
+			<version>${legacyuiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- This is needed for appframework testing -->
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>3.0.1-b06</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>3.0.1-b12</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
-		<finalName>${project.parent.artifactId}-${project.parent.version}</finalName>
+		<finalName>${MODULE_ID}-${project.parent.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -99,55 +314,24 @@
 				<targetPath>web/module</targetPath>
 			</resource>
 		</resources>
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<configuration>
-						<includeEmptyDirs>true</includeEmptyDirs>
-					</configuration>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
-                    only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.openmrs.maven.plugins</groupId>
-										<artifactId>maven-openmrs-plugin</artifactId>
-										<versionRange>[1.0.1,)</versionRange>
-										<goals>
-											<goal>initialize-module</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-dependency-plugin</artifactId>
-										<goals>
-											<goal>unpack-dependencies</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</testResource>
+		</testResources>
 
 		<plugins>
 			<plugin>
@@ -172,6 +356,23 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+						<configuration>
+							<propertyPrefix>omrsVersion</propertyPrefix>
+							<versionString>${openMRSVersion}</versionString>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -184,8 +385,8 @@
 						</goals>
 						<phase>generate-resources</phase>
 						<configuration>
-							<includeGroupIds>${project.parent.groupId}</includeGroupIds>
-							<includeArtifactIds>${project.parent.artifactId}-api</includeArtifactIds>
+							<includeGroupIds>org.openmrs.module</includeGroupIds>
+							<includeArtifactIds>pihmalawi-api</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 							<includes>liquibase.xml</includes>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -247,33 +448,4 @@
 
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>deploy-web</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-<!--									<tasks>-->
-<!--										<copy todir="${deploy.path}/WEB-INF/view/module/${project.parent.artifactId}">-->
-<!--											<fileset dir="src/main/webapp" includes="**/*" />-->
-<!--										</copy>-->
-<!--									</tasks>-->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

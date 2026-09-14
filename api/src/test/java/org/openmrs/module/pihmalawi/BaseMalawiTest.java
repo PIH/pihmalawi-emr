@@ -66,7 +66,7 @@ public abstract class BaseMalawiTest extends BaseModuleContextSensitiveTest {
     /**
      * The root of a temp "OpenMRS application data directory" built once per test JVM run, whose
      * {@code configuration/} subfolder Initializer reads from. It is a copy of the module's real
-     * {@code configuration/configuration/} tree (see MLW-1839 Tasks 1-4), except the {@code concepts}
+     * {@code content/configuration/backend_configuration/} tree (see MLW-1839 Tasks 1-4), except the {@code concepts}
      * and {@code conceptsets} subfolders are replaced with {@link #METADATA_XML_FOLDER}'s small
      * test-only equivalents - loading the real ~8,400-concept production set through Initializer's
      * service-layer processing on every test run would be a serious performance regression.
@@ -256,7 +256,7 @@ public abstract class BaseMalawiTest extends BaseModuleContextSensitiveTest {
     /**
      * Builds (once per test JVM run) a temp "OpenMRS application data directory" whose
      * {@code configuration/} subfolder holds only the domains in {@link #INITIALIZER_TEST_DOMAINS},
-     * copied from the module's real {@code configuration/configuration/} tree, except with the
+     * copied from the module's real {@code content/configuration/backend_configuration/} tree, except with the
      * {@code concepts} and {@code conceptsets} subfolders replaced by the small test-only CSVs at
      * {@link #METADATA_XML_FOLDER} (see MLW-1839 Task 6). Copying only the needed domains (rather
      * than the whole tree, which includes the ~2.9MB addresshierarchy CSV and 139 htmlform files)
@@ -271,11 +271,11 @@ public abstract class BaseMalawiTest extends BaseModuleContextSensitiveTest {
         // own base directory (here, "api/"), so the real config tree - a sibling Maven module - is
         // reachable via this relative path regardless of where the `mvn` invocation itself started.
         String basedir = System.getProperty("basedir", System.getProperty("user.dir"));
-        File realConfigRoot = new File(basedir, "../configuration").getCanonicalFile();
-        File realConfigSource = new File(realConfigRoot, "configuration");
+        File realConfigRoot = new File(basedir, "../content").getCanonicalFile();
+        File realConfigSource = new File(realConfigRoot, "configuration/backend_configuration");
         if (!realConfigSource.isDirectory()) {
             throw new IllegalStateException("Could not locate the real Initializer configuration directory at " + realConfigSource
-                    + " (expected the sibling 'configuration' Maven module's 'configuration/configuration' resource tree)");
+                    + " (expected the sibling 'content' Maven module's 'configuration/backend_configuration' resource tree)");
         }
 
         File tempRoot = Files.createTempDirectory("pihmalawi-test-appdata").toFile();
@@ -292,11 +292,10 @@ public abstract class BaseMalawiTest extends BaseModuleContextSensitiveTest {
         replaceDomainWithTestOnlyFile(configDest, "concepts", "concepts.csv", "testConcepts.csv");
         replaceDomainWithTestOnlyFile(configDest, "conceptsets", "conceptAnswers.csv", "testConceptAnswers.csv");
 
-        // Real config CSVs contain unresolved ${dotted.key} placeholders (see constants.yml) normally
-        // filled in by the `configuration` module's own Maven build (openmrs-packager-maven-plugin +
-        // resource filtering) - a step that never runs for this test-only copy, so do the same
-        // substitution by hand here.
-        Map<String, String> constants = loadFlattenedYaml(new File(realConfigRoot, "constants.yml"));
+        // Real config CSVs contain unresolved ${dotted.key} placeholders (see content.properties)
+        // normally filled in by the `content` module's own Maven build (resource filtering) - a step
+        // that never runs for this test-only copy, so do the same substitution by hand here.
+        Map<String, String> constants = loadContentProperties(new File(realConfigRoot, "content.properties"));
         substitutePlaceholdersInDirectory(configDest, constants);
 
         testConfigRootDir = tempRoot;
@@ -304,52 +303,23 @@ public abstract class BaseMalawiTest extends BaseModuleContextSensitiveTest {
     }
 
     /**
-     * Minimal parser for the specific simple subset of YAML used by {@code constants.yml}: nested
-     * maps of string keys down to quoted (or bare) leaf string values, 2-space indented, no lists or
-     * anchors. Returns a flat map keyed by dotted path (e.g. {@code program.chronicCare.uuid}),
-     * matching the dotted placeholder names (e.g. {@code ${program.chronicCare.uuid}}) used in the
-     * CSVs. A real YAML library isn't used here because none is on this module's test classpath.
+     * Loads {@code content.properties} (a flat {@code java.util.Properties} file, every key prefixed
+     * {@code var.} - see MLW-1843) and strips that prefix, returning a map keyed the same way
+     * {@code constants.yml} used to be (e.g. {@code program.chronicCare.uuid}), matching the dotted
+     * placeholder names (e.g. {@code ${program.chronicCare.uuid}}) used in the CSVs.
      */
-    private static Map<String, String> loadFlattenedYaml(File yamlFile) throws IOException {
+    private static Map<String, String> loadContentProperties(File propertiesFile) throws IOException {
         Map<String, String> flat = new java.util.LinkedHashMap<>();
-        if (!yamlFile.isFile()) {
+        if (!propertiesFile.isFile()) {
             return flat;
         }
-        java.util.Deque<String> pathStack = new java.util.ArrayDeque<>();
-        java.util.Deque<Integer> indentStack = new java.util.ArrayDeque<>();
-        for (String rawLine : Files.readAllLines(yamlFile.toPath())) {
-            String line = rawLine.replace("\t", "    ");
-            if (line.trim().isEmpty() || line.trim().startsWith("#")) {
-                continue;
-            }
-            int indent = 0;
-            while (indent < line.length() && line.charAt(indent) == ' ') {
-                indent++;
-            }
-            String content = line.substring(indent).trim();
-            int colonIdx = content.indexOf(':');
-            if (colonIdx < 0) {
-                continue;
-            }
-            String key = content.substring(0, colonIdx).trim();
-            String value = content.substring(colonIdx + 1).trim();
-            while (!indentStack.isEmpty() && indentStack.peek() >= indent) {
-                indentStack.pop();
-                pathStack.pop();
-            }
-            if (value.isEmpty()) {
-                pathStack.push(key);
-                indentStack.push(indent);
-            }
-            else {
-                if (value.length() >= 2 && (value.charAt(0) == '"' || value.charAt(0) == '\'')
-                        && value.charAt(value.length() - 1) == value.charAt(0)) {
-                    value = value.substring(1, value.length() - 1);
-                }
-                java.util.List<String> pathParts = new java.util.ArrayList<>(pathStack);
-                java.util.Collections.reverse(pathParts);
-                pathParts.add(key);
-                flat.put(String.join(".", pathParts), value);
+        Properties properties = new Properties();
+        try (java.io.InputStream in = new java.io.FileInputStream(propertiesFile)) {
+            properties.load(in);
+        }
+        for (String name : properties.stringPropertyNames()) {
+            if (name.startsWith("var.")) {
+                flat.put(name.substring("var.".length()), properties.getProperty(name));
             }
         }
         return flat;
