@@ -76,11 +76,11 @@ source *name of openmrs neno database*.sql
 4. Setup SDK
    - mvn openmrs-sdk:setup -DserverId=malawi 
    - Type '1' to setup a distribution
-   - Set custom distribution = 'org.openmrs.distro:pihmalawi-distro:X-Y-Z-SNAPSHOT' (see pom.xml for current version) 
+   - Set custom distribution = 'org.pih.openmrs:pihmalawi-distro:X-Y-Z-SNAPSHOT' (see pom.xml for current version) 
    - Set -DdbUri=jdbc:mysql://localhost:3306/openmrs_neno
    - or, just run the following command
    ```
-   mvn openmrs-sdk:setup -DserverId=malawi -Ddistro=org.openmrs.distro:pihmalawi-distro:9.2.0-SNAPSHOT -DdbUri=jdbc:mysql://localhost:3306/openmrs_neno -DdbUser=openmrs -DdbPassword=openmrs
+   mvn openmrs-sdk:setup -DserverId=malawi -Ddistro=org.pih.openmrs:pihmalawi-distro:9.2.0-SNAPSHOT -DdbUri=jdbc:mysql://localhost:3306/openmrs_neno -DdbUser=openmrs -DdbPassword=openmrs
    ```
 
 5. Install configuration

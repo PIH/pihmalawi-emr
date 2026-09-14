@@ -2,12 +2,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.openmrs.module</groupId>
-        <artifactId>pihmalawi</artifactId>
+        <groupId>org.pih.openmrs</groupId>
+        <artifactId>pihmalawi-emr</artifactId>
         <version>9.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openmrs.distro</groupId>
     <artifactId>pihmalawi-distro</artifactId>
     <packaging>jar</packaging>
     <name>PIH Malawi EMR Distribution</name>

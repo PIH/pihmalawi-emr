@@ -38,7 +38,7 @@
 	</bean>
 
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
-        <property name="moduleId" value="${project.parent.artifactId}"/>
+        <property name="moduleId" value="${MODULE_ID}"/>
     </bean>
 
 	<bean id="pihMalawiUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
