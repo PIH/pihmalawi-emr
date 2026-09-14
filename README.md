@@ -84,8 +84,16 @@ source *name of openmrs neno database*.sql
    ```
 
 5. Install configuration
-   - cd configuration
-   - ./install.sh <serverId> (eg. ./install.sh malawi)
+   - From the repo root, build the distro properties and push configuration only to the running
+     server (replace `malawi` with your server id):
+   ```
+   mvn clean install -Pdistribution -DbuildDistro=true
+   mvn openmrs-sdk:deploy -Ddistro=distro/target/classes/openmrs-distro.properties -DserverId=malawi -DconfigOnly=true
+   ```
+   Note: this is slower than the old `configuration/install.sh` (it resolves the full distro, not
+   just configuration), because `distro/pom.xml`'s `build-distro` execution and its
+   properties-filtering step share the same Maven phase. A lighter config-only refresh is a
+   possible future improvement, not part of this change.
 
 6. Run SDK
    - mvn openmrs-sdk:run -DserverId=malawi
