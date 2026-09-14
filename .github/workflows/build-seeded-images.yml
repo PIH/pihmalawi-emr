@@ -13,6 +13,5 @@ jobs:
     uses: PIH/openmrs-contrib-distro-tools/.github/workflows/build-seeded-image.yml@main
     with:
       image_name: partnersinhealth/pihmalawi-emr
-      # No per-site config here, so just used for instance/seed-image naming - unused at runtime.
-      pih_config: malawi
+      instance_name: malawi
     secrets: inherit
