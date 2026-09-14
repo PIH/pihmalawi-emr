@@ -1,0 +1,17 @@
+name: Build seeded images
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  malawi:
+    if: github.repository_owner == 'PIH'
+    concurrency:
+      group: build-seeded-images-malawi-${{ github.ref }}
+      cancel-in-progress: true
+    uses: PIH/openmrs-contrib-distro-tools/.github/workflows/build-seeded-image.yml@main
+    with:
+      image_name: partnersinhealth/pihmalawi-emr
+      instance_name: malawi
+    secrets: inherit
