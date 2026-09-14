@@ -14,7 +14,6 @@
 
 	<properties>
 		<!-- The module's own identity, independent of the parent reactor's coordinates -->
-		<pihmalawi.groupId>org.openmrs.module</pihmalawi.groupId>
 		<MODULE_ID>pihmalawi</MODULE_ID>
 		<MODULE_NAME>PIH Malawi</MODULE_NAME>
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
@@ -23,8 +22,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${pihmalawi.groupId}</groupId>
-			<artifactId>${MODULE_ID}-api</artifactId>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>pihmalawi-api</artifactId>
 			<version>${project.parent.version}</version>
             <scope>compile</scope>
 		</dependency>
@@ -334,55 +333,6 @@
 			</testResource>
 		</testResources>
 
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<configuration>
-						<includeEmptyDirs>true</includeEmptyDirs>
-					</configuration>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
-                    only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.openmrs.maven.plugins</groupId>
-										<artifactId>maven-openmrs-plugin</artifactId>
-										<versionRange>[1.0.1,)</versionRange>
-										<goals>
-											<goal>initialize-module</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-dependency-plugin</artifactId>
-										<goals>
-											<goal>unpack-dependencies</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 		<plugins>
 			<plugin>
 				<groupId>org.openmrs.maven.plugins</groupId>
@@ -435,8 +385,8 @@
 						</goals>
 						<phase>generate-resources</phase>
 						<configuration>
-							<includeGroupIds>${pihmalawi.groupId}</includeGroupIds>
-							<includeArtifactIds>${MODULE_ID}-api</includeArtifactIds>
+							<includeGroupIds>org.openmrs.module</includeGroupIds>
+							<includeArtifactIds>pihmalawi-api</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 							<includes>liquibase.xml</includes>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -498,33 +448,4 @@
 
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>deploy-web</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-<!--									<tasks>-->
-<!--										<copy todir="${deploy.path}/WEB-INF/view/module/${project.parent.artifactId}">-->
-<!--											<fileset dir="src/main/webapp" includes="**/*" />-->
-<!--										</copy>-->
-<!--									</tasks>-->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

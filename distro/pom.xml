@@ -12,12 +12,38 @@
     <name>PIH Malawi EMR Distribution</name>
     <description>Distro project for PIH Malawi EMR</description>
 
+    <properties>
+        <frontendVersion>1.42.0-SNAPSHOT</frontendVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>pihmalawi-omod</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.pih.openmrs</groupId>
+            <artifactId>pihmalawi-content</artifactId>
+            <version>${project.parent.version}</version>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.pih.openmrs</groupId>
+            <artifactId>openmrs-frontend-pihemr</artifactId>
+            <version>${frontendVersion}</version>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
-
+            <!-- Add the openmrs-distro.properties file into the artifact jar and apply variable replacements -->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
                 <configuration>
                     <propertiesEncoding>UTF-8</propertiesEncoding>
                     <resources>
@@ -32,62 +58,56 @@
                     <outputDirectory>${project.build.directory}/classes</outputDirectory>
                 </configuration>
             </plugin>
-            <!-- Use the SDK to retrieve the war, modules, and owas -->
+
+            <!-- Use the SDK to retrieve all artifacts defined in openmrs-distro.properties -->
             <plugin>
                 <groupId>org.openmrs.maven.plugins</groupId>
                 <artifactId>openmrs-sdk-maven-plugin</artifactId>
-                <version>6.9.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>build-distro</id>
-                        <phase>process-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>build-distro</goal>
                         </goals>
                         <configuration>
-                            <distro>${basedir}/openmrs-distro.properties</distro>
+                            <distro>${project.build.directory}/classes/openmrs-distro.properties</distro>
                             <dir>${project.build.directory}/distro</dir>
-                            <bundled>false</bundled>
+                            <skipDockerCompose>true</skipDockerCompose>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Assemble omods, owas, spas, etc into a zip file -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                        <descriptor>${basedir}/assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <name>Central Portal Snapshots</name>
-            <id>central-portal-snapshots</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <profiles>
+        <profile>
+            <id>distro-zip</id>
+            <build>
+                <plugins>
+                    <!-- Assemble artifacts into a zip artifact -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
