@@ -58,8 +58,8 @@ public class ValidateFullConceptSetup extends BaseModuleContextSensitiveTest {
         executeDataSet("org/openmrs/module/pihmalawi/metadata/concept_map_type.xml");
 
         String basedir = System.getProperty("basedir", System.getProperty("user.dir"));
-        File realConfigRoot = new File(basedir, "../configuration").getCanonicalFile();
-        File realConfigSource = new File(realConfigRoot, "configuration");
+        File realConfigRoot = new File(basedir, "../content").getCanonicalFile();
+        File realConfigSource = new File(realConfigRoot, "configuration/backend_configuration");
         Assert.assertTrue("Expected to find the real Initializer configuration directory at " + realConfigSource,
             realConfigSource.isDirectory());
 
