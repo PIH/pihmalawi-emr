@@ -101,6 +101,74 @@ produces the complete, checked-in inventory.
   concentrated in JSP/taglib parameters, htmlform XML/macro content, and a handful of GP values and
   task classes — not spread through the core service layer.
 
+## Phasing (decided 2026-09-14)
+
+Work is split into two phases:
+
+- **Phase 1 (this plan targets first)**: everything *except* htmlforms and concept-identity
+  mappings — portlets/taglibs, non-concept reports/misc findings.
+- **Phase 2 (separate, later)**: htmlforms `conceptId`/macro conversion, the core-owned
+  `concept.*`/`dashboard.header.showConcept` GPs, and the 3 concept-based `DataConverter` classes
+  (`ObsValueBooleanYesNoConverter`, `PregnantLactatingConverter`, `TbStatusConverter`) — all of these
+  depend on the parallel effort to give every concept a `PIH Malawi:<production concept_id>` SAME-AS
+  reference-term mapping (see below), which is out of scope for this plan.
+
+**Why the split works cleanly**: a full non-concept audit (below) found that `gp.xml` has *zero*
+non-concept metadata-ID findings (every remaining numeric value is a count/limit/duration, e.g.
+`webservices.rest.maxResultsAbsolute=1000`, `security.passwordMinimumLength=7` — not a metadata
+reference), and reports have zero non-concept findings (the 3 untouched SQL descriptors —
+`user_roles.sql`, `user_logins.sql`, `users.sql` — contain no metadata ID references at all; a
+broader sweep of the 124-file Java `reporting` package for non-concept ID-comparison patterns
+turned up only correct, dynamically-resolved patterns, e.g. `hivMetadata.getHivProgram().getProgramId()`
+used to build a SQL string at query time from an already name/uuid-resolved object — not a hardcoded
+literal). So Phase 1's real scope is the portlets/taglibs category (plus documenting, not fixing,
+the two already-known dead-code items below).
+
+**Concept SAME-AS mapping strategy (Phase 2, noted here for context)**: rather than resolving each
+hardcoded `conceptId` to its current UUID directly, every concept gets a stable `SAME-AS` mapping to
+a `PIH Malawi` reference term whose code is the string form of that concept's *production*
+`concept_id` (e.g. concept_id `5089` in production → mapping `PIH Malawi:5089`, looked up via
+`getConceptByMapping`/`HtmlFormEntryUtil.getConcept("PIH Malawi:5089")`). Confirmed no naming
+conflict — `conceptSources.csv` already defines a `PIH Malawi` source (distinct from an existing,
+differently-scoped `PIH` source), and `MigrateViralLoadAndEIDTestResultsTask` already uses this
+exact pattern for 3 concepts, so it's precedented, just not yet universal. `concepts.csv` already
+has a `mappings|SAME-AS|PIH Malawi` column, suggesting partial infrastructure exists already. This
+mapping population is tracked separately from this plan.
+
+## Non-concept ID mapping, verified (Phase 1 scope)
+
+Verified against a policy-compliant, metadata-only production extract (table/column-filtered to
+exclude every patient/clinical/employee table — confirmed via its own `_excluded_tables_report.txt`
+before use), not the raw production dump:
+
+| Raw value in code | Resolves to |
+|---|---|
+| `patientIdentifierType="4"` | `ARV Number` |
+| `patientIdentifierType="19"` | `HCC Number` |
+| `patientIdentifierType="21"` | `Chronic Care Number` |
+| `patientIdentifierType="22"` | `Palliative Care Number` |
+| `patientIdentifierType="26"` | `PDC Identifier` |
+| `patientIdentifierType="28"` | `Nutrition Program Number` |
+| `patientIdentifierType="29"` | `TB program identifier` |
+| `formId="64"` | `ART eMastercard` |
+| `formId="66"` | `Pre-ART eMastercard` |
+| `formId="68"` | `Exposed Child eMastercard` |
+| `formId="54"` | `Chronic Care eMastercard` |
+| `initialEncounterTypeId="9"` / `followupEncounterTypeId="10"` | `ART_INITIAL` / `ART_FOLLOWUP` |
+| `initialEncounterTypeId="11"` / `followupEncounterTypeId="12"` | `PART_INITIAL` / `PART_FOLLOWUP` |
+| `initialEncounterTypeId="92"` / `followupEncounterTypeId="93"` | `EXPOSED_CHILD_INITIAL` / `EXPOSED_CHILD_FOLLOWUP` |
+| `initialEncounterTypeId="67"` / `followupEncounterTypeId="69"` | `CHRONIC_CARE_INITIAL` / `CHRONIC_CARE_FOLLOWUP` |
+| ProgramWorkflowState `1` | `Pre-ART (Continue)` (uuid `6687f284-977f-11e1-8993-905e29aff6c1`) |
+| ProgramWorkflowState `2` | `Patient transferred out` (uuid `6687f50e-977f-11e1-8993-905e29aff6c1`) |
+| ProgramWorkflowState `7` | `On antiretrovirals` (uuid `6687fa7c-977f-11e1-8993-905e29aff6c1`) |
+| ProgramWorkflowState `12` | `Patient defaulted` (uuid `6687fff4-977f-11e1-8993-905e29aff6c1`) |
+| ProgramWorkflowState `119` | `Discharged uninfected` (uuid `668846d0-977f-11e1-8993-905e29aff6c1`) — **not** "Patient died" as initially guessed from naming conventions alone; verified against real data before use |
+| ProgramWorkflowState `120` | `Exposed Child (Continue)` (uuid `668847a2-977f-11e1-8993-905e29aff6c1`) |
+
+`formId="62"` (Kaposis Sarcoma eMastercard) is assigned to a JSP-local variable
+(`eMastercardFormId`) that is set but never actually read anywhere in the file — dead code, not
+converted as part of this plan.
+
 ## Task 1: Systematic audit (produces the full inventory)
 
 Spot checks undercounted this on the first pass (the `MigrateViralLoadAndEIDTestResultsTask` find,
@@ -175,12 +243,16 @@ it works once.
 
 ## Work breakdown (staged PRs)
 
-1. Systematic audit (Task 1 above) — produces the full inventory, no functional changes.
-2. Global properties fixup (new Initializer-style loader + CSV).
-3. htmlforms `conceptId`/macro conversion (both directories, once their relationship is resolved).
-4. Portlet/taglib Java + JSP fixes (`Helper`, `EMastercardAccessTag`, `QuickProgramsTag`,
-   `malawiPatientDashboard.jsp`).
-5. Reports audit and fixes.
-6. `MigrateViralLoadAndEIDTestResultsTask` and any other misc findings from the sweep.
+**Phase 1** (this plan targets — see `docs/superpowers/plans/2026-09-14-mlw1846-phase1-portlets-taglibs.md`):
+1. Portlet/taglib Java + JSP fixes (`Helper`, `EMastercardAccessTag`, `QuickProgramsTag`,
+   `malawiPatientDashboard.jsp`) — the only category with real Phase 1 findings.
+2. Documentation-only note on `MigrateViralLoadAndEIDTestResultsTask` and the unused
+   `ERecordAccessTag` (both dead/unwired code, not functionally fixed here).
+
+**Phase 2** (separate plan, later, depends on the concept SAME-AS mapping effort):
+3. Concept reference-term mapping bootstrap (parallel/separate effort, not part of either plan).
+4. Global properties fixup (new Initializer-style loader + CSV) for the core-owned `concept.*` GPs.
+5. htmlforms `conceptId`/macro conversion (both directories, once their relationship is resolved).
+6. The 3 concept-based `DataConverter` fixes.
 
 Each PR gets its own review and can be reverted independently.
