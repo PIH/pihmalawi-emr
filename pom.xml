@@ -62,7 +62,7 @@
 		<reportingrestVersion>2.0.0</reportingrestVersion>
 		<reportinguiVersion>1.14.0</reportinguiVersion>
 		<serializationxstreamVersion>0.3.0</serializationxstreamVersion>
-		<spaVersion>2.1.0</spaVersion>
+		<spaVersion>3.0.0</spaVersion>
 		<testutilsVersion>1.7.0</testutilsVersion>
 		<uicommonsVersion>3.1.0</uicommonsVersion>
 		<uiframeworkVersion>4.0.0</uiframeworkVersion>
