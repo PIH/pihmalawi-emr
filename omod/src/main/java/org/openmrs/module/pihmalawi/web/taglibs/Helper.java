@@ -36,15 +36,14 @@ public class Helper {
 	protected static final Log log = LogFactory.getLog(Helper.class);
 	
 	/**
-	 * @return true if the passed patient has an identifier with the passed type id, false otherwise
+	 * @return true if the passed patient has an identifier of the passed type, false otherwise
 	 */
-	public static boolean hasIdentifierType(Patient p, Integer patientIdentifierType) {
+	public static boolean hasIdentifierType(Patient p, PatientIdentifierType patientIdentifierType) {
 		if (patientIdentifierType == null) {
 			// no patientIdentifierType specified, simply accept
 			return true;
 		}
-		PatientIdentifierType pit = Context.getPatientService().getPatientIdentifierType(patientIdentifierType);
-		return !p.getPatientIdentifiers(pit).isEmpty();
+		return !p.getPatientIdentifiers(patientIdentifierType).isEmpty();
 	}
 
 	public static boolean hasCondition(Patient p, Concept condition, List<Concept> answers) {
@@ -75,12 +74,12 @@ public class Helper {
 	 * @return true if the passed patient has an identifier of the passed type whose location is the same as
 	 * their current PatientProgram location that is associated with the passed states
 	 */
-	public static boolean hasIdentifierForEnrollmentLocation(Patient p, Integer identifierType, List<ProgramWorkflow> workflows) {
+	public static boolean hasIdentifierForEnrollmentLocation(Patient p, PatientIdentifierType identifierType, List<ProgramWorkflow> workflows) {
 		if (identifierType == null) {
 			// no identifierType specified, simply accept
 			return true;
 		}
-		List<PatientIdentifier> pis = p.getPatientIdentifiers(Context.getPatientService().getPatientIdentifierType(identifierType));
+		List<PatientIdentifier> pis = p.getPatientIdentifiers(identifierType);
 		if ( workflows!= null && !workflows.isEmpty()) {
 			for (ProgramWorkflow workflow : workflows) {
 				Location enrollmentLocation = currentEnrollmentLocation(p, workflow);
@@ -174,6 +173,22 @@ public class Helper {
 		}
 		return workflows;
 	}
+
+	/**
+	 * @return the PatientIdentifierType matching the given name if non-blank and found, otherwise the
+	 * PatientIdentifierType matching the given id, otherwise null
+	 */
+	public static PatientIdentifierType getPatientIdentifierType(String name, Integer id) {
+		PatientIdentifierType pit = null;
+		if (StringUtils.isNotBlank(name)) {
+			pit = Context.getPatientService().getPatientIdentifierTypeByName(name);
+		}
+		if (pit == null && id != null) {
+			pit = Context.getPatientService().getPatientIdentifierType(id);
+		}
+		return pit;
+	}
+
 	/**
 	 * @param csvStateIds a String containing comma-separated programWorkflowState ids or UUIDs
 	 * @return the List of ProgramWorkflowStates that match the given ids
