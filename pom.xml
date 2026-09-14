@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>PIH Malawi EMR</name>
 	<description>PIH Malawi EMR parent</description>
-	<url>https://github.com/PIH/openmrs-module-pihmalawi</url>
+	<url>https://github.com/PIH/pihmalawi-emr</url>
 
 	<organization>
 		<name>Partners In Health</name>
@@ -28,9 +28,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https://github.com/PIH/openmrs-module-pihmalawi.git</connection>
-		<developerConnection>scm:git:https://github.com/PIH/openmrs-module-pihmalawi.git</developerConnection>
-		<url>https://github.com/PIH/openmrs-module-pihmalawi/</url>
+		<connection>scm:git:https://github.com/PIH/pihmalawi-emr.git</connection>
+		<developerConnection>scm:git:https://github.com/PIH/pihmalawi-emr.git</developerConnection>
+		<url>https://github.com/PIH/pihmalawi-emr/</url>
 	  <tag>HEAD</tag>
   	</scm>
 
