@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.pihmalawi.metadata.HivMetadata;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,8 @@ public class AddressCleanupController {
 		System.out.println("Loaded " + replacementMap.size() + " address map entries from csv to check");
 
 		if (programId == null) {
-			programId = 1;
+			Program hivProgram = Context.getProgramWorkflowService().getProgramByUuid(HivMetadata.HIV_PROGRAM_UUID);
+			programId = hivProgram.getProgramId();
 		}
 
 		System.out.println("Retrieving patients in program " + programId + " to check");

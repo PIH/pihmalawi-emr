@@ -128,4 +128,12 @@
 		<sqlFile path="pihmalawiMigrations/renameRetiredMetronidazoleDuplicate.sql" stripComments="true" />
 	</changeSet>
 
+	<changeSet id="20260915-remove-stale-migrate-eid-test-results-task" author="mseaton">
+		<comment>
+			Remove the "Migrate EID Test Results" scheduled task, whose backing Java class has been
+			deleted, if a previous install ever had it scheduled. MLW-1846
+		</comment>
+		<sqlFile path="pihmalawiMigrations/removeStaleMigrateEIDTestResultsTask.sql" stripComments="true" />
+	</changeSet>
+
 </databaseChangeLog>

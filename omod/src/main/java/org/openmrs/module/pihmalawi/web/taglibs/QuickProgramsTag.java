@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -58,7 +57,6 @@ public class QuickProgramsTag extends BodyTagSupport {
 	private String initialStateIds;
 	private String terminalStateIds;
 	private String workflowIds;
-	private String defaultLocation;
 
 	/**
 	 * @see javax.servlet.jsp.tagext.BodyTagSupport#doStartTag()
@@ -225,14 +223,9 @@ public class QuickProgramsTag extends BodyTagSupport {
 					s += dateTag("dateEnrolled-" + workflow.getId(), "dateEnrolled") + "\n";
 					s += " at <select name=\"locationId\">\n";
 					s += "<option value=\"\">Choose a location...</option>\n";
-					String defaultLocationId = getDefaultLocation();
 
 					for (Location l : Context.getLocationService().getAllLocations(false)) {
-						if (defaultLocationId != null && !"".equals(defaultLocationId) && l.getId().equals(new Integer(defaultLocationId))) {
-							s += "<option value=\"" + l.getId() + "\" selected>" + l.getName() + "</option>\n";
-						} else {
-							s += "<option value=\"" + l.getId() + "\">" + l.getName() + "</option>\n";
-						}
+						s += "<option value=\"" + l.getId() + "\">" + l.getName() + "</option>\n";
 					}
 					s += "</select>\n";
 					s += "</form><br/>";
@@ -256,16 +249,11 @@ public class QuickProgramsTag extends BodyTagSupport {
 		s += dateTag("dateEnrolled-" + pws.getId(), "dateEnrolled") + "\n";
 		s += " at <select name=\"locationId\">\n";
 		s += "<option value=\"\">Choose a location...</option>\n";
-		String defaultLocationId = getDefaultLocation();
-		
+
 		for (Location l : Context.getLocationService().getAllLocations(false)) {
-			if (defaultLocationId != null && !"".equals(defaultLocationId) && l.getId().equals(new Integer(defaultLocationId))) {
-				s += "<option value=\"" + l.getId() + "\" selected>" + l.getName() + "</option>\n";
-			} else {
-				s += "<option value=\"" + l.getId() + "\">" + l.getName() + "</option>\n";
-			}
+			s += "<option value=\"" + l.getId() + "\">" + l.getName() + "</option>\n";
 		}
-		s += "</select>\n";				
+		s += "</select>\n";
 		s += "</form>";
 		return s;
 	}
@@ -432,22 +420,6 @@ public class QuickProgramsTag extends BodyTagSupport {
 	}
 
 	/**
-	 * Private utility method for returning a List of States from a comma separated string of state ids
-	 */
-	@SuppressWarnings("deprecation")
-    private List<ProgramWorkflowState> getStates(String ids) {
-		List<ProgramWorkflowState> states = new ArrayList<ProgramWorkflowState>();
-		if (StringUtils.isNotBlank(ids)) {
-			StringTokenizer st = new StringTokenizer(ids, ",");
-			while (st.hasMoreTokens()) {
-				String id = st.nextToken().trim();
-				states.add(Context.getProgramWorkflowService().getState(new Integer(id)));
-			}
-		}
-		return states;
-	}
-
-	/**
 	 * @see javax.servlet.jsp.tagext.BodyTagSupport#doEndTag()
 	 */
 	public int doEndTag() {
@@ -456,7 +428,6 @@ public class QuickProgramsTag extends BodyTagSupport {
 		stateIds = null;
 		initialStateIds = null;
 		workflowIds = null;
-		defaultLocation = null;
 		return EVAL_PAGE;
 	}
 	
@@ -523,18 +494,4 @@ public class QuickProgramsTag extends BodyTagSupport {
 	public void setWorkflowIds(String workflowIds) {
 		this.workflowIds = workflowIds;
 	}
-
-	/**
-     * @return the defaultLocation
-     */
-    public String getDefaultLocation() {
-    	return defaultLocation;
-    }
-	
-    /**
-     * @param defaultLocation the defaultLocation to set
-     */
-    public void setDefaultLocation(String defaultLocation) {
-    	this.defaultLocation = defaultLocation;
-    }
 }
