@@ -6,15 +6,15 @@
 -- ## parameter = endDate|End Date|java.util.Date
 -- ## parameter = location|Location|org.openmrs.Location
 
-select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'), -1) into @hccNumberTypeId; -- HCC Number
-select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '667858f6-977f-11e1-8993-905e29aff6c1'), -1) into @deprecatedPartNumberTypeId; -- z_deprecated PART Number
-select coalesce((select program_id from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'), -1) into @hivProgramId; -- HIV program
-select coalesce((select program_id from program where uuid = '6685153c-977f-11e1-8993-905e29aff6c1'), -1) into @preArtProgramId; -- PRE-ART PROGRAM
-select coalesce((select program_workflow_state_id from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'), -1) into @preArtContinueStateId; -- Pre-ART (Continue)
-select coalesce((select encounter_type_id from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'), -1) into @partInitialType; -- PART_INITIAL
-select coalesce((select encounter_type_id from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'), -1) into @partFollowupType; -- PART_FOLLOWUP
-select coalesce((select concept_id from concept where uuid = '6565b94a-977f-11e1-8993-905e29aff6c1'), -1) into @clinicianReportedCd4ConceptId; -- Clinician reported to CD4
-select coalesce((select concept_id from concept where uuid = '656c327a-977f-11e1-8993-905e29aff6c1'), -1) into @cd4ConceptId; -- CD4
+select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
+select patient_identifier_type_id into @deprecatedPartNumberTypeId from patient_identifier_type where uuid = '667858f6-977f-11e1-8993-905e29aff6c1'; -- z_deprecated PART Number
+select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+select program_id into @preArtProgramId from program where uuid = '6685153c-977f-11e1-8993-905e29aff6c1'; -- PRE-ART PROGRAM
+select program_workflow_state_id into @preArtContinueStateId from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'; -- Pre-ART (Continue)
+select encounter_type_id into @partInitialType from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'; -- PART_INITIAL
+select encounter_type_id into @partFollowupType from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'; -- PART_FOLLOWUP
+select concept_id into @clinicianReportedCd4ConceptId from concept where uuid = '6565b94a-977f-11e1-8993-905e29aff6c1'; -- Clinician reported to CD4
+select concept_id into @cd4ConceptId from concept where uuid = '656c327a-977f-11e1-8993-905e29aff6c1'; -- CD4
 
 drop temporary table if exists PS; -- Create a temporary table to store cohort with state Pre-ART (continue)
 create temporary table PS as

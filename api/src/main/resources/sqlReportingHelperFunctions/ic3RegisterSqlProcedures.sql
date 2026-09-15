@@ -175,14 +175,14 @@ DROP PROCEDURE IF EXISTS createIc3RegisterCohort;
 CREATE PROCEDURE createIc3RegisterCohort(IN reportEndDate DATE)
 BEGIN
 
-	select coalesce((select program_workflow_state_id from program_workflow_state where uuid = '6687fa7c-977f-11e1-8993-905e29aff6c1'), -1) into @artOnTreatmentStateId; -- ART: On treatment
-	select coalesce((select program_workflow_state_id from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'), -1) into @preArtContinueStateId; -- ART: Pre-ART (Continue)
-	select coalesce((select program_workflow_state_id from program_workflow_state where uuid = '66882650-977f-11e1-8993-905e29aff6c1'), -1) into @ccOnTreatmentStateId; -- Chronic Care: On treatment
-	select coalesce((select program_id from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'), -1) into @hivProgramId; -- HIV program
-	select coalesce((select program_id from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'), -1) into @chronicCareProgramId; -- Chronic Care program
-	select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'), -1) into @arvNumberTypeId; -- ARV Number
-	select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'), -1) into @hccNumberTypeId; -- HCC Number
-	select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'), -1) into @chronicCareNumberTypeId; -- Chronic Care Number
+	select program_workflow_state_id into @artOnTreatmentStateId from program_workflow_state where uuid = '6687fa7c-977f-11e1-8993-905e29aff6c1'; -- ART: On treatment
+	select program_workflow_state_id into @preArtContinueStateId from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'; -- ART: Pre-ART (Continue)
+	select program_workflow_state_id into @ccOnTreatmentStateId from program_workflow_state where uuid = '66882650-977f-11e1-8993-905e29aff6c1'; -- Chronic Care: On treatment
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
+	select patient_identifier_type_id into @arvNumberTypeId from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'; -- ARV Number
+	select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
+	select patient_identifier_type_id into @chronicCareNumberTypeId from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'; -- Chronic Care Number
 
 	-- Create Initial Cohort With Basic Demographic Data
 
@@ -269,8 +269,8 @@ DROP PROCEDURE IF EXISTS warehouseProgramEnrollment;
 CREATE PROCEDURE `warehouseProgramEnrollment`()
 BEGIN
 
-	select coalesce((select program_id from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'), -1) into @hivProgramId; -- HIV program
-	select coalesce((select program_id from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'), -1) into @chronicCareProgramId; -- Chronic Care program
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
 
 	-- Refresh warehouse_program_enrollment
 	drop table if exists warehouse_program_enrollment;
@@ -412,7 +412,7 @@ DROP PROCEDURE IF EXISTS updateRecentRegimen;
 CREATE PROCEDURE updateRecentRegimen(IN endDate DATE)
 BEGIN
 
-	select coalesce((select concept_id from concept where uuid = '657ac57e-977f-11e1-8993-905e29aff6c1'), -1) into @arvReceivedConceptId; -- Malawi Antiretroviral drugs received
+	select concept_id into @arvReceivedConceptId from concept where uuid = '657ac57e-977f-11e1-8993-905e29aff6c1'; -- Malawi Antiretroviral drugs received
 
 	DROP TEMPORARY TABLE IF EXISTS recentRegimenObs;
 	create temporary table recentRegimenObs (
@@ -489,8 +489,8 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
-	select coalesce((select program_id from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'), -1) into @hivProgramId; -- HIV program
-	select coalesce((select program_id from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'), -1) into @chronicCareProgramId; -- Chronic Care program
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
 
 	insert into temp_obs_vector(PID, programId, dateEnrolled)
 		select PID, programId, Min(dateEnrolled)
@@ -519,11 +519,11 @@ DROP PROCEDURE IF EXISTS updateFirstViralLoad;
 CREATE PROCEDURE updateFirstViralLoad(IN endDate DATE)
 BEGIN
 
-	select coalesce((select concept_id from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'), -1) into @vlTestSetConceptId; -- Viral Load test set
-	select coalesce((select concept_id from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'), -1) into @vlConceptId; -- HIV viral load
-	select coalesce((select concept_id from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'), -1) into @vlLdlConceptId; -- Lower than Detection Limit
-	select coalesce((select concept_id from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'), -1) into @vlSampleTakenConceptId; -- Sample taken for Viral Load
-	select coalesce((select concept_id from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'), -1) into @trueConceptId; -- True
+	select concept_id into @vlTestSetConceptId from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'; -- Viral Load test set
+	select concept_id into @vlConceptId from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'; -- HIV viral load
+	select concept_id into @vlLdlConceptId from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'; -- Lower than Detection Limit
+	select concept_id into @vlSampleTakenConceptId from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'; -- Sample taken for Viral Load
+	select concept_id into @trueConceptId from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'; -- True
 
 	DROP TABLE IF EXISTS firstVL;
 
@@ -588,12 +588,12 @@ DROP PROCEDURE IF EXISTS updateLastViralLoad;
 CREATE PROCEDURE updateLastViralLoad(IN endDate DATE)
 BEGIN
 
-	select coalesce((select concept_id from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'), -1) into @vlTestSetConceptId; -- Viral Load test set
-	select coalesce((select concept_id from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'), -1) into @weightConceptId; -- Weight (kg)
-	select coalesce((select concept_id from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'), -1) into @vlConceptId; -- HIV viral load
-	select coalesce((select concept_id from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'), -1) into @vlLdlConceptId; -- Lower than Detection Limit
-	select coalesce((select concept_id from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'), -1) into @vlSampleTakenConceptId; -- Sample taken for Viral Load
-	select coalesce((select concept_id from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'), -1) into @trueConceptId; -- True
+	select concept_id into @vlTestSetConceptId from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'; -- Viral Load test set
+	select concept_id into @weightConceptId from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'; -- Weight (kg)
+	select concept_id into @vlConceptId from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'; -- HIV viral load
+	select concept_id into @vlLdlConceptId from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'; -- Lower than Detection Limit
+	select concept_id into @vlSampleTakenConceptId from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'; -- Sample taken for Viral Load
+	select concept_id into @trueConceptId from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'; -- True
 
 	DROP TABLE IF EXISTS lastVL;
 
@@ -727,12 +727,12 @@ DROP PROCEDURE IF EXISTS getBloodGlucoseBeforeDate;
 CREATE PROCEDURE getBloodGlucoseBeforeDate(IN endDate DATE, IN firstLast VARCHAR(50), IN colObsDate VARCHAR(100), IN colHba1c VARCHAR(100), IN colRandom VARCHAR(100), IN colFast VARCHAR(100))
 BEGIN
 
-	select coalesce((select concept_id from concept where uuid = '654a98b8-977f-11e1-8993-905e29aff6c1'), -1) into @serumGlucoseConceptId; -- Serum glucose
-	select coalesce((select concept_id from concept where uuid = '160914AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), -1) into @postPrandialGlucoseConceptId; -- Post-prandial blood glucose measurement (mg/dL)
-	select coalesce((select concept_id from concept where uuid = '160912AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), -1) into @fastingGlucoseConceptId; -- Fasting blood glucose measurement (mg/dL)
-	select coalesce((select concept_id from concept where uuid = '65714f76-977f-11e1-8993-905e29aff6c1'), -1) into @hba1cConceptId; -- Glycated hemoglobin
-	select coalesce((select concept_id from concept where uuid = '65711e3e-977f-11e1-8993-905e29aff6c1'), -1) into @bloodSugarTestTypeConceptId; -- Blood sugar test type
-	select coalesce((select concept_id from concept where uuid = '65711c2c-977f-11e1-8993-905e29aff6c1'), -1) into @fastingConceptId; -- Fasting
+	select concept_id into @serumGlucoseConceptId from concept where uuid = '654a98b8-977f-11e1-8993-905e29aff6c1'; -- Serum glucose
+	select concept_id into @postPrandialGlucoseConceptId from concept where uuid = '160914AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Post-prandial blood glucose measurement (mg/dL)
+	select concept_id into @fastingGlucoseConceptId from concept where uuid = '160912AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Fasting blood glucose measurement (mg/dL)
+	select concept_id into @hba1cConceptId from concept where uuid = '65714f76-977f-11e1-8993-905e29aff6c1'; -- Glycated hemoglobin
+	select concept_id into @bloodSugarTestTypeConceptId from concept where uuid = '65711e3e-977f-11e1-8993-905e29aff6c1'; -- Blood sugar test type
+	select concept_id into @fastingConceptId from concept where uuid = '65711c2c-977f-11e1-8993-905e29aff6c1'; -- Fasting
 
 	DROP TEMPORARY TABLE IF EXISTS temp_obs_vector;
 	create temporary table temp_obs_vector (
@@ -868,11 +868,11 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
-	select coalesce((select encounter_type_id from encounter_type where uuid = 'ebaa2ad8-baaa-11e6-91a8-5622a9e78e10'), -1) into @AAS;
-	select coalesce((select encounter_type_id from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1'), -1) into @CCF;
-	select coalesce((select encounter_type_id from encounter_type where uuid = '66079de4-a8df-11e5-bf7f-feff819cdc9f'), -1) into @DHF;
-	select coalesce((select concept_id from concept where uuid = '6569bffe-977f-11e1-8993-905e29aff6c1'), -1) into @systolicBpConceptId; -- Systolic blood pressure
-	select coalesce((select concept_id from concept where uuid = '6569c116-977f-11e1-8993-905e29aff6c1'), -1) into @diastolicBpConceptId; -- Diastolic blood pressure
+	select encounter_type_id into @AAS from encounter_type where uuid = 'ebaa2ad8-baaa-11e6-91a8-5622a9e78e10';
+	select encounter_type_id into @CCF from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1';
+	select encounter_type_id into @DHF from encounter_type where uuid = '66079de4-a8df-11e5-bf7f-feff819cdc9f';
+	select concept_id into @systolicBpConceptId from concept where uuid = '6569bffe-977f-11e1-8993-905e29aff6c1'; -- Systolic blood pressure
+	select concept_id into @diastolicBpConceptId from concept where uuid = '6569c116-977f-11e1-8993-905e29aff6c1'; -- Diastolic blood pressure
 
 	IF firstLast = 'first' THEN
 		       set @upDown = 'asc';
@@ -1047,8 +1047,8 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
-	select coalesce((select concept_id from concept where uuid = 'b2fafb7e-ce9f-11e5-ab30-625662870761'), -1) into @monthOfOnsetConceptId; -- Month of onset
-	select coalesce((select concept_id from concept where uuid = 'b2faf9a8-ce9f-11e5-ab30-625662870761'), -1) into @yearOfOnsetConceptId; -- Year of onset
+	select concept_id into @monthOfOnsetConceptId from concept where uuid = 'b2fafb7e-ce9f-11e5-ab30-625662870761'; -- Month of onset
+	select concept_id into @yearOfOnsetConceptId from concept where uuid = 'b2faf9a8-ce9f-11e5-ab30-625662870761'; -- Year of onset
 
 	IF firstLast = 'first' THEN
 		       set @upDown = 'asc';

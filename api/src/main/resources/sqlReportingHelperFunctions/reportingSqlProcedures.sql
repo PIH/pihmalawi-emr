@@ -997,7 +997,7 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
-	select coalesce((select concept_id from concept where uuid = '6569cbd4-977f-11e1-8993-905e29aff6c1'), -1) into @apptDateConceptId; -- Appointment date
+	select concept_id into @apptDateConceptId from concept where uuid = '6569cbd4-977f-11e1-8993-905e29aff6c1'; -- Appointment date
 
 	SET @s=CONCAT('insert into temp_obs_vector
 					(PID, obs)
