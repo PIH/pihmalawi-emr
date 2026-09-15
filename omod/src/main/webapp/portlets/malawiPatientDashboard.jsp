@@ -111,12 +111,11 @@
         <td><pihmalawi:eMastercardAccess patientId="${model.patientId}" form="ART eMastercard" initialEncounterType="ART_INITIAL" followupEncounterType="ART_FOLLOWUP" patientIdentifierType="ARV Number" programWorkflowStates="6687fa7c-977f-11e1-8993-905e29aff6c1"/></td>
     </tr>
         <c:set var="artInitialEncounter" value="" />
-        <openmrs:forEachEncounter encounters="${model.patientEncounters}"
-                                  type="9" num="1" var="enc">
-            <c:if test="${ not empty enc }">
+        <c:forEach var="enc" items="${model.patientEncounters}">
+            <c:if test="${enc.encounterType.name == 'ART_INITIAL'}">
                 <c:set var="artInitialEncounter" value="true" />
             </c:if>
-        </openmrs:forEachEncounter>
+        </c:forEach>
     <tr>
         <td><br /></td>
     </tr>
@@ -146,11 +145,11 @@
     </tr>
     <tr>
         <c:set var="artInitialEncounter" value="" />
-        <openmrs:forEachEncounter encounters="${model.patientEncounters}" type="9" num="1" var="enc">
-            <c:if test="${ not empty enc }">
+        <c:forEach var="enc" items="${model.patientEncounters}">
+            <c:if test="${enc.encounterType.name == 'ART_INITIAL'}">
                 <c:set var="artInitialEncounter" value="true" />
             </c:if>
-        </openmrs:forEachEncounter>
+        </c:forEach>
         <td>Exposed Child Patient Card:</td>
         <c:choose>
             <c:when test="${ not empty artInitialEncounter }">
@@ -255,16 +254,14 @@
         <td><br /></td>
     </tr>
     <tr>
-        <openmrs:forEachEncounter encounters="${model.patientEncounters}" type="24" num="1" var="enc">
-            <c:if test="${ not empty enc }">
+        <c:forEach var="enc" items="${model.patientEncounters}">
+            <c:if test="${enc.encounterType.name == 'CHEMOTHERAPY'}">
                 <c:set var="ctEncounter" value="true" />
             </c:if>
-        </openmrs:forEachEncounter>
-        <openmrs:forEachEncounter encounters="${model.patientEncounters}" type="17" num="1" var="enc">
-            <c:if test="${ not empty enc }">
+            <c:if test="${enc.encounterType.name == 'PATIENT EVALUATION'}">
                 <c:set var="evaluationEncounter" value="true" />
             </c:if>
-        </openmrs:forEachEncounter>
+        </c:forEach>
         <td>Kaposis Sarcoma Flowsheet:</td>
         <openmrs:hasPrivilege privilege="Edit Patients">
             <c:choose>
