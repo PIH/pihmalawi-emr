@@ -23,6 +23,10 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  */
 public class PregnantLactatingConverter implements DataConverter  {
 
+	public static final String NO_CONCEPT_UUID = "6557646c-977f-11e1-8993-905e29aff6c1";
+	public static final String PREGNANT_CONCEPT_UUID = "655b6bac-977f-11e1-8993-905e29aff6c1";
+	public static final String LACTATING_CONCEPT_UUID = "656cdab8-977f-11e1-8993-905e29aff6c1";
+
 	//***** CONSTRUCTORS *****
 
 	/**
@@ -38,10 +42,10 @@ public class PregnantLactatingConverter implements DataConverter  {
 	public Object convert(Object original) {
         Obs o = (Obs)original;
         if (o != null) {
-            int conceptId = o.getValueCoded().getConceptId();
-            if (conceptId == 1066) { return "No"; }
-            if (conceptId == 1755) { return "Pregnant"; }
-            if (conceptId == 5632) { return "Lactating"; }
+            String conceptUuid = o.getValueCoded().getUuid();
+            if (NO_CONCEPT_UUID.equals(conceptUuid)) { return "No"; }
+            if (PREGNANT_CONCEPT_UUID.equals(conceptUuid)) { return "Pregnant"; }
+            if (LACTATING_CONCEPT_UUID.equals(conceptUuid)) { return "Lactating"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;

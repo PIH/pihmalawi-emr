@@ -23,6 +23,9 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  */
 public class ObsValueBooleanYesNoConverter implements DataConverter  {
 
+	public static final String TRUE_CONCEPT_UUID = "655e2f90-977f-11e1-8993-905e29aff6c1";
+	public static final String FALSE_CONCEPT_UUID = "655e3148-977f-11e1-8993-905e29aff6c1";
+
 	//***** CONSTRUCTORS *****
 
 	/**
@@ -38,9 +41,9 @@ public class ObsValueBooleanYesNoConverter implements DataConverter  {
 	public Object convert(Object original) {
         Obs o = (Obs)original;
         if (o != null) {
-            int conceptId = o.getValueCoded().getConceptId();
-            if (conceptId == 2257) { return "Yes"; }
-            if (conceptId == 2258) { return "No"; }
+            String conceptUuid = o.getValueCoded().getUuid();
+            if (TRUE_CONCEPT_UUID.equals(conceptUuid)) { return "Yes"; }
+            if (FALSE_CONCEPT_UUID.equals(conceptUuid)) { return "No"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;
