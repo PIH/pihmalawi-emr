@@ -9,8 +9,6 @@ public class PihMalawiConstants {
     public static final String PRIV_CHW_MANAGEMENT_APP = "CHW Management App";
     public static final String HEALTH_FACILITY_GP_NAME = "providermanagement.locationTag";
     public static final String HEALTH_FACILITY_GP_VALUE = "Health Facility";
-    public static final String DASHBOARD_IDENTIFIERS_GP_NAME = "dashboard.identifiers";
-    public static final String DASHBOARD_IDENTIFIERS_GP_VALUE = "{\"9\":[\"ARV Number\",\"HCC Number\",\"KS Number\",\"Chronic Care Number\",\"Palliative Care Number\",\"PDC Identifier\",\"Nutrition Program Number\",\"TB program identifier\"]}";
     public static final String PATIENT_IDENTIFIER_IMPORTANT_TYPES_GP_NAME = "patient_identifier.importantTypes";
 
     public static final String SYNC_ALLOW_MAC_ADDRESSES_GP_NAME = "pihmalawi.syncAllowMacAddresses";

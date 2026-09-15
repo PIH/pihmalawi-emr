@@ -29,7 +29,9 @@ import java.util.List;
 public class HivMetadata extends CommonMetadata {
 
 	public static String HIV_PROGRAM = "HIV program";
+	public static String HIV_PROGRAM_UUID = "66850b0a-977f-11e1-8993-905e29aff6c1";
 	public static String HIV_PROGRAM_TREATMENT_STATUS = "Treatment status";
+	public static String HIV_PROGRAM_TREATMENT_STATUS_UUID = "6686ffe6-977f-11e1-8993-905e29aff6c1";
 	public static String HIV_PROGRAM_STATUS_EXPOSED_CHILD = "668847a2-977f-11e1-8993-905e29aff6c1";
 	public static String HIV_PROGRAM_STATUS_PRE_ART = "Pre-ART (Continue)";
 	public static String HIV_PROGRAM_STATUS_ON_ARVS = "6687fa7c-977f-11e1-8993-905e29aff6c1";

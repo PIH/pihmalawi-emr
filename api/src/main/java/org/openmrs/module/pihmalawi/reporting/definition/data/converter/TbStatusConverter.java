@@ -15,7 +15,7 @@ package org.openmrs.module.pihmalawi.reporting.definition.data.converter;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
-import org.openmrs.module.pihmalawi.metadata.HivMetadata;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
@@ -39,10 +39,10 @@ public class TbStatusConverter implements DataConverter  {
 	public Object convert(Object original) {
         Obs o = (Obs)original;
         if (o != null) {
-            int conceptId = o.getValueCoded().getConceptId();
-            if (conceptId == 1067) { return "Never"; }
-            if (conceptId == 1714) { return "Last"; }
-            if (conceptId == 1432) { return "Curr"; }
+            String conceptUuid = o.getValueCoded().getUuid();
+            if (CommonConcepts.Concepts.UNKNOWN.equals(conceptUuid)) { return "Never"; }
+            if (CommonConcepts.Concepts.TREATMENT_COMPLETE.equals(conceptUuid)) { return "Last"; }
+            if (CommonConcepts.Concepts.CURRENTLY_IN_TREATMENT.equals(conceptUuid)) { return "Curr"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;

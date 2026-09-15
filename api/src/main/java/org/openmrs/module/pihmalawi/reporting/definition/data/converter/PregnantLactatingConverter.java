@@ -15,6 +15,7 @@ package org.openmrs.module.pihmalawi.reporting.definition.data.converter;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
@@ -38,10 +39,10 @@ public class PregnantLactatingConverter implements DataConverter  {
 	public Object convert(Object original) {
         Obs o = (Obs)original;
         if (o != null) {
-            int conceptId = o.getValueCoded().getConceptId();
-            if (conceptId == 1066) { return "No"; }
-            if (conceptId == 1755) { return "Pregnant"; }
-            if (conceptId == 5632) { return "Lactating"; }
+            String conceptUuid = o.getValueCoded().getUuid();
+            if (CommonConcepts.Concepts.NO.equals(conceptUuid)) { return "No"; }
+            if (CommonConcepts.Concepts.PREGNANT.equals(conceptUuid)) { return "Pregnant"; }
+            if (CommonConcepts.Concepts.LACTATING.equals(conceptUuid)) { return "Lactating"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;
