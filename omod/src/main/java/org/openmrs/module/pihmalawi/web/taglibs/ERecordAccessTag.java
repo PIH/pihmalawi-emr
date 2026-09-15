@@ -7,12 +7,14 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.pihmalawi.Utils;
@@ -24,22 +26,27 @@ public class ERecordAccessTag extends BodyTagSupport {
 	private final Log log = LogFactory.getLog(getClass());
 
 	private Integer patientId;
-	private Integer formId;
-	private Integer encounterTypeId;
+	private String form;
+	private String encounterType;
 	private boolean readonly = false;
 	private String programWorkflowStates;
-	private Integer patientIdentifierType;
+	private String patientIdentifierType;
 
 	public int doStartTag() throws JspException {
 		JspWriter o = pageContext.getOut();
 
 		Patient p = Context.getPatientService().getPatient(getPatientId());
-		Form f = Context.getFormService().getForm(getFormId());
-		EncounterType initialEncounterType = Context.getEncounterService()
-				.getEncounterType(getencounterTypeId());
+		Form f = Helper.getForm(getForm());
+		EncounterType initialEncounterType = Helper.getEncounterType(getEncounterType());
 
 		try {
 			if (f == null || initialEncounterType == null) {
+				o.write("Not available: Wrong configuration");
+				release();
+				return SKIP_BODY;
+			}
+			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierType());
+			if (resolvedPatientIdentifierType == null && StringUtils.isNotBlank(getPatientIdentifierType())) {
 				o.write("Not available: Wrong configuration");
 				release();
 				return SKIP_BODY;
@@ -48,7 +55,7 @@ public class ERecordAccessTag extends BodyTagSupport {
 			if (!Helper.isInProgramWorkflowState(p, stateList)) {
 				o.write("Not available: Inactive program state");
 			} else {
-				if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+				if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 					o.write("Not available: No identifier");
 				} else {
 					// if (!hasIdentifierForEnrollmentLocation(p,
@@ -74,7 +81,7 @@ public class ERecordAccessTag extends BodyTagSupport {
 				if (!Helper.isInProgramWorkflowState(p, stateList)) {
 					o.write(createViewCardHtmlTag(p, f, initial,
 							"Readonly: Inactive program state"));
-				} else if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+				} else if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 					o.write(createViewCardHtmlTag(p, f, initial,
 							"Readonly: No identifier"));
 				} else
@@ -159,8 +166,8 @@ public class ERecordAccessTag extends BodyTagSupport {
 
 	public int doEndTag() {
 		patientId = null;
-		formId = null;
-		encounterTypeId = null;
+		form = null;
+		encounterType = null;
 		readonly = false;
 		patientIdentifierType = null;
 		programWorkflowStates = null;
@@ -176,20 +183,20 @@ public class ERecordAccessTag extends BodyTagSupport {
 		this.patientId = patientId;
 	}
 
-	public Integer getFormId() {
-		return formId;
+	public String getForm() {
+		return form;
 	}
 
-	public void setFormId(Integer formId) {
-		this.formId = formId;
+	public void setForm(String form) {
+		this.form = form;
 	}
 
-	public Integer getencounterTypeId() {
-		return encounterTypeId;
+	public String getEncounterType() {
+		return encounterType;
 	}
 
-	public void setencounterTypeId(Integer encounterTypeId) {
-		this.encounterTypeId = encounterTypeId;
+	public void setEncounterType(String encounterType) {
+		this.encounterType = encounterType;
 	}
 
 	public boolean isReadonly() {
@@ -208,11 +215,11 @@ public class ERecordAccessTag extends BodyTagSupport {
 		this.programWorkflowStates = programWorkflowStates;
 	}
 
-	public Integer getPatientIdentifierType() {
+	public String getPatientIdentifierType() {
 		return patientIdentifierType;
 	}
 
-	public void setPatientIdentifierType(Integer patientIdentifierType) {
+	public void setPatientIdentifierType(String patientIdentifierType) {
 		this.patientIdentifierType = patientIdentifierType;
 	}
 }

@@ -9,6 +9,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
@@ -41,15 +42,12 @@ public class EMastercardAccessTag extends BodyTagSupport {
 	private final Log log = LogFactory.getLog(getClass());
 
 	private Integer patientId;
-	private Integer formId;
-    private String formName;
-	private Integer initialEncounterTypeId;
-    private String initialEncounterTypeName;
-	private Integer followupEncounterTypeId;
-    private String followupEncounterTypeName;
+	private String form;
+	private String initialEncounterType;
+	private String followupEncounterType;
 	private boolean readonly = false;
 	private String programWorkflowStates;
-	private Integer patientIdentifierType;
+	private String patientIdentifierType;
 	private boolean includeAppointmentInfo = true;
 	private String condition=null;
 	private String conditionAnswer=null;
@@ -59,20 +57,9 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		JspWriter o = pageContext.getOut();
 		try {
 			Patient p = Context.getPatientService().getPatient(getPatientId());
-            Form f = null;
-            if (StringUtils.isNotBlank(getFormName())) {
-                f = Context.getFormService().getForm(getFormName());
-            }
-            if (f == null) {
-                f = Context.getFormService().getForm(getFormId());
-            }
-			EncounterType initialEncounterType = null;
-            if (StringUtils.isNotBlank(getInitialEncounterTypeName())) {
-                initialEncounterType = Context.getEncounterService().getEncounterType(getInitialEncounterTypeName());
-            }
-            if (initialEncounterType == null && getInitialEncounterTypeId() !=null ) {
-                initialEncounterType = Context.getEncounterService().getEncounterType(getInitialEncounterTypeId());
-            }
+			Form f = Helper.getForm(getForm());
+			EncounterType initialEncounterType = Helper.getEncounterType(getInitialEncounterType());
+			EncounterType followupEncounterType = Helper.getEncounterType(getFollowupEncounterType());
 			Concept conditionConcept = null;
 			List<Concept> conditionConceptAnswers = null;
 			if (StringUtils.isNotBlank(getCondition()) && StringUtils.isNotBlank(getConditionAnswer())){
@@ -82,6 +69,19 @@ public class EMastercardAccessTag extends BodyTagSupport {
 
             // Ensure valid form and initial encounter type passed in
 			if (f == null || initialEncounterType == null) {
+				o.write("Not available: Wrong configuration");
+				release();
+				return SKIP_BODY;
+			}
+
+			if (followupEncounterType == null && StringUtils.isNotBlank(getFollowupEncounterType())) {
+				o.write("Not available: Wrong configuration");
+				release();
+				return SKIP_BODY;
+			}
+
+			PatientIdentifierType resolvedPatientIdentifierType = Helper.getPatientIdentifierType(getPatientIdentifierType());
+			if (resolvedPatientIdentifierType == null && StringUtils.isNotBlank(getPatientIdentifierType())) {
 				o.write("Not available: Wrong configuration");
 				release();
 				return SKIP_BODY;
@@ -111,10 +111,10 @@ public class EMastercardAccessTag extends BodyTagSupport {
                 } else if (!Helper.isInProgramWorkflowState(p, stateList)) {
 					o.write("Not available: Inactive program state (" + f.getName() + ")");
 				} else {
-					if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
+					if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
 						o.write("Not available: No identifier (" + f.getName() + ")");
 					} else {
-						if (!Helper.hasIdentifierForEnrollmentLocation(p, getPatientIdentifierType(), programWorkflows)) {
+						if (!Helper.hasIdentifierForEnrollmentLocation(p, resolvedPatientIdentifierType, programWorkflows)) {
 							o.write("Not available: No identifier for current enrollment location (" + f.getName() + ")");
 						} else {
 							if (conditionConcept !=null && conditionConceptAnswers !=null && (conditionConceptAnswers.size() > 0) && !Helper.hasCondition(p, conditionConcept, conditionConceptAnswers)) {
@@ -143,36 +143,36 @@ public class EMastercardAccessTag extends BodyTagSupport {
 
             if (initials.size() == 1) {
                 if (!Helper.userHasEditPrivilege()) {
-                    o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+                    o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
                     release();
                     return SKIP_BODY;
                 }
 				if (!Helper.isInProgramWorkflowState(p, stateList)) {
-					o.write(createViewCardHtmlTag(p, f, initials.get(0), "Readonly: Inactive program state"));
+					o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, "Readonly: Inactive program state"));
 					release();
 					return SKIP_BODY;
 				}
-				if (!Helper.hasIdentifierType(p, getPatientIdentifierType())) {
-					o.write(createViewCardHtmlTag(p, f, initials.get(0), "Readonly: No identifier"));
+				if (!Helper.hasIdentifierType(p, resolvedPatientIdentifierType)) {
+					o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, "Readonly: No identifier"));
 					release();
 					return SKIP_BODY;
 				}
-				if (!Helper.hasIdentifierForEnrollmentLocation(p, getPatientIdentifierType(), programWorkflows)) {
-					o.write(createViewCardHtmlTag(p, f, initials.get(0), "Readonly: No identifier for current enrollment location"));
+				if (!Helper.hasIdentifierForEnrollmentLocation(p, resolvedPatientIdentifierType, programWorkflows)) {
+					o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, "Readonly: No identifier for current enrollment location"));
 					release();
 					return SKIP_BODY;
 				}
 				if (isReadonly()) {
-					o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+					o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
 					release();
 					return SKIP_BODY;
 				}
 				if (p.isDead()) {
-					o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+					o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
 					release();
 					return SKIP_BODY;
 				}
-				o.write(createEditCardHtmlTag(p, f, initials.get(0)));
+				o.write(createEditCardHtmlTag(p, f, initials.get(0), followupEncounterType));
 				release();
 				return SKIP_BODY;
 			}
@@ -281,7 +281,7 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		return null;
     }
 
-	protected String createViewCardHtmlTag(Patient p, Form f, Encounter initialEncounter, String additionalMessage) {
+	protected String createViewCardHtmlTag(Patient p, Form f, Encounter initialEncounter, EncounterType followupEncounterType, String additionalMessage) {
         String link = "";
         String newMasterCardConfig = getNewMasterCardConfiguration(f);
         if (newMasterCardConfig != null) {
@@ -301,11 +301,11 @@ public class EMastercardAccessTag extends BodyTagSupport {
                     + "&inPopup=true'); return false;\">";
         }
         return link + "View " + f.getName() + "</a><br/>"
-                + (includeAppointmentInfo ? getDetails(p, initialEncounter) + "<br/>" : "")
+                + (includeAppointmentInfo ? getDetails(p, initialEncounter, followupEncounterType) + "<br/>" : "")
                 + "(" + additionalMessage + ")";
 	}
 
-	protected String createEditCardHtmlTag(Patient p, Form f, Encounter initialEncounter) {
+	protected String createEditCardHtmlTag(Patient p, Form f, Encounter initialEncounter, EncounterType followupEncounterType) {
         String link = "";
         String newMasterCardConfig = getNewMasterCardConfiguration(f);
         if (newMasterCardConfig != null) {
@@ -317,7 +317,7 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		if (f.getName().equals("Viral Load Tests") || f.getName().equals("EID Test Results")) {
 			return link + "Edit " + f.getName() + "</a><br/>";
         } else {
-			return link + "Edit " + f.getName() + "</a><br/>" + (includeAppointmentInfo ? getDetails(p, initialEncounter) + "<br/>" : "");
+			return link + "Edit " + f.getName() + "</a><br/>" + (includeAppointmentInfo ? getDetails(p, initialEncounter, followupEncounterType) + "<br/>" : "");
 		}
 	}
 
@@ -350,14 +350,7 @@ public class EMastercardAccessTag extends BodyTagSupport {
         }
     }
 
-    protected String getDetails(Patient p, Encounter initialEncounter) {
-        EncounterType followupEncounterType = null;
-        if (StringUtils.isNotBlank(getFollowupEncounterTypeName())) {
-            followupEncounterType = Context.getEncounterService().getEncounterType(getFollowupEncounterTypeName());
-        }
-        if (followupEncounterType == null && (getFollowupEncounterTypeId() != null) ) {
-            followupEncounterType = Context.getEncounterService().getEncounterType(getFollowupEncounterTypeId());
-        }
+    protected String getDetails(Patient p, Encounter initialEncounter, EncounterType followupEncounterType) {
         List<Encounter> followups = Utils.getEncounters(p, followupEncounterType);
         String created = "Created: " + Helper.formatDate(initialEncounter.getEncounterDatetime());
         String visited = "Visited: no";
@@ -384,12 +377,9 @@ public class EMastercardAccessTag extends BodyTagSupport {
 
 	public int doEndTag() {
 		patientId = null;
-		formId = null;
-        formName = null;
-		initialEncounterTypeId = null;
-        initialEncounterTypeName = null;
-		followupEncounterTypeId = null;
-        followupEncounterTypeName = null;
+		form = null;
+		initialEncounterType = null;
+		followupEncounterType = null;
 		readonly = false;
 		patientIdentifierType = null;
 		programWorkflowStates = null;
@@ -407,20 +397,28 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		this.patientId = patientId;
 	}
 
-	public Integer getFormId() {
-		return formId;
+	public String getForm() {
+		return form;
 	}
 
-	public void setFormId(Integer formId) {
-		this.formId = formId;
+	public void setForm(String form) {
+		this.form = form;
 	}
 
-    public String getFormName() { return formName; }
+	public String getInitialEncounterType() {
+		return initialEncounterType;
+	}
 
-    public void setFormName(String formName) { this.formName = formName; }
+	public void setInitialEncounterType(String initialEncounterType) {
+		this.initialEncounterType = initialEncounterType;
+	}
 
-	public Integer getInitialEncounterTypeId() {
-		return initialEncounterTypeId;
+	public String getFollowupEncounterType() {
+		return followupEncounterType;
+	}
+
+	public void setFollowupEncounterType(String followupEncounterType) {
+		this.followupEncounterType = followupEncounterType;
 	}
 
 	public String getCondition() {
@@ -439,34 +437,6 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		this.conditionAnswer = conditionAnswer;
 	}
 
-	public void setInitialEncounterTypeId(Integer initialEncounterTypeId) {
-		this.initialEncounterTypeId = initialEncounterTypeId;
-	}
-
-    public String getInitialEncounterTypeName() {
-        return initialEncounterTypeName;
-    }
-
-    public void setInitialEncounterTypeName(String initialEncounterTypeName) {
-        this.initialEncounterTypeName = initialEncounterTypeName;
-    }
-
-    public Integer getFollowupEncounterTypeId() {
-		return followupEncounterTypeId;
-	}
-
-	public void setFollowupEncounterTypeId(Integer followupEncounterTypeId) {
-		this.followupEncounterTypeId = followupEncounterTypeId;
-	}
-
-    public String getFollowupEncounterTypeName() {
-        return followupEncounterTypeName;
-    }
-
-    public void setFollowupEncounterTypeName(String followupEncounterTypeName) {
-        this.followupEncounterTypeName = followupEncounterTypeName;
-    }
-
     public boolean isReadonly() {
 		return readonly;
 	}
@@ -483,11 +453,11 @@ public class EMastercardAccessTag extends BodyTagSupport {
 		this.programWorkflowStates = programWorkflowStates;
 	}
 
-	public Integer getPatientIdentifierType() {
+	public String getPatientIdentifierType() {
 		return patientIdentifierType;
 	}
 
-	public void setPatientIdentifierType(Integer patientIdentifierType) {
+	public void setPatientIdentifierType(String patientIdentifierType) {
 		this.patientIdentifierType = patientIdentifierType;
 	}
 

@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -36,15 +38,14 @@ public class Helper {
 	protected static final Log log = LogFactory.getLog(Helper.class);
 	
 	/**
-	 * @return true if the passed patient has an identifier with the passed type id, false otherwise
+	 * @return true if the passed patient has an identifier of the passed type, false otherwise
 	 */
-	public static boolean hasIdentifierType(Patient p, Integer patientIdentifierType) {
+	public static boolean hasIdentifierType(Patient p, PatientIdentifierType patientIdentifierType) {
 		if (patientIdentifierType == null) {
 			// no patientIdentifierType specified, simply accept
 			return true;
 		}
-		PatientIdentifierType pit = Context.getPatientService().getPatientIdentifierType(patientIdentifierType);
-		return !p.getPatientIdentifiers(pit).isEmpty();
+		return !p.getPatientIdentifiers(patientIdentifierType).isEmpty();
 	}
 
 	public static boolean hasCondition(Patient p, Concept condition, List<Concept> answers) {
@@ -75,12 +76,12 @@ public class Helper {
 	 * @return true if the passed patient has an identifier of the passed type whose location is the same as
 	 * their current PatientProgram location that is associated with the passed states
 	 */
-	public static boolean hasIdentifierForEnrollmentLocation(Patient p, Integer identifierType, List<ProgramWorkflow> workflows) {
+	public static boolean hasIdentifierForEnrollmentLocation(Patient p, PatientIdentifierType identifierType, List<ProgramWorkflow> workflows) {
 		if (identifierType == null) {
 			// no identifierType specified, simply accept
 			return true;
 		}
-		List<PatientIdentifier> pis = p.getPatientIdentifiers(Context.getPatientService().getPatientIdentifierType(identifierType));
+		List<PatientIdentifier> pis = p.getPatientIdentifiers(identifierType);
 		if ( workflows!= null && !workflows.isEmpty()) {
 			for (ProgramWorkflow workflow : workflows) {
 				Location enrollmentLocation = currentEnrollmentLocation(p, workflow);
@@ -174,6 +175,49 @@ public class Helper {
 		}
 		return workflows;
 	}
+
+	/**
+	 * @return the Form matching the given value as a UUID first, then as a name, otherwise null
+	 */
+	public static Form getForm(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
+		}
+		Form f = Context.getFormService().getFormByUuid(uuidOrName);
+		if (f == null) {
+			f = Context.getFormService().getForm(uuidOrName);
+		}
+		return f;
+	}
+
+	/**
+	 * @return the EncounterType matching the given value as a UUID first, then as a name, otherwise null
+	 */
+	public static EncounterType getEncounterType(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
+		}
+		EncounterType et = Context.getEncounterService().getEncounterTypeByUuid(uuidOrName);
+		if (et == null) {
+			et = Context.getEncounterService().getEncounterType(uuidOrName);
+		}
+		return et;
+	}
+
+	/**
+	 * @return the PatientIdentifierType matching the given value as a UUID first, then as a name, otherwise null
+	 */
+	public static PatientIdentifierType getPatientIdentifierType(String uuidOrName) {
+		if (StringUtils.isBlank(uuidOrName)) {
+			return null;
+		}
+		PatientIdentifierType pit = Context.getPatientService().getPatientIdentifierTypeByUuid(uuidOrName);
+		if (pit == null) {
+			pit = Context.getPatientService().getPatientIdentifierTypeByName(uuidOrName);
+		}
+		return pit;
+	}
+
 	/**
 	 * @param csvStateIds a String containing comma-separated programWorkflowState ids or UUIDs
 	 * @return the List of ProgramWorkflowStates that match the given ids

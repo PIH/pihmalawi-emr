@@ -31,12 +31,9 @@ public class ETraceAccessTag extends BodyTagSupport {
     private final Log log = LogFactory.getLog(getClass());
 
     private Integer patientId;
-    private Integer formId;
-    private String formName;
-    private Integer initialEncounterTypeId;
-    private String initialEncounterTypeName;
-    private Integer followupEncounterTypeId;
-    private String followupEncounterTypeName;
+    private String form;
+    private String initialEncounterType;
+    private String followupEncounterType;
     private boolean readonly = false;
     private boolean includeAppointmentInfo = true;
 
@@ -45,23 +42,18 @@ public class ETraceAccessTag extends BodyTagSupport {
         JspWriter o = pageContext.getOut();
         try {
             Patient p = Context.getPatientService().getPatient(getPatientId());
-            Form f = null;
-            if (StringUtils.isNotBlank(getFormName())) {
-                f = Context.getFormService().getForm(getFormName());
-            }
-            if (f == null) {
-                f = Context.getFormService().getForm(getFormId());
-            }
-            EncounterType initialEncounterType = null;
-            if (StringUtils.isNotBlank(getInitialEncounterTypeName())) {
-                initialEncounterType = Context.getEncounterService().getEncounterType(getInitialEncounterTypeName());
-            }
-            if (initialEncounterType == null ) {
-                initialEncounterType = Context.getEncounterService().getEncounterType(getInitialEncounterTypeId());
-            }
+            Form f = Helper.getForm(getForm());
+            EncounterType initialEncounterType = Helper.getEncounterType(getInitialEncounterType());
+            EncounterType followupEncounterType = Helper.getEncounterType(getFollowupEncounterType());
 
             // Ensure valid form and initial encounter type passed in
             if (f == null || initialEncounterType == null) {
+                o.write("Not available: Wrong configuration");
+                release();
+                return SKIP_BODY;
+            }
+
+            if (followupEncounterType == null && StringUtils.isNotBlank(getFollowupEncounterType())) {
                 o.write("Not available: Wrong configuration");
                 release();
                 return SKIP_BODY;
@@ -86,22 +78,22 @@ public class ETraceAccessTag extends BodyTagSupport {
 
             if (initials.size() == 1) {
                 if (!Helper.userHasEditPrivilege()) {
-                    o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+                    o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
                     release();
                     return SKIP_BODY;
                 }
 
                 if (isReadonly()) {
-                    o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+                    o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
                     release();
                     return SKIP_BODY;
                 }
                 if (p.isDead()) {
-                    o.write(createViewCardHtmlTag(p, f, initials.get(0), null));
+                    o.write(createViewCardHtmlTag(p, f, initials.get(0), followupEncounterType, null));
                     release();
                     return SKIP_BODY;
                 }
-                o.write(createEditCardHtmlTag(p, f, initials.get(0)));
+                o.write(createEditCardHtmlTag(p, f, initials.get(0), followupEncounterType));
                 release();
                 return SKIP_BODY;
             }
@@ -142,7 +134,7 @@ public class ETraceAccessTag extends BodyTagSupport {
         return null;
     }
 
-    protected String createViewCardHtmlTag(Patient p, Form f, Encounter initialEncounter, String additionalMessage) {
+    protected String createViewCardHtmlTag(Patient p, Form f, Encounter initialEncounter, EncounterType followupEncounterType, String additionalMessage) {
         String link = "";
         String newMasterCardConfig = getNewMasterCardConfiguration(f);
         if (newMasterCardConfig != null) {
@@ -162,7 +154,7 @@ public class ETraceAccessTag extends BodyTagSupport {
                     + "&inPopup=true'); return false;\">";
         }
         return link + "View " + f.getName() + "</a><br/>"
-                + (includeAppointmentInfo ? getDetails(p, initialEncounter) + "<br/>" : "")
+                + (includeAppointmentInfo ? getDetails(p, initialEncounter, followupEncounterType) + "<br/>" : "")
                 + "(" + additionalMessage + ")";
     }
 
@@ -195,7 +187,7 @@ public class ETraceAccessTag extends BodyTagSupport {
         }
     }
 
-    protected String createEditCardHtmlTag(Patient p, Form f, Encounter initialEncounter) {
+    protected String createEditCardHtmlTag(Patient p, Form f, Encounter initialEncounter, EncounterType followupEncounterType) {
         String link = "";
         String newMasterCardConfig = getNewMasterCardConfiguration(f);
         if (newMasterCardConfig != null) {
@@ -205,20 +197,13 @@ public class ETraceAccessTag extends BodyTagSupport {
             link = "<a href=\"/openmrs/module/htmlformentry/htmlFormEntry.form?encounterId=" + initialEncounter.getId() + "&mode=EDIT\">";
         }
 
-        return link + "Edit " + f.getName() + "</a><br/>" + (includeAppointmentInfo ? getDetails(p, initialEncounter) + "<br/>" : "");
+        return link + "Edit " + f.getName() + "</a><br/>" + (includeAppointmentInfo ? getDetails(p, initialEncounter, followupEncounterType) + "<br/>" : "");
 
     }
 
 
 
-    protected String getDetails(Patient p, Encounter initialEncounter) {
-        EncounterType followupEncounterType = null;
-        if (StringUtils.isNotBlank(getFollowupEncounterTypeName())) {
-            followupEncounterType = Context.getEncounterService().getEncounterType(getFollowupEncounterTypeName());
-        }
-        if (followupEncounterType == null) {
-            followupEncounterType = Context.getEncounterService().getEncounterType(getFollowupEncounterTypeId());
-        }
+    protected String getDetails(Patient p, Encounter initialEncounter, EncounterType followupEncounterType) {
         List<Encounter> followups = Utils.getEncounters(p, followupEncounterType);
         String created = "Created: " + Helper.formatDate(initialEncounter.getEncounterDatetime());
         String visited = "Last Tracking Date: no";
@@ -245,12 +230,9 @@ public class ETraceAccessTag extends BodyTagSupport {
 
     public int doEndTag() {
         patientId = null;
-        formId = null;
-        formName = null;
-        initialEncounterTypeId = null;
-        initialEncounterTypeName = null;
-        followupEncounterTypeId = null;
-        followupEncounterTypeName = null;
+        form = null;
+        initialEncounterType = null;
+        followupEncounterType = null;
         readonly = false;
 
         return EVAL_PAGE;
@@ -264,48 +246,28 @@ public class ETraceAccessTag extends BodyTagSupport {
         this.patientId = patientId;
     }
 
-    public Integer getFormId() {
-        return formId;
+    public String getForm() {
+        return form;
     }
 
-    public void setFormId(Integer formId) {
-        this.formId = formId;
+    public void setForm(String form) {
+        this.form = form;
     }
 
-    public String getFormName() { return formName; }
-
-    public void setFormName(String formName) { this.formName = formName; }
-
-    public Integer getInitialEncounterTypeId() {
-        return initialEncounterTypeId;
+    public String getInitialEncounterType() {
+        return initialEncounterType;
     }
 
-    public void setInitialEncounterTypeId(Integer initialEncounterTypeId) {
-        this.initialEncounterTypeId = initialEncounterTypeId;
+    public void setInitialEncounterType(String initialEncounterType) {
+        this.initialEncounterType = initialEncounterType;
     }
 
-    public String getInitialEncounterTypeName() {
-        return initialEncounterTypeName;
+    public String getFollowupEncounterType() {
+        return followupEncounterType;
     }
 
-    public void setInitialEncounterTypeName(String initialEncounterTypeName) {
-        this.initialEncounterTypeName = initialEncounterTypeName;
-    }
-
-    public Integer getFollowupEncounterTypeId() {
-        return followupEncounterTypeId;
-    }
-
-    public void setFollowupEncounterTypeId(Integer followupEncounterTypeId) {
-        this.followupEncounterTypeId = followupEncounterTypeId;
-    }
-
-    public String getFollowupEncounterTypeName() {
-        return followupEncounterTypeName;
-    }
-
-    public void setFollowupEncounterTypeName(String followupEncounterTypeName) {
-        this.followupEncounterTypeName = followupEncounterTypeName;
+    public void setFollowupEncounterType(String followupEncounterType) {
+        this.followupEncounterType = followupEncounterType;
     }
 
     public boolean isReadonly() {
