@@ -25,6 +25,7 @@ import org.openmrs.module.appui.AppUiExtensions;
 import org.openmrs.module.emrapi.EmrApiActivator;
 import org.openmrs.module.pihmalawi.data.IC3ScreeningDataLoader;
 import org.openmrs.module.pihmalawi.setup.CloseStaleVisitsSetup;
+import org.openmrs.module.pihmalawi.setup.RemoveStaleScheduledTasksSetup;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.config.ReportLoader;
 
@@ -40,6 +41,7 @@ public class PihMalawiModuleActivator extends BaseModuleActivator implements Dae
     public void contextRefreshed() {
         log.info("PIH Malawi Module refreshed");
         CloseStaleVisitsSetup.setupCloseStaleVisitsTask();
+        RemoveStaleScheduledTasksSetup.removeStaleTasks();
     }
 
     @Override
