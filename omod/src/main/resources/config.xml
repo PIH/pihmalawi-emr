@@ -41,55 +41,6 @@
     <!-- Module Activator -->
     <activator>${MODULE_PACKAGE}.PihMalawiActivator</activator>
 
-    <!-- Global Property Values -->
-	<globalProperty>
-		<property>pihmalawi.upperOrLowerNeno</property>
-		<defaultValue>UPPER_NENO</defaultValue>
-		<description>Valid values are UPPER_NENO or LOWER_NENO</description>
-	</globalProperty>
-
-    <globalProperty>
-        <property>pihmalawi.excelPassword</property>
-        <defaultValue></defaultValue>
-        <description>Password that is used to encrypt patient data export reports</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>pihmalawi.showOldChronicCareCard</property>
-        <defaultValue>true</defaultValue>
-        <description>Indicates whether or not to enable the link to the previous version of the CCC Mastercard</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>dashboard.identifiers</property>
-        <defaultValue>{"9":["ARV Number","HCC Number","KS Number","Chronic Care Number","Palliative Care Number","PDC Identifier","TB program identifier"]}</defaultValue>
-        <description></description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>dashboard.header.showConcept</property>
-        <defaultValue>8169</defaultValue>
-        <description>Comma delimited list of concepts ids to show on the patient header overview</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>concept.viralLoad</property>
-        <defaultValue>654a7694-977f-11e1-8993-905e29aff6c1</defaultValue>
-        <description>The UUID, ID, or mapping code of the viral load test concept</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>concept.viralLoad.ldl</property>
-        <defaultValue>e97b36a2-16f5-11e6-b6ba-3e1d05defe78</defaultValue>
-        <description>The UUID, ID, or mapping code of the Lower than Detection Limit(LDL) viral load concept</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>patient_identifier.importantTypes</property>
-        <defaultValue>ARV Number,HCC Number,Chronic Care Number,Palliative Care Number,PDC Identifier,Nutrition Program Number,TB program identifier</defaultValue>
-        <description>A comma delimited list of PatientIdentifier names : PatientIdentifier locations that will be displayed on the patient dashboard.  E.g.: ARV Number,Chronic Care Number</description>
-    </globalProperty>
-
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>

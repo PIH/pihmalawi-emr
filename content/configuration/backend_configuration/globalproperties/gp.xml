@@ -1,6 +1,22 @@
 <config>
     <globalProperties>
         <globalProperty>
+            <property>pihmalawi.upperOrLowerNeno</property>
+            <value>UPPER_NENO</value>
+        </globalProperty>
+        <globalProperty>
+            <property>pihmalawi.showOldChronicCareCard</property>
+            <value>true</value>
+        </globalProperty>
+        <globalProperty>
+            <property>concept.viralLoad</property>
+            <value>654a7694-977f-11e1-8993-905e29aff6c1</value>
+        </globalProperty>
+        <globalProperty>
+            <property>concept.viralLoad.ldl</property>
+            <value>e97b36a2-16f5-11e6-b6ba-3e1d05defe78</value>
+        </globalProperty>
+        <globalProperty>
             <property>dashboard.identifiers</property>
             <value>{"9":["ARV Number","HCC Number","KS Number","Chronic Care Number","Palliative Care Number","PDC Identifier","Nutrition Program Number","TB program identifier"]}</value>
         </globalProperty>
