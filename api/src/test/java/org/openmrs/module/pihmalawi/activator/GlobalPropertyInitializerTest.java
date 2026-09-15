@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSensitiveTest {
+public class GlobalPropertyInitializerTest extends BaseModuleContextSensitiveTest {
 
     private Concept saveTestConcept(String uuid, String name) {
         Concept concept = new Concept();
@@ -28,7 +28,7 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
     }
 
     private void saveAllEntities() {
-        for (GlobalPropertyMetadataIdInitializer.Entry entry : GlobalPropertyMetadataIdInitializer.GLOBAL_PROPERTY_METADATA_UUIDS) {
+        for (GlobalPropertyInitializer.Entry entry : GlobalPropertyInitializer.GLOBAL_PROPERTY_METADATA_UUIDS) {
             for (String uuid : entry.uuids) {
                 switch (entry.type) {
                     case CONCEPT:
@@ -70,9 +70,9 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
     public void shouldSetEveryGlobalPropertyToTheCurrentIdsOfItsMappedMetadata() {
         saveAllEntities();
 
-        new GlobalPropertyMetadataIdInitializer().started();
+        new GlobalPropertyInitializer().started();
 
-        for (GlobalPropertyMetadataIdInitializer.Entry entry : GlobalPropertyMetadataIdInitializer.GLOBAL_PROPERTY_METADATA_UUIDS) {
+        for (GlobalPropertyInitializer.Entry entry : GlobalPropertyInitializer.GLOBAL_PROPERTY_METADATA_UUIDS) {
             List<String> expectedIds = new ArrayList<String>();
             for (String uuid : entry.uuids) {
                 switch (entry.type) {
@@ -96,7 +96,7 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
     @Test
     public void shouldFailLoudlyIfMetadataCannotBeResolved() {
         try {
-            new GlobalPropertyMetadataIdInitializer().started();
+            new GlobalPropertyInitializer().started();
             Assert.fail("Expected an IllegalStateException to be thrown");
         }
         catch (IllegalStateException e) {
@@ -106,26 +106,26 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
 
     @Test
     public void shouldDeleteStaleGlobalPropertiesIfPresent() {
-        String staleName = GlobalPropertyMetadataIdInitializer.GLOBAL_PROPERTIES_TO_DELETE.get(0);
+        String staleName = GlobalPropertyInitializer.GLOBAL_PROPERTIES_TO_DELETE.get(0);
         GlobalProperty stale = new GlobalProperty(staleName, "33,32,31");
         Context.getAdministrationService().saveGlobalProperty(stale);
         Assert.assertNotNull(Context.getAdministrationService().getGlobalPropertyObject(staleName));
 
         saveAllEntities();
-        new GlobalPropertyMetadataIdInitializer().started();
+        new GlobalPropertyInitializer().started();
 
         Assert.assertNull(Context.getAdministrationService().getGlobalPropertyObject(staleName));
     }
 
     @Test
     public void shouldNotFailWhenStaleGlobalPropertiesAreAlreadyAbsent() {
-        for (String staleName : GlobalPropertyMetadataIdInitializer.GLOBAL_PROPERTIES_TO_DELETE) {
+        for (String staleName : GlobalPropertyInitializer.GLOBAL_PROPERTIES_TO_DELETE) {
             Assert.assertNull(Context.getAdministrationService().getGlobalPropertyObject(staleName));
         }
 
         saveAllEntities();
         // Should not throw, even though none of the stale properties exist to delete.
-        new GlobalPropertyMetadataIdInitializer().started();
+        new GlobalPropertyInitializer().started();
     }
 
     @Test
@@ -137,12 +137,12 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
             if (initializers.get(i) instanceof MetadataInitializer) {
                 metadataIndex = i;
             }
-            if (initializers.get(i) instanceof GlobalPropertyMetadataIdInitializer) {
+            if (initializers.get(i) instanceof GlobalPropertyInitializer) {
                 fixupIndex = i;
             }
         }
         Assert.assertTrue("MetadataInitializer should be present", metadataIndex >= 0);
-        Assert.assertTrue("GlobalPropertyMetadataIdInitializer should be present", fixupIndex >= 0);
-        Assert.assertTrue("GlobalPropertyMetadataIdInitializer must run after MetadataInitializer", fixupIndex > metadataIndex);
+        Assert.assertTrue("GlobalPropertyInitializer should be present", fixupIndex >= 0);
+        Assert.assertTrue("GlobalPropertyInitializer must run after MetadataInitializer", fixupIndex > metadataIndex);
     }
 }

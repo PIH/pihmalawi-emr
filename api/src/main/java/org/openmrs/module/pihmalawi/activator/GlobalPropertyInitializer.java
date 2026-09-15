@@ -44,9 +44,9 @@ import java.util.List;
  * for the JVM's lifetime. In practice this class runs early enough in startup that this hasn't
  * been observed, but it's a latent risk worth knowing about.
  */
-public class GlobalPropertyMetadataIdInitializer implements Initializer {
+public class GlobalPropertyInitializer implements Initializer {
 
-    protected static final Log log = LogFactory.getLog(GlobalPropertyMetadataIdInitializer.class);
+    protected static final Log log = LogFactory.getLog(GlobalPropertyInitializer.class);
 
     // The HIV program and its treatment-status workflow - no existing UUID constant class
     // covers these (HivMetadata resolves programs/workflows by name, not by raw uuid), so they're
