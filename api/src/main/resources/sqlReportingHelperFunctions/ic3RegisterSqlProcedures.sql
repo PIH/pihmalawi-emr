@@ -175,6 +175,15 @@ DROP PROCEDURE IF EXISTS createIc3RegisterCohort;
 CREATE PROCEDURE createIc3RegisterCohort(IN reportEndDate DATE)
 BEGIN
 
+	select program_workflow_state_id into @artOnTreatmentStateId from program_workflow_state where uuid = '6687fa7c-977f-11e1-8993-905e29aff6c1'; -- ART: On treatment
+	select program_workflow_state_id into @preArtContinueStateId from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'; -- ART: Pre-ART (Continue)
+	select program_workflow_state_id into @ccOnTreatmentStateId from program_workflow_state where uuid = '66882650-977f-11e1-8993-905e29aff6c1'; -- Chronic Care: On treatment
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
+	select patient_identifier_type_id into @arvNumberTypeId from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'; -- ARV Number
+	select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
+	select patient_identifier_type_id into @chronicCareNumberTypeId from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'; -- Chronic Care Number
+
 	-- Create Initial Cohort With Basic Demographic Data
 
 	insert into warehouseCohortTable
@@ -196,22 +205,22 @@ BEGIN
 	from	 	(select * from 
 					(select patient_id, xps.patient_program_id 
 						from patient_program ppi
-						join (select * 
-							from patient_state where state in (1,7,83)
+						join (select *
+							from patient_state where state in (@artOnTreatmentStateId,@preArtContinueStateId,@ccOnTreatmentStateId)
 							and start_date < reportEndDate
 							and voided = 0) xps on xps.patient_program_id = ppi.patient_program_id
-						where ppi.voided = 0 
-						and program_id in (1,10) 
+						where ppi.voided = 0
+						and program_id in (@hivProgramId,@chronicCareProgramId)
 						and (date_enrolled <= reportEndDate or date_enrolled is NULL)
 						order by date_enrolled DESC) 
 					ppi group by patient_id) pp -- Most recent Program Enrollment - sub query ensures have been On ARVs, Pre-ART (continue), and CC continue
 	join 		(select * from person where voided = 0) p on p.person_id = pp.patient_id -- remove voided persons
 	join 		(select patient_id, identifier from 
 					(select * 
-					from patient_identifier 
-					where voided = 0 
-					and identifier_type in (4, 19, 21) 
-					order by date_created desc) pii 
+					from patient_identifier
+					where voided = 0
+					and identifier_type in (@arvNumberTypeId,@hccNumberTypeId,@chronicCareNumberTypeId)
+					order by date_created desc) pii
 				group by patient_id) pi 
 				on pi.patient_id = pp.patient_id -- Ensure HCC/ARV/NCD identifier
 	join 		(select * from 
@@ -260,6 +269,9 @@ DROP PROCEDURE IF EXISTS warehouseProgramEnrollment;
 CREATE PROCEDURE `warehouseProgramEnrollment`()
 BEGIN
 
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
+
 	-- Refresh warehouse_program_enrollment
 	drop table if exists warehouse_program_enrollment;
 
@@ -307,7 +319,7 @@ BEGIN
 	inner  join patient_state ps on pp.patient_program_id = ps.patient_program_id
 	inner  join program_workflow_state pws on ps.state=pws.program_workflow_state_id
 	left outer join location l on pp.location_id = l.location_id
-	where       pp.voided = 0 and p.voided = 0 and pg.program_id in (1,10) -- only HIV and CC programs
+	where       pp.voided = 0 and p.voided = 0 and pg.program_id in (@hivProgramId, @chronicCareProgramId) -- only HIV and CC programs
 				and ps.voided =0
 	and			pp.date_enrolled is not null
 	order by patient_id, ps.start_date ;
@@ -400,6 +412,8 @@ DROP PROCEDURE IF EXISTS updateRecentRegimen;
 CREATE PROCEDURE updateRecentRegimen(IN endDate DATE)
 BEGIN
 
+	select concept_id into @arvReceivedConceptId from concept where uuid = '657ac57e-977f-11e1-8993-905e29aff6c1'; -- Malawi Antiretroviral drugs received
+
 	DROP TEMPORARY TABLE IF EXISTS recentRegimenObs;
 	create temporary table recentRegimenObs (
   		id INT not null auto_increment primary key,
@@ -414,8 +428,8 @@ BEGIN
 	select pid, cid, recentRegimen
 	from (select * from 
 			(select person_id as pid, concept_id as cid, value_coded as recentRegimen
-			from obs 
-			where concept_id = 8169 
+			from obs
+			where concept_id = @arvReceivedConceptId
 			and obs_datetime < endDate
 			and voided = 0 
 			order by obs_datetime desc) oi 
@@ -439,8 +453,8 @@ BEGIN
 				from obs o
 				join recentRegimenObs rro 
 				on rro.pid = o.person_id 
-				and rro.recentRegimen = o.value_coded 
-				where concept_id = 8169
+				and rro.recentRegimen = o.value_coded
+				where concept_id = @arvReceivedConceptId
 				order by obs_datetime asc) oi
 				group by oi.person_id;
 	
@@ -475,6 +489,9 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
+	select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+	select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
+
 	insert into temp_obs_vector(PID, programId, dateEnrolled)
 		select PID, programId, Min(dateEnrolled)
 		from `warehouse_program_enrollment`
@@ -482,11 +499,11 @@ BEGIN
 
 	-- update ART enrollment date
 	UPDATE warehouseCohortTable tc, temp_obs_vector tt
-	SET tc.hivEnrollmentDate = tt.dateEnrolled WHERE tc.PID = tt.PID and tt.programId=1;
+	SET tc.hivEnrollmentDate = tt.dateEnrolled WHERE tc.PID = tt.PID and tt.programId=@hivProgramId;
 
 	-- update NCD enrollment date
 	UPDATE warehouseCohortTable tc, temp_obs_vector tt
-	SET tc.ncdEnrollmentDate = tt.dateEnrolled WHERE tc.PID = tt.PID and tt.programId=10;
+	SET tc.ncdEnrollmentDate = tt.dateEnrolled WHERE tc.PID = tt.PID and tt.programId=@chronicCareProgramId;
 
 END
 
@@ -501,6 +518,12 @@ DROP PROCEDURE IF EXISTS updateFirstViralLoad;
 
 CREATE PROCEDURE updateFirstViralLoad(IN endDate DATE)
 BEGIN
+
+	select concept_id into @vlTestSetConceptId from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'; -- Viral Load test set
+	select concept_id into @vlConceptId from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'; -- HIV viral load
+	select concept_id into @vlLdlConceptId from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'; -- Lower than Detection Limit
+	select concept_id into @vlSampleTakenConceptId from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'; -- Sample taken for Viral Load
+	select concept_id into @trueConceptId from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'; -- True
 
 	DROP TABLE IF EXISTS firstVL;
 
@@ -520,28 +543,28 @@ BEGIN
 				ELSE 
 					vl.value_numeric
 				END AS insert_numeric	    
-	from 		(select * 
-		 		from (select * 
-		  	  		 from obs 
-			   	     where concept_id = 8628
+	from 		(select *
+		 		from (select *
+		  	  		 from obs
+			   	     where concept_id = @vlTestSetConceptId
 			         and voided = 0
-			  		 order by obs_datetime asc) ogi 
+			  		 order by obs_datetime asc) ogi
 		 	    group by person_id) og
-	left join	(select obs_group_id, value_numeric 
-				from obs 
-				where concept_id = 856
+	left join	(select obs_group_id, value_numeric
+				from obs
+				where concept_id = @vlConceptId
 				and voided = 0) vl
 				on vl.obs_group_id = og.obs_id
-	left join	(select obs_group_id, value_coded 
-				from obs 
-				where concept_id = 8561
-				and value_coded = 2257
+	left join	(select obs_group_id, value_coded
+				from obs
+				where concept_id = @vlLdlConceptId
+				and value_coded = @trueConceptId
 				and voided = 0) ldl
 				on ldl.obs_group_id = og.obs_id
-	left join	(select obs_group_id, value_coded 
-				from obs 
-				where concept_id = 8421
-				and value_coded = 2257
+	left join	(select obs_group_id, value_coded
+				from obs
+				where concept_id = @vlSampleTakenConceptId
+				and value_coded = @trueConceptId
 				and voided = 0) bled
 				on bled.obs_group_id = og.obs_id
 	;
@@ -564,6 +587,13 @@ DROP PROCEDURE IF EXISTS updateLastViralLoad;
 
 CREATE PROCEDURE updateLastViralLoad(IN endDate DATE)
 BEGIN
+
+	select concept_id into @vlTestSetConceptId from concept where uuid = '83931c6d-0e5a-4302-b8ce-a31175b6475e'; -- Viral Load test set
+	select concept_id into @weightConceptId from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'; -- Weight (kg)
+	select concept_id into @vlConceptId from concept where uuid = '654a7694-977f-11e1-8993-905e29aff6c1'; -- HIV viral load
+	select concept_id into @vlLdlConceptId from concept where uuid = 'e97b36a2-16f5-11e6-b6ba-3e1d05defe78'; -- Lower than Detection Limit
+	select concept_id into @vlSampleTakenConceptId from concept where uuid = 'f792f2f9-9c24-4d6e-98fd-caffa8f2383f'; -- Sample taken for Viral Load
+	select concept_id into @trueConceptId from concept where uuid = '655e2f90-977f-11e1-8993-905e29aff6c1'; -- True
 
 	DROP TABLE IF EXISTS lastVL;
 
@@ -588,30 +618,30 @@ BEGIN
 	from 		(select *
 		 		from (select *
 		  	  		 from obs
-			   	     where concept_id = 8628
+			   	     where concept_id = @vlTestSetConceptId
 			         and voided = 0
 			  		 order by obs_datetime desc) ogi
 		 	    group by person_id) og
    left join	(select encounter_id, obs_id, value_numeric
 				from obs
-				where concept_id = 5089
+				where concept_id = @weightConceptId
 				and voided = 0) w
 				on w.encounter_id = og.encounter_id
 	left join	(select obs_group_id, value_numeric
 				from obs
-				where concept_id = 856
+				where concept_id = @vlConceptId
 				and voided = 0) vl
 				on vl.obs_group_id = og.obs_id
 	left join	(select obs_group_id, value_coded
 				from obs
-				where concept_id = 8561
-				and value_coded = 2257
+				where concept_id = @vlLdlConceptId
+				and value_coded = @trueConceptId
 				and voided = 0) ldl
 				on ldl.obs_group_id = og.obs_id
 	left join	(select obs_group_id, value_coded
 				from obs
-				where concept_id = 8421
-				and value_coded = 2257
+				where concept_id = @vlSampleTakenConceptId
+				and value_coded = @trueConceptId
 				and voided = 0) bled
 				on bled.obs_group_id = og.obs_id
 	;
@@ -697,6 +727,13 @@ DROP PROCEDURE IF EXISTS getBloodGlucoseBeforeDate;
 CREATE PROCEDURE getBloodGlucoseBeforeDate(IN endDate DATE, IN firstLast VARCHAR(50), IN colObsDate VARCHAR(100), IN colHba1c VARCHAR(100), IN colRandom VARCHAR(100), IN colFast VARCHAR(100))
 BEGIN
 
+	select concept_id into @serumGlucoseConceptId from concept where uuid = '654a98b8-977f-11e1-8993-905e29aff6c1'; -- Serum glucose
+	select concept_id into @postPrandialGlucoseConceptId from concept where uuid = '160914AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Post-prandial blood glucose measurement (mg/dL)
+	select concept_id into @fastingGlucoseConceptId from concept where uuid = '160912AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Fasting blood glucose measurement (mg/dL)
+	select concept_id into @hba1cConceptId from concept where uuid = '65714f76-977f-11e1-8993-905e29aff6c1'; -- Glycated hemoglobin
+	select concept_id into @bloodSugarTestTypeConceptId from concept where uuid = '65711e3e-977f-11e1-8993-905e29aff6c1'; -- Blood sugar test type
+	select concept_id into @fastingConceptId from concept where uuid = '65711c2c-977f-11e1-8993-905e29aff6c1'; -- Fasting
+
 	DROP TEMPORARY TABLE IF EXISTS temp_obs_vector;
 	create temporary table temp_obs_vector (
   		id INT not null auto_increment primary key,
@@ -717,53 +754,53 @@ BEGIN
 
 	set @s=CONCAT('insert into temp_obs_vector
 						(PID, obsDate, hba1c, fasting, random)
-	select oAll.person_id as PID, 
-		oAll.obs_datetime as obsDate, 
+	select oAll.person_id as PID,
+		oAll.obs_datetime as obsDate,
 		oHba1c.value_numeric as hba1c,
-		CASE WHEN value_coded = 6379 
-			THEN oGen.value_numeric 
+		CASE WHEN value_coded = @fastingConceptId
+			THEN oGen.value_numeric
 		WHEN oFast.value_numeric is NOT NULL
 			THEN oFast.value_numeric
 		ELSE NULL
 		END AS fasting,
 		CASE WHEN value_coded IS NULL AND oGen.value_numeric IS NOT NULL
-			THEN oGen.value_numeric 
+			THEN oGen.value_numeric
 		WHEN oRandom.value_numeric is NOT NULL
 			THEN oRandom.value_numeric
-		ELSE NULL		
+		ELSE NULL
 		END AS random
-	from (select * from 
-			(select person_id, encounter_id, obs_datetime, value_numeric 
-			from obs 
-			where concept_id in (887,8447,8448,6422) 
+	from (select * from
+			(select person_id, encounter_id, obs_datetime, value_numeric
+			from obs
+			where concept_id in (@serumGlucoseConceptId,@postPrandialGlucoseConceptId,@fastingGlucoseConceptId,@hba1cConceptId)
 			and obs_datetime <= \'', endDate, '\'
 			and voided = 0 order by obs_datetime ', @upDown,
-			') aAlli 
-			group by person_id) oAll 
-	left join (select person_id, encounter_id, value_coded 
-				from obs 
-				where concept_id = 6381 
-				and value_coded = 6379 
-				and voided = 0) oCheck 
+			') aAlli
+			group by person_id) oAll
+	left join (select person_id, encounter_id, value_coded
+				from obs
+				where concept_id = @bloodSugarTestTypeConceptId
+				and value_coded = @fastingConceptId
+				and voided = 0) oCheck
 				on oCheck.encounter_id = oAll.encounter_id
-	left join (select person_id, encounter_id, value_numeric 
-				from obs 
-				where concept_id = 887 
+	left join (select person_id, encounter_id, value_numeric
+				from obs
+				where concept_id = @serumGlucoseConceptId
 				and voided = 0) oGen on oGen.encounter_id = oAll.encounter_id
-	left join (select person_id, encounter_id, value_numeric 
-				from obs 
-				where concept_id = 8447 
-				and voided = 0) oRandom 
+	left join (select person_id, encounter_id, value_numeric
+				from obs
+				where concept_id = @postPrandialGlucoseConceptId
+				and voided = 0) oRandom
 				on oRandom.encounter_id = oAll.encounter_id
-	left join (select person_id, encounter_id, value_numeric 
-				from obs 
-				where concept_id = 8448 
-				and voided = 0) oFast 
+	left join (select person_id, encounter_id, value_numeric
+				from obs
+				where concept_id = @fastingGlucoseConceptId
+				and voided = 0) oFast
 				on oFast.encounter_id = oAll.encounter_id
-	left join (select person_id, encounter_id, value_numeric 
-				from obs 
-				where concept_id = 6422 
-				and voided = 0) oHba1c 
+	left join (select person_id, encounter_id, value_numeric
+				from obs
+				where concept_id = @hba1cConceptId
+				and voided = 0) oHba1c
 				on oHba1c.encounter_id = oAll.encounter_id;');
 	
 	PREPARE stmt1 FROM @s;
@@ -833,7 +870,9 @@ BEGIN
 
 	select encounter_type_id into @AAS from encounter_type where uuid = 'ebaa2ad8-baaa-11e6-91a8-5622a9e78e10';
 	select encounter_type_id into @CCF from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1';
-	select encounter_type_id into @DHF from encounter_type where uuid = '66079de4-a8df-11e5-bf7f-feff819cdc9f';	
+	select encounter_type_id into @DHF from encounter_type where uuid = '66079de4-a8df-11e5-bf7f-feff819cdc9f';
+	select concept_id into @systolicBpConceptId from concept where uuid = '6569bffe-977f-11e1-8993-905e29aff6c1'; -- Systolic blood pressure
+	select concept_id into @diastolicBpConceptId from concept where uuid = '6569c116-977f-11e1-8993-905e29aff6c1'; -- Diastolic blood pressure
 
 	IF firstLast = 'first' THEN
 		       set @upDown = 'asc';
@@ -844,28 +883,28 @@ BEGIN
 
 	SET @s=CONCAT('insert into temp_obs_vector
 							(PID, obs_datetime, obs)
-					select o.person_id, e.encounter_datetime as obs_datetime, concat_ws(\'/\',o1.value_numeric, o2.value_numeric) as obs 
-					from (select * 
-							from (select person_id, encounter_id 
-									from obs 
-									where concept_id in (5085,5086)
+					select o.person_id, e.encounter_datetime as obs_datetime, concat_ws(\'/\',o1.value_numeric, o2.value_numeric) as obs
+					from (select *
+							from (select person_id, encounter_id
+									from obs
+									where concept_id in (@systolicBpConceptId,@diastolicBpConceptId)
 									and obs_datetime <= (\'', CONCAT(endDate),'\')
-									and voided = 0 
-									order by obs_datetime ', @upDown, ') 
+									and voided = 0
+									order by obs_datetime ', @upDown, ')
 							oi group by person_id) o
-					join (select encounter_id, encounter_datetime 
-							from encounter 
+					join (select encounter_id, encounter_datetime
+							from encounter
 							where encounter_datetime <= (\'', CONCAT(endDate),'\')
-							and encounter_type in (@AAS,@CCF,@DHF)							
-							and voided = 0) e 
+							and encounter_type in (@AAS,@CCF,@DHF)
+							and voided = 0) e
 							on e.encounter_id = o.encounter_id
-					left join (select encounter_id, value_numeric 
-								from obs 
-								where concept_id = 5085) o1 
+					left join (select encounter_id, value_numeric
+								from obs
+								where concept_id = @systolicBpConceptId) o1
 								on o1.encounter_id = e.encounter_id
-					left join (select encounter_id, value_numeric 
-								from obs 
-								where concept_id = 5086) o2 
+					left join (select encounter_id, value_numeric
+								from obs
+								where concept_id = @diastolicBpConceptId) o2
 								on o2.encounter_id = e.encounter_id;');
 	
 	PREPARE stmt1 FROM @s;
@@ -1008,6 +1047,9 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
+	select concept_id into @monthOfOnsetConceptId from concept where uuid = 'b2fafb7e-ce9f-11e5-ab30-625662870761'; -- Month of onset
+	select concept_id into @yearOfOnsetConceptId from concept where uuid = 'b2faf9a8-ce9f-11e5-ab30-625662870761'; -- Year of onset
+
 	IF firstLast = 'first' THEN
 		       set @upDown = 'asc';
 	ELSEIF firstLast = 'last' THEN
@@ -1025,9 +1067,9 @@ BEGIN
   					  from obs year, encounter e
                       left join (select encounter_id, value_numeric
 								from obs
-								where concept_id = 8513) month
+								where concept_id = @monthOfOnsetConceptId) month
 					on month.encounter_id = e.encounter_id
-					 where year.concept_id = 8512
+					 where year.concept_id = @yearOfOnsetConceptId
                        and e.encounter_id = year.encounter_id
                        and e.encounter_datetime <= (\'', CONCAT(endDate),'\')
                        and year.voided = 0
