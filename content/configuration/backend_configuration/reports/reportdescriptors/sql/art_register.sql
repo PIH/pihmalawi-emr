@@ -220,18 +220,26 @@ set @cd4PercentConcept = lookup_concept('Cd4%');
 set @pshdConcept = lookup_concept('Presumed severe HIV criteria present');
 set @conditionsConcept = lookup_concept('Clinical Conditions Text');
 set @pregLacConcept = lookup_concept('Pregnant/Lactating');
+set @trueConcept = lookup_concept('655e2f90-977f-11e1-8993-905e29aff6c1'); -- True
+set @falseConcept = lookup_concept('655e3148-977f-11e1-8993-905e29aff6c1'); -- False
+set @tbNeverConcept = lookup_concept('65576584-977f-11e1-8993-905e29aff6c1'); -- Unknown
+set @tbLastConcept = lookup_concept('655b3ccc-977f-11e1-8993-905e29aff6c1'); -- Treatment complete
+set @tbCurrConcept = lookup_concept('6559c054-977f-11e1-8993-905e29aff6c1'); -- Currently in treatment
+set @pregLacNoConcept = lookup_concept('6557646c-977f-11e1-8993-905e29aff6c1'); -- No
+set @pregnantConcept = lookup_concept('655b6bac-977f-11e1-8993-905e29aff6c1'); -- Patient pregnant
+set @lactatingConcept = lookup_concept('656cdab8-977f-11e1-8993-905e29aff6c1'); -- Currently breastfeeding child
 
 insert into temp_start_reasons (encounter_id, type, reason)
 select encounter_id, 'CD4', convert(value_numeric, char) from temp_art_initial_obs where concept_id = @cd4Concept;
 
 insert into temp_start_reasons (encounter_id, type, reason)
 select encounter_id, 'KS',
-       case when value_coded = 2257 then 'Yes' when value_coded = 2258 then 'No' end
+       case when value_coded = @trueConcept then 'Yes' when value_coded = @falseConcept then 'No' end
 from temp_art_initial_obs where concept_id = @ksWorseningConcept;
 
 insert into temp_start_reasons (encounter_id, type, reason)
 select encounter_id, 'TB',
-       case when value_coded = 1067 then 'Never' when value_coded = 1714 then 'Last' when value_coded = 1432 then 'Curr' end
+       case when value_coded = @tbNeverConcept then 'Never' when value_coded = @tbLastConcept then 'Last' when value_coded = @tbCurrConcept then 'Curr' end
 from temp_art_initial_obs where concept_id = @tbTxStatusConcept;
 
 insert into temp_start_reasons (encounter_id, type, reason)
@@ -250,7 +258,7 @@ select encounter_id, 'CONDITIONS', value_text from temp_art_initial_obs where co
 
 insert into temp_start_reasons (encounter_id, type, reason)
 select encounter_id, 'PREG',
-       case when value_coded = 1066 then 'No' when value_coded = 1755 then 'Pregnant' when value_coded = 5632 then 'Lactating' end
+       case when value_coded = @pregLacNoConcept then 'No' when value_coded = @pregnantConcept then 'Pregnant' when value_coded = @lactatingConcept then 'Lactating' end
 from temp_art_initial_obs where concept_id = @pregLacConcept;
 
 delete from temp_start_reasons where reason is null or trim(reason) = '';
@@ -335,7 +343,7 @@ update temp_art_register set last_cd4_count = last_clinician_reported_cd4, last_
 
 update temp_art_register r set r.last_viral_load_numeric = (select value_numeric from temp_obs where person_id = r.pid and concept_id = @viralLoadNumericConcept and latest = true order by obs_id desc limit 1);
 update temp_art_register r set r.last_viral_load_numeric_date = (select obs_datetime from temp_obs where person_id = r.pid and concept_id = @viralLoadNumericConcept and latest = true order by obs_id desc limit 1);
-update temp_art_register r set r.last_viral_load_ldl_date = (select obs_datetime from temp_obs where person_id = r.pid and concept_id = @viralLoadLdlConcept and latest = true and value_coded = 2257 order by obs_id desc limit 1);
+update temp_art_register r set r.last_viral_load_ldl_date = (select obs_datetime from temp_obs where person_id = r.pid and concept_id = @viralLoadLdlConcept and latest = true and value_coded = @trueConcept order by obs_id desc limit 1);
 update temp_art_register r set r.last_viral_load_ldl_limit = (select value_numeric from temp_obs where person_id = r.pid and concept_id = @viralLoadLdlLimitConcept and latest = true order by obs_id desc limit 1);
 update temp_art_register r set r.last_viral_load_ldl_limit_date = (select obs_datetime from temp_obs where person_id = r.pid and concept_id = @viralLoadLdlLimitConcept and latest = true order by obs_id desc limit 1);
 

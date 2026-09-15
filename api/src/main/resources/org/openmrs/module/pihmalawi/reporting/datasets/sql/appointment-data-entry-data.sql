@@ -14,7 +14,7 @@
 g
 *************************************************************************/
 
-SET @appointment_concept_id = 5096;
+select concept_id into @appointment_concept_id from concept where uuid = '6569cbd4-977f-11e1-8993-905e29aff6c1'; -- Appointment date
 SET @arv_number_name = 'ARV Number';
 SET @chronic_number_name = 'Chronic Care Number';
 SET @hcc_number = "HCC Number";
