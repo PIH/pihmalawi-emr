@@ -13,6 +13,111 @@ select encounter_type_id into @M_I from encounter_type where uuid = '3F94849C-F2
 select encounter_type_id into @M_F from encounter_type where uuid = 'D51F45F8-0EEA-4231-A7E9-C45D57F1CBA1';
 select encounter_type_id into @A_I from encounter_type where uuid = 'a95dc43f-925c-11e5-a1de-e82aea237783';
 select encounter_type_id into @A_F from encounter_type where uuid = 'f4596df5-925c-11e5-a1de-e82aea237783';
+select encounter_type_id into @CC_I from encounter_type where uuid = '664bb6de-977f-11e1-8993-905e29aff6c1'; -- CHRONIC_CARE_INITIAL
+select encounter_type_id into @CC_F from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1'; -- CHRONIC_CARE_FOLLOWUP
+select encounter_type_id into @DH_I from encounter_type where uuid = '664b9442-977f-11e1-8993-905e29aff6c1'; -- DIABETES HYPERTENSION INITIAL VISIT
+select encounter_type_id into @ART_I from encounter_type where uuid = '664b8574-977f-11e1-8993-905e29aff6c1'; -- ART_INITIAL
+select encounter_type_id into @PART_I from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'; -- PART_INITIAL
+select encounter_type_id into @PART_F from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'; -- PART_FOLLOWUP
+
+select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+select program_id into @chronicCareProgramId from program where uuid = '6685164a-977f-11e1-8993-905e29aff6c1'; -- Chronic Care program
+select patient_identifier_type_id into @arvNumberTypeId from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'; -- ARV Number
+select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
+select patient_identifier_type_id into @chronicCareNumberTypeId from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'; -- Chronic Care Number
+
+select concept_id into @tbStatusConceptId from concept where uuid = '65770db2-977f-11e1-8993-905e29aff6c1'; -- TB status
+select concept_id into @artStartDateConceptId from concept where uuid = '656fbe36-977f-11e1-8993-905e29aff6c1'; -- Start date 1st line ARV
+select concept_id into @chronicCareDiagnosisConceptId from concept where uuid = '65671c9a-977f-11e1-8993-905e29aff6c1'; -- Chronic care diagnosis (diagnosis question)
+select concept_id into @diagnosisDateConceptId from concept where uuid = '65732bf2-977f-11e1-8993-905e29aff6c1'; -- Diagnosis date
+select concept_id into @currentDrugsUsedConceptId from concept where uuid = '65585192-977f-11e1-8993-905e29aff6c1'; -- Current drugs used (meds question)
+select concept_id into @chronicLungDiseaseTreatmentConceptId from concept where uuid = '60ae390a-c15f-11e5-9912-ba0be0483c18'; -- Chronic lung disease treatment (meds question)
+select concept_id into @hypertensionConceptId from concept where uuid = '654abfc8-977f-11e1-8993-905e29aff6c1'; -- Hypertension
+select concept_id into @captoprilConceptId from concept where uuid = '6563597a-977f-11e1-8993-905e29aff6c1'; -- Captopril
+select concept_id into @amlodipineConceptId from concept where uuid = '65635ef2-977f-11e1-8993-905e29aff6c1'; -- Amlodipine
+select concept_id into @enalaprilConceptId from concept where uuid = '65588cde-977f-11e1-8993-905e29aff6c1'; -- Enalapril
+select concept_id into @nifedipineConceptId from concept where uuid = '654704dc-977f-11e1-8993-905e29aff6c1'; -- Nifedipine
+select concept_id into @atenololConceptId from concept where uuid = '65635d58-977f-11e1-8993-905e29aff6c1'; -- Atenolol
+select concept_id into @lisinoprilConceptId from concept where uuid = '65635a74-977f-11e1-8993-905e29aff6c1'; -- Lisinopril
+select concept_id into @propranololConceptId from concept where uuid = '65470f18-977f-11e1-8993-905e29aff6c1'; -- Propranolol
+select concept_id into @diureticsClassConceptId from concept where uuid = '163212AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Diuretics
+select concept_id into @calciumChannelBlockersClassConceptId from concept where uuid = '163213AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Calcium channel blockers
+select concept_id into @aceInhibitorsClassConceptId from concept where uuid = '162298AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- ACE inhibitors
+select concept_id into @betaBlockersClassConceptId from concept where uuid = '163211AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Beta blockers
+select concept_id into @aspirinConceptId from concept where uuid = '6545efde-977f-11e1-8993-905e29aff6c1'; -- Aspirin
+select concept_id into @statinsClassConceptId from concept where uuid = '162307AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Statins
+select concept_id into @hydralazineConceptId from concept where uuid = '654b10d6-977f-11e1-8993-905e29aff6c1'; -- Hydralazine
+select concept_id into @isosorbideMononitrateConceptId from concept where uuid = '6574f45a-977f-11e1-8993-905e29aff6c1'; -- Isosorbide mononitrate
+select concept_id into @hydrochlorothiazideConceptId from concept where uuid = '65588df6-977f-11e1-8993-905e29aff6c1'; -- Hydrochlorothiazide
+select concept_id into @furosemideConceptId from concept where uuid = '6546003c-977f-11e1-8993-905e29aff6c1'; -- Furosemide
+select concept_id into @spironolactoneConceptId from concept where uuid = '65694c36-977f-11e1-8993-905e29aff6c1'; -- Spironolactone
+select concept_id into @bisoprololConceptId from concept where uuid = '72247AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Bisoprolol
+select concept_id into @simvastatinConceptId from concept where uuid = '83936AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Simvastatin
+select concept_id into @pravastatinConceptId from concept where uuid = '82411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Pravastatin
+select concept_id into @atorvastatinConceptId from concept where uuid = '657aefc2-977f-11e1-8993-905e29aff6c1'; -- Atorvastatin
+select concept_id into @type1DiabetesConceptId from concept where uuid = '65714206-977f-11e1-8993-905e29aff6c1'; -- Type 1 diabetes
+select concept_id into @type2DiabetesConceptId from concept where uuid = '65714314-977f-11e1-8993-905e29aff6c1'; -- Type 2 diabetes
+select concept_id into @diabetesConceptId from concept where uuid = '6567426a-977f-11e1-8993-905e29aff6c1'; -- Diabetes
+select concept_id into @metforminConceptId from concept where uuid = '65694308-977f-11e1-8993-905e29aff6c1'; -- Metformin
+select concept_id into @insulinConceptId from concept where uuid = '467f702f-7d45-4ebe-9588-d68319ad65d8'; -- Insulin
+select concept_id into @glibenclamideConceptId from concept where uuid = '65693cf0-977f-11e1-8993-905e29aff6c1'; -- Glibenclamide
+select concept_id into @regularInsulinConceptId from concept where uuid = '6547414a-977f-11e1-8993-905e29aff6c1'; -- Insulin, soluble
+select concept_id into @longActingInsulinConceptId from concept where uuid = '6573132e-977f-11e1-8993-905e29aff6c1'; -- Long acting insulin
+select concept_id into @epilepsyConceptId from concept where uuid = '6546938a-977f-11e1-8993-905e29aff6c1'; -- Epilepsy
+select concept_id into @phenobarbitalConceptId from concept where uuid = '6546f3c0-977f-11e1-8993-905e29aff6c1'; -- Phenobarbital
+select concept_id into @phenytoinConceptId from concept where uuid = '65473768-977f-11e1-8993-905e29aff6c1'; -- Phenytoin
+select concept_id into @carbamazepineConceptId from concept where uuid = '654b0726-977f-11e1-8993-905e29aff6c1'; -- Carbamazepine
+select concept_id into @numberOfSeizuresConceptId from concept where uuid = '65795b26-977f-11e1-8993-905e29aff6c1'; -- NUMBER OF SEIZURES
+select concept_id into @alcoholTriggerConceptId from concept where uuid = '7e8ab286-cf5c-11e5-ab30-625662870761'; -- Alcohol trigger
+select concept_id into @feverTriggerConceptId from concept where uuid = '7e8ab5b0-cf5c-11e5-ab30-625662870761'; -- Fever trigger
+select concept_id into @soundLightTouchTriggerConceptId from concept where uuid = '7e8ab740-cf5c-11e5-ab30-625662870761'; -- Sound, light, and touch trigger
+select concept_id into @emotionalStressTriggerConceptId from concept where uuid = '7e8abbdc-cf5c-11e5-ab30-625662870761'; -- Emotional stress, anger, boredom trigger
+select concept_id into @sleepDeprivationTriggerConceptId from concept where uuid = '7e8abdbc-cf5c-11e5-ab30-625662870761'; -- Sleep deprivation and overtired trigger
+select concept_id into @missedMedicationTriggerConceptId from concept where uuid = '7e8abefc-cf5c-11e5-ab30-625662870761'; -- Missed medication trigger
+select concept_id into @menstruationTriggerConceptId from concept where uuid = '7e8abfd8-cf5c-11e5-ab30-625662870761'; -- Menstruation trigger
+select concept_id into @asthmaConceptId from concept where uuid = '65459124-977f-11e1-8993-905e29aff6c1'; -- Asthma
+select concept_id into @copdConceptId from concept where uuid = '65673e96-977f-11e1-8993-905e29aff6c1'; -- Chronic obstructive pulmonary disease
+select concept_id into @salbutamolConceptId from concept where uuid = '654a3238-977f-11e1-8993-905e29aff6c1'; -- Salbutamol
+select concept_id into @beclomethasoneConceptId from concept where uuid = '65588aa4-977f-11e1-8993-905e29aff6c1'; -- Beclomethasone
+select concept_id into @inhaledBetaAgonistsConceptId from concept where uuid = '60ae316c-c15f-11e5-9912-ba0be0483c18'; -- Beta-agonists (inhaled)
+select concept_id into @inhaledSteroidConceptId from concept where uuid = '60ae3554-c15f-11e5-9912-ba0be0483c18'; -- Inhaled steroid
+select concept_id into @oralSteroidConceptId from concept where uuid = '60ae373e-c15f-11e5-9912-ba0be0483c18'; -- Oral steroid
+select concept_id into @otherNonCodedConceptId from concept where uuid = '656cce7e-977f-11e1-8993-905e29aff6c1'; -- Other non-coded
+select concept_id into @asthmaClassificationConceptId from concept where uuid = 'e31e65ff-8523-4d49-a5b0-276a0760966f'; -- Asthma classification
+select concept_id into @asthmaNotAtAllConceptId from concept where uuid = '655c32bc-977f-11e1-8993-905e29aff6c1'; -- Not at all
+select concept_id into @asthmaIntermittentConceptId from concept where uuid = 'dcbd27b0-4ca2-4a93-9d8a-89f1cbe761ed'; -- Intermittent
+select concept_id into @asthmaMildPersistentConceptId from concept where uuid = 'e865c314-a0cf-4431-ba73-aa9280e2fa71'; -- Mild persistent
+select concept_id into @asthmaModeratePersistentConceptId from concept where uuid = '5fd72021-54af-4630-b72b-829421d2d65b'; -- Moderate persistent
+select concept_id into @asthmaSeverePersistentConceptId from concept where uuid = 'ac3d4d70-4145-4dec-a4bb-ea8136dff4e6'; -- Severe persistent
+select concept_id into @asthmaSevereUncontrolledConceptId from concept where uuid = 'a863ffd7-2806-4b2d-8d7c-d6709d106488'; -- Severe uncontrolled
+select concept_id into @inhaledBetaAgonistOtherConceptId from concept where uuid = '78bf44d5-03c7-3180-bf3d-4baf78a4ce0c'; -- 'Mini bus' (sic) - concept id 978 in the original report; likely a pre-existing data/authoring error, preserved as-is rather than guessed at
+select concept_id into @schizophreniaConceptId from concept where uuid = '654860c0-977f-11e1-8993-905e29aff6c1'; -- Schizophrenia
+select concept_id into @depressionConceptId from concept where uuid = '6546cbd4-977f-11e1-8993-905e29aff6c1'; -- Depression
+select concept_id into @acutePsychoticDisorderConceptId from concept where uuid = '93e9be37-1369-11e4-a125-54ee7513a7ff'; -- Acute Psychotic disorder
+select concept_id into @schizoaffectiveDisorderConceptId from concept where uuid = '127132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Schizoaffective Disorder
+select concept_id into @anxietyDisorderConceptId from concept where uuid = '6560bf08-977f-11e1-8993-905e29aff6c1'; -- Anxiety disorder
+select concept_id into @organicMentalDisorderAcuteConceptId from concept where uuid = '7057d712-c5dd-11e5-9912-ba0be0483c18'; -- Organic mental disorder (acute)
+select concept_id into @organicMentalDisorderChronicConceptId from concept where uuid = '7057d8b6-c5dd-11e5-9912-ba0be0483c18'; -- Organic mental disorder (chronic)
+select concept_id into @alcoholInducedMentalDisorderConceptId from concept where uuid = '121716AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Alcohol-induced mental and behavior disorder
+select concept_id into @drugInducedMentalDisorderConceptId from concept where uuid = '90ec5559-3ba2-4fc3-abc1-614727b17141'; -- Drug-induced mental and behavior disorder
+select concept_id into @bipolarManicConceptId from concept where uuid = '115924AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Bipolar Affective Disorder, Manic
+select concept_id into @otherMentalHealthDxNonCodedConceptId from concept where uuid = 'aad4c0e9-1369-11e4-a125-54ee7513a7ff'; -- Other Mental Health Diagnosis non-coded
+select concept_id into @otherMentalHealthDx1ConceptId from concept where uuid = 'f97271c0-63ed-11e6-8b77-86f30ca893d3'; -- Other mental health diagnosis 1
+select concept_id into @otherMentalHealthDx2ConceptId from concept where uuid = 'f972763e-63ed-11e6-8b77-86f30ca893d3'; -- Other mental health diagnosis 2
+select concept_id into @chlorpromazineConceptId from concept where uuid = '654b00aa-977f-11e1-8993-905e29aff6c1'; -- Chlorpromazine
+select concept_id into @haloperidolConceptId from concept where uuid = '65693df4-977f-11e1-8993-905e29aff6c1'; -- Haloperidol
+select concept_id into @fluphenazineConceptId from concept where uuid = '654b0eb0-977f-11e1-8993-905e29aff6c1'; -- Fluphenazine
+select concept_id into @carbamazepineMentalConceptId from concept where uuid = '654b0726-977f-11e1-8993-905e29aff6c1'; -- Carbamazepine (also used as a mental health medication)
+select concept_id into @sodiumValproateConceptId from concept where uuid = '65694b32-977f-11e1-8993-905e29aff6c1'; -- Sodium valproate
+select concept_id into @risperidoneConceptId from concept where uuid = '83405AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; -- Risperidone
+select concept_id into @fluoxetineConceptId from concept where uuid = '65693bec-977f-11e1-8993-905e29aff6c1'; -- Fluoxetine
+select concept_id into @olanzapineConceptId from concept where uuid = 'dae4e2e4-659e-11e6-8b77-86f30ca893d3'; -- Olanzapine
+select concept_id into @clozapineConceptId from concept where uuid = 'dae4e5e6-659e-11e6-8b77-86f30ca893d3'; -- Clozapine
+select concept_id into @trifluoperazineConceptId from concept where uuid = '657b0bba-977f-11e1-8993-905e29aff6c1'; -- Trifluoperazine
+select concept_id into @clopixolConceptId from concept where uuid = 'dae4eb4a-659e-11e6-8b77-86f30ca893d3'; -- Clopixol
+select concept_id into @otherConceptId from concept where uuid = '657140f8-977f-11e1-8993-905e29aff6c1'; -- Other
+select concept_id into @weightConceptId from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'; -- Weight (kg)
+select concept_id into @heightConceptId from concept where uuid = '6569c562-977f-11e1-8993-905e29aff6c1'; -- Height (cm)
 
 -- Create an empty table
 CALL createIc3RegisterTable();
@@ -24,20 +129,20 @@ CALL createIc3RegisterCohort(@reportEndDate);
 -- Warehousing 
 CALL warehouseProgramEnrollment();
 -- Demographics
-CALL getAllIdentifiers(@reportEndDate,'4','allArtIds');
-CALL getAllIdentifiers(@reportEndDate,'19','allPreArtIds');
-CALL getAllIdentifiers(@reportEndDate,'21','allCccIds');
-CALL getIdentifierForProgram(1, '4,19', @reportEndDate, 'activeHivId');
-CALL getIdentifierForProgram(10, '21', @reportEndDate, 'activeCCCId');
+CALL getAllIdentifiers(@reportEndDate,'@arvNumberTypeId','allArtIds');
+CALL getAllIdentifiers(@reportEndDate,'@hccNumberTypeId','allPreArtIds');
+CALL getAllIdentifiers(@reportEndDate,'@chronicCareNumberTypeId','allCccIds');
+CALL getIdentifierForProgram(@hivProgramId, '@arvNumberTypeId,@hccNumberTypeId', @reportEndDate, 'activeHivId');
+CALL getIdentifierForProgram(@chronicCareProgramId, '@chronicCareNumberTypeId', @reportEndDate, 'activeCCCId');
 -- General Visits and outcomes
-CALL getEncounterDatetimeBeforeEndDate('67,69,29,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastNcdVisitDate');
-CALL getEncounterLocationBeforeEndDate('67,69,29,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastNcdVisitLocation');
-CALL getEncounterDatetimeBeforeEndDate('9,10,11,12', @reportEndDate, 'first', 'firstHivVisitDate');
-CALL getEncounterDatetimeBeforeEndDate('9,10,11,12', @reportEndDate, 'last', 'lastHivVisitDate');
-CALL getEncounterLocationBeforeEndDate('9,10,11,12', @reportEndDate, 'last', 'lastHivVisitLocation');
-CALL getEncounterDatetimeBeforeEndDate('9,10,11,12,67,69,29,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastVisitDate');
-CALL getEncounterLocationBeforeEndDate('9,10,11,12,67,69,29,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastVisitLocation');
-CALL getEncounterDatetimeBeforeEndDate('29,@DH_F', @reportEndDate, 'last', 'lastHtnDmVisitDate');
+CALL getEncounterDatetimeBeforeEndDate('@CC_I,@CC_F,@DH_I,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastNcdVisitDate');
+CALL getEncounterLocationBeforeEndDate('@CC_I,@CC_F,@DH_I,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastNcdVisitLocation');
+CALL getEncounterDatetimeBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'first', 'firstHivVisitDate');
+CALL getEncounterDatetimeBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'last', 'lastHivVisitDate');
+CALL getEncounterLocationBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'last', 'lastHivVisitLocation');
+CALL getEncounterDatetimeBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F,@CC_I,@CC_F,@DH_I,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastVisitDate');
+CALL getEncounterLocationBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F,@CC_I,@CC_F,@DH_I,@DH_F,@A_I,@A_F,@E_I,@E_F,@M_I,@M_F', @reportEndDate, 'last', 'lastVisitLocation');
+CALL getEncounterDatetimeBeforeEndDate('@DH_I,@DH_F', @reportEndDate, 'last', 'lastHtnDmVisitDate');
 CALL getEncounterDatetimeBeforeEndDate('@E_I,@E_F', @reportEndDate, 'last', 'lastEpilepsyVisitDate');
 CALL getEncounterDatetimeBeforeEndDate('@A_I,@A_F', @reportEndDate, 'last', 'lastChronicLungVisitDate');
 CALL getEncounterDatetimeBeforeEndDate('@M_I,@M_F', @reportEndDate, 'last', 'lastMentalHealthVisitDate');
@@ -46,85 +151,85 @@ CALL updateProgramsEnrollmentDate();
 -- HIV Program Information
 CALL updateFirstViralLoad(@reportEndDate);
 CALL updateLastViralLoad(@reportEndDate);
-CALL getLastOutcomeForProgram(1, @reportEndDate, 'lastHivOutcome', 'lastHivOutcomeDate');
+CALL getLastOutcomeForProgram(@hivProgramId, @reportEndDate, 'lastHivOutcome', 'lastHivOutcomeDate');
 CALL everDefaultedByProgram('HIV Program', 'everDefaultedHiv');
-CALL getLastOutcomeForProgram(10, @reportEndDate, 'lastNcdOutcome', 'lastNcdOutcomeDate');
+CALL getLastOutcomeForProgram(@chronicCareProgramId, @reportEndDate, 'lastNcdOutcome', 'lastNcdOutcomeDate');
 CALL everDefaultedByProgram('CHRONIC CARE PROGRAM', 'everDefaultedNcd');
-CALL getEncounterLocationBeforeEndDate('9,10,11,12', @reportEndDate, 'last', 'lastHivVisitLocation');
-CALL getDatetimeObsBeforeDate(6132, @reportEndDate, 'last', 'artInitialDate');
+CALL getEncounterLocationBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'last', 'lastHivVisitLocation');
+CALL getDatetimeObsBeforeDate(@artStartDateConceptId, @reportEndDate, 'last', 'artInitialDate');
 CALL updateRecentRegimen(@reportEndDate);
-CALL getCodedObsFromEncounterBeforeDate(7459, '9,10,11,12', @reportEndDate, 'last', 'lastTbValueInHiv');
-CALL getEncounterDatetimeBeforeEndDate('9,10,11,12', @reportEndDate, 'last', 'lastTbDateInHiv');
+CALL getCodedObsFromEncounterBeforeDate(@tbStatusConceptId, '@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'last', 'lastTbValueInHiv');
+CALL getEncounterDatetimeBeforeEndDate('@ART_I,@ART_FOLLOWUP,@PART_I,@PART_F', @reportEndDate, 'last', 'lastTbDateInHiv');
 
 -- Hypertension Information
-CALL getDiagnosisBoolean(3683, '903', @reportEndDate, 'htnDx');
-CALL getDiagnosisDate(3683, '903', 6774, @reportEndDate, 'first', 'firstHtnDxDate');
-CALL getEncounterDateForCodedObs('1193', '3182,3187,1242,250,3186,3183,254,8466,8465,8464,8463,88,8462', @reportEndDate, 'first', 'firstHtnMedsDate');
-CALL getEncounterDateForCodedObs('1193', '3182,3187,1242,250,3186,3183,254,8466,8465,8464,8463', @reportEndDate, 'last', 'lastHtnMedsDate');
-CALL getEncounterLocationForCodedObs('1193', '3182,3187,1242,250,3186,3183,254,8466,8465,8464,8463', @reportEndDate, 'last', 'lastHtnMedsLocation');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@hypertensionConceptId', @reportEndDate, 'htnDx');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@hypertensionConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'firstHtnDxDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@captoprilConceptId,@amlodipineConceptId,@enalaprilConceptId,@nifedipineConceptId,@atenololConceptId,@lisinoprilConceptId,@propranololConceptId,@diureticsClassConceptId,@calciumChannelBlockersClassConceptId,@aceInhibitorsClassConceptId,@betaBlockersClassConceptId,@aspirinConceptId,@statinsClassConceptId', @reportEndDate, 'first', 'firstHtnMedsDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@captoprilConceptId,@amlodipineConceptId,@enalaprilConceptId,@nifedipineConceptId,@atenololConceptId,@lisinoprilConceptId,@propranololConceptId,@diureticsClassConceptId,@calciumChannelBlockersClassConceptId,@aceInhibitorsClassConceptId,@betaBlockersClassConceptId', @reportEndDate, 'last', 'lastHtnMedsDate');
+CALL getEncounterLocationForCodedObs('@currentDrugsUsedConceptId', '@captoprilConceptId,@amlodipineConceptId,@enalaprilConceptId,@nifedipineConceptId,@atenololConceptId,@lisinoprilConceptId,@propranololConceptId,@diureticsClassConceptId,@calciumChannelBlockersClassConceptId,@aceInhibitorsClassConceptId,@betaBlockersClassConceptId', @reportEndDate, 'last', 'lastHtnMedsLocation');
 CALL getBloodPressureBeforeDate(@reportEndDate, 'first', 'firstBpDate', 'firstBp');
 CALL getBloodPressureBeforeDate(@reportEndDate, 'last', 'lastBpDate', 'lastBp');
 -- Hypertension Meds
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '8466,1243,99,4061', @reportEndDate, 'last', 'diuretic');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '8465,3187,250', @reportEndDate, 'last', 'calciumChannelBlocker');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '8464,1242,3182,3183', @reportEndDate, 'last', 'aceIInhibitor');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '8463,3186,8612,254', @reportEndDate, 'last', 'betaBlocker');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '8462,8613,8614,8210', @reportEndDate, 'last', 'statin');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '88,929,7121', @reportEndDate, 'last', 'otherHtnMeds');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@diureticsClassConceptId,@hydrochlorothiazideConceptId,@furosemideConceptId,@spironolactoneConceptId', @reportEndDate, 'last', 'diuretic');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@calciumChannelBlockersClassConceptId,@amlodipineConceptId,@nifedipineConceptId', @reportEndDate, 'last', 'calciumChannelBlocker');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@aceInhibitorsClassConceptId,@enalaprilConceptId,@captoprilConceptId,@lisinoprilConceptId', @reportEndDate, 'last', 'aceIInhibitor');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@betaBlockersClassConceptId,@atenololConceptId,@bisoprololConceptId,@propranololConceptId', @reportEndDate, 'last', 'betaBlocker');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@statinsClassConceptId,@simvastatinConceptId,@pravastatinConceptId,@atorvastatinConceptId', @reportEndDate, 'last', 'statin');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@aspirinConceptId,@hydralazineConceptId,@isosorbideMononitrateConceptId', @reportEndDate, 'last', 'otherHtnMeds');
 -- Diabetes Information
-CALL getDiagnosisBoolean(3683, '6409,6410,3720', @reportEndDate, 'dmDx');
-CALL getDiagnosisDate(3683, '6409,6410,3720', 6774, @reportEndDate, 'first', 'firstDmDxDate');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('3683', '29', '6409,6410', @reportEndDate, 'last', 'diabetesType');
-CALL getEncounterDateForCodedObs('1193', '4052,8413,4046', @reportEndDate, 'first', 'firstDmMedsDate');
-CALL getEncounterDateForCodedObs('1193', '4052,8413,4046', @reportEndDate, 'last', 'lastDmMedsDate');
-CALL getEncounterLocationForCodedObs('1193', '4052,8413,4046', @reportEndDate, 'last', 'lastDmMedsLocation');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@type1DiabetesConceptId,@type2DiabetesConceptId,@diabetesConceptId', @reportEndDate, 'dmDx');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@type1DiabetesConceptId,@type2DiabetesConceptId,@diabetesConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'firstDmDxDate');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@chronicCareDiagnosisConceptId', '@DH_I', '@type1DiabetesConceptId,@type2DiabetesConceptId', @reportEndDate, 'last', 'diabetesType');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@metforminConceptId,@insulinConceptId,@glibenclamideConceptId', @reportEndDate, 'first', 'firstDmMedsDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@metforminConceptId,@insulinConceptId,@glibenclamideConceptId', @reportEndDate, 'last', 'lastDmMedsDate');
+CALL getEncounterLocationForCodedObs('@currentDrugsUsedConceptId', '@metforminConceptId,@insulinConceptId,@glibenclamideConceptId', @reportEndDate, 'last', 'lastDmMedsLocation');
 CALL getBloodGlucoseBeforeDate(@reportEndDate, 'first', 'firstGlucoseMonitoringDate','firstVisitHba1c','firstVisitRandomBloodSugar','firstVisitFastingBloodSugar');
 CALL getBloodGlucoseBeforeDate(@reportEndDate, 'last', 'lastGlucoseMonitoringDate','lastVisitHba1c','lastVisitRandomBloodSugar','lastVisitFastingBloodSugar');
 -- Diabetes Meds
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '282', @reportEndDate, 'last', 'shortActingRegularInsulin');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '6750', @reportEndDate, 'last', 'longActingInsulin');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '4052', @reportEndDate, 'last', 'metformin');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '69,@DH_F', '4046', @reportEndDate, 'last', 'glibenclamide');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@regularInsulinConceptId', @reportEndDate, 'last', 'shortActingRegularInsulin');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@longActingInsulinConceptId', @reportEndDate, 'last', 'longActingInsulin');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@metforminConceptId', @reportEndDate, 'last', 'metformin');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@CC_F,@DH_F', '@glibenclamideConceptId', @reportEndDate, 'last', 'glibenclamide');
 -- Epilepsy Information
-CALL getDiagnosisBoolean(3683, '155', @reportEndDate, 'epilepsyDx');
-CALL getDiagnosisDate(3683, '155', 6774, @reportEndDate, 'first', 'firstEpilepsyDxDate');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@epilepsyConceptId', @reportEndDate, 'epilepsyDx');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@epilepsyConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'firstEpilepsyDxDate');
 CALL getEpilepsyOnsetDate(@reportEndDate, 'last', 'epilepsyOnsetDate');
-CALL getEncounterDateForCodedObs('1193', '238,273,920', @reportEndDate, 'first', 'firstEpilepsyMedsDate');
-CALL getEncounterDateForCodedObs('1193', '238,273,920', @reportEndDate, 'last', 'lastEpilepsyMedsDate');
-CALL getEncounterLocationForCodedObs('1193', '238,273,920', @reportEndDate, 'last', 'lastEpilepsyMedsLocation');
-CALL getEncounterDateForObs(7924, @reportEndDate, 'first', 'firstSeizuresDate');
-CALL getNumericObsBeforeDate(7924, @reportEndDate, 'first', 'firstSeizures');
-CALL getEncounterDateForObs(7924, @reportEndDate, 'last', 'lastSeizuresDate');
-CALL getNumericObsBeforeDate(7924, @reportEndDate, 'last', 'lastSeizures');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193', '@E_F', '8531,8532,8533,8534,8535,8536,8537', @reportEndDate, 'last', 'seizureTriggers');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@phenobarbitalConceptId,@phenytoinConceptId,@carbamazepineConceptId', @reportEndDate, 'first', 'firstEpilepsyMedsDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@phenobarbitalConceptId,@phenytoinConceptId,@carbamazepineConceptId', @reportEndDate, 'last', 'lastEpilepsyMedsDate');
+CALL getEncounterLocationForCodedObs('@currentDrugsUsedConceptId', '@phenobarbitalConceptId,@phenytoinConceptId,@carbamazepineConceptId', @reportEndDate, 'last', 'lastEpilepsyMedsLocation');
+CALL getEncounterDateForObs(@numberOfSeizuresConceptId, @reportEndDate, 'first', 'firstSeizuresDate');
+CALL getNumericObsBeforeDate(@numberOfSeizuresConceptId, @reportEndDate, 'first', 'firstSeizures');
+CALL getEncounterDateForObs(@numberOfSeizuresConceptId, @reportEndDate, 'last', 'lastSeizuresDate');
+CALL getNumericObsBeforeDate(@numberOfSeizuresConceptId, @reportEndDate, 'last', 'lastSeizures');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId', '@E_F', '@alcoholTriggerConceptId,@feverTriggerConceptId,@soundLightTouchTriggerConceptId,@emotionalStressTriggerConceptId,@sleepDeprivationTriggerConceptId,@missedMedicationTriggerConceptId,@menstruationTriggerConceptId', @reportEndDate, 'last', 'seizureTriggers');
 -- Asthma Information (added COPD)
-CALL getDiagnosisBoolean(3683, '5', @reportEndDate, 'asthmaDx');
-CALL getDiagnosisDate(3683, '5', 6774, @reportEndDate, 'first', 'firstAsthmaDxDate');
-CALL getEncounterDateForCodedObs('1193,8474', '798,1240,8471,8472,8473,5622', @reportEndDate, 'first', 'firstChronicLungMedsDate');
-CALL getEncounterDateForCodedObs('1193,8474', '798,1240,8471,8472,8473,5622', @reportEndDate, 'last', 'lastChronicLungMedsDate');
-CALL getEncounterLocationForCodedObs('1193,8474', '798,1240,8471,8472,8473,5622', @reportEndDate, 'last', 'lastChronicLungMedsLocation');
-CALL getEncounterDateForCodedObs('8410', '1905,8405,8406,8407,8408,8409', @reportEndDate, 'first', 'firstAsthmaSeverityDate');
-CALL getCodedObsBeforeDate(8410, @reportEndDate, 'first', 'firstAsthmaSeverity');
-CALL getEncounterDateForCodedObs('8410', '1905,8405,8406,8407,8408,8409', @reportEndDate, 'last', 'lastAsthmaSeverityDate');
-CALL getCodedObsBeforeDate(8410, @reportEndDate, 'last', 'lastAsthmaSeverity');
-CALL getDiagnosisBoolean(3683, '3716', @reportEndDate, 'copdDx');
-CALL getDiagnosisDate(3683, '3716', 6774, @reportEndDate, 'first', 'copdDiagnosisDate');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@asthmaConceptId', @reportEndDate, 'asthmaDx');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@asthmaConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'firstAsthmaDxDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@salbutamolConceptId,@beclomethasoneConceptId,@inhaledBetaAgonistsConceptId,@inhaledSteroidConceptId,@oralSteroidConceptId,@otherNonCodedConceptId', @reportEndDate, 'first', 'firstChronicLungMedsDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@salbutamolConceptId,@beclomethasoneConceptId,@inhaledBetaAgonistsConceptId,@inhaledSteroidConceptId,@oralSteroidConceptId,@otherNonCodedConceptId', @reportEndDate, 'last', 'lastChronicLungMedsDate');
+CALL getEncounterLocationForCodedObs('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@salbutamolConceptId,@beclomethasoneConceptId,@inhaledBetaAgonistsConceptId,@inhaledSteroidConceptId,@oralSteroidConceptId,@otherNonCodedConceptId', @reportEndDate, 'last', 'lastChronicLungMedsLocation');
+CALL getEncounterDateForCodedObs('@asthmaClassificationConceptId', '@asthmaNotAtAllConceptId,@asthmaIntermittentConceptId,@asthmaMildPersistentConceptId,@asthmaModeratePersistentConceptId,@asthmaSeverePersistentConceptId,@asthmaSevereUncontrolledConceptId', @reportEndDate, 'first', 'firstAsthmaSeverityDate');
+CALL getCodedObsBeforeDate(@asthmaClassificationConceptId, @reportEndDate, 'first', 'firstAsthmaSeverity');
+CALL getEncounterDateForCodedObs('@asthmaClassificationConceptId', '@asthmaNotAtAllConceptId,@asthmaIntermittentConceptId,@asthmaMildPersistentConceptId,@asthmaModeratePersistentConceptId,@asthmaSeverePersistentConceptId,@asthmaSevereUncontrolledConceptId', @reportEndDate, 'last', 'lastAsthmaSeverityDate');
+CALL getCodedObsBeforeDate(@asthmaClassificationConceptId, @reportEndDate, 'last', 'lastAsthmaSeverity');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@copdConceptId', @reportEndDate, 'copdDx');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@copdConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'copdDiagnosisDate');
 -- Asthma Meds
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193,8474', '69,@A_F', '8471,978', @reportEndDate, 'last', 'inhaledBAgonist');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193,8474', '69,@A_F', '8472,1240', @reportEndDate, 'last', 'inhaledSteroid');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193,8474', '69,@A_F', '8473', @reportEndDate, 'last', 'oralSteroid');
-CALL getCodedObsWithValuesFromEncounterBeforeDate('1193,8474', '69,@A_F', '5622', @reportEndDate, 'last', 'otherAsthmaMeds');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@CC_F,@A_F', '@inhaledBetaAgonistsConceptId,@inhaledBetaAgonistOtherConceptId', @reportEndDate, 'last', 'inhaledBAgonist');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@CC_F,@A_F', '@inhaledSteroidConceptId,@beclomethasoneConceptId', @reportEndDate, 'last', 'inhaledSteroid');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@CC_F,@A_F', '@oralSteroidConceptId', @reportEndDate, 'last', 'oralSteroid');
+CALL getCodedObsWithValuesFromEncounterBeforeDate('@currentDrugsUsedConceptId,@chronicLungDiseaseTreatmentConceptId', '@CC_F,@A_F', '@otherNonCodedConceptId', @reportEndDate, 'last', 'otherAsthmaMeds');
 -- Mental Health Information
-CALL getDiagnosisBoolean(3683, '467,207,8419,8487,2719,8488,8489,8562,8563,8491,8420,8580,8581', @reportEndDate, 'mentalDx');
-CALL getDiagnosisList(3683, '467,207,8419,8487,2719,8488,8489,8562,8563,8491,8420,8580,8581', @reportEndDate, 'mentalDxList');
-CALL getDiagnosisDate(3683, '467,207,8419,8487,2719,8488,8489,8562,8563,8491,8420,8580,8581', 6774, @reportEndDate, 'first', 'firstMentalHealthDxDate');
-CALL getEncounterDateForCodedObs('1193', '914,4047,927,920,920,4060,8498,4045,8582,8583,8237,8584,6408', @reportEndDate, 'first', 'firstMentalHealthMedsDate');
-CALL getEncounterDateForCodedObs('1193', '914,4047,927,920,920,4060,8498,4045,8582,8583,8237,8584,6408', @reportEndDate, 'last', 'lastMentalHealthMedsDate');        
-CALL getEncounterLocationForCodedObs('1193', '914,4047,927,920,920,4060,8498,4045,8582,8583,8237,8584,6408', @reportEndDate, 'last', 'lastMentalHealthMedsLocation');
+CALL getDiagnosisBoolean(@chronicCareDiagnosisConceptId, '@schizophreniaConceptId,@depressionConceptId,@acutePsychoticDisorderConceptId,@schizoaffectiveDisorderConceptId,@anxietyDisorderConceptId,@organicMentalDisorderAcuteConceptId,@organicMentalDisorderChronicConceptId,@alcoholInducedMentalDisorderConceptId,@drugInducedMentalDisorderConceptId,@bipolarManicConceptId,@otherMentalHealthDxNonCodedConceptId,@otherMentalHealthDx1ConceptId,@otherMentalHealthDx2ConceptId', @reportEndDate, 'mentalDx');
+CALL getDiagnosisList(@chronicCareDiagnosisConceptId, '@schizophreniaConceptId,@depressionConceptId,@acutePsychoticDisorderConceptId,@schizoaffectiveDisorderConceptId,@anxietyDisorderConceptId,@organicMentalDisorderAcuteConceptId,@organicMentalDisorderChronicConceptId,@alcoholInducedMentalDisorderConceptId,@drugInducedMentalDisorderConceptId,@bipolarManicConceptId,@otherMentalHealthDxNonCodedConceptId,@otherMentalHealthDx1ConceptId,@otherMentalHealthDx2ConceptId', @reportEndDate, 'mentalDxList');
+CALL getDiagnosisDate(@chronicCareDiagnosisConceptId, '@schizophreniaConceptId,@depressionConceptId,@acutePsychoticDisorderConceptId,@schizoaffectiveDisorderConceptId,@anxietyDisorderConceptId,@organicMentalDisorderAcuteConceptId,@organicMentalDisorderChronicConceptId,@alcoholInducedMentalDisorderConceptId,@drugInducedMentalDisorderConceptId,@bipolarManicConceptId,@otherMentalHealthDxNonCodedConceptId,@otherMentalHealthDx1ConceptId,@otherMentalHealthDx2ConceptId', @diagnosisDateConceptId, @reportEndDate, 'first', 'firstMentalHealthDxDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@chlorpromazineConceptId,@haloperidolConceptId,@fluphenazineConceptId,@carbamazepineMentalConceptId,@carbamazepineMentalConceptId,@sodiumValproateConceptId,@risperidoneConceptId,@fluoxetineConceptId,@olanzapineConceptId,@clozapineConceptId,@trifluoperazineConceptId,@clopixolConceptId,@otherConceptId', @reportEndDate, 'first', 'firstMentalHealthMedsDate');
+CALL getEncounterDateForCodedObs('@currentDrugsUsedConceptId', '@chlorpromazineConceptId,@haloperidolConceptId,@fluphenazineConceptId,@carbamazepineMentalConceptId,@carbamazepineMentalConceptId,@sodiumValproateConceptId,@risperidoneConceptId,@fluoxetineConceptId,@olanzapineConceptId,@clozapineConceptId,@trifluoperazineConceptId,@clopixolConceptId,@otherConceptId', @reportEndDate, 'last', 'lastMentalHealthMedsDate');        
+CALL getEncounterLocationForCodedObs('@currentDrugsUsedConceptId', '@chlorpromazineConceptId,@haloperidolConceptId,@fluphenazineConceptId,@carbamazepineMentalConceptId,@carbamazepineMentalConceptId,@sodiumValproateConceptId,@risperidoneConceptId,@fluoxetineConceptId,@olanzapineConceptId,@clozapineConceptId,@trifluoperazineConceptId,@clopixolConceptId,@otherConceptId', @reportEndDate, 'last', 'lastMentalHealthMedsLocation');
 -- BMI Information
-CALL getEncounterDateForObs(5089, @reportEndDate, 'last', 'lastWeightDate');
-CALL getNumericObsBeforeDate(5090, @reportEndDate, 'last', 'lastHeight');
-CALL getNumericObsBeforeDate(5089, @reportEndDate, 'last', 'lastWeight');
+CALL getEncounterDateForObs(@weightConceptId, @reportEndDate, 'last', 'lastWeightDate');
+CALL getNumericObsBeforeDate(@heightConceptId, @reportEndDate, 'last', 'lastHeight');
+CALL getNumericObsBeforeDate(@weightConceptId, @reportEndDate, 'last', 'lastWeight');
 -- Diagnoses Logic
 CALL diagnosesLogic(); -- Must be last!
 -- Appointments
