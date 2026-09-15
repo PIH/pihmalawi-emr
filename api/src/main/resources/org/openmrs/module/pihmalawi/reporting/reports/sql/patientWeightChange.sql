@@ -18,16 +18,16 @@
 -- long-term (e.g. 6-12 months) for patients with a recent visit. Report can be applied for clinical and data
 -- quality checks.
 
-select patient_identifier_type_id into @arvNumberTypeId from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'; -- ARV Number
-select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
-select patient_identifier_type_id into @chronicCareNumberTypeId from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'; -- Chronic Care Number
-select encounter_type_id into @artInitialType from encounter_type where uuid = '664b8574-977f-11e1-8993-905e29aff6c1'; -- ART_INITIAL
-select encounter_type_id into @artFollowupType from encounter_type where uuid = '664b8650-977f-11e1-8993-905e29aff6c1'; -- ART_FOLLOWUP
-select encounter_type_id into @partInitialType from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'; -- PART_INITIAL
-select encounter_type_id into @partFollowupType from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'; -- PART_FOLLOWUP
-select encounter_type_id into @chronicCareInitialType from encounter_type where uuid = '664bb6de-977f-11e1-8993-905e29aff6c1'; -- CHRONIC_CARE_INITIAL
-select encounter_type_id into @chronicCareFollowupType from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1'; -- CHRONIC_CARE_FOLLOWUP
-select concept_id into @weightConceptId from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'; -- Weight (kg)
+select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '66784d84-977f-11e1-8993-905e29aff6c1'), -1) into @arvNumberTypeId; -- ARV Number
+select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'), -1) into @hccNumberTypeId; -- HCC Number
+select coalesce((select patient_identifier_type_id from patient_identifier_type where uuid = '11a76c3e-1db8-4d16-9252-9a18b5ed1843'), -1) into @chronicCareNumberTypeId; -- Chronic Care Number
+select coalesce((select encounter_type_id from encounter_type where uuid = '664b8574-977f-11e1-8993-905e29aff6c1'), -1) into @artInitialType; -- ART_INITIAL
+select coalesce((select encounter_type_id from encounter_type where uuid = '664b8650-977f-11e1-8993-905e29aff6c1'), -1) into @artFollowupType; -- ART_FOLLOWUP
+select coalesce((select encounter_type_id from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'), -1) into @partInitialType; -- PART_INITIAL
+select coalesce((select encounter_type_id from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'), -1) into @partFollowupType; -- PART_FOLLOWUP
+select coalesce((select encounter_type_id from encounter_type where uuid = '664bb6de-977f-11e1-8993-905e29aff6c1'), -1) into @chronicCareInitialType; -- CHRONIC_CARE_INITIAL
+select coalesce((select encounter_type_id from encounter_type where uuid = '664bb896-977f-11e1-8993-905e29aff6c1'), -1) into @chronicCareFollowupType; -- CHRONIC_CARE_FOLLOWUP
+select coalesce((select concept_id from concept where uuid = '6569c44a-977f-11e1-8993-905e29aff6c1'), -1) into @weightConceptId; -- Weight (kg)
 
 select 	pi.patient_id as "Internal ID",
 		pi.identifier as "Identifier", 
