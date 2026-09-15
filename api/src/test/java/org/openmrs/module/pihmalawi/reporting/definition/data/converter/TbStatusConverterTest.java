@@ -3,7 +3,11 @@ package org.openmrs.module.pihmalawi.reporting.definition.data.converter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
 import org.openmrs.Obs;
+import org.openmrs.module.reporting.common.ObjectUtil;
+
+import java.util.Locale;
 
 public class TbStatusConverterTest {
 
@@ -40,5 +44,19 @@ public class TbStatusConverterTest {
     @Test
     public void shouldReturnNullForNullObs() {
         Assert.assertNull(new TbStatusConverter().convert(null));
+    }
+
+    @Test
+    public void shouldFormatUnmappedConceptUsingFallback() {
+        Concept otherConcept = new Concept();
+        otherConcept.setUuid("11111111-1111-1111-1111-111111111111");
+        otherConcept.addName(new ConceptName("Some Other Concept", Locale.ENGLISH));
+        Obs o = new Obs();
+        o.setValueCoded(otherConcept);
+
+        Assert.assertEquals(ObjectUtil.format(otherConcept), new TbStatusConverter().convert(o));
+        Assert.assertNotEquals("Never", new TbStatusConverter().convert(o));
+        Assert.assertNotEquals("Last", new TbStatusConverter().convert(o));
+        Assert.assertNotEquals("Curr", new TbStatusConverter().convert(o));
     }
 }

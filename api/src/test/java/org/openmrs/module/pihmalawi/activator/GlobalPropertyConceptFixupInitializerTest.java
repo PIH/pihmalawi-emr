@@ -6,6 +6,7 @@ import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.List;
 import java.util.Map;
 
 public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContextSensitiveTest {
@@ -35,8 +36,32 @@ public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContext
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldFailLoudlyIfAConceptCannotBeResolved() {
-        new GlobalPropertyConceptFixupInitializer().started();
+        try {
+            new GlobalPropertyConceptFixupInitializer().started();
+            Assert.fail("Expected an IllegalStateException to be thrown");
+        }
+        catch (IllegalStateException e) {
+            Assert.assertTrue(e.getMessage().contains("concept.true"));
+        }
+    }
+
+    @Test
+    public void shouldRunAfterMetadataInitializerInActivatorList() {
+        List<Initializer> initializers = new PihMalawiModuleActivator().getInitializers();
+        int metadataIndex = -1;
+        int fixupIndex = -1;
+        for (int i = 0; i < initializers.size(); i++) {
+            if (initializers.get(i) instanceof MetadataInitializer) {
+                metadataIndex = i;
+            }
+            if (initializers.get(i) instanceof GlobalPropertyConceptFixupInitializer) {
+                fixupIndex = i;
+            }
+        }
+        Assert.assertTrue("MetadataInitializer should be present", metadataIndex >= 0);
+        Assert.assertTrue("GlobalPropertyConceptFixupInitializer should be present", fixupIndex >= 0);
+        Assert.assertTrue("GlobalPropertyConceptFixupInitializer must run after MetadataInitializer", fixupIndex > metadataIndex);
     }
 }
