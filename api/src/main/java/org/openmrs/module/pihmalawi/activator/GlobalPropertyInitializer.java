@@ -101,7 +101,8 @@ public class GlobalPropertyInitializer implements Initializer {
      */
     protected static final List<String> GLOBAL_PROPERTIES_TO_DELETE = Collections.unmodifiableList(Arrays.asList(
             "facilitydata.unsupportedFacilities",
-            "facilitydata.dailyReportDaysOfWeek"
+            "facilitydata.dailyReportDaysOfWeek",
+            "dashboard.identifiers"
     ));
 
     @Override

@@ -17,10 +17,6 @@
             <value>e97b36a2-16f5-11e6-b6ba-3e1d05defe78</value>
         </globalProperty>
         <globalProperty>
-            <property>dashboard.identifiers</property>
-            <value>{"9":["ARV Number","HCC Number","KS Number","Chronic Care Number","Palliative Care Number","PDC Identifier","Nutrition Program Number","TB program identifier"]}</value>
-        </globalProperty>
-        <globalProperty>
             <property>emr.atFacilityVisitType</property>
             <value>f01c54cb-2225-471a-9cd5-d348552c337c</value>
         </globalProperty>
