@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 
 import java.util.Locale;
@@ -14,7 +15,7 @@ public class TbStatusConverterTest {
     @Test
     public void shouldConvertNeverConceptToNever() {
         Concept neverConcept = new Concept();
-        neverConcept.setUuid(TbStatusConverter.NEVER_CONCEPT_UUID);
+        neverConcept.setUuid(CommonConcepts.Concepts.UNKNOWN);
         Obs o = new Obs();
         o.setValueCoded(neverConcept);
 
@@ -24,7 +25,7 @@ public class TbStatusConverterTest {
     @Test
     public void shouldConvertLastConceptToLast() {
         Concept lastConcept = new Concept();
-        lastConcept.setUuid(TbStatusConverter.LAST_CONCEPT_UUID);
+        lastConcept.setUuid(CommonConcepts.Concepts.TREATMENT_COMPLETE);
         Obs o = new Obs();
         o.setValueCoded(lastConcept);
 
@@ -34,7 +35,7 @@ public class TbStatusConverterTest {
     @Test
     public void shouldConvertCurrConceptToCurr() {
         Concept currConcept = new Concept();
-        currConcept.setUuid(TbStatusConverter.CURR_CONCEPT_UUID);
+        currConcept.setUuid(CommonConcepts.Concepts.CURRENTLY_IN_TREATMENT);
         Obs o = new Obs();
         o.setValueCoded(currConcept);
 

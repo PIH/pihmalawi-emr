@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 
 import java.util.Locale;
@@ -14,7 +15,7 @@ public class ObsValueBooleanYesNoConverterTest {
     @Test
     public void shouldConvertTrueConceptToYes() {
         Concept trueConcept = new Concept();
-        trueConcept.setUuid(ObsValueBooleanYesNoConverter.TRUE_CONCEPT_UUID);
+        trueConcept.setUuid(CommonConcepts.Concepts.TRUE);
         Obs o = new Obs();
         o.setValueCoded(trueConcept);
 
@@ -24,7 +25,7 @@ public class ObsValueBooleanYesNoConverterTest {
     @Test
     public void shouldConvertFalseConceptToNo() {
         Concept falseConcept = new Concept();
-        falseConcept.setUuid(ObsValueBooleanYesNoConverter.FALSE_CONCEPT_UUID);
+        falseConcept.setUuid(CommonConcepts.Concepts.FALSE);
         Obs o = new Obs();
         o.setValueCoded(falseConcept);
 

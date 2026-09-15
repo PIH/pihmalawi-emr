@@ -15,6 +15,7 @@ package org.openmrs.module.pihmalawi.reporting.definition.data.converter;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
@@ -22,9 +23,6 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  * Who Stage data converter
  */
 public class ObsValueBooleanYesNoConverter implements DataConverter  {
-
-	public static final String TRUE_CONCEPT_UUID = "655e2f90-977f-11e1-8993-905e29aff6c1";
-	public static final String FALSE_CONCEPT_UUID = "655e3148-977f-11e1-8993-905e29aff6c1";
 
 	//***** CONSTRUCTORS *****
 
@@ -42,8 +40,8 @@ public class ObsValueBooleanYesNoConverter implements DataConverter  {
         Obs o = (Obs)original;
         if (o != null) {
             String conceptUuid = o.getValueCoded().getUuid();
-            if (TRUE_CONCEPT_UUID.equals(conceptUuid)) { return "Yes"; }
-            if (FALSE_CONCEPT_UUID.equals(conceptUuid)) { return "No"; }
+            if (CommonConcepts.Concepts.TRUE.equals(conceptUuid)) { return "Yes"; }
+            if (CommonConcepts.Concepts.FALSE.equals(conceptUuid)) { return "No"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;

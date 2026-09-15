@@ -15,6 +15,7 @@ package org.openmrs.module.pihmalawi.reporting.definition.data.converter;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
@@ -22,10 +23,6 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  * Who Stage data converter
  */
 public class PregnantLactatingConverter implements DataConverter  {
-
-	public static final String NO_CONCEPT_UUID = "6557646c-977f-11e1-8993-905e29aff6c1";
-	public static final String PREGNANT_CONCEPT_UUID = "655b6bac-977f-11e1-8993-905e29aff6c1";
-	public static final String LACTATING_CONCEPT_UUID = "656cdab8-977f-11e1-8993-905e29aff6c1";
 
 	//***** CONSTRUCTORS *****
 
@@ -43,9 +40,9 @@ public class PregnantLactatingConverter implements DataConverter  {
         Obs o = (Obs)original;
         if (o != null) {
             String conceptUuid = o.getValueCoded().getUuid();
-            if (NO_CONCEPT_UUID.equals(conceptUuid)) { return "No"; }
-            if (PREGNANT_CONCEPT_UUID.equals(conceptUuid)) { return "Pregnant"; }
-            if (LACTATING_CONCEPT_UUID.equals(conceptUuid)) { return "Lactating"; }
+            if (CommonConcepts.Concepts.NO.equals(conceptUuid)) { return "No"; }
+            if (CommonConcepts.Concepts.PREGNANT.equals(conceptUuid)) { return "Pregnant"; }
+            if (CommonConcepts.Concepts.LACTATING.equals(conceptUuid)) { return "Lactating"; }
             return ObjectUtil.format(o.getValueCoded());
         }
         return null;

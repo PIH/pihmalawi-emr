@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,20 +44,22 @@ public class GlobalPropertyConceptIdInitializer implements Initializer {
     protected static final Map<String, String> GLOBAL_PROPERTY_CONCEPT_UUIDS;
     static {
         Map<String, String> m = new LinkedHashMap<String, String>();
-        m.put("concept.true", "655e2f90-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.false", "655e3148-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.unknown", "65576584-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.causeOfDeath", "6569569a-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.height", "6569c562-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.weight", "6569c44a-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.medicalRecordObservations", "65588874-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.none", "6557987e-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.otherNonCoded", "656cce7e-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.patientDied", "655b5e46-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.problemList", "6558c8ca-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.reasonExitedCare", "655baf40-977f-11e1-8993-905e29aff6c1");
-        m.put("concept.reasonOrderStopped", "655bb044-977f-11e1-8993-905e29aff6c1");
-        m.put("dashboard.header.showConcept", "656c327a-977f-11e1-8993-905e29aff6c1");
+        m.put("concept.true", CommonConcepts.Concepts.TRUE);
+        m.put("concept.false", CommonConcepts.Concepts.FALSE);
+        m.put("concept.unknown", CommonConcepts.Concepts.UNKNOWN);
+        m.put("concept.causeOfDeath", CommonConcepts.Concepts.CAUSE_OF_DEATH);
+        m.put("concept.height", CommonConcepts.Concepts.HEIGHT);
+        m.put("concept.weight", CommonConcepts.Concepts.WEIGHT);
+        m.put("concept.medicalRecordObservations", CommonConcepts.Concepts.MEDICAL_RECORD_OBSERVATIONS);
+        m.put("concept.none", CommonConcepts.Concepts.NONE);
+        m.put("concept.otherNonCoded", CommonConcepts.Concepts.OTHER);
+        m.put("concept.patientDied", CommonConcepts.Concepts.PATIENT_DIED);
+        m.put("concept.problemList", CommonConcepts.Concepts.PROBLEM_LIST);
+        m.put("concept.reasonExitedCare", CommonConcepts.Concepts.REASON_EXITED_CARE);
+        m.put("concept.reasonOrderStopped", CommonConcepts.Concepts.REASON_ORDER_STOPPED);
+        // dashboard.header.showConcept accepts a comma-delimited list of concept ids to display;
+        // this install only shows CD4 count.
+        m.put("dashboard.header.showConcept", CommonConcepts.Concepts.CD4_COUNT);
         GLOBAL_PROPERTY_CONCEPT_UUIDS = Collections.unmodifiableMap(m);
     }
 

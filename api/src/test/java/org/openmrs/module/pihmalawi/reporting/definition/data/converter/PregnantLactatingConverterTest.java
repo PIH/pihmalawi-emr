@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Obs;
+import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 import org.openmrs.module.reporting.common.ObjectUtil;
 
 import java.util.Locale;
@@ -14,7 +15,7 @@ public class PregnantLactatingConverterTest {
     @Test
     public void shouldConvertNoConceptToNo() {
         Concept noConcept = new Concept();
-        noConcept.setUuid(PregnantLactatingConverter.NO_CONCEPT_UUID);
+        noConcept.setUuid(CommonConcepts.Concepts.NO);
         Obs o = new Obs();
         o.setValueCoded(noConcept);
 
@@ -24,7 +25,7 @@ public class PregnantLactatingConverterTest {
     @Test
     public void shouldConvertPregnantConceptToPregnant() {
         Concept pregnantConcept = new Concept();
-        pregnantConcept.setUuid(PregnantLactatingConverter.PREGNANT_CONCEPT_UUID);
+        pregnantConcept.setUuid(CommonConcepts.Concepts.PREGNANT);
         Obs o = new Obs();
         o.setValueCoded(pregnantConcept);
 
@@ -34,7 +35,7 @@ public class PregnantLactatingConverterTest {
     @Test
     public void shouldConvertLactatingConceptToLactating() {
         Concept lactatingConcept = new Concept();
-        lactatingConcept.setUuid(PregnantLactatingConverter.LACTATING_CONCEPT_UUID);
+        lactatingConcept.setUuid(CommonConcepts.Concepts.LACTATING);
         Obs o = new Obs();
         o.setValueCoded(lactatingConcept);
 
