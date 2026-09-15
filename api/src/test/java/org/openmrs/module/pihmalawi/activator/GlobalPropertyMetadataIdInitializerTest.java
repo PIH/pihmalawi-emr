@@ -1,5 +1,6 @@
 package org.openmrs.module.pihmalawi.activator;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -10,8 +11,10 @@ import org.openmrs.ProgramWorkflow;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSensitiveTest {
 
@@ -35,7 +38,7 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
                         break;
                     case PROGRAM:
                         if (Context.getProgramWorkflowService().getProgramByUuid(uuid) == null) {
-                            Concept programConcept = saveTestConcept(java.util.UUID.randomUUID().toString(), uuid + " program concept");
+                            Concept programConcept = saveTestConcept(UUID.randomUUID().toString(), uuid + " program concept");
                             Program program = new Program();
                             program.setUuid(uuid);
                             program.setName(uuid + " test program");
@@ -45,8 +48,8 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
                         break;
                     case PROGRAM_WORKFLOW:
                         if (Context.getProgramWorkflowService().getWorkflowByUuid(uuid) == null) {
-                            Concept workflowConcept = saveTestConcept(java.util.UUID.randomUUID().toString(), uuid + " workflow concept");
-                            Concept programConcept = saveTestConcept(java.util.UUID.randomUUID().toString(), uuid + " workflow's program concept");
+                            Concept workflowConcept = saveTestConcept(UUID.randomUUID().toString(), uuid + " workflow concept");
+                            Concept programConcept = saveTestConcept(UUID.randomUUID().toString(), uuid + " workflow's program concept");
                             Program program = new Program();
                             program.setName(uuid + " test program for workflow");
                             program.setConcept(programConcept);
@@ -70,7 +73,7 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
         new GlobalPropertyMetadataIdInitializer().started();
 
         for (GlobalPropertyMetadataIdInitializer.Entry entry : GlobalPropertyMetadataIdInitializer.GLOBAL_PROPERTY_METADATA_UUIDS) {
-            List<String> expectedIds = new java.util.ArrayList<String>();
+            List<String> expectedIds = new ArrayList<String>();
             for (String uuid : entry.uuids) {
                 switch (entry.type) {
                     case CONCEPT:
@@ -84,7 +87,7 @@ public class GlobalPropertyMetadataIdInitializerTest extends BaseModuleContextSe
                         break;
                 }
             }
-            String expectedValue = org.apache.commons.lang.StringUtils.join(expectedIds, ",");
+            String expectedValue = StringUtils.join(expectedIds, ",");
             String actualValue = Context.getAdministrationService().getGlobalProperty(entry.globalPropertyName);
             Assert.assertEquals("Mismatch for " + entry.globalPropertyName, expectedValue, actualValue);
         }
