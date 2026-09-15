@@ -113,9 +113,9 @@ public class ETraceAccessTag extends BodyTagSupport {
     protected String getNewMasterCardConfiguration(Form f) {
 
         Map<String, String> headerForms = new LinkedHashMap<String, String>();
-        headerForms.put(PihMalawiConfigConstants.ENCOUNTERTYPE_TRACE_INITIAL_NAME, "trace_mastercard");
+        headerForms.put(PihMalawiConfigConstants.ENCOUNTERTYPE_TRACE_INITIAL_NAME, "trace-mastercard");
         Map<String, List<String>> flowsheetForms = new LinkedHashMap<String, List<String>>();
-        flowsheetForms.put(PihMalawiConfigConstants.ENCOUNTERTYPE_TRACE_INITIAL_NAME, Arrays.asList("trace_visit"));
+        flowsheetForms.put(PihMalawiConfigConstants.ENCOUNTERTYPE_TRACE_INITIAL_NAME, Arrays.asList("trace-attempt"));
 
         String encType = f.getEncounterType().getName();
         String headerForm = headerForms.get(encType);
@@ -124,9 +124,9 @@ public class ETraceAccessTag extends BodyTagSupport {
         if (headerForm != null && flowsheets != null) {
             StringBuilder sb = new StringBuilder();
             sb.append("/openmrs/htmlformentryui/htmlform/flowsheet.page?");
-            sb.append("headerForm=pihmalawi:htmlforms/").append(headerForm).append(".xml");
+            sb.append("headerForm=file:configuration/htmlforms/").append(headerForm).append(".xml");
             for (String flowsheet : flowsheets) {
-                sb.append("&flowsheets=pihmalawi:htmlforms/").append(flowsheet).append(".xml");
+                sb.append("&flowsheets=file:configuration/htmlforms/").append(flowsheet).append(".xml");
             }
             sb.append("&dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard");
             return sb.toString();
