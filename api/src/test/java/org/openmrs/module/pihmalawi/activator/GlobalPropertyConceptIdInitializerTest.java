@@ -9,11 +9,11 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import java.util.List;
 import java.util.Map;
 
-public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContextSensitiveTest {
+public class GlobalPropertyConceptIdInitializerTest extends BaseModuleContextSensitiveTest {
 
     @Test
     public void shouldSetEveryGlobalPropertyToTheCurrentIdOfItsMappedConcept() {
-        for (Map.Entry<String, String> entry : GlobalPropertyConceptFixupInitializer.GLOBAL_PROPERTY_CONCEPT_UUIDS.entrySet()) {
+        for (Map.Entry<String, String> entry : GlobalPropertyConceptIdInitializer.GLOBAL_PROPERTY_CONCEPT_UUIDS.entrySet()) {
             String globalPropertyName = entry.getKey();
             String conceptUuid = entry.getValue();
 
@@ -25,9 +25,9 @@ public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContext
             Context.getConceptService().saveConcept(concept);
         }
 
-        new GlobalPropertyConceptFixupInitializer().started();
+        new GlobalPropertyConceptIdInitializer().started();
 
-        for (Map.Entry<String, String> entry : GlobalPropertyConceptFixupInitializer.GLOBAL_PROPERTY_CONCEPT_UUIDS.entrySet()) {
+        for (Map.Entry<String, String> entry : GlobalPropertyConceptIdInitializer.GLOBAL_PROPERTY_CONCEPT_UUIDS.entrySet()) {
             String globalPropertyName = entry.getKey();
             String conceptUuid = entry.getValue();
             Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
@@ -39,7 +39,7 @@ public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContext
     @Test
     public void shouldFailLoudlyIfAConceptCannotBeResolved() {
         try {
-            new GlobalPropertyConceptFixupInitializer().started();
+            new GlobalPropertyConceptIdInitializer().started();
             Assert.fail("Expected an IllegalStateException to be thrown");
         }
         catch (IllegalStateException e) {
@@ -56,12 +56,12 @@ public class GlobalPropertyConceptFixupInitializerTest extends BaseModuleContext
             if (initializers.get(i) instanceof MetadataInitializer) {
                 metadataIndex = i;
             }
-            if (initializers.get(i) instanceof GlobalPropertyConceptFixupInitializer) {
+            if (initializers.get(i) instanceof GlobalPropertyConceptIdInitializer) {
                 fixupIndex = i;
             }
         }
         Assert.assertTrue("MetadataInitializer should be present", metadataIndex >= 0);
-        Assert.assertTrue("GlobalPropertyConceptFixupInitializer should be present", fixupIndex >= 0);
-        Assert.assertTrue("GlobalPropertyConceptFixupInitializer must run after MetadataInitializer", fixupIndex > metadataIndex);
+        Assert.assertTrue("GlobalPropertyConceptIdInitializer should be present", fixupIndex >= 0);
+        Assert.assertTrue("GlobalPropertyConceptIdInitializer must run after MetadataInitializer", fixupIndex > metadataIndex);
     }
 }

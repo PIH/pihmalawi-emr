@@ -36,9 +36,9 @@ import java.util.Map;
  * for the JVM's lifetime. In practice this class runs early enough in startup that this hasn't
  * been observed, but it's a latent risk worth knowing about.
  */
-public class GlobalPropertyConceptFixupInitializer implements Initializer {
+public class GlobalPropertyConceptIdInitializer implements Initializer {
 
-    protected static final Log log = LogFactory.getLog(GlobalPropertyConceptFixupInitializer.class);
+    protected static final Log log = LogFactory.getLog(GlobalPropertyConceptIdInitializer.class);
 
     protected static final Map<String, String> GLOBAL_PROPERTY_CONCEPT_UUIDS;
     static {
