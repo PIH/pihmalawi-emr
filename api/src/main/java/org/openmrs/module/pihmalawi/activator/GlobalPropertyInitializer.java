@@ -87,12 +87,7 @@ public class GlobalPropertyInitializer implements Initializer {
         l.add(new Entry("concept.problemList", MetadataType.CONCEPT, CommonConcepts.Concepts.PROBLEM_LIST));
         l.add(new Entry("concept.reasonExitedCare", MetadataType.CONCEPT, CommonConcepts.Concepts.REASON_EXITED_CARE));
         l.add(new Entry("concept.reasonOrderStopped", MetadataType.CONCEPT, CommonConcepts.Concepts.REASON_ORDER_STOPPED));
-        // dashboard.header.showConcept accepts a comma-delimited list of concept ids to display;
-        // this install only shows CD4 count.
         l.add(new Entry("dashboard.header.showConcept", MetadataType.CONCEPT, CommonConcepts.Concepts.CD4_COUNT));
-        // dashboard.header.programs_to_show/workflows_to_show also accept comma-delimited lists
-        // (of program ids / program workflow ids respectively); this install shows just the HIV
-        // program and its treatment-status workflow.
         l.add(new Entry("dashboard.header.programs_to_show", MetadataType.PROGRAM, HivMetadata.HIV_PROGRAM_UUID));
         l.add(new Entry("dashboard.header.workflows_to_show", MetadataType.PROGRAM_WORKFLOW, HivMetadata.HIV_PROGRAM_TREATMENT_STATUS_UUID));
         GLOBAL_PROPERTY_METADATA_UUIDS = Collections.unmodifiableList(l);
