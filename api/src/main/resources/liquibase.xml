@@ -129,25 +129,11 @@
 	</changeSet>
 
 	<changeSet id="20260915-remove-stale-migrate-eid-test-results-task" author="mseaton">
+		<validCheckSum>9:2ce0c9064f1a1f86e33d54b0faa00297</validCheckSum>
 		<comment>
 			Remove the "Migrate EID Test Results" scheduled task, whose backing Java class has been
 			deleted, if a previous install ever had it scheduled. MLW-1846
 		</comment>
-		<!-- This changeset previously ran as a sqlFile with a buggy comment (a stray semicolon
-			 inside a # comment broke liquibase's statement splitter on real MySQL - #281). Any
-			 server/test instance that already ran that version successfully recorded its checksum;
-			 these validCheckSum entries (one per liquibase checksum algorithm version, since we
-			 don't know which was active when it ran) keep this changeset from failing checksum
-			 validation there when it re-parses to this native <delete> form. -->
-		<validCheckSum>9:2ce0c9064f1a1f86e33d54b0faa00297</validCheckSum>
-		<validCheckSum>8:ba065ab123570dd81a9022cf02efd02a</validCheckSum>
-		<validCheckSum>7:e2100fecabcde4307c04469222d49e95</validCheckSum>
-		<validCheckSum>6:72c24e72041cefe15dac16d4184a91ba</validCheckSum>
-		<validCheckSum>5:905903505b43b033d640b94afe5df420</validCheckSum>
-		<validCheckSum>4:320201204713cc9c6b0e94b50c74b02f</validCheckSum>
-		<validCheckSum>3:93f10f0687f6f9b90d1f82f7b0d6d333</validCheckSum>
-		<validCheckSum>2:18152c9b7fad7448db55a772ee62f557</validCheckSum>
-		<validCheckSum>1:21c5d5ca7c696ec803876ea29a72d7a7</validCheckSum>
 		<delete tableName="scheduler_task_config_property">
 			<where>task_config_id in (select task_config_id from scheduler_task_config where name = 'Migrate EID Test Results')</where>
 		</delete>
