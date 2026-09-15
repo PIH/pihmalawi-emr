@@ -7,7 +7,7 @@ angular.module('importVLRApp', ['ngDialog'])
           PATIENT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/patient",
           FIND_PATIENT: "/" + OPENMRS_CONTEXT_PATH + "/module/pihmalawi/findMatchingPatients.form",
           ENCOUNTER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter",
-          PATIENT_ART_MASTERCARD: "/" + OPENMRS_CONTEXT_PATH + "/htmlformentryui/htmlform/flowsheet.page?headerForm=pihmalawi:htmlforms/art_mastercard.xml&flowsheets=pihmalawi:htmlforms/viral_load_test_results.xml&flowsheets=pihmalawi:htmlforms/art_visit.xml&dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard&patientId="
+          PATIENT_ART_MASTERCARD: "/" + OPENMRS_CONTEXT_PATH + "/htmlformentryui/htmlform/flowsheet.page?headerForm=file:configuration/htmlforms/art-emastercard.xml&flowsheets=file:configuration/htmlforms/viral-load-tests.xml&flowsheets=file:configuration/htmlforms/art-visit.xml&dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard&patientId="
         },
         VL_SCREENING_ENCOUNTER_TYPE: "9959A261-2122-4AE1-A89D-1CA444B712EA",
         VL_TEST_SET: "83931c6d-0e5a-4302-b8ce-a31175b6475e",
