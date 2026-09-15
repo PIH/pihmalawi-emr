@@ -21,6 +21,7 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.Program;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.pihmalawi.metadata.HivMetadata;
 import org.openmrs.module.pihmalawi.metadata.concept.CommonConcepts;
 
 import java.util.ArrayList;
@@ -47,12 +48,6 @@ import java.util.List;
 public class GlobalPropertyInitializer implements Initializer {
 
     protected static final Log log = LogFactory.getLog(GlobalPropertyInitializer.class);
-
-    // The HIV program and its treatment-status workflow - no existing UUID constant class
-    // covers these (HivMetadata resolves programs/workflows by name, not by raw uuid), so they're
-    // named locally here rather than left as bare literals inline below.
-    protected static final String HIV_PROGRAM_UUID = "66850b0a-977f-11e1-8993-905e29aff6c1";
-    protected static final String HIV_TREATMENT_STATUS_WORKFLOW_UUID = "6686ffe6-977f-11e1-8993-905e29aff6c1";
 
     public enum MetadataType {
         CONCEPT, PROGRAM, PROGRAM_WORKFLOW
@@ -98,8 +93,8 @@ public class GlobalPropertyInitializer implements Initializer {
         // dashboard.header.programs_to_show/workflows_to_show also accept comma-delimited lists
         // (of program ids / program workflow ids respectively); this install shows just the HIV
         // program and its treatment-status workflow.
-        l.add(new Entry("dashboard.header.programs_to_show", MetadataType.PROGRAM, HIV_PROGRAM_UUID));
-        l.add(new Entry("dashboard.header.workflows_to_show", MetadataType.PROGRAM_WORKFLOW, HIV_TREATMENT_STATUS_WORKFLOW_UUID));
+        l.add(new Entry("dashboard.header.programs_to_show", MetadataType.PROGRAM, HivMetadata.HIV_PROGRAM_UUID));
+        l.add(new Entry("dashboard.header.workflows_to_show", MetadataType.PROGRAM_WORKFLOW, HivMetadata.HIV_PROGRAM_TREATMENT_STATUS_UUID));
         GLOBAL_PROPERTY_METADATA_UUIDS = Collections.unmodifiableList(l);
     }
 
