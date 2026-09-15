@@ -129,11 +129,17 @@
 	</changeSet>
 
 	<changeSet id="20260915-remove-stale-migrate-eid-test-results-task" author="mseaton">
+		<validCheckSum>9:2ce0c9064f1a1f86e33d54b0faa00297</validCheckSum>
 		<comment>
 			Remove the "Migrate EID Test Results" scheduled task, whose backing Java class has been
 			deleted, if a previous install ever had it scheduled. MLW-1846
 		</comment>
-		<sqlFile path="pihmalawiMigrations/removeStaleMigrateEIDTestResultsTask.sql" stripComments="true" />
+		<delete tableName="scheduler_task_config_property">
+			<where>task_config_id in (select task_config_id from scheduler_task_config where name = 'Migrate EID Test Results')</where>
+		</delete>
+		<delete tableName="scheduler_task_config">
+			<where>name = 'Migrate EID Test Results'</where>
+		</delete>
 	</changeSet>
 
 </databaseChangeLog>

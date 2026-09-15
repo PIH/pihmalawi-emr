@@ -6,19 +6,29 @@
 -- ## parameter = endDate|End Date|java.util.Date
 -- ## parameter = location|Location|org.openmrs.Location
 
+select patient_identifier_type_id into @hccNumberTypeId from patient_identifier_type where uuid = '66786256-977f-11e1-8993-905e29aff6c1'; -- HCC Number
+select patient_identifier_type_id into @deprecatedPartNumberTypeId from patient_identifier_type where uuid = '667858f6-977f-11e1-8993-905e29aff6c1'; -- z_deprecated PART Number
+select program_id into @hivProgramId from program where uuid = '66850b0a-977f-11e1-8993-905e29aff6c1'; -- HIV program
+select program_id into @preArtProgramId from program where uuid = '6685153c-977f-11e1-8993-905e29aff6c1'; -- PRE-ART PROGRAM
+select program_workflow_state_id into @preArtContinueStateId from program_workflow_state where uuid = '6687f284-977f-11e1-8993-905e29aff6c1'; -- Pre-ART (Continue)
+select encounter_type_id into @partInitialType from encounter_type where uuid = '664b8736-977f-11e1-8993-905e29aff6c1'; -- PART_INITIAL
+select encounter_type_id into @partFollowupType from encounter_type where uuid = '664b8812-977f-11e1-8993-905e29aff6c1'; -- PART_FOLLOWUP
+select concept_id into @clinicianReportedCd4ConceptId from concept where uuid = '6565b94a-977f-11e1-8993-905e29aff6c1'; -- Clinician reported to CD4
+select concept_id into @cd4ConceptId from concept where uuid = '656c327a-977f-11e1-8993-905e29aff6c1'; -- CD4
+
 drop temporary table if exists PS; -- Create a temporary table to store cohort with state Pre-ART (continue)
 create temporary table PS as
 select * from
 (select state, end_date, patient_state.voided, patient_program.patient_id, patient_program.date_created, patient_state.patient_program_id, patient_program.location_id
 from patient_state
 join patient_program on patient_state.patient_program_id = patient_program.patient_program_id
-join (select * from patient_identifier where voided = 0 and identifier_type = 19) pi on pi.patient_id = patient_program.patient_id
+join (select * from patient_identifier where voided = 0 and identifier_type = @hccNumberTypeId) pi on pi.patient_id = patient_program.patient_id
 where (end_date > @endDate or end_date IS NULL)
 and start_date < @endDate
-and patient_program.program_id in (1,9)
+and patient_program.program_id in (@hivProgramId,@preArtProgramId)
 and patient_program.voided = 0
 and (patient_program.date_completed > @endDate or patient_program.date_completed is NULL)
-and state=1
+and state=@preArtContinueStateId
 and patient_program.location_id = @location
 and patient_state.voided = 0
 order by patient_program.date_created desc) PSi
@@ -40,14 +50,14 @@ l.name as Enrollment_location
 
 from PS
 
-left join (select * from (select patient_identifier.patient_id, identifier, patient_identifier.location_id from patient_identifier where identifier_type in (13,19) and identifier_type = 19 and voided=0 order by patient_identifier.identifier_type desc) pii) PI on PS.patient_id = PI.patient_id  and PI.location_id = PS.location_id -- Grab patient identifiers
+left join (select * from (select patient_identifier.patient_id, identifier, patient_identifier.location_id from patient_identifier where identifier_type in (@deprecatedPartNumberTypeId,@hccNumberTypeId) and identifier_type = @hccNumberTypeId and voided=0 order by patient_identifier.identifier_type desc) pii) PI on PS.patient_id = PI.patient_id  and PI.location_id = PS.location_id -- Grab patient identifiers
 
 join (select voided, person.person_id from person where person.voided=0) pii on pii.person_id = PS.patient_id -- Ensure persons are not voided
 
 left join
 (select * from (select patient_id, encounter_datetime as Last_Encounter, location_id as ENC_loc
 from encounter
-where encounter_type in (11,12) and encounter_datetime <=@endDate and voided = 0 order by encounter_datetime desc) ENCi
+where encounter_type in (@partInitialType,@partFollowupType) and encounter_datetime <=@endDate and voided = 0 order by encounter_datetime desc) ENCi
 group by patient_id) ENC
 on PS.patient_id = ENC.patient_id -- Ensure patients had a visit in the last year (eliminates hundreds of patients with active state, but not really active)
 
@@ -57,7 +67,7 @@ left join
 (select * from (select concept_id, person_id, patient_id, form_id, obs_datetime, value_numeric, obs.encounter_id
 from obs
 left join encounter on obs.encounter_id = encounter.encounter_id
-where obs_datetime <= @endDate and concept_id in (3434,5497) and encounter.voided = 0 and obs.voided = 0 order by obs_datetime desc) OBi67
+where obs_datetime <= @endDate and concept_id in (@clinicianReportedCd4ConceptId,@cd4ConceptId) and encounter.voided = 0 and obs.voided = 0 order by obs_datetime desc) OBi67
 group by person_id) OBSCD4
 on PS.patient_id = OBSCD4.person_id -- Grab CD4 obs. There might be a conflict here between the concepts, but it shouldn't effect Pre-ART patients (concept 5497 is also on the ART e-mastercard header)
 

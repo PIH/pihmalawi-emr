@@ -997,6 +997,8 @@ BEGIN
 	);
 	CREATE INDEX PID_index ON temp_obs_vector (PID);
 
+	select concept_id into @apptDateConceptId from concept where uuid = '6569cbd4-977f-11e1-8993-905e29aff6c1'; -- Appointment date
+
 	SET @s=CONCAT('insert into temp_obs_vector
 					(PID, obs)
 					select patient_id, value_datetime 
@@ -1010,7 +1012,7 @@ BEGIN
 							group by patient_id) e
 					join (select encounter_id, value_datetime 
 							from obs 
-							where concept_id = 5096
+							where concept_id = @apptDateConceptId
 							and voided = 0) o
 							on o.encounter_id = e.encounter_id;');
 				
