@@ -1,10 +1,6 @@
 <config>
     <globalProperties>
         <globalProperty>
-            <property>concept.unknown</property>
-            <value>65576584-977f-11e1-8993-905e29aff6c1</value>
-        </globalProperty>
-        <globalProperty>
             <property>dashboard.identifiers</property>
             <value>{"9":["ARV Number","HCC Number","KS Number","Chronic Care Number","Palliative Care Number","PDC Identifier","Nutrition Program Number","TB program identifier"]}</value>
         </globalProperty>
@@ -125,54 +121,6 @@
             <value>true</value>
         </globalProperty>
         <globalProperty>
-            <property>concept.causeOfDeath</property>
-            <value>5002</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.false</property>
-            <value>2258</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.height</property>
-            <value>5090</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.medicalRecordObservations</property>
-            <value>1238</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.none</property>
-            <value>1107</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.otherNonCoded</property>
-            <value>5622</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.patientDied</property>
-            <value>1742</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.problemList</property>
-            <value>1284</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.reasonExitedCare</property>
-            <value>1811</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.reasonOrderStopped</property>
-            <value>1812</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.true</property>
-            <value>2257</value>
-        </globalProperty>
-        <globalProperty>
-            <property>concept.weight</property>
-            <value>5089</value>
-        </globalProperty>
-        <globalProperty>
             <property>coreapps.conceptStickyNote</property>
             <value>CIEL:162169</value>
         </globalProperty>
@@ -191,10 +139,6 @@
         <globalProperty>
             <property>dashboard.header.programs_to_show</property>
             <value>1</value>
-        </globalProperty>
-        <globalProperty>
-            <property>dashboard.header.showConcept</property>
-            <value>5497</value>
         </globalProperty>
         <globalProperty>
             <property>dashboard.header.workflows_to_show</property>
