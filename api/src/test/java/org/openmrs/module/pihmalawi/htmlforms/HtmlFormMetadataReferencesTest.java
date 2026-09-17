@@ -221,7 +221,17 @@ public class HtmlFormMetadataReferencesTest {
             }
         }
         for (MacroFinding f : macroFindings) {
-            if (INT_PATTERN.matcher(f.value).matches() || INT_LIST_PATTERN.matcher(f.value).matches()) {
+            // Catches both a macro whose whole value is a bare integer/integer list, and a mixed
+            // comma list (e.g. some uuids, some raw ids) where only some tokens are raw integers -
+            // regimenOptions was exactly this shape and was missed until a runtime failure surfaced it.
+            boolean anyIntegerToken = false;
+            for (String token : f.value.split(",")) {
+                if (INT_PATTERN.matcher(token.trim()).matches()) {
+                    anyIntegerToken = true;
+                    break;
+                }
+            }
+            if (anyIntegerToken) {
                 violations.add(f.file + ":" + f.line + " macro " + f.name + "=" + f.value);
             }
         }
