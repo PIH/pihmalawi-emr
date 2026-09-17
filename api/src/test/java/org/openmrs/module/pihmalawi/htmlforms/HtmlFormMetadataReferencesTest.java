@@ -221,7 +221,7 @@ public class HtmlFormMetadataReferencesTest {
             }
         }
         for (MacroFinding f : macroFindings) {
-            if (INT_PATTERN.matcher(f.value).matches()) {
+            if (INT_PATTERN.matcher(f.value).matches() || INT_LIST_PATTERN.matcher(f.value).matches()) {
                 violations.add(f.file + ":" + f.line + " macro " + f.name + "=" + f.value);
             }
         }
