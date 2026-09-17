@@ -66,86 +66,86 @@
                         <encounterDate />
                     </td>
                     <!-- Weight -->
-                    <td><obs conceptId="5089" /></td>
+                    <td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- Height -->
-                    <td><obs conceptId="5090" /></td>
+                    <td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- BSA -->
-                    <td><obs conceptId="3649" /></td>
+                    <td><obs conceptId="6566f364-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- BMI -->
-                    <td><obs conceptId="2137" /></td>
+                    <td><obs conceptId="655d615a-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- Diagnosis -->
                     <td>
-                        <obs conceptId="3596" answerConceptId="3592" answerLabel="Clinical"
+                        <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566b8c2-977f-11e1-8993-905e29aff6c1" answerLabel="Clinical"
                     style="checkbox" />
-                        <obs conceptId="3596" answerConceptId="3593" answerLabel="Biopsy proven"
+                        <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566b9d0-977f-11e1-8993-905e29aff6c1" answerLabel="Biopsy proven"
                     style="checkbox" />
-                        <obs conceptId="3596" answerConceptId="3597" answerLabel="Results" />
+                        <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566bdf4-977f-11e1-8993-905e29aff6c1" answerLabel="Results" />
                     </td>
                     <!-- Evaluation Period -->
-                    <td><obs conceptId="3648" /></td>
+                    <td><obs conceptId="6566f256-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- On ARVs -->
                     <td>
-                        <obs conceptId="1622"  style="yes_no"/>
-                        <obs conceptId="1251" />
+                        <obs conceptId="655a9d30-977f-11e1-8993-905e29aff6c1"  style="yes_no"/>
+                        <obs conceptId="655896c0-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <!-- Date of HIV dx -->
-                    <td><obs conceptId="2515" /></td>
+                    <td><obs conceptId="655f9d08-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- CD4 at HIV dx -->
-                    <td><obs conceptId="5497" showDate="true" /></td>
+                    <td><obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1" showDate="true" /></td>
                     <!-- ARV regimen -->
-                    <td><obs conceptId="2538" /></td>
+                    <td><obs conceptId="655fb676-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- Worsening KS Sx on ARV? -->
-                    <td><obs conceptId="3599" style="yes_no" /></td>
+                    <td><obs conceptId="6566c006-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- History of OI's? -->
-                    <td><obs conceptId="3600" style="yes_no" /></td>
+                    <td><obs conceptId="6566c10a-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- Patient able to work or do daily activities: -->
-                    <td><obs conceptId="2064" style="yes_no" /></td>
+                    <td><obs conceptId="655d1164-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- Patient able to eat (oral lesions): -->
-                    <td><obs conceptId="3602" style="yes_no" /></td>
+                    <td><obs conceptId="6566c312-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- Patient able to walk: -->
-                    <td><obs conceptId="3601" style="yes_no" /></td>
+                    <td><obs conceptId="6566c20e-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- Patient c/o cough: -->
-                    <td><obs conceptId="3650" style="yes_no" /></td>
+                    <td><obs conceptId="6566f472-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
                     <!-- Pain (0-10) -->
-                    <td><obs conceptId="3604" /></td>
-                    <obsgroup groupingConceptId="1337">
+                    <td><obs conceptId="6566c524-977f-11e1-8993-905e29aff6c1" /></td>
+                    <obsgroup groupingConceptId="65590696-977f-11e1-8993-905e29aff6c1">
                         <repeat>
                             <template>
                                     <td><obs conceptId="{conceptId}" showDate="{date}" style="radio" /></td>
                             </template>
-                            <render conceptId="5497" label="Most recent CD4 and date"
+                            <render conceptId="656c327a-977f-11e1-8993-905e29aff6c1" label="Most recent CD4 and date"
                                 date="true" />
-                            <render conceptId="678" date="false"  />
-                            <render conceptId="1022" date="false"  />
-                            <render conceptId="1021" date="false"  />
-                            <render conceptId="21" date="false"  />
-                            <render conceptId="729" date="false" />
-                            <render conceptId="653" date="false"
+                            <render conceptId="6549a3b8-977f-11e1-8993-905e29aff6c1" date="false"  />
+                            <render conceptId="654b81b0-977f-11e1-8993-905e29aff6c1" date="false"  />
+                            <render conceptId="654b7fee-977f-11e1-8993-905e29aff6c1" date="false"  />
+                            <render conceptId="6545ab32-977f-11e1-8993-905e29aff6c1" date="false"  />
+                            <render conceptId="6549da2c-977f-11e1-8993-905e29aff6c1" date="false" />
+                            <render conceptId="6549656a-977f-11e1-8993-905e29aff6c1" date="false"
                                 answer="/L" />
-                            <render conceptId="654" date="false" />
-                            <render conceptId="3612" date="false" />
-                            <render conceptId="1342" date="false" />
+                            <render conceptId="65497014-977f-11e1-8993-905e29aff6c1" date="false" />
+                            <render conceptId="6566cd58-977f-11e1-8993-905e29aff6c1" date="false" />
+                            <render conceptId="65590bdc-977f-11e1-8993-905e29aff6c1" date="false" />
                         </repeat>
                     </obsgroup>
                     <!-- Number of Lesions -->
-                    <td><obs conceptId="3605" /></td>
+                    <td><obs conceptId="6566c628-977f-11e1-8993-905e29aff6c1" /></td>
                         <repeat>
                             <template>
-                                <td><obs conceptId="3610" answerConceptId="{conceptId}" labelText="" style="yes_no" /></td>
+                                <td><obs conceptId="6566cb46-977f-11e1-8993-905e29aff6c1" answerConceptId="{conceptId}" labelText="" style="yes_no" /></td>
                             </template>
                                 <!-- oral lesions, visceral localizations, oedema, ulcerations, lymphadenopathy -->
-                            <render conceptId="3606" />
-                            <render conceptId="3607"  />
-                            <render conceptId="460"  />
-                            <render conceptId="3608" />
-                            <render conceptId="161"  />
+                            <render conceptId="6566c72c-977f-11e1-8993-905e29aff6c1" />
+                            <render conceptId="6566c830-977f-11e1-8993-905e29aff6c1"  />
+                            <render conceptId="65485940-977f-11e1-8993-905e29aff6c1"  />
+                            <render conceptId="6566c93e-977f-11e1-8993-905e29aff6c1" />
+                            <render conceptId="65469a24-977f-11e1-8993-905e29aff6c1"  />
                         </repeat>
                     <!-- Location -->
-                    <td><obs conceptId="3358" /></td>
+                    <td><obs conceptId="656421d4-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- Classification TS at present -->
-                    <td><obs conceptId="3615" /><obs conceptId="3621" /></td>
+                    <td><obs conceptId="6566d064-977f-11e1-8993-905e29aff6c1" /><obs conceptId="6566d686-977f-11e1-8993-905e29aff6c1" /></td>
                     <!-- HAART -->
-                    <td><obs conceptId="2516" /></td>
+                    <td><obs conceptId="655f9eb6-977f-11e1-8993-905e29aff6c1" /></td>
                 </tr>
             </tbody>
             </table>
@@ -185,83 +185,83 @@
             </tr>
             <tr>
                 <th>Weight</th>
-                <td><obs conceptId="5089" /></td>
+                <td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Height</th>
-                <td><obs conceptId="5090" /></td>
+                <td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>BSA</th>
-                <td><obs conceptId="3649" /></td>
+                <td><obs conceptId="6566f364-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>BMI</th>
-                <td><obs conceptId="2137" /></td>
+                <td><obs conceptId="655d615a-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Diagnosis</th>
                 <td>
-                    <obs conceptId="3596" answerConceptId="3592" answerLabel="Clinical"
+                    <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566b8c2-977f-11e1-8993-905e29aff6c1" answerLabel="Clinical"
                 style="checkbox" />
-                    <obs conceptId="3596" answerConceptId="3593" answerLabel="Biopsy proven"
+                    <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566b9d0-977f-11e1-8993-905e29aff6c1" answerLabel="Biopsy proven"
                 style="checkbox" />
-                    <obs conceptId="3596" answerConceptId="3597" answerLabel="results:" />
+                    <obs conceptId="6566bce6-977f-11e1-8993-905e29aff6c1" answerConceptId="6566bdf4-977f-11e1-8993-905e29aff6c1" answerLabel="results:" />
                 </td>
             </tr>
             <tr>
                 <th>Evaluation<br/>Period</th>
-                <td><obs conceptId="3648" /></td>
+                <td><obs conceptId="6566f256-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Patient <br/>on ARVs</th>
-                <td><obs conceptId="1622" style="yes_no" /><br/>
-                <obs conceptId="1251" /></td>
+                <td><obs conceptId="655a9d30-977f-11e1-8993-905e29aff6c1" style="yes_no" /><br/>
+                <obs conceptId="655896c0-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Date of<br/> HIV Dx</th>
-                <td><obs conceptId="2515" /></td>
+                <td><obs conceptId="655f9d08-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>CD4 at<br/> HIV Dx</th>
-                <td><obs conceptId="5497" showDate="true" /></td>
+                <td><obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1" showDate="true" /></td>
             </tr>
             <tr>
                 <th>ARV Regimen</th>
-                <td><obs conceptId="2538" /></td>
+                <td><obs conceptId="655fb676-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Worsening KS <br/> Sx on ARV</th>
-                <td><obs conceptId="3599" style="yes_no" /></td>
+                <td><obs conceptId="6566c006-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>History <br/>of OI's</th>
-                <td><obs conceptId="3600" style="yes_no" /></td>
+                <td><obs conceptId="6566c10a-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>Patient able to work<br/>or do daily activities</th>
-                <td><obs conceptId="2064" style="yes_no" /></td>
+                <td><obs conceptId="655d1164-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>Patient able to<br/>eat (oral lesions)</th>
-                <td><obs conceptId="3602" style="yes_no" /></td>
+                <td><obs conceptId="6566c312-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>Patient able<br/>to walk</th>
-                <td><obs conceptId="3601" style="yes_no" /></td>
+                <td><obs conceptId="6566c20e-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>Patient<br/>c/o cough</th>
-                <td><obs conceptId="3650" style="yes_no" /></td>
+                <td><obs conceptId="6566f472-977f-11e1-8993-905e29aff6c1" style="yes_no" /></td>
             </tr>
             <tr>
                 <th>Pain (0-10)</th>
-                <td><obs conceptId="3604" /></td>
+                <td><obs conceptId="6566c524-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th colspan="2"><h3>Laboratory</h3></th>
             </tr>
-                <obsgroup groupingConceptId="1337">
+                <obsgroup groupingConceptId="65590696-977f-11e1-8993-905e29aff6c1">
                     <repeat>
                         <template>
                             <tr>
@@ -270,20 +270,20 @@
                                 style="radio" /> {answer}</td>
                             </tr>
                         </template>
-                        <render conceptId="5497" label="Most recent CD4 and date"
+                        <render conceptId="656c327a-977f-11e1-8993-905e29aff6c1" label="Most recent CD4 and date"
                             date="true" answer="" />
-                        <render conceptId="678" label="WBC" date="false" answer="[/uL]" />
-                        <render conceptId="1022" label="ANC" date="false" answer="[%]" />
-                        <render conceptId="1021" label="TLC" date="false" answer="[%]" />
-                        <render conceptId="21" label="HGB" date="false" answer="/[dL]" />
-                        <render conceptId="729" label="PLT" date="false" answer="[/ul]" />
-                        <render conceptId="653" label="SGOT (AST)" date="false"
+                        <render conceptId="6549a3b8-977f-11e1-8993-905e29aff6c1" label="WBC" date="false" answer="[/uL]" />
+                        <render conceptId="654b81b0-977f-11e1-8993-905e29aff6c1" label="ANC" date="false" answer="[%]" />
+                        <render conceptId="654b7fee-977f-11e1-8993-905e29aff6c1" label="TLC" date="false" answer="[%]" />
+                        <render conceptId="6545ab32-977f-11e1-8993-905e29aff6c1" label="HGB" date="false" answer="/[dL]" />
+                        <render conceptId="6549da2c-977f-11e1-8993-905e29aff6c1" label="PLT" date="false" answer="[/ul]" />
+                        <render conceptId="6549656a-977f-11e1-8993-905e29aff6c1" label="SGOT (AST)" date="false"
                             answer="[/L]" />
-                        <render conceptId="654" label="SGPT (ALT)" date="false"
+                        <render conceptId="65497014-977f-11e1-8993-905e29aff6c1" label="SGPT (ALT)" date="false"
                             answer="[/L]" />
-                        <render conceptId="3612" label="Stool Guaic Occult" date="false"
+                        <render conceptId="6566cd58-977f-11e1-8993-905e29aff6c1" label="Stool Guaic Occult" date="false"
                             answer="" />
-                        <render conceptId="1342" label="CXR (Comments)" date="false"
+                        <render conceptId="65590bdc-977f-11e1-8993-905e29aff6c1" label="CXR (Comments)" date="false"
                             answer="" />
                     </repeat>
                 </obsgroup>
@@ -292,32 +292,32 @@
             </tr>                
             <tr>
                 <th>Number <br/>of Lesions</th>
-                <td><obs conceptId="3605" /></td>
+                <td><obs conceptId="6566c628-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <repeat>
                 <template>
                     <tr>
-                        <th>{label}</th><td><obs conceptId="3610" answerConceptId="{conceptId}"  style="yes_no" /></td>
+                        <th>{label}</th><td><obs conceptId="6566cb46-977f-11e1-8993-905e29aff6c1" answerConceptId="{conceptId}"  style="yes_no" /></td>
                     </tr>
                 </template>
                     <!-- oral lesions, visceral localizations, oedema, ulcerations, lymphadenopathy -->
-                <render conceptId="3606" label="Oral lesions:" />
-                <render conceptId="3607" label="Visceral localizations:" />
-                <render conceptId="460" label="Oedema:" />
-                <render conceptId="3608" label="Ulcerations:" />
-                <render conceptId="161" label="Lymphadenopathy:" />
+                <render conceptId="6566c72c-977f-11e1-8993-905e29aff6c1" label="Oral lesions:" />
+                <render conceptId="6566c830-977f-11e1-8993-905e29aff6c1" label="Visceral localizations:" />
+                <render conceptId="65485940-977f-11e1-8993-905e29aff6c1" label="Oedema:" />
+                <render conceptId="6566c93e-977f-11e1-8993-905e29aff6c1" label="Ulcerations:" />
+                <render conceptId="65469a24-977f-11e1-8993-905e29aff6c1" label="Lymphadenopathy:" />
             </repeat>
             <tr>
                 <th>Location</th>
-                <td><obs conceptId="3358" /></td>
+                <td><obs conceptId="656421d4-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Classification<br/>TS at present</th>
-                <td><obs conceptId="3615" /><obs conceptId="3621" /></td>
+                <td><obs conceptId="6566d064-977f-11e1-8993-905e29aff6c1" /><obs conceptId="6566d686-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>HAART <br/>Start Date</th>
-                <td><obs conceptId="2516" /></td>
+                <td><obs conceptId="655f9eb6-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
                
         </table>

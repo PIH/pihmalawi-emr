@@ -81,7 +81,7 @@
 					<tr>
 						<td>Agrees to FUP</td>
 						<td>
-							<obs conceptId="2552" style="radio" />
+							<obs conceptId="655fc526-977f-11e1-8993-905e29aff6c1" style="radio" />
 						</td>
 					</tr>
 					<tr>
@@ -130,73 +130,73 @@
 					<tr>
 						<td>Clinic Stage</td>
 						<td style="white-space: nowrap;">
-							<obs conceptId="1480" style="radio" answerConceptIds="1204,1205,1206,1207"
+							<obs conceptId="6559f286-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="65585dae-977f-11e1-8993-905e29aff6c1,65585ec6-977f-11e1-8993-905e29aff6c1,65585fde-977f-11e1-8993-905e29aff6c1,655860f6-977f-11e1-8993-905e29aff6c1"
 								answerLabels="1,2,3,4" />
-							<obs conceptId="7036" style="checkbox" answerConceptId="1065"
+							<obs conceptId="657494e2-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1"
 								answerLabel="Pres" />
 						</td>
 					</tr>
 					<tr>
 						<td>CD4/TLC</td>
 						<td>
-							<obs conceptId="5497" labelText="" />
-							<obs conceptId="730" labelText="" />
+							<obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1" labelText="" />
+							<obs conceptId="6549db44-977f-11e1-8993-905e29aff6c1" labelText="" />
 							%
 						</td>
 					</tr>
 					<tr>
 						<td>CD4/TLC Date</td>
 						<td>
-							<obs conceptId="3461" />
+							<obs conceptId="65661dc2-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Height, Wt</td>
 						<td>
-							<obs conceptId="5090" />
-							<obs conceptId="5089" />
+							<obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
+							<obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Age at init</td>
 						<td>
-							<obs conceptId="3467" />
+							<obs conceptId="6566247a-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>TB status at initiation</td>
 						<td>
-							<obs conceptId="1568" style="radio" answerConceptIds="1067,1714,1432" answerLabels="None,Past,Curr" />
+							<obs conceptId="655a5f5a-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="65576584-977f-11e1-8993-905e29aff6c1,655b3ccc-977f-11e1-8993-905e29aff6c1,6559c054-977f-11e1-8993-905e29aff6c1" answerLabels="None,Past,Curr" />
 						</td>
 					</tr>
 					<tr>
 						<td>KS</td>
 						<td>
-							<obs conceptId="3599" style="no_yes" noLabel="NO" yesLabel="YES" />
+							<obs conceptId="6566c006-977f-11e1-8993-905e29aff6c1" style="no_yes" noLabel="NO" yesLabel="YES" />
 						</td>
 					</tr>
 					<tr>
 						<td>Pregnant at initiation</td>
 						<td>
-							<obs conceptId="6131" style="radio" />
+							<obs conceptId="656fbd28-977f-11e1-8993-905e29aff6c1" style="radio" />
 						</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap;">Ever taken ARVs</td>
 						<td>
-							<obs conceptId="7754" style="radio" />
+							<obs conceptId="65789c4a-977f-11e1-8993-905e29aff6c1" style="radio" />
 						</td>
 					</tr>
 					<tr>
 						<td>Last ARVs Date</td>
 						<td>
-							<obs conceptId="7751" />
+							<obs conceptId="65789934-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Last ARVs Drug</td>
 						<td>
-							<obs conceptId="7753" />
+							<obs conceptId="65789b46-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 				</table>
@@ -211,19 +211,19 @@
 					<tr>
 						<td>Date</td>
 						<td>
-							<obs conceptId="2515" />
+							<obs conceptId="655f9d08-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td> Place</td>
 						<td>
-							<obs conceptId="2170" />
+							<obs conceptId="655dcc8a-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Type</td>
 						<td>
-							<obs conceptId="6982" style="radio" answerConceptIds="1040,844"
+							<obs conceptId="6574552c-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="654b983a-977f-11e1-8993-905e29aff6c1,654a6960-977f-11e1-8993-905e29aff6c1"
 								answerLabels="Rapid,PCR" />
 						</td>
 					</tr>
@@ -238,23 +238,23 @@
 						<td>
 							d4T 3TC NVP
 							<br />
-							<obs conceptId="6132" />
+							<obs conceptId="656fbe36-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Alt 1st Line</td>
 						<td>
-							<obs conceptId="2589" answerConceptIds="6878,1610,1613,1612,6880,2988,6408"
+							<obs conceptId="655ff0f0-977f-11e1-8993-905e29aff6c1" answerConceptIds="6573e2fe-977f-11e1-8993-905e29aff6c1,655a90b0-977f-11e1-8993-905e29aff6c1,655a93da-977f-11e1-8993-905e29aff6c1,655a92cc-977f-11e1-8993-905e29aff6c1,6573e506-977f-11e1-8993-905e29aff6c1,65623c02-977f-11e1-8993-905e29aff6c1,657140f8-977f-11e1-8993-905e29aff6c1"
 								answerLabels="1L (D4T + 3TC + NVP), AZT (AZT + 3TC + NVP), EFV (D4T + 3TC + EFV), AZTEFV (AZT + 3TC + EFV), 2Ad (AZT + 3TC + TDF + LPV/R), 2Ch (DDI + ABC + LPV/R), NS (Non-standard)" />
-							<obs conceptId="2528" />
+							<obs conceptId="655fabfe-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>2nd Line</td>
 						<td>
-							<obs conceptId="2589" answerConceptIds="6878,1610,1613,1612,6880,2988,6408"
+							<obs conceptId="655ff0f0-977f-11e1-8993-905e29aff6c1" answerConceptIds="6573e2fe-977f-11e1-8993-905e29aff6c1,655a90b0-977f-11e1-8993-905e29aff6c1,655a93da-977f-11e1-8993-905e29aff6c1,655a92cc-977f-11e1-8993-905e29aff6c1,6573e506-977f-11e1-8993-905e29aff6c1,65623c02-977f-11e1-8993-905e29aff6c1,657140f8-977f-11e1-8993-905e29aff6c1"
 								answerLabels="1L (D4T + 3TC + NVP), AZT (AZT + 3TC + NVP), EFV (D4T + 3TC + EFV), AZTEFV (AZT + 3TC + EFV), 2Ad (AZT + 3TC + TDF + LPV/R), 2Ch (DDI + ABC + LPV/R), NS (Non-standard)" />
-							<obs conceptId="2529" />
+							<obs conceptId="655fad02-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 				</table>
@@ -267,7 +267,7 @@
 	<b>
 		<big>Visits</big>
 	</b>
-	<htmlformflowsheet formId="56" />
+	<htmlformflowsheet formId="749a14b9-07e4-43ee-b24d-6f7a50e0c8fe" />
 	<hr />
 	<br />
 

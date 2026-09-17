@@ -42,41 +42,41 @@
 				<encounterDate  default="today"/>
 			</td>
 			<td>
-				<obs conceptId="5090" />
+				<obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="5089" />
+				<obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="1822"/>
+				<obs conceptId="655bba76-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 			<td>
-				<obs conceptId="3571" style="list" answerConceptIds="1107,58,1291,3569,43,2709,60,3570,123" answerLabels="none,TB,fever 4wks,oral thrush 8wks,pneumonia,diarrhoea 2wks,meningitis,other WHO condition,malaria"/>
+				<obs conceptId="65669590-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="6557987e-977f-11e1-8993-905e29aff6c1,6545d15c-977f-11e1-8993-905e29aff6c1,6558d1a8-977f-11e1-8993-905e29aff6c1,6566937e-977f-11e1-8993-905e29aff6c1,6545c176-977f-11e1-8993-905e29aff6c1,6560b4ea-977f-11e1-8993-905e29aff6c1,6545d36e-977f-11e1-8993-905e29aff6c1,65669482-977f-11e1-8993-905e29aff6c1,65461b8a-977f-11e1-8993-905e29aff6c1" answerLabels="none,TB,fever 4wks,oral thrush 8wks,pneumonia,diarrhoea 2wks,meningitis,other WHO condition,malaria"/>
 			</td>
 			<td>
-				<obs conceptId="1310" style="radio" answerConceptIds="1115,1311,1312"/>
+				<obs conceptId="6558e580-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6557a15c-977f-11e1-8993-905e29aff6c1,6558e68e-977f-11e1-8993-905e29aff6c1,6558e792-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 			<td>
-				<obs conceptId="1151" answerConceptIds="1152,5526,5254,6046" style="radio"/>
+				<obs conceptId="6557e504-977f-11e1-8993-905e29aff6c1" answerConceptIds="6557e69e-977f-11e1-8993-905e29aff6c1,656c5264-977f-11e1-8993-905e29aff6c1,656ac570-977f-11e1-8993-905e29aff6c1,656f5c2a-977f-11e1-8993-905e29aff6c1" style="radio"/>
 			</td>
 			<td>
-				<obs conceptId="3587" style="checkbox"/>
+				<obs conceptId="6566b05c-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
 			</td>
 			<td>
-				<obs conceptId="3657" style="checkbox"/>
-				<obs conceptId="1040" style="list" answerConceptIds="664,703,1138" answerLabels="negative,positive,indeterminate"/>
+				<obs conceptId="6566fbb6-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
+				<obs conceptId="654b983a-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="654994c2-977f-11e1-8993-905e29aff6c1,6549be7a-977f-11e1-8993-905e29aff6c1,6557baa2-977f-11e1-8993-905e29aff6c1" answerLabels="negative,positive,indeterminate"/>
 			</td>
 			<td>
-				<obs conceptId="844" style="list" answerConceptIds="664,703,1138" answerLabels="negative,positive,indeterminate"/>
+				<obs conceptId="654a6960-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="654994c2-977f-11e1-8993-905e29aff6c1,6549be7a-977f-11e1-8993-905e29aff6c1,6557baa2-977f-11e1-8993-905e29aff6c1" answerLabels="negative,positive,indeterminate"/>
 			</td>
 			<td>
-				<obs conceptId="1623" style="checkbox"/>
+				<obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
 			</td>
 			<td>
-				<obs conceptId="5497"/>/<obs conceptId="730"/>
+				<obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1"/>/<obs conceptId="6549db44-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 			<td>
-				<obs conceptId="5096" allowFutureDates="true"/>
+				<obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true"/>
 			</td>
 		</tr>
 		<tr>

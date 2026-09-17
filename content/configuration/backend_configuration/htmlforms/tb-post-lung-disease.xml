@@ -14,9 +14,9 @@
         <macro key="week" value="655849e0-977f-11e1-8993-905e29aff6c1"/>
         <macro key="secondVisit" value="76a7f807-80ad-4043-aca4-2cf2b3211268"/>
 
-        noAnswer=1066
-        yesAnswer=1065
-        nextAppt=5096
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>

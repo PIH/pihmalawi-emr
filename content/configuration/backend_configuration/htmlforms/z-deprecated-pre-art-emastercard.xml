@@ -78,7 +78,7 @@
 					<tr>
 						<td>Agrees to FUP</td>
 						<td>
-							<obs conceptId="2552" style="radio" />
+							<obs conceptId="655fc526-977f-11e1-8993-905e29aff6c1" style="radio" />
 						</td>
 					</tr>
 					<tr>
@@ -119,7 +119,7 @@
 					<tr>
 						<td>Clinic Stage</td>
 						<td>
-							<obs conceptId="1480" style="radio" answerConceptIds=",1204,1205,1206,1207,1067"
+							<obs conceptId="6559f286-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds=",65585dae-977f-11e1-8993-905e29aff6c1,65585ec6-977f-11e1-8993-905e29aff6c1,65585fde-977f-11e1-8993-905e29aff6c1,655860f6-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1"
 								answerLabels="1,2,3,4,Unknown" />
 							(todo: Pres)
 						</td>
@@ -132,19 +132,19 @@
 					<tr>
 						<td>Date</td>
 						<td>
-							<obs conceptId="2515" />
+							<obs conceptId="655f9d08-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td> Place</td>
 						<td>
-							<obs conceptId="2170" />
+							<obs conceptId="655dcc8a-977f-11e1-8993-905e29aff6c1" />
 						</td>
 					</tr>
 					<tr>
 						<td>Type</td>
 						<td>
-							<obs conceptId="6982" style="radio" answerConceptIds="1040,844"
+							<obs conceptId="6574552c-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="654b983a-977f-11e1-8993-905e29aff6c1,654a6960-977f-11e1-8993-905e29aff6c1"
 								answerLabels="Rapid,PCR" />
 							(todo: Unknown)
 						</td>
@@ -159,6 +159,6 @@
 	<b>
 		<big>Visits</big>
 	</b>
-	<htmlformflowsheet formId="61" />
+	<htmlformflowsheet formId="d3869141-c3e9-45d4-b25b-354aa6802ff2" />
 
 </htmlform>

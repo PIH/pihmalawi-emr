@@ -11,40 +11,40 @@
 
 
     <macros>
-        chronicCareDiagnosis=3683
-        plannedVisit=1246
-        noAnswer=1066
-        yesAnswer=1065
-        height=5090
-        weight=5089
-        daysx=8436
-        nightsx=8437
-        baDay=8438
-        baWk=8439
-        baMo=8440
-        baYr=8441
-        steroidUse=8442
-        smoking=6161
-        secondHandSmoke=8443
-        cookingLocation=8404
-        indoor=2437
-        outdoor=2438
-        exacerbation=8444
-        asthmaClass=8410
-        intermittent=8405
-        mild=8406
-        moderatePersistent=8407
-        severePersistent=8408
-        severeUncontrolled=8409
-        copdDx=3716
-        otherDx=7685
-        lungTreatment=8474
-        bAgonistInhaled=8471
-        steroidInhaled=8472
-        steroidOral=8473
-        otherCoded=5622
-        clinicalImpression=1364
-        nextAppt=5096
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
+        plannedVisit=6558913e-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        daysx=257fb56c-8c34-11e5-80a3-c0430f805837
+        nightsx=53e5e188-8c34-11e5-80a3-c0430f805837
+        baDay=79a37b88-8c34-11e5-80a3-c0430f805837
+        baWk=baf99a7c-8c34-11e5-80a3-c0430f805837
+        baMo=b60d8d98-8c34-11e5-80a3-c0430f805837
+        baYr=af73fa84-8c35-11e5-80a3-c0430f805837
+        steroidUse=359808c6-8c36-11e5-80a3-c0430f805837
+        smoking=656fe064-977f-11e1-8993-905e29aff6c1
+        secondHandSmoke=e51be8fa-8c34-11e5-80a3-c0430f805837
+        cookingLocation=94498de6-6ea7-441f-8d79-d2ef3c3df30f
+        indoor=655f3dcc-977f-11e1-8993-905e29aff6c1
+        outdoor=655f3ed0-977f-11e1-8993-905e29aff6c1
+        exacerbation=2198f6d8-8c35-11e5-80a3-c0430f805837
+        asthmaClass=e31e65ff-8523-4d49-a5b0-276a0760966f
+        intermittent=dcbd27b0-4ca2-4a93-9d8a-89f1cbe761ed
+        mild=e865c314-a0cf-4431-ba73-aa9280e2fa71
+        moderatePersistent=5fd72021-54af-4630-b72b-829421d2d65b
+        severePersistent=ac3d4d70-4145-4dec-a4bb-ea8136dff4e6
+        severeUncontrolled=a863ffd7-2806-4b2d-8d7c-d6709d106488
+        copdDx=65673e96-977f-11e1-8993-905e29aff6c1
+        otherDx=65780d0c-977f-11e1-8993-905e29aff6c1
+        lungTreatment=60ae390a-c15f-11e5-9912-ba0be0483c18
+        bAgonistInhaled=60ae316c-c15f-11e5-9912-ba0be0483c18
+        steroidInhaled=60ae3554-c15f-11e5-9912-ba0be0483c18
+        steroidOral=60ae373e-c15f-11e5-9912-ba0be0483c18
+        otherCoded=656cce7e-977f-11e1-8993-905e29aff6c1
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="f4596df5-925c-11e5-a1de-e82aea237783"/>

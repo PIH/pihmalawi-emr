@@ -15,15 +15,15 @@
         <macro key="transferIn" value="6559bc30-977f-11e1-8993-905e29aff6c1" />
         <macro key="meconiumDelayed" value="9af02405-2861-4c98-87b0-6b92a4606a7d" />
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        patientPhone=1426
-        guardianName=1824
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
     </macros>
 
     <span style="display:none">

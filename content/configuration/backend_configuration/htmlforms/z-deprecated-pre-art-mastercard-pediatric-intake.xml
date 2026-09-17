@@ -20,21 +20,21 @@
 				Sex: <lookup expression="patient.sex" class="value"/><br/>
 				D.O.B. <lookup expression="patient.birthdate" class="value"/><br/>
 				Age: <lookup expression="patient.age" class="value"/><br/>
-				<obsgroup groupingConceptId="1325"><br/>				
-					<obs conceptId="2927" labelText="Primary Caregiver: (replace with proper concept)"/><obs conceptId="2928"/><br/>
-					<obs conceptId="1328" labelText="Relationship: (replace with proper concept)"/><br/>
+				<obsgroup groupingConceptId="6558f4f8-977f-11e1-8993-905e29aff6c1"><br/>				
+					<obs conceptId="6561f832-977f-11e1-8993-905e29aff6c1" labelText="Primary Caregiver: (replace with proper concept)"/><obs conceptId="6561f936-977f-11e1-8993-905e29aff6c1"/><br/>
+					<obs conceptId="6558fd0e-977f-11e1-8993-905e29aff6c1" labelText="Relationship: (replace with proper concept)"/><br/>
 				</obsgroup>
 				Address: <lookup expression="patient_address.city_village" class="value"/>
 			</td>
 			<td>
 				Registration Date: <encounterDate/><br/>
 				Clinic Registration #: (REPLACE WITH PROPER #) <lookup class="value" expression="patient.arv_number"/><br/>
-				<obs conceptId="1837" labelText="HIV test date*: "/><br/>
-				<obs conceptId="1480" labelText="WHO Stage" answerConceptIds="1204,1205,1206,1207" answerLabels="I,II,III,IV" style="radio"/><br/>
+				<obs conceptId="655bc9da-977f-11e1-8993-905e29aff6c1" labelText="HIV test date*: "/><br/>
+				<obs conceptId="6559f286-977f-11e1-8993-905e29aff6c1" labelText="WHO Stage" answerConceptIds="65585dae-977f-11e1-8993-905e29aff6c1,65585ec6-977f-11e1-8993-905e29aff6c1,65585fde-977f-11e1-8993-905e29aff6c1,655860f6-977f-11e1-8993-905e29aff6c1" answerLabels="I,II,III,IV" style="radio"/><br/>
 				Reason for Stage: (add appropriate concept)<br/>
-				<obs conceptId="2552" labelText="Permission given to do home visit" style="radio"/><br/>
-				<obsgroup groupingConceptId="1325">
-					<obs conceptId="2299" labelText="Village Health Worker: "/><obs conceptId="2298"/>
+				<obs conceptId="655fc526-977f-11e1-8993-905e29aff6c1" labelText="Permission given to do home visit" style="radio"/><br/>
+				<obsgroup groupingConceptId="6558f4f8-977f-11e1-8993-905e29aff6c1">
+					<obs conceptId="655e650a-977f-11e1-8993-905e29aff6c1" labelText="Village Health Worker: "/><obs conceptId="655e63fc-977f-11e1-8993-905e29aff6c1"/>
 				</obsgroup>
 			</td>
 		</tr>
@@ -67,22 +67,22 @@
 		</tr>
 		<tr>
 			<td><lookup expression="patient.age" class="value"/></td>
-			<td><obs conceptId="5089"/></td>
-			<td><obs conceptId="5090"/></td>
-			<td><obs conceptId="1822"/></td>
-			<td><obs conceptId="3571" answerLabels="0 none,1 TB,2 fever&gt;4weeks,3 Oral thrush after 8 wks, 4 pneumonia,5 diarrhoea&gt;2weeks,6 meningitis,7 other WHO III/IV condition" answerConceptIds="1107,58,1291,3569,43,2709,60,3570"/></td>
-			<td><obs conceptId="1310" answerConceptId="1115" answerLabel="" labelText="" style="checkbox"/></td>
-			<td><obs conceptId="1310" answerConceptId="1311" answerLabel="" style="checkbox"/></td>
-			<td><obs conceptId="1310" answerConceptId="1312" answerLabel="" style="checkbox"/></td>
-			<td><obs conceptId="1151" answerConceptId="1152" answerLabel="" style="checkbox"/></td>
-			<td><obs conceptId="1151" answerConceptId="5526" answerLabel="" style="checkbox"/></td>
-			<td><obs conceptId="1151" answerConceptId="5524" answerLabel="" style="checkbox"/></td>
-			<td><obs conceptId="1151" answerConceptId="6046" answerLabel="" style="checkbox"/></td>
-			<obsgroup groupingConceptId="3573">
+			<td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1"/></td>
+			<td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1"/></td>
+			<td><obs conceptId="655bba76-977f-11e1-8993-905e29aff6c1"/></td>
+			<td><obs conceptId="65669590-977f-11e1-8993-905e29aff6c1" answerLabels="0 none,1 TB,2 fever&gt;4weeks,3 Oral thrush after 8 wks, 4 pneumonia,5 diarrhoea&gt;2weeks,6 meningitis,7 other WHO III/IV condition" answerConceptIds="6557987e-977f-11e1-8993-905e29aff6c1,6545d15c-977f-11e1-8993-905e29aff6c1,6558d1a8-977f-11e1-8993-905e29aff6c1,6566937e-977f-11e1-8993-905e29aff6c1,6545c176-977f-11e1-8993-905e29aff6c1,6560b4ea-977f-11e1-8993-905e29aff6c1,6545d36e-977f-11e1-8993-905e29aff6c1,65669482-977f-11e1-8993-905e29aff6c1"/></td>
+			<td><obs conceptId="6558e580-977f-11e1-8993-905e29aff6c1" answerConceptId="6557a15c-977f-11e1-8993-905e29aff6c1" answerLabel="" labelText="" style="checkbox"/></td>
+			<td><obs conceptId="6558e580-977f-11e1-8993-905e29aff6c1" answerConceptId="6558e68e-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<td><obs conceptId="6558e580-977f-11e1-8993-905e29aff6c1" answerConceptId="6558e792-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<td><obs conceptId="6557e504-977f-11e1-8993-905e29aff6c1" answerConceptId="6557e69e-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<td><obs conceptId="6557e504-977f-11e1-8993-905e29aff6c1" answerConceptId="656c5264-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<td><obs conceptId="6557e504-977f-11e1-8993-905e29aff6c1" answerConceptId="656c503e-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<td><obs conceptId="6557e504-977f-11e1-8993-905e29aff6c1" answerConceptId="656f5c2a-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+			<obsgroup groupingConceptId="65669860-977f-11e1-8993-905e29aff6c1">
 				<td></td>
-				<td><obs conceptId="3572" answerConceptId="1065" answerLabel="" style="checkbox"/></td>
-				<td><obs conceptId="2972" answerConceptId="1065" answerLabel="" style="checkbox"/></td>
-				<td><obs conceptId="3581" answerConceptId="1065" answerLabel="" style="checkbox"/></td>
+				<td><obs conceptId="6566969e-977f-11e1-8993-905e29aff6c1" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+				<td><obs conceptId="656225e6-977f-11e1-8993-905e29aff6c1" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
+				<td><obs conceptId="6566a65c-977f-11e1-8993-905e29aff6c1" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel="" style="checkbox"/></td>
 			</obsgroup>
 		</tr>
 	
@@ -101,30 +101,30 @@
 			<th>N</th>
 		</tr>
 		<tr>
-			<td><obs conceptId="1623" style="checkbox" answerLabel="" /></td>
-			<td><obs conceptId="1623" style="checkbox" value="false" answerLabel="" /></td>
-			<td><obs conceptId="1248" style="checkbox" answerLabel=""/></td>
-			<td><obs conceptId="1248" style="checkbox" answerLabel="" value="false"/></td>
-			<td><obs conceptId="5497"/></td>
-			<td><obs conceptId="1620"/></td>
+			<td><obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="" /></td>
+			<td><obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="checkbox" value="false" answerLabel="" /></td>
+			<td><obs conceptId="65589378-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/></td>
+			<td><obs conceptId="65589378-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="" value="false"/></td>
+			<td><obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1"/></td>
+			<td><obs conceptId="655a9b1e-977f-11e1-8993-905e29aff6c1"/></td>
 		</tr>
 	
 	</table><br/><br/>
 
 	<table border="1">
-		<obsgroup groupingConceptId="6785">
+		<obsgroup groupingConceptId="65733750-977f-11e1-8993-905e29aff6c1">
 		<tr>
 			<td>Appointment date</td>
-			<td><obs conceptId="5096" allowFutureDates="true"/></td>
+			<td><obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true"/></td>
 		</tr>
 		<tr>
 			<td>Appointment reason</td>
-                        <td><obs conceptId="6784" style="radio" answerConceptIds="6256" answerLabels="Pre-ART Visit"/></td>
+                        <td><obs conceptId="6573364c-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="65705490-977f-11e1-8993-905e29aff6c1" answerLabels="Pre-ART Visit"/></td>
 		</tr>
                 </obsgroup>
        </table><br/><br/>	
 	
-	Clinic:<encounterLocation order="2,34,4,3,20,16,35,37,21,22,18"/><br/><br/>
+	Clinic:<encounterLocation order="0d414ce2-5ab4-11e0-870c-9f6107fee88e,0d417e38-5ab4-11e0-870c-9f6107fee88e,0d41505c-5ab4-11e0-870c-9f6107fee88e,0d414eae-5ab4-11e0-870c-9f6107fee88e,0d416830-5ab4-11e0-870c-9f6107fee88e,0d416376-5ab4-11e0-870c-9f6107fee88e,0d417fd2-5ab4-11e0-870c-9f6107fee88e,0d4182e8-5ab4-11e0-870c-9f6107fee88e,0d4169b6-5ab4-11e0-870c-9f6107fee88e,0d416b3c-5ab4-11e0-870c-9f6107fee88e,0d4166a0-5ab4-11e0-870c-9f6107fee88e"/><br/><br/>
 	Entered by:<encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54"/><br/><br/>
 	<submit/><br/><br/>
 

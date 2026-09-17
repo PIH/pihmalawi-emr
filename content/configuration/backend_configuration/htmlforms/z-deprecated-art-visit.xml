@@ -41,46 +41,46 @@
 				<encounterDate  default="today"/>
 			</td>
 			<td>
-				<obs conceptId="5090" />
+				<obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="5089" />
+				<obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="2589"  answerConceptIds="6878,1610,1613,1612,6880,2988,6408" answerLabels="1L (D4T + 3TC + NVP), AZT (AZT + 3TC + NVP), EFV (D4T + 3TC + EFV), AZTEFV (AZT + 3TC + EFV), 2Ad (AZT + 3TC + TDF + LPV/R), 2Ch (DDI + ABC + LPV/R), NS (Non-standard)"/>
+				<obs conceptId="655ff0f0-977f-11e1-8993-905e29aff6c1"  answerConceptIds="6573e2fe-977f-11e1-8993-905e29aff6c1,655a90b0-977f-11e1-8993-905e29aff6c1,655a93da-977f-11e1-8993-905e29aff6c1,655a92cc-977f-11e1-8993-905e29aff6c1,6573e506-977f-11e1-8993-905e29aff6c1,65623c02-977f-11e1-8993-905e29aff6c1,657140f8-977f-11e1-8993-905e29aff6c1" answerLabels="1L (D4T + 3TC + NVP), AZT (AZT + 3TC + NVP), EFV (D4T + 3TC + EFV), AZTEFV (AZT + 3TC + EFV), 2Ad (AZT + 3TC + TDF + LPV/R), 2Ch (DDI + ABC + LPV/R), NS (Non-standard)"/>
 			</td>
 			<td>
-				<obs conceptId="1297" style="checkbox" answerConceptId="1107"
+				<obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="6557987e-977f-11e1-8993-905e29aff6c1"
 					answerLabel="No" />
-				<obs conceptId="1297" style="checkbox" answerConceptId="821"
+				<obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="654a4ade-977f-11e1-8993-905e29aff6c1"
 					answerLabel="PN" />
-				<obs conceptId="1297" style="checkbox" answerConceptId="29"
+				<obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="6545b33e-977f-11e1-8993-905e29aff6c1"
 					answerLabel="HP" />
-				<obs conceptId="1297" style="checkbox" answerConceptId="512"
+				<obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65489e00-977f-11e1-8993-905e29aff6c1"
 					answerLabel="SK" />
-				<obs conceptId="1297" style="checkbox" answerConceptId="5622"
+				<obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="656cce7e-977f-11e1-8993-905e29aff6c1"
 					answerLabel="Oth" />
 			</td>
 			<td style="white-space: nowrap;">
-				<obs conceptId="7459" style="radio" answerConceptIds="7454,7455,7456,7458" answerLabels="N,Y,C,Rx"/>
+				<obs conceptId="65770db2-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6577084e-977f-11e1-8993-905e29aff6c1,65770966-977f-11e1-8993-905e29aff6c1,65770a7e-977f-11e1-8993-905e29aff6c1,65770ca4-977f-11e1-8993-905e29aff6c1" answerLabels="N,Y,C,Rx"/>
 			</td>
 			<td>
-				<obs conceptId="2540" />
+				<obs conceptId="655fb892-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="2973" />
+				<obs conceptId="656226ea-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="2929" />
+				<obs conceptId="6561fa3a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td style="white-space: nowrap;">
-				<obs conceptId="2122" style="no_yes" noLabel="P" yesLabel="G"/>
+				<obs conceptId="655d5246-977f-11e1-8993-905e29aff6c1" style="no_yes" noLabel="P" yesLabel="G"/>
 			</td>
 			<td>
-				<obs conceptId="6319" />
+				<obs conceptId="6570b82c-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
-				<obs conceptId="5096" allowFutureDates="true" />
+				<obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true" />
 			</td>
 		</tr>
 		<tr>

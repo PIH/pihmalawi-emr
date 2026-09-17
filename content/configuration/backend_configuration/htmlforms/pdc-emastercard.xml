@@ -11,20 +11,20 @@
 
 
     <macros>
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        hivStatus=3753
-        reactive=1228
-        nonReactive=1229
-        hivTestDate=1837
-        artStartDate=2516
-        patientPhone=1426
-        guardianName=1824
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        hivStatus=6567ae62-977f-11e1-8993-905e29aff6c1
+        reactive=65587802-977f-11e1-8993-905e29aff6c1
+        nonReactive=6558791a-977f-11e1-8993-905e29aff6c1
+        hivTestDate=655bc9da-977f-11e1-8993-905e29aff6c1
+        artStartDate=655f9eb6-977f-11e1-8993-905e29aff6c1
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
         <macro key="aliveNotOnART" value="657a268c-977f-11e1-8993-905e29aff6c1"/>
         <macro key="aliveOnART" value="657a279a-977f-11e1-8993-905e29aff6c1" />
         <macro key="birthWeight" value="656e797c-977f-11e1-8993-905e29aff6c1" />

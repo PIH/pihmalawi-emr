@@ -69,7 +69,7 @@
         <macro key="lisinopril" value="65635a74-977f-11e1-8993-905e29aff6c1" />
         <!-- betaBlocker=8463 -->
         <macro key="atenolol" value="65635d58-977f-11e1-8993-905e29aff6c1" />
-        bisoprolol=8612
+        bisoprolol=72247AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         <macro key="propranolol" value="65470f18-977f-11e1-8993-905e29aff6c1" />
         <macro key="dietRecommendations" value="ccc842f5-c7ee-4b82-865c-be19053c4db3" />
         <macro key="sodiumLow" value="5e7a1d78-aecc-4b47-bc81-d144dc91dda1" />
@@ -592,7 +592,7 @@
                 <th>Confusion</th>
                 <td style="text-align: left">
                     <obs conceptId="$confusion" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -600,7 +600,7 @@
                 <th>Fatigue</th>
                 <td style="text-align: left">
                     <obs conceptId="$patientHasFatigue" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -608,7 +608,7 @@
                 <th>Nausea</th>
                 <td style="text-align: left">
                     <obs conceptId="$patientHasNausea" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -616,7 +616,7 @@
                 <th>Anorexia</th> 
                 <td>
                     <obs conceptId="$patientHasAnorexia" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -625,7 +625,7 @@
                 <th>Pruritus</th> 
                 <td style="text-align: left">
                     <obs conceptId="$patientHasPruritus" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -633,7 +633,7 @@
                 <th>Conjunctiva</th>     
                 <td>
                     <obs conceptId="$conjunctiva" style="radio" answerLabels="Pink, Pale"
-                                     answerConceptIds="$pinkConjunctiva, $paleConjunctiva"/>
+                                     answerConceptIds="$pinkConjunctiva,$paleConjunctiva"/>
                 </td>
             </tr>
 
@@ -641,7 +641,7 @@
                 <th>Ascites</th>
                 <td>
                     <obs conceptId="$patientHasAscites" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -1061,7 +1061,7 @@
                 <th><span class="rotate">Took medication today?</span></th>
                 <td>
                     <obs conceptId="$tookMedicToday" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -1069,7 +1069,7 @@
                 <th>Diet recommendations</th>
                 <td>
                     <obs conceptId="$dietRecommendations" style="radio" answerLabels="Low Sodium, Low potassium, Low protein, High calories"
-                                     answerConceptIds="$sodiumLow, $potassiumLow, $proteinLow, $caloriesHigh"/>
+                                     answerConceptIds="$sodiumLow,$potassiumLow,$proteinLow,$caloriesHigh"/>
                 </td>
             </tr>
 

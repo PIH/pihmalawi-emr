@@ -38,30 +38,30 @@
     </style>
 
     <macros>
-        diagnosisDate=6774
+        diagnosisDate=65732bf2-977f-11e1-8993-905e29aff6c1
         pcDiagnosisSet=9848aec4-e681-11e7-80c1-9a214cf093ae
         palliativeCareDiagnosis=9848b126-e681-11e7-80c1-9a214cf093ae
 
-        cancerDx=7211
-        depressionDx=207
-        diabetesDx=3720
-        hypertensionDx=903
-        heartFailureDx=3468
-        hfStages=3139
-        nyha1=3135
-        nyha2=3136
-        nyha3=3137
-        nyha4=3138
+        cancerDx=6575a422-977f-11e1-8993-905e29aff6c1
+        depressionDx=6546cbd4-977f-11e1-8993-905e29aff6c1
+        diabetesDx=6567426a-977f-11e1-8993-905e29aff6c1
+        hypertensionDx=654abfc8-977f-11e1-8993-905e29aff6c1
+        heartFailureDx=6566257e-977f-11e1-8993-905e29aff6c1
+        hfStages=6562e508-977f-11e1-8993-905e29aff6c1
+        nyha1=6562e0ee-977f-11e1-8993-905e29aff6c1
+        nyha2=6562e1f2-977f-11e1-8993-905e29aff6c1
+        nyha3=6562e300-977f-11e1-8993-905e29aff6c1
+        nyha4=6562e404-977f-11e1-8993-905e29aff6c1
         chronicLungDx=155569AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         mentalHealthDx=7f55864c-e68d-11e7-80c1-9a214cf093ae
-        epilepsyDx=155
-        kidneyFailureDx=3681
-        tuberculosis=58
+        epilepsyDx=6546938a-977f-11e1-8993-905e29aff6c1
+        kidneyFailureDx=65671a88-977f-11e1-8993-905e29aff6c1
+        tuberculosis=6545d15c-977f-11e1-8993-905e29aff6c1
 
-        diabetesFamilyHistory=6740
-        hypertensionFamilyHistory=8458
-        asthmaFamilyHistory=8426
-        epilepsyFamilyHistory=8484
+        diabetesFamilyHistory=657308fc-977f-11e1-8993-905e29aff6c1
+        hypertensionFamilyHistory=53377d8e-ada7-11e5-bf7f-feff819cdc9f
+        asthmaFamilyHistory=37519f36-8c2e-11e5-80a3-c0430f805837
+        epilepsyFamilyHistory=152450AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         allergyFamilyHistory=151530AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         tbContactFamilyHistory=13491200-e5bd-11e7-80c1-9a214cf093ae
 
@@ -69,29 +69,29 @@
         familyInfoText=9848b9aa-e681-11e7-80c1-9a214cf093ae
         numMales=725B3C83-CCE5-4A71-A7F1-CB1565D6F7ED
         numFemales=155FE093-4A8A-4A23-899E-A435B45A7D05
-        numChildren=2649
+        numChildren=656056da-977f-11e1-8993-905e29aff6c1
 
-        other=5622
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        hivStatus=3753
-        hivTestDate=1837
-        reactive=1228
-        nReactive=1229
-        artStartDate=2516
-        tbStatus=7459
-        smearPos=2185
-        smearNeg=2186
-        eptb=1547
-        tbYear=8453
-        patientPhone=1426
-        guardianName=1824
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
-        married=1055
+        other=656cce7e-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        hivStatus=6567ae62-977f-11e1-8993-905e29aff6c1
+        hivTestDate=655bc9da-977f-11e1-8993-905e29aff6c1
+        reactive=65587802-977f-11e1-8993-905e29aff6c1
+        nReactive=6558791a-977f-11e1-8993-905e29aff6c1
+        artStartDate=655f9eb6-977f-11e1-8993-905e29aff6c1
+        tbStatus=65770db2-977f-11e1-8993-905e29aff6c1
+        smearPos=655ddc20-977f-11e1-8993-905e29aff6c1
+        smearNeg=655ddd24-977f-11e1-8993-905e29aff6c1
+        eptb=655a49ac-977f-11e1-8993-905e29aff6c1
+        tbYear=3237c2a0-ada3-11e5-bf7f-feff819cdc9f
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
+        married=65575832-977f-11e1-8993-905e29aff6c1
 
         <macro key="religion" value="162929AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
         <macro key="historyConstruct" value="9168ACDB-F4CC-49A3-91D9-77E767EEFE78"/>

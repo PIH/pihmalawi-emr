@@ -11,68 +11,68 @@
 
 
     <macros>
-        agreesToFollowup=2552
-        noAnswer=1066
-        yesAnswer=1065
-        none=1107
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        none=6557987e-977f-11e1-8993-905e29aff6c1
         guardianName=PIH Malawi:1824
-        guardianPhone=3294
-        guardianRelation=1826
+        guardianPhone=6563d2c4-977f-11e1-8993-905e29aff6c1
+        guardianRelation=655bbe86-977f-11e1-8993-905e29aff6c1
 
         <!-- Version 1
-        arvsInPreg=8169
-        arvsInLabour=8182
-        arvsAtBirth=8186
-        arvsContd=8187
-        adherence=2681
-        deliveryLocation=3452
-        hivStatus=5303
+        arvsInPreg=657ac57e-977f-11e1-8993-905e29aff6c1
+        arvsInLabour=657ad316-977f-11e1-8993-905e29aff6c1
+        arvsAtBirth=657ad730-977f-11e1-8993-905e29aff6c1
+        arvsContd=657ad83e-977f-11e1-8993-905e29aff6c1
+        adherence=65609870-977f-11e1-8993-905e29aff6c1
+        deliveryLocation=6565e4e2-977f-11e1-8993-905e29aff6c1
+        hivStatus=656b0058-977f-11e1-8993-905e29aff6c1
         -->
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
-        azt03=8173
-        azt4p=8174
-        art03=8175
-        art4p=8176
-        unknown=1067
-        sdNVP=8178
-        AZT3TC=8179
-        NVPAZT3TC=8180
-        ART=8181
-        Nevirapine=631
-        NVPAZT2=8184
-        Zidovudine=797
+        azt03=657ac9d4-977f-11e1-8993-905e29aff6c1
+        azt4p=657acae2-977f-11e1-8993-905e29aff6c1
+        art03=657acbe6-977f-11e1-8993-905e29aff6c1
+        art4p=657accf4-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        sdNVP=657acefc-977f-11e1-8993-905e29aff6c1
+        AZT3TC=657ad000-977f-11e1-8993-905e29aff6c1
+        NVPAZT3TC=657ad10e-977f-11e1-8993-905e29aff6c1
+        ART=657ad212-977f-11e1-8993-905e29aff6c1
+        Nevirapine=6549247e-977f-11e1-8993-905e29aff6c1
+        NVPAZT2=657ad528-977f-11e1-8993-905e29aff6c1
+        Zidovudine=654a312a-977f-11e1-8993-905e29aff6c1
 
-        startAgeNVP=8556
-        nvpDuration=8559
-        durationUnits=8557
-        medDuration=8558
-        days=1072
-        weeks=1073
-        months=1074
-        years=2287
+        startAgeNVP=fd9f79ec-0a23-11e6-b512-3e1d05defe78
+        nvpDuration=fd9f7d52-0a23-11e6-b512-3e1d05defe78
+        durationUnits=f1904502-319d-4681-9030-e642111e7ce2
+        medDuration=159368AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        days=65576b10-977f-11e1-8993-905e29aff6c1
+        weeks=65576c32-977f-11e1-8993-905e29aff6c1
+        months=65576d4a-977f-11e1-8993-905e29aff6c1
+        years=655e56b4-977f-11e1-8993-905e29aff6c1
 
-        enrollmentAge=3467
-        inconclusive=1138
-        hivPCR=844
-        labLocation=8627
-        testingReason=8623
-        exposed=822
-        presumed=1346
-        unknown=1067        
-        notConfirmed=8045
-        confirmed=6250
-        motherHIVStatus=8036
-        aliveNotOnART=8037
-        aliveOnART=8038
-        patientDied=1742
-        suspectedHIVExposure=1062
-        motherRegNo=8046
-        motherARTstart=3586
-        period=8554
-        setAge=8550
-        unitAge=2286
-        dateToGuardian=8549
-        birthWeight=5916
+        enrollmentAge=6566247a-977f-11e1-8993-905e29aff6c1
+        inconclusive=6557baa2-977f-11e1-8993-905e29aff6c1
+        hivPCR=654a6960-977f-11e1-8993-905e29aff6c1
+        labLocation=6fc0ab50-9492-11e7-abc4-cec278b6b50a
+        testingReason=164126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        exposed=654a4bf6-977f-11e1-8993-905e29aff6c1
+        presumed=655915f0-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1        
+        notConfirmed=657a2eca-977f-11e1-8993-905e29aff6c1
+        confirmed=65704860-977f-11e1-8993-905e29aff6c1
+        motherHIVStatus=657a2588-977f-11e1-8993-905e29aff6c1
+        aliveNotOnART=657a268c-977f-11e1-8993-905e29aff6c1
+        aliveOnART=657a279a-977f-11e1-8993-905e29aff6c1
+        patientDied=655b5e46-977f-11e1-8993-905e29aff6c1
+        suspectedHIVExposure=65576002-977f-11e1-8993-905e29aff6c1
+        motherRegNo=657a2fce-977f-11e1-8993-905e29aff6c1
+        motherARTstart=6566aeb8-977f-11e1-8993-905e29aff6c1
+        period=7f5721be-2803-4b09-bfd0-cd4f07cf226a
+        setAge=27baf9f0-eae3-4d98-a1ad-258e82b91285
+        unitAge=655e55b0-977f-11e1-8993-905e29aff6c1
+        dateToGuardian=365a3434-f226-40fa-beb6-a503be77d8bf
+        birthWeight=656e797c-977f-11e1-8993-905e29aff6c1
 	transferIn=6559bc30-977f-11e1-8993-905e29aff6c1
     </macros>
 

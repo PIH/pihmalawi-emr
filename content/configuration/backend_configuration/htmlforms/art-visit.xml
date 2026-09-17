@@ -11,38 +11,38 @@
 
 
     <macros>
-        height=5090
-        weight=5089
-        artRegimen=8169
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        artRegimen=657ac57e-977f-11e1-8993-905e29aff6c1
         regimenOptions=d5930c3a-cb57-11e5-9956-625662870761,8500,8155,8156,8157,8158,8159,8160,8162,8163,1fb83022-491b-4a0b-bd81-a1a48cfc082f,0c812dc8-cb40-4e2e-926e-ebd9fb3376ff,8164,8165,8166,8167,8601,8168,84e96887-5963-4cc9-8feb-b2ccd1447465,e9478866-c8ce-4ca7-a593-03e8ba0166d7,8602,8603,8604,98ec6848-15bf-41ef-b844-5a16d7dbb0f8,ec5edf44-a088-4117-8a05-b23b018ec075,43b86ce6-dc3f-11e8-9f8b-f2801f1b9fd1,3b861411-5818-430a-8a90-2deabf89f328,007f685d-bb78-4f16-91c4-073aa8107943,53009e3a-dc3f-11e8-9f8b-f2801f1b9fd1,5e16f0b2-dc3f-11e8-9f8b-f2801f1b9fd1,cf770b14-4c9d-11ea-b77f-2e728ce88125,8fe981ba-2349-41e4-99d8-2d6051f24718,e901ec7c-f45c-413f-a186-4c779227ac08,6764fc5e-dc3f-11e8-9f8b-f2801f1b9fd1,e2ec7c88-4c9d-11ea-b77f-2e728ce88125,e58595c7-8354-48ea-a2b8-f75584bdf594,fb26bc7f-ae9c-4655-9823-ce0066d8081a,e2ec805c-4c9d-11ea-b77f-2e728ce88125,e2ec82b4-4c9d-11ea-b77f-2e728ce88125,e2ec871e-4c9d-11ea-b77f-2e728ce88125,e2ec899e-4c9d-11ea-b77f-2e728ce88125,e13a8993-5604-40c9-90ea-8217d7d047f0,fd5521f9-00e1-42dc-98cf-103c44e64bc1,826b65ba-dc53-11e8-9f8b-f2801f1b9fd1
         regimenLabels=0A,0P,1A,1P,2A,2P,3A,3P,4A,4P,4PP,4PA,5A,6A,7A,8A,9A,9P,9PP,9PA,10A,11A,11P,11PP,11PA,12A,12PP,12PA,13A,14A,14P,14PP,14PA,15A,15P,15PP,15PA,16A,16P,17A,17P,17PP,17PA,Non Standard
-        sideEffect=7755
-        no=1066
-        yes=1065
-        pn=821
-        hp=29
-        sk=512
-        lip=2148
-        other=6408
-        tbStatus=7459
-        tbNotSuspected=7454
-        tbSuspected=7455
-        tbConfirmedNoTx=7456
-        tbConfirmedTx=7458
-        pillCount=2540
-        dosesMissed=2973
-        numArvsGiven=2929
-        arvsGivenTo=2122
-        hivPreventiveTherapyGroup=8607
-        hivPreventiveTherapy=8606
-        hivPreventiveTherapyPills=2834
+        sideEffect=65789d4e-977f-11e1-8993-905e29aff6c1
+        no=6557646c-977f-11e1-8993-905e29aff6c1
+        yes=65576354-977f-11e1-8993-905e29aff6c1
+        pn=654a4ade-977f-11e1-8993-905e29aff6c1
+        hp=6545b33e-977f-11e1-8993-905e29aff6c1
+        sk=65489e00-977f-11e1-8993-905e29aff6c1
+        lip=655d81f8-977f-11e1-8993-905e29aff6c1
+        other=657140f8-977f-11e1-8993-905e29aff6c1
+        tbStatus=65770db2-977f-11e1-8993-905e29aff6c1
+        tbNotSuspected=6577084e-977f-11e1-8993-905e29aff6c1
+        tbSuspected=65770966-977f-11e1-8993-905e29aff6c1
+        tbConfirmedNoTx=65770a7e-977f-11e1-8993-905e29aff6c1
+        tbConfirmedTx=65770ca4-977f-11e1-8993-905e29aff6c1
+        pillCount=655fb892-977f-11e1-8993-905e29aff6c1
+        dosesMissed=656226ea-977f-11e1-8993-905e29aff6c1
+        numArvsGiven=6561fa3a-977f-11e1-8993-905e29aff6c1
+        arvsGivenTo=655d5246-977f-11e1-8993-905e29aff6c1
+        hivPreventiveTherapyGroup=e87bb1c5-b6da-43dd-988b-50def171fa9f
+        hivPreventiveTherapy=fef29061-1ad7-4cf3-87e8-6bf0b03b3332
+        hivPreventiveTherapyPills=65614392-977f-11e1-8993-905e29aff6c1
         hivPreventiveTherapyDrugs=916,656,8605
-        depoGiven=8029
-        numCondoms=8080
-        pregnantLactating=8027
-        currentlyPregnant=1755
-        currentlyLactating=5632
-        nextAppt=5096
+        depoGiven=657a1e44-977f-11e1-8993-905e29aff6c1
+        numCondoms=657a52ce-977f-11e1-8993-905e29aff6c1
+        pregnantLactating=657a1c3c-977f-11e1-8993-905e29aff6c1
+        currentlyPregnant=655b6bac-977f-11e1-8993-905e29aff6c1
+        currentlyLactating=656cdab8-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
         <macro key="lessThanLimit" value="69e87644-5562-11e9-8647-d663bd873d93"/>
         <macro key="LDL" value="e97b36a2-16f5-11e6-b6ba-3e1d05defe78"/>
         <macro key="systolicBP" value="6569bffe-977f-11e1-8993-905e29aff6c1"/>

@@ -68,32 +68,32 @@
 			</td>
 			<td>
 				<!-- Height -->
-				<obs conceptId="5090" />
+				<obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- Weight -->
-				<obs conceptId="5089" />
+				<obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- Wasting/malnutrition -->
-				<obs conceptId="8033" style="radio" answerConceptIds="1066,1900,1903"
+				<obs conceptId="657a2268-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,655c243e-977f-11e1-8993-905e29aff6c1,655c28b2-977f-11e1-8993-905e29aff6c1"
 					answerLabels="No,Mod,Sev" />
 			</td>
 			<td style="white-space: nowrap;">
 				<!-- TB status -->
-				<obs conceptId="7459" style="radio" answerConceptIds="7454,7455,7456,7458"
+				<obs conceptId="65770db2-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6577084e-977f-11e1-8993-905e29aff6c1,65770966-977f-11e1-8993-905e29aff6c1,65770a7e-977f-11e1-8993-905e29aff6c1,65770ca4-977f-11e1-8993-905e29aff6c1"
 					answerLabels="N,Y,C,Rx" />
 			</td>
 			<td style="white-space: nowrap;">
 				<!-- WHO stage -->
-				<obs conceptId="7562" style="radio" answerConceptIds="7041,7042,7043,7044"
+				<obs conceptId="65778170-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="657499f6-977f-11e1-8993-905e29aff6c1,65749afa-977f-11e1-8993-905e29aff6c1,65749bfe-977f-11e1-8993-905e29aff6c1,65749d02-977f-11e1-8993-905e29aff6c1"
 					answerLabels="1,2,3,4" />
 			</td>
 			<td>
 				<!-- CD4 sample taken -->
 				<!-- taken from DNA/PCR bleeding; not 100% correct for CD4, but at least 
 					consistent to ART -->
-				<obs conceptId="3658" style="checkbox" answerConceptId="3658"
+				<obs conceptId="6566fcba-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="6566fcba-977f-11e1-8993-905e29aff6c1"
 					answerLabel="Bled" />
 			</td>
 			<td>
@@ -115,46 +115,46 @@
 #end
 &lt;input type='text' value='$obsResult' size='5' disabled='true' id='$prevCd4Value' /&gt; at &lt;input type='text' value='$obsDate' size='10' disabled='true' id='$prevCd4Date' /&gt;
 " />
-				<obs conceptId="3434" />
+				<obs conceptId="6565b94a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- pregnant -->
-				<obs conceptId="6131" style="radio" answerConceptIds="1066,1065"
+				<obs conceptId="656fbd28-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,65576354-977f-11e1-8993-905e29aff6c1"
 					answerLabels="N,Y" />
 			</td>
 			<td>
 				<!-- IPT -->
-				<obs conceptId="8032" />
+				<obs conceptId="657a2164-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- CPT -->
-				<obs conceptId="6319" />
+				<obs conceptId="6570b82c-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- depo given -->
-				<obs conceptId="8029" style="checkbox" answerConceptId="1065"
+				<obs conceptId="657a1e44-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1"
 					answerLabel="" />
 			</td>
 			<td>
 				<!-- # condoms -->
-				<obs conceptId="8080" />
+				<obs conceptId="657a52ce-977f-11e1-8993-905e29aff6c1" />
 			</td>
 			<td>
 				<!-- side effects -->
-				<obs conceptId="7755" style="checkbox" answerConceptId="1066"
+				<obs conceptId="65789d4e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="6557646c-977f-11e1-8993-905e29aff6c1"
 					answerLabel="No" />
-				<obs conceptId="7755" style="checkbox" answerConceptId="821"
+				<obs conceptId="65789d4e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="654a4ade-977f-11e1-8993-905e29aff6c1"
 					answerLabel="PN" />
-				<obs conceptId="7755" style="checkbox" answerConceptId="29"
+				<obs conceptId="65789d4e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="6545b33e-977f-11e1-8993-905e29aff6c1"
 					answerLabel="HP" />
-				<obs conceptId="7755" style="checkbox" answerConceptId="512"
+				<obs conceptId="65789d4e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65489e00-977f-11e1-8993-905e29aff6c1"
 					answerLabel="SK" />
-				<obs conceptId="7755" style="checkbox" answerConceptId="6408"
+				<obs conceptId="65789d4e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="657140f8-977f-11e1-8993-905e29aff6c1"
 					answerLabel="Oth" />
 			</td>
 			<td>
 				<!-- Next appointment date -->
-				<obs conceptId="5096" allowFutureDates="true" />
+				<obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true" />
 			</td>
 		</tr>
 		<tr>

@@ -23,9 +23,9 @@
         <macro key="weight" value="6569c44a-977f-11e1-8993-905e29aff6c1"/>
         <macro key="smearResult" value="65628568-977f-11e1-8993-905e29aff6c1"/>
 
-        noAnswer=1066
-        yesAnswer=1065
-        nextAppt=5096
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="61545FD5-4EBC-4E01-B349-304195254A73"/>

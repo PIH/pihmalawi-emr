@@ -11,17 +11,17 @@
 
 
     <macros>
-        ecg=6672
-        creatinine=6445
-        lipidProfile=8611
-        ldl=1008
-        hdl=1007
-        triglyc=1009
-        fundoscopy=6449
-        no=1066
-        yes=1065
-        other=6408
-        typical=1115
+        ecg=6572b4ec-977f-11e1-8993-905e29aff6c1
+        creatinine=657170a0-977f-11e1-8993-905e29aff6c1
+        lipidProfile=f77f0ba3-8668-4537-9f96-7aad3403cff8
+        ldl=654b691e-977f-11e1-8993-905e29aff6c1
+        hdl=654b67fc-977f-11e1-8993-905e29aff6c1
+        triglyc=654b6ad6-977f-11e1-8993-905e29aff6c1
+        fundoscopy=65717578-977f-11e1-8993-905e29aff6c1
+        no=6557646c-977f-11e1-8993-905e29aff6c1
+        yes=65576354-977f-11e1-8993-905e29aff6c1
+        other=657140f8-977f-11e1-8993-905e29aff6c1
+        typical=6557a15c-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
 

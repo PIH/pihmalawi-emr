@@ -22,22 +22,22 @@
 			<td colspan="4">Name:<lookup expression="patient.personName" class="value" size="50"/>
 			Age: <lookup expression="patient.age" class="value"/>    Sex: <lookup expression="patient.gender" class="value" codePrefix="gender_"/></td>
 			<td>Initial Wt (kg) [ENTER BELOW]</td>
-			<td>Transfer in: <obs conceptId="2536"/></td>
+			<td>Transfer in: <obs conceptId="655fb464-977f-11e1-8993-905e29aff6c1"/></td>
 		</tr>
 		<tr>
 			<td colspan="4">Address: Village: <lookup expression="patient.personAddress.cityVillage" class="value"/>
 			Traditional Authority: <lookup expression="patient.personAddress.countyDistrict" class="value"/>
 			Phone: <lookup class="value" expression="personAttributes.get(&quot;Telephone Number&quot;)"/></td>
                         <td></td>
-			<td colspan="2"><obs conceptId="2552" labelText="Follow up agreement? "/></td>
+			<td colspan="2"><obs conceptId="655fc526-977f-11e1-8993-905e29aff6c1" labelText="Follow up agreement? "/></td>
 		</tr>
 		<tr>
-			<td colspan="3">Name of identifiable guardian<obs conceptId="2927" labelText="   First: " color="#e0e0ff"/><obs conceptId="2928" labelText="Last: " color="#e0e0ff"/></td>
-			<td colspan="3">Date and place of positive HIV Test-<obs conceptId="2515" labelText="   Date: "/><obs conceptId="2170" labelText="   Place: "/></td>
+			<td colspan="3">Name of identifiable guardian<obs conceptId="6561f832-977f-11e1-8993-905e29aff6c1" labelText="   First: " color="#e0e0ff"/><obs conceptId="6561f936-977f-11e1-8993-905e29aff6c1" labelText="Last: " color="#e0e0ff"/></td>
+			<td colspan="3">Date and place of positive HIV Test-<obs conceptId="655f9d08-977f-11e1-8993-905e29aff6c1" labelText="   Date: "/><obs conceptId="655dcc8a-977f-11e1-8993-905e29aff6c1" labelText="   Place: "/></td>
 		</tr>
 		<tr>
 			<td colspan="2">Date of starting 1st Line ARV Regimen: (Enter online)</td>
-			<td colspan="4"><obs conceptId="1251" labelText="Reason for ARV: " answerConceptIds="2932,2933,2536,42,2543,1148,1547,507" style="radio" answerLabels="WHO Stage III,WHO Stage IV,Transfer In,PTB,CD4 &lt; 250, PMTCT,EPTB,KS"/></td>
+			<td colspan="4"><obs conceptId="655896c0-977f-11e1-8993-905e29aff6c1" labelText="Reason for ARV: " answerConceptIds="6561fd46-977f-11e1-8993-905e29aff6c1,6561fe40-977f-11e1-8993-905e29aff6c1,655fb464-977f-11e1-8993-905e29aff6c1,6545c072-977f-11e1-8993-905e29aff6c1,655fbbbc-977f-11e1-8993-905e29aff6c1,6557d082-977f-11e1-8993-905e29aff6c1,655a49ac-977f-11e1-8993-905e29aff6c1,6548955e-977f-11e1-8993-905e29aff6c1" style="radio" answerLabels="WHO Stage III,WHO Stage IV,Transfer In,PTB,CD4 &lt; 250, PMTCT,EPTB,KS"/></td>
 		</tr>
 		<tr>
 			<td colspan="2">Date of starting alternative 1st line ARV Regimen: (Enter online)</td>
@@ -46,7 +46,7 @@
 	</table><br/>
 	<table>
 		<tr>
-			<td colspan="4">Location of initial encounter: (See ARV Number. Enter 'Unknown' if necessary)<encounterLocation order="2,34,4,3,20,16,35,37,21,22,18"/></td>
+			<td colspan="4">Location of initial encounter: (See ARV Number. Enter 'Unknown' if necessary)<encounterLocation order="0d414ce2-5ab4-11e0-870c-9f6107fee88e,0d417e38-5ab4-11e0-870c-9f6107fee88e,0d41505c-5ab4-11e0-870c-9f6107fee88e,0d414eae-5ab4-11e0-870c-9f6107fee88e,0d416830-5ab4-11e0-870c-9f6107fee88e,0d416376-5ab4-11e0-870c-9f6107fee88e,0d417fd2-5ab4-11e0-870c-9f6107fee88e,0d4182e8-5ab4-11e0-870c-9f6107fee88e,0d4169b6-5ab4-11e0-870c-9f6107fee88e,0d416b3c-5ab4-11e0-870c-9f6107fee88e,0d4166a0-5ab4-11e0-870c-9f6107fee88e"/></td>
 		</tr>
 	</table><br/>
 	<table border="1" cellpadding="0" cellspacing="0">
@@ -70,18 +70,18 @@
 		</tr>
 		<tr>
                        <td><encounterDate/></td>
-			<td><obs conceptId="5089"/></td>
-                       <td><obs conceptId="5090"/></td>
-                       <td><obs conceptId="2530" style="list" answerConceptIds="2895,1744,1743,1742,1579" answerLabels="Alive,Transferred,Defaulted,Died,Stopped"/></td>
-                       <td><obs conceptId="2538" style="list" answerConceptIds="2537,2532,2534,5424" answerLabels="Start,Substitute,Switch,Other"/></td>
-                       <td><obs conceptId="1662" style="list" answerConceptIds="1664,1665" answerLabels="Ambulatory,Bedridden"/></td>
-                       <td><obs conceptId="2539" style="list" answerConceptIds="1065,1066,1067" answerLabels="Yes,No,Unknown"/></td>
-			<td><obs conceptId="2146" style="no_yes"/><br/>Specify: <obs conceptId="1297" style="list" answerConceptIds="1107,29,512,821,5622" answerLabels="None,Hepatitis,Skin rash,Peripheral Neuropathy,Other"/></td>
-                       <td><obs conceptId="2540"/></td>
-                       <td><obs conceptId="2929"/></td>
-                       <td><obs conceptId="2122" style="checkbox" answerLabel=""/></td>
-                       <td><obs conceptId="1623" style="checkbox" answerLabel=""/></td>
-                       <td><obs conceptId="2972" style="checkbox" answerConceptId="1065" answerLabel=""/></td>
+			<td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="655fae10-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="6561a0b2-977f-11e1-8993-905e29aff6c1,655b604e-977f-11e1-8993-905e29aff6c1,655b5f4a-977f-11e1-8993-905e29aff6c1,655b5e46-977f-11e1-8993-905e29aff6c1,655a6acc-977f-11e1-8993-905e29aff6c1" answerLabels="Alive,Transferred,Defaulted,Died,Stopped"/></td>
+                       <td><obs conceptId="655fb676-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="655fb568-977f-11e1-8993-905e29aff6c1,655fb02c-977f-11e1-8993-905e29aff6c1,655fb248-977f-11e1-8993-905e29aff6c1,656b9414-977f-11e1-8993-905e29aff6c1" answerLabels="Start,Substitute,Switch,Other"/></td>
+                       <td><obs conceptId="655b0770-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="655b0a0e-977f-11e1-8993-905e29aff6c1,655b0b08-977f-11e1-8993-905e29aff6c1" answerLabels="Ambulatory,Bedridden"/></td>
+                       <td><obs conceptId="655fb784-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="65576354-977f-11e1-8993-905e29aff6c1,6557646c-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1" answerLabels="Yes,No,Unknown"/></td>
+			<td><obs conceptId="655d762c-977f-11e1-8993-905e29aff6c1" style="no_yes"/><br/>Specify: <obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="6557987e-977f-11e1-8993-905e29aff6c1,6545b33e-977f-11e1-8993-905e29aff6c1,65489e00-977f-11e1-8993-905e29aff6c1,654a4ade-977f-11e1-8993-905e29aff6c1,656cce7e-977f-11e1-8993-905e29aff6c1" answerLabels="None,Hepatitis,Skin rash,Peripheral Neuropathy,Other"/></td>
+                       <td><obs conceptId="655fb892-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="6561fa3a-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="655d5246-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/></td>
+                       <td><obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/></td>
+                       <td><obs conceptId="656225e6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel=""/></td>
                </tr>
 	</table><br/>
 	<table border="1" cellpadding="0" cellspacing="0">
@@ -90,7 +90,7 @@
 			<th colspan="4">Enter the following information from the back page of the ART mastercard:</th>
 		</tr>
 		<tr>
-			<td colspan="4"><obs conceptId="1480" labelText="WHO Staging Criteria (Based on items checked below)" style="radio" answerConceptIds="1067,1204,1205,1206,1207" answerLabels="Unknown,WHO Stage I,WHO Stage II,WHO Stage III, WHO Stage IV"/></td>
+			<td colspan="4"><obs conceptId="6559f286-977f-11e1-8993-905e29aff6c1" labelText="WHO Staging Criteria (Based on items checked below)" style="radio" answerConceptIds="65576584-977f-11e1-8993-905e29aff6c1,65585dae-977f-11e1-8993-905e29aff6c1,65585ec6-977f-11e1-8993-905e29aff6c1,65585fde-977f-11e1-8993-905e29aff6c1,655860f6-977f-11e1-8993-905e29aff6c1" answerLabels="Unknown,WHO Stage I,WHO Stage II,WHO Stage III, WHO Stage IV"/></td>
 		</tr>
 		<tr>
 			<td width="25%"><b>WHO Clinical Stage I</b><i> Check all that apply</i></td>
@@ -101,71 +101,71 @@
 		<tr>
 			<td valign="top">
 				<u>For Adults and Children</u><br/>
-				<obs conceptId="2743" answerConceptId="5327" style="checkbox" answerLabel="Asymptomatic"/><br/>
-				<obs conceptId="2743" answerConceptId="5328" style="checkbox" answerLabel="Persistent generalized lymphadenopathy"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b1a48-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Asymptomatic"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b1b60-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Persistent generalized lymphadenopathy"/><br/>
 			</td>
 			<td valign="top">
 				<u>For Adults</u><br/>
-				<obs conceptId="2743" answerConceptId="5332" style="checkbox" answerLabel="Unintentional weight loss &lt;10% of body weight in the absence of concurrent illness"/><br/>
-				<obs conceptId="2743" answerConceptId="5330" style="checkbox" answerLabel="Minor mucocutaneous manifestations (seborrheic dermatitis,prurigo, fungal nail infections, recurrent oral ulcerations, angular chelitis)"/><br/>
-				<obs conceptId="2743" answerConceptId="5329" style="checkbox" answerLabel="Herpes zoster"/><br/>
-				<obs conceptId="2743" answerConceptId="5012" style="checkbox" answerLabel="Recurrent upper respiratory tract infections (ie, bacterial sinusitis)"/><br/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b206a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unintentional weight loss &lt;10% of body weight in the absence of concurrent illness"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b1d86-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Minor mucocutaneous manifestations (seborrheic dermatitis,prurigo, fungal nail infections, recurrent oral ulcerations, angular chelitis)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b1c78-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Herpes zoster"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65696158-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Recurrent upper respiratory tract infections (ie, bacterial sinusitis)"/><br/><br/>
 				<u>For Children</u><br/>
-				<obs conceptId="2743" answerConceptId="2893" style="checkbox" answerLabel="Unexplained persistent hepatomegaly"/><br/>
-				<obs conceptId="2743" answerConceptId="2577" style="checkbox" answerLabel="Papular itchy skin eruptions"/><br/>
-				<obs conceptId="2743" answerConceptId="1211" style="checkbox" answerLabel="Extensive wart virus infections"/><br/>
-				<obs conceptId="2743" answerConceptId="1212" style="checkbox" answerLabel="Extenseive molluscum contagiosum"/><br/>
-				<obs conceptId="2743" answerConceptId="2576" style="checkbox" answerLabel="Recurrent oral ulceration"/><br/>
-				<obs conceptId="2743" answerConceptId="1210" style="checkbox" answerLabel="Unexplained persistent parotid gland enlargement"/><br/>
-				<obs conceptId="2743" answerConceptId="2891" style="checkbox" answerLabel="Lineal gingival erythema"/><br/>
-				<obs conceptId="2743" answerConceptId="5022" style="checkbox" answerLabel="Herpes zoster"/><br/>
-				<obs conceptId="2743" answerConceptId="5012" style="checkbox" answerLabel="Recurrent or chronic respiratory tract infections (sinusitis, otorrhoea, tonsillitis, otitis media)"/><br/>
-				<obs conceptId="2743" answerConceptId="2579" style="checkbox" answerLabel="Fungal nail infections"/><br/>				
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65619dc4-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unexplained persistent hepatomegaly"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fdf2a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Papular itchy skin eruptions"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65586560-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Extensive wart virus infections"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65586678-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Extenseive molluscum contagiosum"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fde12-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Recurrent oral ulceration"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6558643e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unexplained persistent parotid gland enlargement"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6561911c-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Lineal gingival erythema"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65696c02-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Herpes zoster"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65696158-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Recurrent or chronic respiratory tract infections (sinusitis, otorrhoea, tonsillitis, otitis media)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fe13c-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Fungal nail infections"/><br/>				
 			</td>
 			<td valign="top">
 				<u>For Adults and Children</u><br/>
-				<obs conceptId="2743" answerConceptId="5340" style="checkbox" answerLabel="Oral candidiasis"/><br/>
-				<obs conceptId="2743" answerConceptId="5337" style="checkbox" answerLabel="Oral hairy leukoplakia"/><br/>
-				<obs conceptId="2743" answerConceptId="5339" style="checkbox" answerLabel="Unintentional weight loss &gt;10% of body weight in the absence of concurrent illness"/><br/>
-				<obs conceptId="2743" answerConceptId="5018" style="checkbox" answerLabel="Chronic diarrhoea &gt;1 month"/><br/>
-				<obs conceptId="2743" answerConceptId="5027" style="checkbox" answerLabel="Prolonged fever (intermmitent or constant &gt;1 month)"/><br/>
-				<obs conceptId="2743" answerConceptId="42" style="checkbox" answerLabel="Active Pulmonary Tuberculosis (PTB)"/><br/>
-				<obs conceptId="2743" answerConceptId="2624" style="checkbox" answerLabel="PTB within the past 2 years"/><br/>
-				<obs conceptId="2743" answerConceptId="5333" style="checkbox" answerLabel="Severe bacterial infections (eg pneumonia, pyomyositis)"/><br/>
-				<obs conceptId="2743" answerConceptId="2581" style="checkbox" answerLabel="Acute ulcerative mouth infections"/><br/>
-				<obs conceptId="2743" answerConceptId="2582" style="checkbox" answerLabel="Unexplained anaemia, neutropaenia or throbocytopaenia"/><br/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b2ef2-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Oral candidiasis"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b29b6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Oral hairy leukoplakia"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b2d30-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unintentional weight loss &gt;10% of body weight in the absence of concurrent illness"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656967c0-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Chronic diarrhoea &gt;1 month"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65697166-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Prolonged fever (intermmitent or constant &gt;1 month)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6545c072-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Active Pulmonary Tuberculosis (PTB)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65601512-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="PTB within the past 2 years"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b2222-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Severe bacterial infections (eg pneumonia, pyomyositis)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fe34e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Acute ulcerative mouth infections"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fe452-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unexplained anaemia, neutropaenia or throbocytopaenia"/><br/><br/>
 				<u>Additional for Children</u><br/>
-				<obs conceptId="2743" answerConceptId="5050" style="checkbox" answerLabel="Moderate unexplained malnutrition"/><br/>
-				<obs conceptId="2743" answerConceptId="2888" style="checkbox" answerLabel="TB lymphadenopathy"/><br/>	
-				<obs conceptId="2743" answerConceptId="1215" style="checkbox" answerLabel="Severe recurrent bacterial pneumonia"/><br/>
-				<obs conceptId="2743" answerConceptId="5024" style="checkbox" answerLabel="Symptomatic lymphoid interstitial pneumonia"/><br/>				
-				<obs conceptId="2743" answerConceptId="2889" style="checkbox" answerLabel="Chronic HIV lung diseases, including bronchiectasis"/><br/>				
-				<obs conceptId="2743" answerConceptId="5016" style="checkbox" answerLabel="HIV-associated cardiomyopathy"/><br/>				
-				<obs conceptId="2743" answerConceptId="5025" style="checkbox" answerLabel="HIV-associated nephropathy"/><br/>									
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65698fb6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Moderate unexplained malnutrition"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6561887a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="TB lymphadenopathy"/><br/>	
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655869c0-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Severe recurrent bacterial pneumonia"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65696e28-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Symptomatic lymphoid interstitial pneumonia"/><br/>				
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65618974-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Chronic HIV lung diseases, including bronchiectasis"/><br/>				
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6569659a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="HIV-associated cardiomyopathy"/><br/>				
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65696f40-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="HIV-associated nephropathy"/><br/>									
 			</td>
 			<td>
 				<u>For Adults and Children</u><br/>
-				<obs conceptId="2743" answerConceptId="823" style="checkbox" answerLabel="HIV wasting syndrome (weight loss &gt;10% of body weight and either chronic fever or diarrhoea in the absence of concurrent illness)"/><br/>
-				<obs conceptId="2743" answerConceptId="882" style="checkbox" answerLabel="Pneumocystic carinii pneumonia"/><br/>
-				<obs conceptId="2743" answerConceptId="2583" style="checkbox" answerLabel="Toxoplasmosis of the brain"/><br/>
-				<obs conceptId="2743" answerConceptId="5034" style="checkbox" answerLabel="Cryptosporidosis with diarrhoea &gt;1 month"/><br/>
-				<obs conceptId="2743" answerConceptId="2858" style="checkbox" answerLabel="Isosporiasis with diarrhoea &gt;1 month"/><br/>
-				<obs conceptId="2743" answerConceptId="5033" style="checkbox" answerLabel="Cryptococcus, extrapulmonary"/><br/>
-				<obs conceptId="2743" answerConceptId="5035" style="checkbox" answerLabel="Cytomegalovirus of an organ other than liver, spleen or lymph node"/><br/>
-				<obs conceptId="2743" answerConceptId="5344" style="checkbox" answerLabel="Herpes simplex infection, mucocutaneous for &gt;1 month or visceral"/><br/>
-				<obs conceptId="2743" answerConceptId="5046" style="checkbox" answerLabel="Progressive multifocal leukoencephalopathy"/><br/>
-				<obs conceptId="2743" answerConceptId="5350" style="checkbox" answerLabel="Any disseminated endemic mycosis"/><br/>
-				<obs conceptId="2743" answerConceptId="5334" style="checkbox" answerLabel="Candidiasis of oesophagus, trachea and bronchus"/><br/>
-				<obs conceptId="2743" answerConceptId="5350" style="checkbox" answerLabel="Atypical mycobacteriosis, disseminated or lungs"/><br/>
-				<obs conceptId="2743" answerConceptId="2890" style="checkbox" answerLabel="Recurrent bacteraemia"/><br/>
-				<obs conceptId="2743" answerConceptId="1547" style="checkbox" answerLabel="Extrapulmonary tuberculosis (EPTB)"/><br/>
-				<obs conceptId="2743" answerConceptId="5041" style="checkbox" answerLabel="Lymphoma (cerebral or B-cell non-Hodgkin)"/><br/>
-				<obs conceptId="2743" answerConceptId="507" style="checkbox" answerLabel="Kaposi's Sarcoma"/><br/>
-				<obs conceptId="2743" answerConceptId="1362" style="checkbox" answerLabel="HIV encephalopathy"/><br/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="654a4d04-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="HIV wasting syndrome (weight loss &gt;10% of body weight and either chronic fever or diarrhoea in the absence of concurrent illness)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="654a935e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Pneumocystic carinii pneumonia"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655fe560-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Toxoplasmosis of the brain"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65697e9a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Cryptosporidosis with diarrhoea &gt;1 month"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65616278-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Isosporiasis with diarrhoea &gt;1 month"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65697d8c-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Cryptococcus, extrapulmonary"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65697fa8-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Cytomegalovirus of an organ other than liver, spleen or lymph node"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b35dc-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Herpes simplex infection, mucocutaneous for &gt;1 month or visceral"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65698b74-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Progressive multifocal leukoencephalopathy"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b4036-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Any disseminated endemic mycosis"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b23c6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Candidiasis of oesophagus, trachea and bronchus"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="656b4036-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Atypical mycobacteriosis, disseminated or lungs"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65618f8c-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Recurrent bacteraemia"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655a49ac-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Extrapulmonary tuberculosis (EPTB)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6569861a-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Lymphoma (cerebral or B-cell non-Hodgkin)"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="6548955e-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Kaposi's Sarcoma"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="655926c6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="HIV encephalopathy"/><br/><br/>
 				<u>Additional for Children</u><br/>
-				<obs conceptId="2743" answerConceptId="823" style="checkbox" answerLabel="Unexplained severe wasting, stunting or malnutrition not responding to treatment"/><br/>
-				<obs conceptId="2743" answerConceptId="2894" style="checkbox" answerLabel="Recurrent severe presumed bacterial infections (eg empyema,sepsis, meningitis, bone or joint infections but excluding pneumonia"/><br/>
-				<obs conceptId="2743" answerConceptId="2892" style="checkbox" answerLabel="EPTB but excluding TB lymphadenopathy"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="654a4d04-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Unexplained severe wasting, stunting or malnutrition not responding to treatment"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65619f36-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="Recurrent severe presumed bacterial infections (eg empyema,sepsis, meningitis, bone or joint infections but excluding pneumonia"/><br/>
+				<obs conceptId="6560dca4-977f-11e1-8993-905e29aff6c1" answerConceptId="65619c48-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel="EPTB but excluding TB lymphadenopathy"/><br/>
 			</td>				
 		</tr>
 
@@ -175,25 +175,25 @@
 			<th colspan="2">Enter the following  information from the ART Clinic Intake, Physician Followup or Nurse Followup Forms:</th>
 		</tr>
 		<tr>
-			<td><obs conceptId="5272" labelText="Pregnant?" style="no_yes"/>
-			       <obs conceptId="968" labelText="LMP: "/></td>
+			<td><obs conceptId="656ad8d0-977f-11e1-8993-905e29aff6c1" labelText="Pregnant?" style="no_yes"/>
+			       <obs conceptId="654b3a8e-977f-11e1-8993-905e29aff6c1" labelText="LMP: "/></td>
 		</tr>
 		<tr><td colspan="2">Comments at Conclusion of examination</td></tr>
-		<tr><td colspan="2"><obs conceptId="1620" size="100"/></td></tr>
+		<tr><td colspan="2"><obs conceptId="655a9b1e-977f-11e1-8993-905e29aff6c1" size="100"/></td></tr>
 	</table><br/>
 	<table border="1" cellpadding="0" cellspacing="0" width="100%">
 		<tr><th>Data Clerk Comments:</th></tr>
-		<tr><td><obs conceptId="2922" size="100"/></td></tr>
+		<tr><td><obs conceptId="6561f314-977f-11e1-8993-905e29aff6c1" size="100"/></td></tr>
 	</table><br/>
 	<table border="1">
-		<obsgroup groupingConceptId="6785">
+		<obsgroup groupingConceptId="65733750-977f-11e1-8993-905e29aff6c1">
 		<tr>
 			<td>Appointment date</td>
-			<td><obs conceptId="5096" allowFutureDates="true"/></td>
+			<td><obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true"/></td>
 		</tr>
 		<tr>
 			<td>Appointment reason</td>
-                        <td><obs conceptId="6784" style="radio" answerConceptIds="6255" answerLabels="ART Visit"/></td>
+                        <td><obs conceptId="6573364c-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6570538c-977f-11e1-8993-905e29aff6c1" answerLabels="ART Visit"/></td>
 		</tr>
                 </obsgroup>
        </table><br/><br/>	

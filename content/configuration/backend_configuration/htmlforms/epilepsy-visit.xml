@@ -11,39 +11,39 @@
 
 
     <macros>
-        other=6408
-        height=5090
-        weight=5089
-        bmiCoded=8467
-        typical=1115
-        underWeight=3812
-        overWeight=8459
-        seizActivity=8541
-        seizSinceVisit=8539
-        anyTrig=8540
-        numSeizures=7924
-        triggers=8538
-        trigAlc=8531
-        trigFever=8532
-        trigSound=8533
-        trigStress=8534
-        trigSleep=8535
-        trigMeds=8536
-        trigMenst=8537
-        seizureSymp=8544
-        tongueBite=8542
-        incontinent=8543
-        pregnant=6131
-        familyPlan=5271
-        hospitalSinceLast=1715
-        drugsNow=1193
-        drugSet=8501
-        cbz=920
-        pb=238
-        pht=273
-        sv=4060
-        clinicalImpression=1364
-        nextAppt=5096
+        other=657140f8-977f-11e1-8993-905e29aff6c1
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        bmiCoded=484499f2-b58b-11e5-9f22-ba0be0483c18
+        typical=6557a15c-977f-11e1-8993-905e29aff6c1
+        underWeight=6567eb98-977f-11e1-8993-905e29aff6c1
+        overWeight=158204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        seizActivity=5f520642-cf63-11e5-ab30-625662870761
+        seizSinceVisit=5f52025a-cf63-11e5-ab30-625662870761
+        anyTrig=5f520476-cf63-11e5-ab30-625662870761
+        numSeizures=65795b26-977f-11e1-8993-905e29aff6c1
+        triggers=5f51fecc-cf63-11e5-ab30-625662870761
+        trigAlc=7e8ab286-cf5c-11e5-ab30-625662870761
+        trigFever=7e8ab5b0-cf5c-11e5-ab30-625662870761
+        trigSound=7e8ab740-cf5c-11e5-ab30-625662870761
+        trigStress=7e8abbdc-cf5c-11e5-ab30-625662870761
+        trigSleep=7e8abdbc-cf5c-11e5-ab30-625662870761
+        trigMeds=7e8abefc-cf5c-11e5-ab30-625662870761
+        trigMenst=7e8abfd8-cf5c-11e5-ab30-625662870761
+        seizureSymp=159502AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        tongueBite=159506AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        incontinent=117211AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        pregnant=656fbd28-977f-11e1-8993-905e29aff6c1
+        familyPlan=656ad7c2-977f-11e1-8993-905e29aff6c1
+        hospitalSinceLast=655b3dc6-977f-11e1-8993-905e29aff6c1
+        drugsNow=65585192-977f-11e1-8993-905e29aff6c1
+        drugSet=447aaa7a-cd03-11e5-9956-625662870761
+        cbz=654b0726-977f-11e1-8993-905e29aff6c1
+        pb=6546f3c0-977f-11e1-8993-905e29aff6c1
+        pht=65473768-977f-11e1-8993-905e29aff6c1
+        sv=65694b32-977f-11e1-8993-905e29aff6c1
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
         <macro key="noncodedText" value="d57e3a20-5802-11e6-8b77-86f30ca893d3" />
         <macro key="yesAnswer" value="65576354-977f-11e1-8993-905e29aff6c1" />
         <macro key="noAnswer" value="6557646c-977f-11e1-8993-905e29aff6c1" />
@@ -211,13 +211,13 @@
 
                     <!-- Seizure activity -->
                     <td>
-                        <obs conceptId="$anySeizures" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                        <obs conceptId="$anySeizures" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                     </td>
                     <td>
                         <obs conceptId="$numSeizures"/>
                     </td>
                     <td>
-                        <obs conceptId="$anyTriggersPresent" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                        <obs conceptId="$anyTriggersPresent" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                     </td>
 
                     <!-- Triggers -->
@@ -241,7 +241,7 @@
                     </td>
                     <td>
                         <!-- Hospitalized since last visit -->
-                        <obs conceptId="$hospitalSinceLast" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                        <obs conceptId="$hospitalSinceLast" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                     </td>
                     <td>
                         <!-- Pregnant -->
@@ -250,7 +250,7 @@
                     </td>
                     <td>
                         <!-- Family planning -->
-                        <obs conceptId="$familyPlan" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                        <obs conceptId="$familyPlan" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                     </td>
                     <!-- Treatment Details -->
                     <td colspan="5" style="padding: 1px; text-align: left;">
@@ -384,7 +384,7 @@
             <tr>
                 <th>Seizures since last visit</th>
                 <td>
-                    <obs conceptId="$anySeizures" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                    <obs conceptId="$anySeizures" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                 </td>
             </tr>
 
@@ -398,7 +398,7 @@
             <tr>
                 <th>Any triggers</th>
                 <td>
-                    <obs conceptId="$anyTriggersPresent" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                    <obs conceptId="$anyTriggersPresent" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                 </td>
             </tr>
 
@@ -428,7 +428,7 @@
             <tr>
                 <th>Hospitalized since last visit</th>
                 <td>
-                    <obs conceptId="$hospitalSinceLast" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                    <obs conceptId="$hospitalSinceLast" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                 </td>
             </tr>
             <tr>
@@ -441,7 +441,7 @@
             <tr>
                 <th>On family planning</th>
                 <td>
-                    <obs conceptId="$familyPlan" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes,No" />
+                    <obs conceptId="$familyPlan" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes,No" />
                 </td>
             </tr>
             <tr>

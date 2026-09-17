@@ -50,7 +50,7 @@
 			<!-- Location isn't needed here, just hide it -->
 			<td>Location</td>
 			<td>
-				<encounterLocation default="1" />
+				<encounterLocation default="8d6c993e-c2cc-11de-8d13-0010c6dffd0f" />
 			</td>
 		</tr>
 		<tr style="display:none">
@@ -110,27 +110,13 @@
 							(todo)
 						</td>
 						<td>
-							<obs conceptId="8050" showDate="true"/>
+							<obs conceptId="657a33f2-977f-11e1-8993-905e29aff6c1" showDate="true"/>
 						</td>
 						<td>
-							<obs conceptId="8056"  showDate="true"/>
+							<obs conceptId="657a3a14-977f-11e1-8993-905e29aff6c1"  showDate="true"/>
 						</td>
 						<td>
-							<obs conceptId="8062"  showDate="true"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							(todo)
-						</td>
-						<td>
-							<obs conceptId="8051" showDate="true" />
-						</td>
-						<td>
-							<obs conceptId="8057" showDate="true" />
-						</td>
-						<td>
-							<obs conceptId="8063"  showDate="true"/>
+							<obs conceptId="657a4040-977f-11e1-8993-905e29aff6c1"  showDate="true"/>
 						</td>
 					</tr>
 					<tr>
@@ -138,13 +124,27 @@
 							(todo)
 						</td>
 						<td>
-							<obs conceptId="8052" showDate="true" />
+							<obs conceptId="657a34f6-977f-11e1-8993-905e29aff6c1" showDate="true" />
 						</td>
 						<td>
-							<obs conceptId="8058" showDate="true" />
+							<obs conceptId="657a3b22-977f-11e1-8993-905e29aff6c1" showDate="true" />
 						</td>
 						<td>
-							<obs conceptId="8064" showDate="true" />
+							<obs conceptId="657a414e-977f-11e1-8993-905e29aff6c1"  showDate="true"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							(todo)
+						</td>
+						<td>
+							<obs conceptId="657a35fa-977f-11e1-8993-905e29aff6c1" showDate="true" />
+						</td>
+						<td>
+							<obs conceptId="657a3c26-977f-11e1-8993-905e29aff6c1" showDate="true" />
+						</td>
+						<td>
+							<obs conceptId="657a4252-977f-11e1-8993-905e29aff6c1" showDate="true" />
 						</td>
 					</tr>
 				</table>

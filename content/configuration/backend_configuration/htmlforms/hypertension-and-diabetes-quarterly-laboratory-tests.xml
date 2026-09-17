@@ -11,15 +11,15 @@
 
 
     <macros>
-        proteinuria=6447
-        proteinuriaNegative=664
-        proteinuriaTrace=6698
-        proteinuria1Plus=1410
-        proteinuria2Plus=1408
-        proteinuria3Plus=1409
+        proteinuria=65717366-977f-11e1-8993-905e29aff6c1
+        proteinuriaNegative=654994c2-977f-11e1-8993-905e29aff6c1
+        proteinuriaTrace=6572cf72-977f-11e1-8993-905e29aff6c1
+        proteinuria1Plus=65598fb2-977f-11e1-8993-905e29aff6c1
+        proteinuria2Plus=65597cde-977f-11e1-8993-905e29aff6c1
+        proteinuria3Plus=65598706-977f-11e1-8993-905e29aff6c1
         hivTestConstruct=PIH Malawi:2168
         hivSampleDate=PIH Malawi:6108
-        hivTestResult=2169
+        hivTestResult=655dcb7c-977f-11e1-8993-905e29aff6c1
 
         <macro key="positive" value="6549be7a-977f-11e1-8993-905e29aff6c1"/>
         <macro key="negative" value="654994c2-977f-11e1-8993-905e29aff6c1"/>
@@ -53,7 +53,7 @@
                     </td>
                     <td>
                         <!-- Proteinuria -->
-                        <obs conceptId="$proteinuria" style="radio" answerConceptIds="664,6698,1410,1408,1409" answerLabels="Negative,Trace,1+,2+,3+"/>
+                        <obs conceptId="$proteinuria" style="radio" answerConceptIds="654994c2-977f-11e1-8993-905e29aff6c1,6572cf72-977f-11e1-8993-905e29aff6c1,65598fb2-977f-11e1-8993-905e29aff6c1,65597cde-977f-11e1-8993-905e29aff6c1,65598706-977f-11e1-8993-905e29aff6c1" answerLabels="Negative,Trace,1+,2+,3+"/>
                     </td>
                     <td>
                         <obsgroup groupingConceptId="$hivTestConstruct">
@@ -105,7 +105,7 @@
             <tr>
                 <th>Proteinuria</th>
                 <td>
-                    <obs conceptId="$proteinuria" style="radio" answerConceptIds="664,6698,1410,1408,1409" answerLabels="Negative,Trace,1+,2+,3+"/>
+                    <obs conceptId="$proteinuria" style="radio" answerConceptIds="654994c2-977f-11e1-8993-905e29aff6c1,6572cf72-977f-11e1-8993-905e29aff6c1,65598fb2-977f-11e1-8993-905e29aff6c1,65597cde-977f-11e1-8993-905e29aff6c1,65598706-977f-11e1-8993-905e29aff6c1" answerLabels="Negative,Trace,1+,2+,3+"/>
                 </td>
             </tr>
 

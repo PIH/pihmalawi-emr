@@ -11,8 +11,8 @@
 
 
     <macros>
-        yesAnswer=1065
-        noAnswer=1066
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
         <macro key="testResult" value="522849a5-be77-41b2-98e4-a755096df7ed" />
         <macro key="pass" value="20f6787b-3f0e-4c98-91c2-ee34f771f3ff" />
         <macro key="fail" value="a2a69a69-ecc7-450f-952e-bc8830aaabe7" />
