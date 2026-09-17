@@ -49,7 +49,7 @@ export const createPatient = async (
         birthdate,
         birthdateEstimated: false,
         dead: opts.dead ?? false,
-        names: [{ givenName, familyName }],
+        names: [{ givenName, familyName, preferred: true }],
         addresses: [],
         attributes: [],
       },
