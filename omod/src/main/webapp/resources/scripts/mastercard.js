@@ -163,6 +163,10 @@
         function setupEncDupsValidation(flowsheet, html) {
             const formName = flowsheet.getCurrentlyEditingFormName();
             const currentFlowsheet = flowsheet.getFlowsheet(formName);
+            if (!currentFlowsheet) {
+              // the header form is not registered as a flowsheet, so there's nothing to check for duplicates
+              return false;
+            }
             const currentlyEditingEncounterId = flowsheet.getCurrentlyEditingEncounterId();
             const encTypeUuid = currentFlowsheet.encounterTypeUuid;
             const apiBaseUrl = "/" + window.location.href.split('/')[3] + "/ws/rest/v1";
