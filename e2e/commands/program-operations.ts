@@ -58,3 +58,14 @@ export const getProgramEnrollments = async (
   const body = await res.json();
   return body.results;
 };
+
+export const purgeProgramEnrollments = async (
+  api: APIRequestContext,
+  patientUuid: string,
+): Promise<void> => {
+  const enrollments = await getProgramEnrollments(api, patientUuid);
+  for (const enrollment of enrollments) {
+    const res = await api.delete(`programenrollment/${enrollment.uuid}?purge=true`);
+    expect(res.ok()).toBeTruthy();
+  }
+};

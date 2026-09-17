@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { api as apiFixture } from '../../fixtures';
-import { createPatient, getPatient, deletePatient, addPatientIdentifier, enrollInProgram, getProgramEnrollments, transitionToState } from '../../commands';
+import { createPatient, getPatient, deletePatient, addPatientIdentifier, enrollInProgram, getProgramEnrollments, transitionToState, purgeProgramEnrollments } from '../../commands';
 import { DUMMY_ID_IDENTIFIER_TYPE_UUID, NENO_DISTRICT_HOSPITAL_LOCATION_UUID, HIV_PROGRAM_UUID, ON_ARVS_STATE_UUID } from '../../core/constants';
 
 const test2 = test.extend<{}, { api: Awaited<ReturnType<typeof apiFixture>> }>({
@@ -41,4 +41,7 @@ test2('enrollInProgram creates an enrollment with the initial state set', async 
 
   const fetched = await getProgramEnrollments(api, patient.uuid);
   expect(fetched.length).toBeGreaterThan(0);
+
+  await purgeProgramEnrollments(api, patient.uuid);
+  await deletePatient(api, patient.uuid);
 });
