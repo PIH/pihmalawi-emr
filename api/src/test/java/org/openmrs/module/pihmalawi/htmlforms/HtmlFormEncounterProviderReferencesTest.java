@@ -17,20 +17,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Every htmlform's encounterProvider default attribute, when present, must reference a provider
- * by uuid from a known-valid set, not by an install-specific raw primary key (see MLW-1846). The
+ * Every htmlform's encounterProvider default attribute, when present, must reference a person
+ * by uuid from a known-valid set, not by an install-specific raw primary key (see MLW-1846).
+ * htmlformentry resolves this attribute via HtmlFormEntryUtil.getPerson(String), not against the
+ * Provider table, despite the tag's name - so the valid values here are person uuids. The
  * attribute is optional; forms with no default at all are fine.
  */
 public class HtmlFormEncounterProviderReferencesTest {
 
     /**
      * uuids it's legitimate for an encounterProvider default to reference. Currently just the
-     * placeholder "Unknown Provider" (see UnknownProviderInitializer), which is what every
+     * placeholder "Unknown Provider" person (see UnknownProviderInitializer), which is what every
      * raw-id default in this repo actually meant - but this isn't the only value that could ever
      * be valid here, so it's a set to extend rather than a single hardcoded expectation.
      */
     private static final Set<String> KNOWN_VALID_PROVIDER_UUIDS =
-            new HashSet<String>(Arrays.asList(UnknownProviderInitializer.UUID));
+            new HashSet<String>(Arrays.asList(UnknownProviderInitializer.PERSON_UUID));
 
     private static final Pattern ENCOUNTER_PROVIDER_DEFAULT =
             Pattern.compile("<encounterProvider\\b[^>]*\\bdefault\\s*=\\s*\"([^\"]*)\"");

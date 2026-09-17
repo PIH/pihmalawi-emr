@@ -82,7 +82,7 @@
             </span>
         </h4>
 
-        <span style="display:none"><encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54" /></span> <!-- Set provider to a default as not used -->
+        <span style="display:none"><encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54" /></span> <!-- Set provider to a default as not used -->
 
         <table class="visit-edit-table">
 

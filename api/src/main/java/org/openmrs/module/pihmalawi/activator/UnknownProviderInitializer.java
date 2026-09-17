@@ -21,35 +21,38 @@ import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 
 /**
- * Ensures a placeholder "Unknown Provider" exists with a fixed, portable uuid, matching the
- * record that already exists in production. Several htmlforms hardcode a raw provider primary
- * key as the default value of their provider field; since that id is install-specific and can't
- * be resolved from any metadata-only source, this creates a matching-uuid Provider on every
- * install instead, so htmlforms can reference it by uuid (see MLW-1846).
+ * Ensures a placeholder "Unknown Provider" exists with fixed, portable uuids, matching the
+ * records that already exist in production. Several htmlforms hardcode a raw person primary key
+ * as the default value of their provider field (htmlformentry resolves encounterProvider's
+ * default via Person, not Provider); since that id is install-specific and can't be resolved
+ * from any metadata-only source, this creates matching-uuid Provider/Person records on every
+ * install instead, so htmlforms can reference the person by uuid (see MLW-1846).
  */
 public class UnknownProviderInitializer implements Initializer {
 
     protected static final Log log = LogFactory.getLog(UnknownProviderInitializer.class);
 
-    public static final String UUID = "provfc3c-2695-102d-b4c2-001d929acb54";
+    public static final String PROVIDER_UUID = "provfc3c-2695-102d-b4c2-001d929acb54";
+    public static final String PERSON_UUID = "c4f0fc3c-2695-102d-b4c2-001d929acb54";
     public static final String GIVEN_NAME = "Unknown";
     public static final String FAMILY_NAME = "Provider";
     public static final String GENDER = "M";
 
     @Override
     public void started() {
-        if (Context.getProviderService().getProviderByUuid(UUID) == null) {
+        if (Context.getProviderService().getProviderByUuid(PROVIDER_UUID) == null) {
             Person person = new Person();
+            person.setUuid(PERSON_UUID);
             person.setGender(GENDER);
             person.addName(new PersonName(GIVEN_NAME, null, FAMILY_NAME));
             person = Context.getPersonService().savePerson(person);
 
             Provider provider = new Provider();
-            provider.setUuid(UUID);
+            provider.setUuid(PROVIDER_UUID);
             provider.setPerson(person);
             Context.getProviderService().saveProvider(provider);
 
-            log.info("Created Unknown Provider with uuid " + UUID);
+            log.info("Created Unknown Provider with uuid " + PROVIDER_UUID);
         }
     }
 

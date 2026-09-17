@@ -21,7 +21,7 @@
         <macro key="noAnswer" value="6557646c-977f-11e1-8993-905e29aff6c1" />
     </macros>
     <span style="display:none">
-        <encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54" />
+        <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54" />
         <span id="patientBirthdate"><lookup expression="patient.birthdate"/></span>
     </span>
     <div>

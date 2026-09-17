@@ -230,7 +230,7 @@
             <tr>
                 <th>Provider</th>
                 <td>
-                    <encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54"/>
+                    <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54"/>
                 </td>
             </tr>
             <tr>

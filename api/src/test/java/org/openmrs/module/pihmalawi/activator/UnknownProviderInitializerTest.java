@@ -14,14 +14,15 @@ public class UnknownProviderInitializerTest extends BaseModuleContextSensitiveTe
 
     @Test
     public void shouldCreateUnknownProviderIfNotPresent() {
-        Assert.assertNull(Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.UUID));
+        Assert.assertNull(Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.PROVIDER_UUID));
 
         new UnknownProviderInitializer().started();
 
-        Provider provider = Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.UUID);
+        Provider provider = Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.PROVIDER_UUID);
         Assert.assertNotNull(provider);
         Person person = provider.getPerson();
         Assert.assertNotNull(person);
+        Assert.assertEquals(UnknownProviderInitializer.PERSON_UUID, person.getUuid());
         Assert.assertEquals(UnknownProviderInitializer.GENDER, person.getGender());
         PersonName name = person.getPersonName();
         Assert.assertEquals(UnknownProviderInitializer.GIVEN_NAME, name.getGivenName());
@@ -31,19 +32,19 @@ public class UnknownProviderInitializerTest extends BaseModuleContextSensitiveTe
     @Test
     public void shouldNotCreateDuplicateIfAlreadyPresent() {
         new UnknownProviderInitializer().started();
-        Provider first = Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.UUID);
+        Provider first = Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.PROVIDER_UUID);
 
         new UnknownProviderInitializer().started();
 
         List<Provider> allProviders = Context.getProviderService().getAllProviders();
         int matching = 0;
         for (Provider p : allProviders) {
-            if (UnknownProviderInitializer.UUID.equals(p.getUuid())) {
+            if (UnknownProviderInitializer.PROVIDER_UUID.equals(p.getUuid())) {
                 matching++;
             }
         }
         Assert.assertEquals(1, matching);
-        Assert.assertEquals(first.getProviderId(), Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.UUID).getProviderId());
+        Assert.assertEquals(first.getProviderId(), Context.getProviderService().getProviderByUuid(UnknownProviderInitializer.PROVIDER_UUID).getProviderId());
     }
 
     @Test
