@@ -151,6 +151,71 @@ export class MastercardGatePage {
 //    are purged, then the encounter, before the patient.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Task 10) — confirmed against a live instance the same
+// way as Tasks 8/9, entering an ART Visit (art-visit.xml) flowsheet against
+// a patient with an existing ART_INITIAL header encounter.
+//
+// 1. `openCreate` cannot be called a second time to reach the visit form.
+//    Once a header (ART_INITIAL) encounter exists, `flowsheet.page` renders
+//    the header in its READ-ONLY view (no `#mastercardLocation select` at
+//    all — confirmed by a 3-minute Playwright timeout waiting for it), with
+//    the flowsheets (viral load tests / ART follow-up testing / ART visit)
+//    listed below it as "Enter New <Form Name>" action links, each with its
+//    own default-to-today date field. The visit form is reached by clicking
+//    "Enter New ART Visit" on that SAME already-loaded page (confirmed via
+//    `flowsheet.js`'s `flowsheet.enterVisit`, which does an in-place AJAX
+//    swap — `jq('#flowsheet-edit-section-'+fs.index).html(data)` — the URL
+//    never changes) — see `enterNewFlowsheet` below.
+//
+// 2. `heightInput`/`weightInput` DO have explicit ids in art-visit.xml
+//    (unlike art-emastercard.xml's same-named fields, which do NOT — see
+//    Task 9 note 1) — confirmed via both the XML source and the rendered
+//    DOM. Both still wrap a plain `<input>` in a `<span id="...">`, same
+//    shape `fillField` already handled for `guardianNameField`.
+//
+// 3. `appointmentDate` DOES have an explicit id in art-visit.xml
+//    (`<obs conceptId="$nextAppt" id="appointmentDate" .../>`), confirming
+//    the brief's claim for this field specifically — but it renders as a
+//    READONLY jQuery-UI-datepicker-driven `<input class="hasDatepicker"
+//    readonly>` plus a hidden ISO-format field, not a plain fillable input.
+//    Playwright's `.fill()` refuses readonly inputs, so `fillField` below
+//    drives htmlformentry's own global `setDatePickerValue()` (defined in
+//    `htmlFormEntry.js`) directly instead, then dispatches `change` on both
+//    the display and hidden inputs (art-visit.xml's own script hooks
+//    `change` on this field for "same-day next-appointment" lookups).
+//
+// 4. Saving the visit form additionally requires two fields the brief's
+//    placeholder didn't mention, enforced by art-visit.xml's own
+//    `beforeValidation` JS (not marked `required` in the XML, so this is
+//    JS-only, not standard htmlformentry validation):
+//      - `artRegimenObs` (ART Regimen `<select>`) — required non-blank.
+//      - `noTabletsGiven` (the "No. of tablets" input under "ARVs given")
+//        — required non-blank.
+//    The rendered `.submitButton` is left `disabled` until these clear.
+//    `visitLocation` (like the header's `mastercardLocation`) is also
+//    blank-by-default and required (an `encounterLocation` tag, same as the
+//    header) — `selectDropdown` below handles both `<select>` fields.
+//
+// 5. The visit form's save button is NOT labeled "Save". art-emastercard.xml
+//    defines its own `<button class="submitButton confirm">Save</button>`,
+//    but art-visit.xml uses a bare `<submit/>` tag, which htmlformentry
+//    renders with its default label: `<input type="button"
+//    class="submitButton" value="Enter Form">`. The brief's/Task 9's
+//    `getByRole('button', { name: /save/i })` never matches this. Both
+//    forms' submit controls DO share the stable `.submitButton` class, so
+//    `save()` below was changed to target that instead of the label text —
+//    confirmed this doesn't break the header form's save (same class is on
+//    its `<button>` too).
+//
+// 6. On successful save, `flowsheet.js`'s `successFunction` →
+//    `loadIntoFlowsheet(..., showVisitTable=true)` → `toggleViewFlowsheet()`
+//    hides the edit section and RE-SHOWS `#header-section` (and its
+//    "Back to Dashboard" link) — the same in-place re-render pattern as the
+//    header form, confirming `expectSaveSuccess()` (unchanged) also works
+//    for the visit form.
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 
@@ -180,9 +245,30 @@ export class MastercardFormPage {
       const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
       if (tagName === 'input' || tagName === 'textarea') {
         await byId.first().fill(value);
-      } else {
-        await byId.first().locator('input').first().fill(value);
+        return;
       }
+
+      const input = byId.first().locator('input').first();
+      const isDatePicker = await input.evaluate((el) => el.classList.contains('hasDatepicker'));
+      if (isDatePicker) {
+        // Readonly jQuery-UI-datepicker-driven field (e.g. art-visit.xml's
+        // `appointmentDate` — see verification note 3 above). Playwright's
+        // fill() refuses readonly inputs, so drive htmlformentry's own
+        // `setDatePickerValue()` global directly, then fire the `change`
+        // events real interaction would (some forms' own scripts hook
+        // `change` on these fields).
+        await byId.first().evaluate((el, val) => {
+          const display = el.querySelector('input') as HTMLInputElement;
+          const hidden = el.querySelector('input[type=hidden]') as HTMLInputElement | null;
+          // @ts-expect-error - global provided by htmlformentry's static JS (htmlFormEntry.js)
+          window.setDatePickerValue(`#${display.id}`, val);
+          display.dispatchEvent(new Event('change', { bubbles: true }));
+          hidden?.dispatchEvent(new Event('change', { bubbles: true }));
+        }, value);
+        return;
+      }
+
+      await input.fill(value);
       return;
     }
 
@@ -203,8 +289,46 @@ export class MastercardFormPage {
     await this.inputCellFor(groupLabel).getByLabel(optionLabel, { exact: true }).check();
   }
 
+  // Handles `<select>` fields either by real DOM id (e.g. `visitLocation`,
+  // `artRegimenObs` — both wrap a `<select>` in an id'd `<span>`, same shape
+  // as fillField's by-id fields) or, falling back, by the plain-text label
+  // immediately to the select's left in the same table row.
+  async selectDropdown(labelOrId: string, optionLabel: string): Promise<void> {
+    const byId = this.page.locator(`#${labelOrId} select`);
+    if (await byId.count()) {
+      await byId.first().selectOption({ label: optionLabel });
+      return;
+    }
+    await this.inputCellFor(labelOrId).locator('select').first().selectOption({ label: optionLabel });
+  }
+
+  // Reaches a flowsheet form (e.g. "ART Visit") from an already-loaded
+  // mastercard page that already has a saved header encounter — see
+  // verification note 1 above. `openCreate` cannot be called a second time
+  // for this: once a header encounter exists, the page renders it
+  // read-only with no edit fields at all, only these "Enter New <label>"
+  // links below it. This performs an in-place AJAX swap on the SAME page
+  // (the URL never changes), matching the header form's own save behavior.
+  async enterNewFlowsheet(formLabel: string): Promise<void> {
+    await this.page
+      .locator('a.form-action-link', { hasText: `Enter New ${formLabel}` })
+      .first()
+      .click();
+    // This is an in-place AJAX swap, not a navigation, so `waitForLoadState`
+    // is unreliable here — it can resolve between round trips before the
+    // form's own DOM has actually been inserted (observed as a race:
+    // `#visitLocation select`'s `count()` returning 0 immediately after
+    // `networkidle` resolved). Wait for the always-present submit control
+    // instead, since every flowsheet form renders one.
+    await this.page.locator('.submitButton').first().waitFor({ state: 'attached' });
+  }
+
   async save(): Promise<void> {
-    await this.page.getByRole('button', { name: /save/i }).click();
+    // `.submitButton` is the stable class htmlformentry always applies to
+    // its generated submit control, regardless of visible label — see
+    // verification note 5 above (art-visit.xml's bare `<submit/>` renders
+    // as "Enter Form", not "Save").
+    await this.page.locator('.submitButton').first().click();
   }
 
   async expectSaveSuccess(): Promise<void> {
