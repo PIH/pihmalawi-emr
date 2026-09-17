@@ -1,22 +1,2 @@
 {
-  "@openmrs/esm-api": {
-    "redirectAuthFailure": {
-      "url": "/findPatient.htm"
-    }
-  },
-  "@openmrs/esm-login-app": {
-    "logo": {
-      "src": "${openmrsSpaBase}/site/pih-logo.png",
-      "alt": "Abwenzi Pa Za Umoyo"
-    },
-    "links": {
-      "loginSuccess": "${openmrsBase}/findPatient.htm"
-    }
-  },
-  "@pih/esm-refapp-navbar-app": {
-    "brand": {
-      "src": "${openmrsSpaBase}/site/zl-logo.png",
-      "alt": "Abwenzi Pa Za Umoyo"
-    }
-  }
 }

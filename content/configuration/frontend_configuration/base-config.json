@@ -1,12 +1,51 @@
 {
+  "@openmrs/esm-api": {
+    "redirectAuthFailure": {
+      "url": "${openmrsBase}/authenticationui/login/login.page"
+    }
+  },
   "@openmrs/esm-login-app": {
     "logo": {
-      "src": "/openmrs/spa/site/pih-logo.png",
-      "alt": "Abwenzi Pa Za Umoyo"
+      "src": "${openmrsSpaBase}/pih_apzu_logo_white.png",
+      "alt": "Abwenzi Pa Za Umoyo",
+      "name": "Abwenzi Pa Za Umoyo"
     },
     "links": {
       "loginSuccess": "${openmrsBase}/findPatient.htm"
+    },
+    "provider": {
+      "type": "custom",
+      "loginUrl": "${openmrsBase}/index.htm",
+      "logoutUrl": "${openmrsBase}/appui/header/logout.action"
     }
+  },
+  "@openmrs/esm-form-builder-app": {
+    "showSchemaSaveWarning": false
+  },
+  "@openmrs/esm-help-menu-app": {
+    "extensionSlots": {
+      "help-menu-slot": {
+        "remove": [
+          "release-notes", "docs", "contact-us", "tutorials"
+        ]
+      }
+    }
+  },
+  "@openmrs/esm-home-app": {
+    "extensionSlots": {
+      "homepage-dashboard-slot": {
+        "remove": [
+          "laboratory-dashboard-link",
+          "patient-lists-dashboard-link",
+          "service-queues-dashboard-link"
+        ],
+        "order": [
+          "home-widget-db-link",
+          "audit-dashboard-link"
+        ]
+      }
+    },
+    "leftNavMode": "hidden"
   },
   "@openmrs/esm-patient-vitals-app": {
     "concepts": {
@@ -20,9 +59,71 @@
       "respiratoryRateUuid": "3ceb11f8-26fe-102b-80cb-0017a47871b2",
       "generalPatientNoteUuid": "3cd9d956-26fe-102b-80cb-0017a47871b2",
       "midUpperArmCircumferenceUuid": "4326b04b-3158-417a-bb8d-ad022295b0f4"
+    },
+    "vitals": {
+      "encounterTypeUuid": "664b82cc-977f-11e1-8993-905e29aff6c1"
+    }
+  },
+  "@openmrs/esm-primary-navigation-app": {
+    "logo": {
+      "src": "${openmrsSpaBase}/pih_apzu_logo_white.png",
+      "alt": "Abwenzi Pa Za Umoyo",
+      "name": "Abwenzi Pa Za Umoyo",
+      "link": "${openmrsBase}/findPatient.htm"
+    },
+    "extensionSlots": {
+      "app-menu-slot": {
+        "remove": [
+          "dispensing-link",
+          "forms-app-link",
+          "offline-tools-link",
+          "system-administration-app-menu-link"
+        ]
+      },
+      "top-nav-actions-slot": {
+        "remove": [
+          "implementer-tools-button",
+          "patient-search-icon"
+        ]
+      },
+      "top-nav-app-menu-slot": {
+        "remove": [
+          "app-menu-button"
+        ]
+      },
+      "user-panel-slot": {
+        "remove": [
+          "offline-tools-opt-in-offline-mode-button"
+        ]
+      }
+    }
+  },
+  "@openmrs/esm-styleguide": {
+    "Brand color #1": "#FB9500",
+    "Brand color #2": "#FB9500",
+    "Brand color #3": "#D87100"
+  },
+  "@openmrs/esm-patient-search-app": {
+    "extensionSlots": {
+      "start-visit-button-slot2": {
+        "remove": [
+          "patient-search-start-visit-button"
+        ]
+      },
+      "patient-search-actions-slot": {
+        "remove": [
+          "add-past-visit-button",
+          "cancel-visit-button",
+          "edit-patient-details-button",
+          "stop-visit-button-patient-search"
+        ]
+      }
     }
   },
   "@openmrs/esm-patient-registration-app": {
+    "links": {
+      "submitButton": "${openmrsSpaBase}/patient-registration"
+    },
     "defaultPatientIdentifierTypes": ["66784d84-977f-11e1-8993-905e29aff6c1","11a76c3e-1db8-4d16-9252-9a18b5ed1843","f7de1b97-013e-49ad-a596-4ada6ede1053"],
     "address": {
       "useAddressHierarchy": {
