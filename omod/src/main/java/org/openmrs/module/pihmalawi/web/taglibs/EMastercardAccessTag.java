@@ -327,12 +327,13 @@ public class EMastercardAccessTag extends BodyTagSupport {
         if (newMasterCardConfig != null) {
 
 			String uuid = UUID.randomUUID().toString();
+			String jQueryDateFormat = Helper.toJQueryDateFormat(Context.getDateFormat().toPattern());
 
 			// special case here to allow us to pre-pick the encounter date
 			link = "<a onclick=\"window.location.href='"
 					+ newMasterCardConfig
 					+ "&patientId=" + p.getPatientId()
-					+ "&encounterDate=' + $j.datepicker.formatDate('yy-mm-dd', $j.datepicker.parseDate('dd/mm/yy', $j('#date-" + uuid + "').val()))"
+					+ "&encounterDate=' + $j.datepicker.formatDate('yy-mm-dd', $j.datepicker.parseDate('" + jQueryDateFormat + "', $j('#date-" + uuid + "').val()))"
 					+ "\">";
 
 			return link + "Create new " + f.getName() + "</a> on " + dateTag("date-" + uuid, "date-" + uuid);

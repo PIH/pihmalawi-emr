@@ -300,7 +300,53 @@ public class Helper {
 		}
 		return new SimpleDateFormat("dd-MMM-yyyy").format(date);
 	}
-	
+
+	/**
+	 * Converts a {@link SimpleDateFormat} pattern (e.g. as returned by a locale-dependent
+	 * {@code Context.getDateFormat().toPattern()}) into the equivalent jQuery UI datepicker format
+	 * string, so client-side code can parse a value with {@code $.datepicker.parseDate} using the
+	 * same format it was rendered with, instead of hardcoding one locale's format (see MLW-1853).
+	 * Only day/month/year tokens are translated; anything else (separators, quoted literals, or
+	 * time-of-day letters, which a date-only pattern shouldn't contain) passes through unchanged.
+	 */
+	public static String toJQueryDateFormat(String javaPattern) {
+		StringBuilder result = new StringBuilder();
+		int i = 0;
+		while (i < javaPattern.length()) {
+			char c = javaPattern.charAt(i);
+			int runLength = 1;
+			while (i + runLength < javaPattern.length() && javaPattern.charAt(i + runLength) == c) {
+				runLength++;
+			}
+			switch (c) {
+				case 'd':
+					result.append(runLength == 1 ? "d" : "dd");
+					break;
+				case 'M':
+					if (runLength == 1) {
+						result.append("m");
+					} else if (runLength == 2) {
+						result.append("mm");
+					} else if (runLength == 3) {
+						result.append("M");
+					} else {
+						result.append("MM");
+					}
+					break;
+				case 'y':
+					result.append(runLength <= 2 ? "y" : "yy");
+					break;
+				case 'E':
+					result.append(runLength <= 3 ? "D" : "DD");
+					break;
+				default:
+					result.append(javaPattern, i, i + runLength);
+			}
+			i += runLength;
+		}
+		return result.toString();
+	}
+
 	/**
 	 * @return the Location associated with the patients most recent enrollment in the given ProgramWorkflow
 	 */
