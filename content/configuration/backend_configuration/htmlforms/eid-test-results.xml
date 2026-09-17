@@ -43,7 +43,7 @@
             </span>
         </h4>
     <span style="display:none">
-        <encounterProvider default="16576" />
+        <encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54" />
         <span id="patientBirthdate"><lookup expression="patient.birthdate"/></span>
     </span> <!-- Set provider to a default as not used -->        
         <table class="visit-table data-entry-table">
@@ -95,7 +95,7 @@
         </h4>
 
         <span style="display:none">
-            <encounterProvider default="16576"/>
+            <encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54"/>
         </span> <!-- Set provider to a default as not used -->
 
         <table class="visit-edit-table">

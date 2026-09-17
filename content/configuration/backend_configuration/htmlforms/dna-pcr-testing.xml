@@ -57,7 +57,7 @@
 			<!-- Provider is close to useless for us, so just hide it -->
 			<td>Provider</td>
 			<td>
-				<encounterProvider default="16576" />
+				<encounterProvider default="provfc3c-2695-102d-b4c2-001d929acb54" />
 			</td>
 		</tr>
 		<tr style="display:none">
