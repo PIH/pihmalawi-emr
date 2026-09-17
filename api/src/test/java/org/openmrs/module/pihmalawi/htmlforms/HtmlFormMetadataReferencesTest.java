@@ -19,15 +19,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Every htmlform's metadata references (concept, location, form) must be by uuid, not by an
- * install-specific raw primary key (see MLW-1846/MLW-1851). Covers two invariants:
+ * Every htmlform's metadata references (concept, location, form) must be by uuid or, for concepts
+ * only, a "source:code" mapping - never an install-specific raw primary key (see
+ * MLW-1846/MLW-1851). Covers two invariants:
  * <ol>
  * <li>no module-defined tag attribute or macro value is a bare integer or comma-separated
  * integer list anywhere under the htmlforms directory (a permanent regression guard, independent
- * of whether any individual uuid mapping below is correct);</li>
- * <li>every concept/location/form reference that IS present resolves to something real - a uuid
- * already known to this repo's own Initializer content (concepts.csv/locations.csv), or, for
- * htmlformflowsheet's formId, another htmlform's own declared formUuid.</li>
+ * of whether any individual uuid/mapping below is correct);</li>
+ * <li>every concept/location/form reference that IS present resolves to something real: for
+ * concepts, either a uuid known to this repo's own concepts.csv, or a "source:code" mapping
+ * verified against concepts.csv's own mapping columns (both are valid resolution paths supported
+ * by HtmlFormEntryUtil#getConcept); for locations/htmlformflowsheet's formId, a uuid known to
+ * locations.csv, or another htmlform's own declared formUuid, respectively.</li>
  * </ol>
  */
 public class HtmlFormMetadataReferencesTest {
@@ -78,11 +81,13 @@ public class HtmlFormMetadataReferencesTest {
     private static final Pattern INT_LIST_PATTERN = Pattern.compile("^\\d+(,\\d+)+$");
 
     /**
-     * Shape of a value worth existence-checking against concepts.csv/locations.csv. Other forms a
-     * reference can legitimately take - a $-prefixed macro placeholder, a "source:code" concept
-     * mapping (already the recommended HtmlFormEntryUtil.getConcept resolution path, predates this
-     * ticket), a runtime template like "{0}", or a plain-text macro label/list - aren't primary-key
-     * references at all, so they're out of scope for this check, not violations.
+     * Shape of a value checked directly against a uuid set (concepts.csv/locations.csv). A
+     * "source:code" concept mapping is a separate, equally valid shape for a concept reference -
+     * see {@link #SOURCE_CODE_PATTERN} and {@link #checkConceptReference}, which checks it against
+     * concepts.csv's own mapping columns instead of this set. A $-prefixed macro placeholder or a
+     * repeat-tag template like "{0}"/"{name}" defers resolution elsewhere and isn't checked directly
+     * at all; a plain-text macro label/list (e.g. regimenLabels) isn't a metadata reference in the
+     * first place.
      */
     private static final Pattern UUID_SHAPE_PATTERN =
             Pattern.compile("^[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}$");
