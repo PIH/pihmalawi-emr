@@ -3,6 +3,7 @@ import { api } from '../fixtures';
 import {
   createPatient,
   deletePatient,
+  getPatient,
   addPatientIdentifier,
   enrollInProgram,
   purgeProgramEnrollments,
@@ -29,7 +30,7 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
   eligibleHivArtPatient: [
     async ({ api }, use) => {
       // No digits in the name — see the note on createPatient's default givenName in Task 4.
-      const patient = await createPatient(api, { givenName: 'AutoArt', familyName: 'Pilot' });
+      let patient = await createPatient(api, { givenName: 'AutoArt', familyName: 'Pilot' });
 
       await addPatientIdentifier(api, patient.uuid, {
         identifierTypeUuid: ARV_NUMBER_IDENTIFIER_TYPE_UUID,
@@ -45,6 +46,9 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
         dateEnrolled: new Date().toISOString().slice(0, 10),
         initialState: { stateUuid: ON_ARVS_STATE_UUID, startDate: new Date().toISOString().slice(0, 10) },
       });
+
+      // Refresh patient data to include the added identifier
+      patient = await getPatient(api, patient.uuid);
 
       await use(patient);
 
