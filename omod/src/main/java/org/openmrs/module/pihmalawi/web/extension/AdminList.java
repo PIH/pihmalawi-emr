@@ -53,7 +53,8 @@ public class AdminList extends AdministrationSectionExt {
 		}
 		map.put("/pihmalawi/vlresults/importVLR.page", "Import VL Results");
 		map.put("/pihmalawi/duplicateEncounters.page", "Delete duplicate encounters");
-		map.put("/pihmalawi/setupReports.page", "Create or Delete Reports");
+		map.put("/spa/patient-registration", "O3 - Patient registration");
+        map.put("/spa/home/audit", "Audit trail");
 		
 		return map;
 	}
