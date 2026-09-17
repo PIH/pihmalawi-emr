@@ -7,6 +7,7 @@ import {
   addPatientIdentifier,
   enrollInProgram,
   purgeProgramEnrollments,
+  purgeEncountersForPatient,
   type TestPatient,
 } from '../commands';
 import {
@@ -52,8 +53,12 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
 
       await use(patient);
 
-      // Purging the patient directly would 500 (patient_program FK) — the
-      // enrollment must be purged first. See Task 5's purgeProgramEnrollments.
+      // Purging the patient directly would 500 (FK constraints) — any
+      // encounters (e.g. the ART_INITIAL mastercard header form saved by
+      // Task 9's MastercardFormPage) and program enrollments must be purged
+      // first. See Task 5's purgeProgramEnrollments and Task 9's
+      // purgeEncountersForPatient for the verified FK chain.
+      await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
     },
