@@ -3,7 +3,10 @@
     "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["ES2022"],
+    // "DOM" is required for page.evaluate/waitForFunction callbacks (Task 7+),
+    // which reference browser globals like `document` — these are type-checked
+    // in this file even though they execute in the browser at runtime.
+    "lib": ["ES2022", "DOM"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
