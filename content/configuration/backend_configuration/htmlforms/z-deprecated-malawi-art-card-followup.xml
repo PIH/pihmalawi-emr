@@ -22,7 +22,7 @@
 			<td colspan="4">Name:<lookup expression="patient.personName" class="value" size="50"/>
 			Age: <lookup expression="patient.age" class="value"/>    Sex: <lookup expression="patient.gender" class="value" codePrefix="gender_"/></td>
 			<td>Initial Wt (kg) [ENTER BELOW]</td>
-			<td>Transfer in: <obs conceptId="2536"/></td>
+			<td>Transfer in: <obs conceptId="655fb464-977f-11e1-8993-905e29aff6c1"/></td>
 		</tr>
 		<tr>
 			<td colspan="4">Address: Village: <lookup expression="patient.personAddress.cityVillage" class="value"/>
@@ -32,7 +32,7 @@
 	</table><br/>
 	<table>
 		<tr>
-			<td colspan="4">Location of initial encounter: (See ARV Number. Enter 'Unknown' if necessary)<encounterLocation order="2,34,4,3,20,16,35,37,21,22,18"/></td>
+			<td colspan="4">Location of initial encounter: (See ARV Number. Enter 'Unknown' if necessary)<encounterLocation order="0d414ce2-5ab4-11e0-870c-9f6107fee88e,0d417e38-5ab4-11e0-870c-9f6107fee88e,0d41505c-5ab4-11e0-870c-9f6107fee88e,0d414eae-5ab4-11e0-870c-9f6107fee88e,0d416830-5ab4-11e0-870c-9f6107fee88e,0d416376-5ab4-11e0-870c-9f6107fee88e,0d417fd2-5ab4-11e0-870c-9f6107fee88e,0d4182e8-5ab4-11e0-870c-9f6107fee88e,0d4169b6-5ab4-11e0-870c-9f6107fee88e,0d416b3c-5ab4-11e0-870c-9f6107fee88e,0d4166a0-5ab4-11e0-870c-9f6107fee88e"/></td>
 		</tr>
 	</table><br/>
 	<table border="1" cellpadding="0" cellspacing="0">
@@ -56,18 +56,18 @@
 		</tr>
 		<tr>
                        <td><encounterDate/></td>
-			<td><obs conceptId="5089"/></td>
-                       <td><obs conceptId="5090"/></td>
-                       <td><obs conceptId="2530" style="list" answerConceptIds="2895,1744,1743,1742,1579" answerLabels="Alive,Transferred,Defaulted,Died,Stopped"/></td>
-                       <td><obs conceptId="2538" style="list" answerConceptIds="2537,2532,2534,5424" answerLabels="Start,Substitute,Switch,Other"/></td>
-                       <td><obs conceptId="1662" style="list" answerConceptIds="1664,1665" answerLabels="Ambulatory,Bedridden"/></td>
-                       <td><obs conceptId="2539" style="list" answerConceptIds="1065,1066,1067" answerLabels="Yes,No,Unknown"/></td>
-			<td><obs conceptId="2146" style="no_yes"/><br/>Specify: <obs conceptId="1297" style="list" answerConceptIds="1107,29,512,821,5622" answerLabels="None,Hepatitis,Skin rash,Peripheral Neuropathy,Other"/></td>
-                       <td><obs conceptId="2540"/></td>
-                       <td><obs conceptId="2929"/></td>
-                       <td><obs conceptId="2122" style="checkbox" answerLabel=""/></td>
-                       <td><obs conceptId="1623" style="checkbox" answerLabel=""/></td>
-                       <td><obs conceptId="2972" style="checkbox" answerConceptId="1065" answerLabel=""/></td>
+			<td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="655fae10-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="6561a0b2-977f-11e1-8993-905e29aff6c1,655b604e-977f-11e1-8993-905e29aff6c1,655b5f4a-977f-11e1-8993-905e29aff6c1,655b5e46-977f-11e1-8993-905e29aff6c1,655a6acc-977f-11e1-8993-905e29aff6c1" answerLabels="Alive,Transferred,Defaulted,Died,Stopped"/></td>
+                       <td><obs conceptId="655fb676-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="655fb568-977f-11e1-8993-905e29aff6c1,655fb02c-977f-11e1-8993-905e29aff6c1,655fb248-977f-11e1-8993-905e29aff6c1,656b9414-977f-11e1-8993-905e29aff6c1" answerLabels="Start,Substitute,Switch,Other"/></td>
+                       <td><obs conceptId="655b0770-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="655b0a0e-977f-11e1-8993-905e29aff6c1,655b0b08-977f-11e1-8993-905e29aff6c1" answerLabels="Ambulatory,Bedridden"/></td>
+                       <td><obs conceptId="655fb784-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="65576354-977f-11e1-8993-905e29aff6c1,6557646c-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1" answerLabels="Yes,No,Unknown"/></td>
+			<td><obs conceptId="655d762c-977f-11e1-8993-905e29aff6c1" style="no_yes"/><br/>Specify: <obs conceptId="6558d7de-977f-11e1-8993-905e29aff6c1" style="list" answerConceptIds="6557987e-977f-11e1-8993-905e29aff6c1,6545b33e-977f-11e1-8993-905e29aff6c1,65489e00-977f-11e1-8993-905e29aff6c1,654a4ade-977f-11e1-8993-905e29aff6c1,656cce7e-977f-11e1-8993-905e29aff6c1" answerLabels="None,Hepatitis,Skin rash,Peripheral Neuropathy,Other"/></td>
+                       <td><obs conceptId="655fb892-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="6561fa3a-977f-11e1-8993-905e29aff6c1"/></td>
+                       <td><obs conceptId="655d5246-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/></td>
+                       <td><obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/></td>
+                       <td><obs conceptId="656225e6-977f-11e1-8993-905e29aff6c1" style="checkbox" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel=""/></td>
                </tr>
 	</table><br/>
 
@@ -76,26 +76,26 @@
 			<th colspan="2">Enter the following  information from the ART Clinic Intake, Physician Followup or Nurse Followup Forms:</th>
 		</tr>
 		<tr>
-			<td><obs conceptId="5272" labelText="Pregnant?" style="no_yes"/>
-			       <obs conceptId="968" labelText="LMP: "/></td>
+			<td><obs conceptId="656ad8d0-977f-11e1-8993-905e29aff6c1" labelText="Pregnant?" style="no_yes"/>
+			       <obs conceptId="654b3a8e-977f-11e1-8993-905e29aff6c1" labelText="LMP: "/></td>
 		</tr>
 		<tr><td colspan="2">Comments at Conclusion of examination</td></tr>
-		<tr><td colspan="2"><obs conceptId="1620" size="100"/></td></tr>
+		<tr><td colspan="2"><obs conceptId="655a9b1e-977f-11e1-8993-905e29aff6c1" size="100"/></td></tr>
 	</table><br/>
 
 	<table border="1" cellpadding="0" cellspacing="0" width="100%">
 		<tr><th>Data Clerk Comments:</th></tr>
-		<tr><td><obs conceptId="2922" size="100"/></td></tr>
+		<tr><td><obs conceptId="6561f314-977f-11e1-8993-905e29aff6c1" size="100"/></td></tr>
 	</table><br/>
 	<table border="1">
-		<obsgroup groupingConceptId="6785">
+		<obsgroup groupingConceptId="65733750-977f-11e1-8993-905e29aff6c1">
 		<tr>
 			<td>Appointment date</td>
-			<td><obs conceptId="5096" allowFutureDates="true"/></td>
+			<td><obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true"/></td>
 		</tr>
 		<tr>
 			<td>Appointment reason</td>
-                        <td><obs conceptId="6784" style="radio" answerConceptIds="6255" answerLabels="ART Visit"/></td>
+                        <td><obs conceptId="6573364c-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="6570538c-977f-11e1-8993-905e29aff6c1" answerLabels="ART Visit"/></td>
 		</tr>
                 </obsgroup>
        </table><br/><br/>	

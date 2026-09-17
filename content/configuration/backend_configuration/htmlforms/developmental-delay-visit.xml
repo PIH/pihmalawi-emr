@@ -64,10 +64,10 @@
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="64148b3f-f732-4809-9a23-8b8ebe11279a"/>
 
-        nonCodedOther=5622
-        noncodedText=8575
-        clinicalImpression=1364
-        nextAppt=5096
+        nonCodedOther=656cce7e-977f-11e1-8993-905e29aff6c1
+        noncodedText=d57e3a20-5802-11e6-8b77-86f30ca893d3
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
     </macros>
 
     <style>

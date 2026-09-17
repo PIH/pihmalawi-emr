@@ -11,86 +11,86 @@
 
 
     <macros>
-        diagnosisSet=8445
-        chronicCareDiagnosis=3683
-        diagnosisDate=6774
-        epilepsyDiagnosis=155
-        epilepsyFamilyHistory=8484
-        mentalIllFamilyHistory=8485
-        behaviorFamilyHistory=8486
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        hivStatus=3753
-        hivTestDate=1837
-        vdrlTest=299
-        reactive=1228
-        nReactive=1229
-        artStartDate=2516
-        tonicClonic=7100
-        clonic=8503
-        absenceSeiz=8504
-        tonicSeiz=8505
-        myoclonic=8506
-        atonic=8507
-        simplePartial=8508
-        complexPartial=8509
-        unclassifiedSeiz=8510
-        headTrauma=8515
-        seizureHistory=8516
-        birthComplicate=8517
-        neonatalInfect=8518
-        delayedMile=6022
-        patientPhone=1426
-        symptom=1293
-        guardianName=1824
-        smokingHistory=1551
-        inPast=1548
-        lastTimeSmoking=8432
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
-        ageOnset=8403
-        onsetMonth=8513
-        onsetYear=8512
-        occupation=1304
-        civilStatus=1054
-        educationLevel=1688
-        medHistory=8502
-        exposureGroup=8546
-        exposureAns=8495
-        exposureDate=8545
-        smoking=8492
-        alcohol=6958
-        pig=3675
-        tradMeds=8494
-        complicationGroup=8548
-        complicationAns=8514
-        complicationDate=8547
-        injury=148
-        burn=135
-        statusEpil=7721
-        psychosis=219
-        drugRelated=1581
-        other=6408
-        preIctalWarn=8520
-        postIcHeadache=8521
-        postIcDrows=8522
-        postIcPoorConcentr=8523
-        postIcPoorVerbal=8524
-        postIcParal=8525
-        postIcDisorient=8526
-        postIcNausea=8527
-        postIcMemLoss=8528
-        postIcHyper=8529
-        trigAlc=8531
-        trigFever=8532
-        trigSound=8533
-        trigStress=8534
-        trigSleep=8535
-        trigMeds=8536
-        trigMenst=8537
+        diagnosisSet=6db168f1-0f38-42d9-9f0e-90946a3d8e72
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
+        diagnosisDate=65732bf2-977f-11e1-8993-905e29aff6c1
+        epilepsyDiagnosis=6546938a-977f-11e1-8993-905e29aff6c1
+        epilepsyFamilyHistory=152450AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        mentalIllFamilyHistory=7057d000-c5dd-11e5-9912-ba0be0483c18
+        behaviorFamilyHistory=7057d3ac-c5dd-11e5-9912-ba0be0483c18
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        hivStatus=6567ae62-977f-11e1-8993-905e29aff6c1
+        hivTestDate=655bc9da-977f-11e1-8993-905e29aff6c1
+        vdrlTest=654753ec-977f-11e1-8993-905e29aff6c1
+        reactive=65587802-977f-11e1-8993-905e29aff6c1
+        nReactive=6558791a-977f-11e1-8993-905e29aff6c1
+        artStartDate=655f9eb6-977f-11e1-8993-905e29aff6c1
+        tonicClonic=6574dea2-977f-11e1-8993-905e29aff6c1
+        clonic=145044AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        absenceSeiz=150525AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        tonicSeiz=112356AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        myoclonic=115424AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        atonic=148223AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        simplePartial=b2faee68-ce9f-11e5-ab30-625662870761
+        complexPartial=b2faf2c8-ce9f-11e5-ab30-625662870761
+        unclassifiedSeiz=123826AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        headTrauma=b2fb002e-ce9f-11e5-ab30-625662870761
+        seizureHistory=b2fb01f0-ce9f-11e5-ab30-625662870761
+        birthComplicate=b2fb06dc-ce9f-11e5-ab30-625662870761
+        neonatalInfect=82b4827e-cf4d-11e5-ab30-625662870761
+        delayedMile=656ef938-977f-11e1-8993-905e29aff6c1
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        symptom=6558d3ba-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        smokingHistory=655a4dc6-977f-11e1-8993-905e29aff6c1
+        inPast=655a4ab0-977f-11e1-8993-905e29aff6c1
+        lastTimeSmoking=af397d66-8c33-11e5-80a3-c0430f805837
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
+        ageOnset=60cc004f-ab6a-4bd7-836a-4683856c0d11
+        onsetMonth=b2fafb7e-ce9f-11e5-ab30-625662870761
+        onsetYear=b2faf9a8-ce9f-11e5-ab30-625662870761
+        occupation=6558df36-977f-11e1-8993-905e29aff6c1
+        civilStatus=6557571a-977f-11e1-8993-905e29aff6c1
+        educationLevel=655b226e-977f-11e1-8993-905e29aff6c1
+        medHistory=b2fafcfa-ce9f-11e5-ab30-625662870761
+        exposureGroup=5f52124a-cf63-11e5-ab30-625662870761
+        exposureAns=7057db5e-c5dd-11e5-9912-ba0be0483c18
+        exposureDate=5f521038-cf63-11e5-ab30-625662870761
+        smokingStatus=7057de06-c5dd-11e5-9912-ba0be0483c18
+        alcohol=65743a88-977f-11e1-8993-905e29aff6c1
+        pig=65671452-977f-11e1-8993-905e29aff6c1
+        tradMeds=7057e27a-c5dd-11e5-9912-ba0be0483c18
+        complicationGroup=5f52156a-cf63-11e5-ab30-625662870761
+        complicationAns=b2fafe94-ce9f-11e5-ab30-625662870761
+        complicationDate=5f5213e4-cf63-11e5-ab30-625662870761
+        injury=65465eba-977f-11e1-8993-905e29aff6c1
+        burn=65463124-977f-11e1-8993-905e29aff6c1
+        statusEpil=657849fc-977f-11e1-8993-905e29aff6c1
+        psychosis=6546d8ae-977f-11e1-8993-905e29aff6c1
+        drugRelated=655a6cde-977f-11e1-8993-905e29aff6c1
+        otherAnswer=657140f8-977f-11e1-8993-905e29aff6c1
+        preIctalWarn=82b48d50-cf4d-11e5-ab30-625662870761
+        postIcHeadache=82b48f4e-cf4d-11e5-ab30-625662870761
+        postIcDrows=82b49106-cf4d-11e5-ab30-625662870761
+        postIcPoorConcentr=82b4926e-cf4d-11e5-ab30-625662870761
+        postIcPoorVerbal=82b4944e-cf4d-11e5-ab30-625662870761
+        postIcParal=82b495d4-cf4d-11e5-ab30-625662870761
+        postIcDisorient=82b49b7e-cf4d-11e5-ab30-625662870761
+        postIcNausea=82b49d4a-cf4d-11e5-ab30-625662870761
+        postIcMemLoss=7e8aa840-cf5c-11e5-ab30-625662870761
+        postIcHyper=7e8aabb0-cf5c-11e5-ab30-625662870761
+        trigAlc=7e8ab286-cf5c-11e5-ab30-625662870761
+        trigFever=7e8ab5b0-cf5c-11e5-ab30-625662870761
+        trigSound=7e8ab740-cf5c-11e5-ab30-625662870761
+        trigStress=7e8abbdc-cf5c-11e5-ab30-625662870761
+        trigSleep=7e8abdbc-cf5c-11e5-ab30-625662870761
+        trigMeds=7e8abefc-cf5c-11e5-ab30-625662870761
+        trigMenst=7e8abfd8-cf5c-11e5-ab30-625662870761
 
         <macro key="otherNonCoded" value="656cce7e-977f-11e1-8993-905e29aff6c1" />
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
@@ -390,7 +390,7 @@
                             <td rowspan="5">
                                 <table>
                                     <!-- ToDo:  Add free-text for other -->
-                                    <repeat with="['$smoking','Smoking'],
+                                    <repeat with="['$smokingStatus','Smoking'],
                                                   ['$alcohol','Alcohol'],
                                                   ['$pig','Pigs/Pork'],
                                                   ['$tradMeds','Traditional medicine']">
@@ -408,7 +408,7 @@
                                     <tr>
                                         <obsgroup groupingConceptId="$exposureGroup">
                                             <td data-toggle-source="exposure-other" data-toggle-target="exposure-other-date">
-                                                <obs id="exposure-other" conceptId="$exposureAns" answerConceptId="$other" answerLabel="Other:" commentFieldLabel="" />
+                                                <obs id="exposure-other" conceptId="$exposureAns" answerConceptId="$otherAnswer" answerLabel="Other:" commentFieldLabel="" />
                                             </td>
                                             <td>
                                                 <obs id="exposure-other-date" conceptId="$exposureDate" allowFutureDates="true"/>
@@ -501,7 +501,7 @@
                                     <tr>
                                         <obsgroup groupingConceptId="$complicationGroup">
                                             <td data-toggle-source="complication-other" data-toggle-target="complication-other-date">
-                                                <obs id="complication-other" conceptId="$complicationAns" answerConceptId="$other" answerLabel="Other:" commentFieldLabel="" />
+                                                <obs id="complication-other" conceptId="$complicationAns" answerConceptId="$otherAnswer" answerLabel="Other:" commentFieldLabel="" />
                                             </td>
                                             <td>
                                                 <obs id="complication-other-date" conceptId="$complicationDate" allowFutureDates="true"/>

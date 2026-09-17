@@ -11,11 +11,11 @@
 
 
     <macros>
-        height=5090
-        weight=5089
-        systolicBP=5085
-        diastolicBP=5086
-        nextAppt=5096
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        systolicBP=6569bffe-977f-11e1-8993-905e29aff6c1
+        diastolicBP=6569c116-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="664bb896-977f-11e1-8993-905e29aff6c1"/>
     </macros>
@@ -134,47 +134,47 @@
 
                     <!-- Fingerstick -->
                     <td>
-                        <obsreference conceptId="887"/> <obsreference conceptId="6381" answerConceptId="6379" style="checkbox"/>
+                        <obsreference conceptId="654a98b8-977f-11e1-8993-905e29aff6c1"/> <obsreference conceptId="65711e3e-977f-11e1-8993-905e29aff6c1" answerConceptId="65711c2c-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
                     </td>
                     <td>
                         <!-- CHF NYHA Classification --> 
-                        <obs conceptId="3139" answerConceptIds="3135,3136,3137,3138" answerLabels="I,II,III,IV" style="radio"/>
+                        <obs conceptId="6562e508-977f-11e1-8993-905e29aff6c1" answerConceptIds="6562e0ee-977f-11e1-8993-905e29aff6c1,6562e1f2-977f-11e1-8993-905e29aff6c1,6562e300-977f-11e1-8993-905e29aff6c1,6562e404-977f-11e1-8993-905e29aff6c1" answerLabels="I,II,III,IV" style="radio"/>
                     </td>
                     <td>
                         <!-- # Seizures -->
-                        <obs conceptId="7924"/>
+                        <obs conceptId="65795b26-977f-11e1-8993-905e29aff6c1"/>
                     </td>
 
                         <!-- Peak flow / percent predicted -->
-                    <td><obs conceptId="7925"/> / <obs conceptId="7926"/></td>
+                    <td><obs conceptId="65795c2a-977f-11e1-8993-905e29aff6c1"/> / <obs conceptId="65795d42-977f-11e1-8993-905e29aff6c1"/></td>
 
                     <td>
                         <!-- Asthma class -->
-                        <obs conceptId="8410" answerConceptIds="1905,8405,8406,8407,8408,8409" answerLabels="Not asthma,Intermittent,Mild persistent,Moderate persistent,Severe persistent,Severe Uncontrolled"/>
+                        <obs conceptId="e31e65ff-8523-4d49-a5b0-276a0760966f" answerConceptIds="655c32bc-977f-11e1-8993-905e29aff6c1,dcbd27b0-4ca2-4a93-9d8a-89f1cbe761ed,e865c314-a0cf-4431-ba73-aa9280e2fa71,5fd72021-54af-4630-b72b-829421d2d65b,ac3d4d70-4145-4dec-a4bb-ea8136dff4e6,a863ffd7-2806-4b2d-8d7c-d6709d106488" answerLabels="Not asthma,Intermittent,Mild persistent,Moderate persistent,Severe persistent,Severe Uncontrolled"/>
                     </td>
                     <td>
                         <!-- Diagnosis -->
-                        <obs conceptId="3683" answerConceptIds="5,903,155,3720,3468,5622" answerLabels="Asthma,Hypertension,Epilepsy,Diabetes,Heart Failure,Other" style="checkbox"/>
+                        <obs conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptIds="65459124-977f-11e1-8993-905e29aff6c1,654abfc8-977f-11e1-8993-905e29aff6c1,6546938a-977f-11e1-8993-905e29aff6c1,6567426a-977f-11e1-8993-905e29aff6c1,6566257e-977f-11e1-8993-905e29aff6c1,656cce7e-977f-11e1-8993-905e29aff6c1" answerLabels="Asthma,Hypertension,Epilepsy,Diabetes,Heart Failure,Other" style="checkbox"/>
                     </td>
                     <td>
                         <!-- Hospitalized since last visit -->
-                        <obs conceptId="1715" style="yes_no" yesLabel="Y" noLabel="N" />
+                        <obs conceptId="655b3dc6-977f-11e1-8993-905e29aff6c1" style="yes_no" yesLabel="Y" noLabel="N" />
                     </td>
                     <td>
                         <!-- For NCD? -->
-                        <obs conceptId="8411" style="radio" answerConceptIds="1066,1065" answerLabels="N,Y" />
+                        <obs conceptId="ef3c5476-a0e2-44eb-be62-dab5631af36d" style="radio" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,65576354-977f-11e1-8993-905e29aff6c1" answerLabels="N,Y" />
                     </td>
                     <td>
                         <!-- Preferred out of stock -->
-                        <obs conceptId="8412" style="radio" answerConceptIds="1066,1065" answerLabels="N,Y" />
+                        <obs conceptId="e4fdb689-8423-4592-bcb9-04dc2df69a98" style="radio" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,65576354-977f-11e1-8993-905e29aff6c1" answerLabels="N,Y" />
                     </td>
                     <td>
                         <!-- current meds -->
-                        <obs conceptId="1193" answerConceptIds="798,1240,1243,3182,3187,1242,250,3186,3183,254,238,273,920,8413,4052,4046,99,4061" answerLabels="Salbutamol inhaler,Beclomethasone inhaler,Hydrochlorothiazide,Captopril,Amlodipine,Enalapril,Nifedipine,Atenolol,Lisinopril,Propanolol,Phenobarbital,Phenytoin,Carbamazepine,Insulin,Metformin,Glibenclamide,Furosemide,Spironolactone" style="checkbox"/>
+                        <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptIds="654a3238-977f-11e1-8993-905e29aff6c1,65588aa4-977f-11e1-8993-905e29aff6c1,65588df6-977f-11e1-8993-905e29aff6c1,6563597a-977f-11e1-8993-905e29aff6c1,65635ef2-977f-11e1-8993-905e29aff6c1,65588cde-977f-11e1-8993-905e29aff6c1,654704dc-977f-11e1-8993-905e29aff6c1,65635d58-977f-11e1-8993-905e29aff6c1,65635a74-977f-11e1-8993-905e29aff6c1,65470f18-977f-11e1-8993-905e29aff6c1,6546f3c0-977f-11e1-8993-905e29aff6c1,65473768-977f-11e1-8993-905e29aff6c1,654b0726-977f-11e1-8993-905e29aff6c1,467f702f-7d45-4ebe-9588-d68319ad65d8,65694308-977f-11e1-8993-905e29aff6c1,65693cf0-977f-11e1-8993-905e29aff6c1,6546003c-977f-11e1-8993-905e29aff6c1,65694c36-977f-11e1-8993-905e29aff6c1" answerLabels="Salbutamol inhaler,Beclomethasone inhaler,Hydrochlorothiazide,Captopril,Amlodipine,Enalapril,Nifedipine,Atenolol,Lisinopril,Propanolol,Phenobarbital,Phenytoin,Carbamazepine,Insulin,Metformin,Glibenclamide,Furosemide,Spironolactone" style="checkbox"/>
                     </td>    
                     <td>
                         <!-- meds changed? -->
-                        <obs conceptId="2432" answerConceptIds="1066,1065" answerLabels="N,Y" style="radio"/>
+                        <obs conceptId="655f38a4-977f-11e1-8993-905e29aff6c1" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,65576354-977f-11e1-8993-905e29aff6c1" answerLabels="N,Y" style="radio"/>
                     </td>              
                     <td>
                         <!-- next appt -->
@@ -182,15 +182,15 @@
                     </td>
                     <td>
                         <!-- high risk --> 
-                        <obs conceptId="8398" answerConceptId="1065" answerLabel="Y"/>
+                        <obs conceptId="79918894-763e-4135-aaae-0fc940e13b2c" answerConceptId="65576354-977f-11e1-8993-905e29aff6c1" answerLabel="Y"/>
                     </td>
                     <td>
                         <!-- fully completed --> 
-                        <obs conceptId="8082" style="radio" answerConceptIds="1065,1066,1067" answerLabels="Y,N,Unk"/>
+                        <obs conceptId="657a54d6-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="65576354-977f-11e1-8993-905e29aff6c1,6557646c-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1" answerLabels="Y,N,Unk"/>
                     </td>
                     <td>
                         <!-- comments --> 
-                        <obs conceptId="2922"/>
+                        <obs conceptId="6561f314-977f-11e1-8993-905e29aff6c1"/>
                     </td>                    
                 </tr>
             </tbody>
@@ -252,105 +252,105 @@
             <tr>
                 <th>Fingerstick (fasting)</th>
                 <td>
-                    <obsreference conceptId="887"/> <obsreference conceptId="6381" answerConceptId="6379" style="checkbox" answerLabel=""/>
+                    <obsreference conceptId="654a98b8-977f-11e1-8993-905e29aff6c1"/> <obsreference conceptId="65711e3e-977f-11e1-8993-905e29aff6c1" answerConceptId="65711c2c-977f-11e1-8993-905e29aff6c1" style="checkbox" answerLabel=""/>
                 </td>
             </tr>
             <tr>
                 <th>CHF NYHA Classification</th>
                 <td>
-                    <obs conceptId="3139" answerConceptIds="3135,3136,3137,3138" answerLabels="I,II,III,IV" style="radio"/>
+                    <obs conceptId="6562e508-977f-11e1-8993-905e29aff6c1" answerConceptIds="6562e0ee-977f-11e1-8993-905e29aff6c1,6562e1f2-977f-11e1-8993-905e29aff6c1,6562e300-977f-11e1-8993-905e29aff6c1,6562e404-977f-11e1-8993-905e29aff6c1" answerLabels="I,II,III,IV" style="radio"/>
                 </td>
             </tr>
             <tr>
                 <th>Number of seizures<br/>in the last month</th>
                 <td>
-                    <obs conceptId="7924"/>
+                    <obs conceptId="65795b26-977f-11e1-8993-905e29aff6c1"/>
                 </td>
             </tr>
             <tr>
                 <th>Peak Flow (Percent of predicted)</th>
                 <td>
-                    <obs conceptId="7925"/> (<obs conceptId="7926"/>)
+                    <obs conceptId="65795c2a-977f-11e1-8993-905e29aff6c1"/> (<obs conceptId="65795d42-977f-11e1-8993-905e29aff6c1"/>)
                 </td>
             </tr>
             <tr>
                 <th>Asthma Classification</th>
                 <td>
-                    <obs conceptId="8410" answerConceptIds="1905,8405,8406,8407,8408,8409" answerLabels="Not asthma,Intermittent,Mild persistent,Moderate persistent,Severe persistent,Severe Uncontrolled"/>  
+                    <obs conceptId="e31e65ff-8523-4d49-a5b0-276a0760966f" answerConceptIds="655c32bc-977f-11e1-8993-905e29aff6c1,dcbd27b0-4ca2-4a93-9d8a-89f1cbe761ed,e865c314-a0cf-4431-ba73-aa9280e2fa71,5fd72021-54af-4630-b72b-829421d2d65b,ac3d4d70-4145-4dec-a4bb-ea8136dff4e6,a863ffd7-2806-4b2d-8d7c-d6709d106488" answerLabels="Not asthma,Intermittent,Mild persistent,Moderate persistent,Severe persistent,Severe Uncontrolled"/>  
                 </td>
             </tr>   
 
             <tr>
                 <th>Diagnosis</th>
                 <td>
-                    <obs conceptId="3683" answerConceptIds="5,903,155,3720,3468,5622" answerLabels="Asthma,Hypertension,Epilepsy,Diabetes,Heart Failure,Other" style="checkbox"/>
+                    <obs conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptIds="65459124-977f-11e1-8993-905e29aff6c1,654abfc8-977f-11e1-8993-905e29aff6c1,6546938a-977f-11e1-8993-905e29aff6c1,6567426a-977f-11e1-8993-905e29aff6c1,6566257e-977f-11e1-8993-905e29aff6c1,656cce7e-977f-11e1-8993-905e29aff6c1" answerLabels="Asthma,Hypertension,Epilepsy,Diabetes,Heart Failure,Other" style="checkbox"/>
                 </td>
             </tr>                                  
             <tr>
                 <th>Hospitalized since last visit?</th>
                 <td>
-                    <obs conceptId="1715" style="yes_no"/> 
+                    <obs conceptId="655b3dc6-977f-11e1-8993-905e29aff6c1" style="yes_no"/> 
                 </td>
             </tr>   
             <tr>
                 <th>For NCD?</th>
                 <td>
-                    <obs conceptId="8411" style="radio"/> 
+                    <obs conceptId="ef3c5476-a0e2-44eb-be62-dab5631af36d" style="radio"/> 
                 </td>
             </tr>   
             <tr>
                 <th>Preferred treatment out of stock?</th>
                 <td>
-                    <obs conceptId="8412" style="radio"/>
+                    <obs conceptId="e4fdb689-8423-4592-bcb9-04dc2df69a98" style="radio"/>
                 </td>
             </tr> 
             <tr>
                 <th>Asthma Medications</th>
                 <td>
-                    <obs conceptId="1193" answerConceptId="798" answerLabel="Salbutamol inhaler" style="checkbox"/>
-                    <obs conceptId="1193" answerConceptId="1240" answerLabel="Beclomethasone inhaler" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="654a3238-977f-11e1-8993-905e29aff6c1" answerLabel="Salbutamol inhaler" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65588aa4-977f-11e1-8993-905e29aff6c1" answerLabel="Beclomethasone inhaler" style="checkbox"/>
                 </td>
             </tr>   
             <tr>
                 <th>Hypertension Medications</th>
                 <td>
-                    <obs conceptId="1193" answerConceptId="1243" answerLabel="Hydrochlorothiazide" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="3182" answerLabel="Captopril" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="3187" answerLabel="Amlodipine" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="1242" answerLabel="Enalapril" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="250" answerLabel="Nifedipine" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="3186" answerLabel="Atenolol" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="3183" answerLabel="Lisinopril" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="254" answerLabel="Propanolol" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65588df6-977f-11e1-8993-905e29aff6c1" answerLabel="Hydrochlorothiazide" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="6563597a-977f-11e1-8993-905e29aff6c1" answerLabel="Captopril" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65635ef2-977f-11e1-8993-905e29aff6c1" answerLabel="Amlodipine" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65588cde-977f-11e1-8993-905e29aff6c1" answerLabel="Enalapril" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="654704dc-977f-11e1-8993-905e29aff6c1" answerLabel="Nifedipine" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65635d58-977f-11e1-8993-905e29aff6c1" answerLabel="Atenolol" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65635a74-977f-11e1-8993-905e29aff6c1" answerLabel="Lisinopril" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65470f18-977f-11e1-8993-905e29aff6c1" answerLabel="Propanolol" style="checkbox"/>
                 </td>
             </tr>  
             <tr>
                 <th>Epilepsy Medications</th>
                 <td>
-                    <obs conceptId="1193" answerConceptId="238" answerLabel="Phenobarbital" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="273" answerLabel="Phenytoin" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="920" answerLabel="Carbamazepine" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="6546f3c0-977f-11e1-8993-905e29aff6c1" answerLabel="Phenobarbital" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65473768-977f-11e1-8993-905e29aff6c1" answerLabel="Phenytoin" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="654b0726-977f-11e1-8993-905e29aff6c1" answerLabel="Carbamazepine" style="checkbox"/><br/>
                 </td>
             </tr>  
             <tr>
                 <th>Diabetes Medications</th>
                 <td>
-                    <obs conceptId="1193" answerConceptId="8413" answerLabel="Insulin" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="4052" answerLabel="Metformin" style="checkbox"/><br/>
-                    <obs conceptId="1193" answerConceptId="4046" answerLabel="Glibenclamide" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="467f702f-7d45-4ebe-9588-d68319ad65d8" answerLabel="Insulin" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65694308-977f-11e1-8993-905e29aff6c1" answerLabel="Metformin" style="checkbox"/><br/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65693cf0-977f-11e1-8993-905e29aff6c1" answerLabel="Glibenclamide" style="checkbox"/>
                 </td>
             </tr>     
             <tr>
                 <th>Heart Failure Medications</th>
                 <td>
-                    <obs conceptId="1193" answerConceptId="99" answerLabel="Furosemide" style="checkbox"/>
-                    <obs conceptId="1193" answerConceptId="4061" answerLabel="Spironolactone" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="6546003c-977f-11e1-8993-905e29aff6c1" answerLabel="Furosemide" style="checkbox"/>
+                    <obs conceptId="65585192-977f-11e1-8993-905e29aff6c1" answerConceptId="65694c36-977f-11e1-8993-905e29aff6c1" answerLabel="Spironolactone" style="checkbox"/>
                 </td>
             </tr>                                   
             <tr>
                 <th>Medications changed?</th>
                 <td>
-                    <obs conceptId="2432" answerConceptIds="1066,1065" answerLabels="No,Yes" style="radio"/>
+                    <obs conceptId="655f38a4-977f-11e1-8993-905e29aff6c1" answerConceptIds="6557646c-977f-11e1-8993-905e29aff6c1,65576354-977f-11e1-8993-905e29aff6c1" answerLabels="No,Yes" style="radio"/>
                 </td>
             </tr>            
             <tr>
@@ -362,13 +362,13 @@
             <tr>
                 <th>Visit fully completed?</th>
                 <td>
-                    <obs conceptId="8082" style="radio" answerConceptIds="1065,1066,1067"/>
+                    <obs conceptId="657a54d6-977f-11e1-8993-905e29aff6c1" style="radio" answerConceptIds="65576354-977f-11e1-8993-905e29aff6c1,6557646c-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1"/>
                 </td>
             </tr>            
             <tr>
                 <th>Comment (if not fully completed)</th>
                 <td>
-                    <obs conceptId="2922"/>
+                    <obs conceptId="6561f314-977f-11e1-8993-905e29aff6c1"/>
                 </td>
             </tr>     
         </table>

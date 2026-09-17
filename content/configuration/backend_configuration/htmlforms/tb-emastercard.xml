@@ -11,17 +11,17 @@
 
 
     <macros>
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        positive=703
-        negative=664
-        patientPhone=1426
-        guardianName=1824
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        positive=6549be7a-977f-11e1-8993-905e29aff6c1
+        negative=654994c2-977f-11e1-8993-905e29aff6c1
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
         <macro key="artStartDate" value="655f9d08-977f-11e1-8993-905e29aff6c1" />
         <macro key="cotrimoxazoleStartDate" value="434fd4bb-41a9-4c7c-8dcd-48c574a9f1cc"/>
         <macro key="tbArvstatus" value="38362892-90eb-41d0-b50b-49ecc2152d2e"/>

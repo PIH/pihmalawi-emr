@@ -11,51 +11,51 @@
 
 
     <macros>
-        yesAnswer=1065
-        noAnswer=1066
-        unknown=1067
-        positive=703
-        negative=664
-        diagnosisSet=8445
-        chronicCareDiagnosis=3683
-        diagnosisDate=6774
-        asthmaDx=5
-        asthmaFamilyHistory=8426
-        copdDx=3716
-        copdFamilyHistory=8427
-        hivStatus=3753
-        reactive=1228
-        nonReactive=1229
-        hivTestDate=1837
-        artStartDate=2516
-        tbStatus=7459
-        smearPos=2185
-        smearNeg=2186
-        eptb=1547
-        tbYear=8453
-        patientPhone=1426
-        symptom=1293
-        dryCough=2128
-        duration=2161
-        ageAtOnset=8428
-        exposureGroup=8546
-        exposureAns=8495
-        exposureDate=8545
-        tbContact=2133
-        secondHandSmoke=8443
-        occupationalExposure=8430
-        guardianName=1824
-        cookingLocation=8404
-        indoor=2437
-        outdoor=2438
-        smokingHistory=1551
-        inPast=1548
-        lastTimeSmoking=8432
-        guardianPhone=2616
-        occupation=1304
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        positive=6549be7a-977f-11e1-8993-905e29aff6c1
+        negative=654994c2-977f-11e1-8993-905e29aff6c1
+        diagnosisSet=6db168f1-0f38-42d9-9f0e-90946a3d8e72
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
+        diagnosisDate=65732bf2-977f-11e1-8993-905e29aff6c1
+        asthmaDx=65459124-977f-11e1-8993-905e29aff6c1
+        asthmaFamilyHistory=37519f36-8c2e-11e5-80a3-c0430f805837
+        copdDx=65673e96-977f-11e1-8993-905e29aff6c1
+        copdFamilyHistory=41afdae4-8c31-11e5-80a3-c0430f805837
+        hivStatus=6567ae62-977f-11e1-8993-905e29aff6c1
+        reactive=65587802-977f-11e1-8993-905e29aff6c1
+        nonReactive=6558791a-977f-11e1-8993-905e29aff6c1
+        hivTestDate=655bc9da-977f-11e1-8993-905e29aff6c1
+        artStartDate=655f9eb6-977f-11e1-8993-905e29aff6c1
+        tbStatus=65770db2-977f-11e1-8993-905e29aff6c1
+        smearPos=655ddc20-977f-11e1-8993-905e29aff6c1
+        smearNeg=655ddd24-977f-11e1-8993-905e29aff6c1
+        eptb=655a49ac-977f-11e1-8993-905e29aff6c1
+        tbYear=3237c2a0-ada3-11e5-bf7f-feff819cdc9f
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        symptom=6558d3ba-977f-11e1-8993-905e29aff6c1
+        dryCough=655d587c-977f-11e1-8993-905e29aff6c1
+        duration=655dc348-977f-11e1-8993-905e29aff6c1
+        ageAtOnset=6df61adc-8c31-11e5-80a3-c0430f805837
+        exposureGroup=5f52124a-cf63-11e5-ab30-625662870761
+        exposureAns=7057db5e-c5dd-11e5-9912-ba0be0483c18
+        exposureDate=5f521038-cf63-11e5-ab30-625662870761
+        tbContact=655d5d7c-977f-11e1-8993-905e29aff6c1
+        secondHandSmoke=e51be8fa-8c34-11e5-80a3-c0430f805837
+        occupationalExposure=6780fd96-8c33-11e5-80a3-c0430f805837
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        cookingLocation=94498de6-6ea7-441f-8d79-d2ef3c3df30f
+        indoor=655f3dcc-977f-11e1-8993-905e29aff6c1
+        outdoor=655f3ed0-977f-11e1-8993-905e29aff6c1
+        smokingHistory=655a4dc6-977f-11e1-8993-905e29aff6c1
+        inPast=655a4ab0-977f-11e1-8993-905e29aff6c1
+        lastTimeSmoking=af397d66-8c33-11e5-80a3-c0430f805837
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        patientOccupation=6558df36-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
     </macros>
@@ -247,7 +247,7 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <obs conceptId="$occupation" labelText="Occupation"/>
+                                <obs conceptId="$patientOccupation" labelText="Occupation"/>
                             </td>
                             <obsgroup groupingConceptId="$exposureGroup">
                             <td data-toggle-source="shsmoke-expo" data-toggle-target="shsmoke-expo-date">

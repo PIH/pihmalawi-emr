@@ -11,56 +11,56 @@
 
 
     <macros>
-        noAnswer=1066
-        yesAnswer=1065
-        other=6408
-        height=5090
-        weight=5089
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        other=657140f8-977f-11e1-8993-905e29aff6c1
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
 
-        chiefCompAnswer=8569
-        chiefCompAbsent=8620
-        depressive=8568
-        elevMood=8572
-        disrupt=8566
-        abSpeech=8567
-        delusion=8565
-        hallucinate=8564
-        insight=8579
-        lacksInsight=8619
-        nonCodedOther=5622
+        chiefCompAnswer=0b7892bc-43bb-11e6-beb8-9e71128cae77
+        chiefCompAbsent=6fc0a984-9492-11e7-abc4-cec278b6b50a
+        depressive=142563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        elevMood=138045AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        disrupt=118905AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        abSpeech=159538AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        delusion=142600AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        hallucinate=139146AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        insight=8e1006be-5a55-11e6-8b77-86f30ca893d3
+        lacksInsight=6fc0a5c4-9492-11e7-abc4-cec278b6b50a
+        nonCodedOther=656cce7e-977f-11e1-8993-905e29aff6c1
 
-        stable=8616
-        activity=8617
+        stable=1855AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        activity=b36bce1e-8288-11e7-bb31-be2e44b06b34
 
-        alcoholConstruct=2242
-        mjConstruct=8574
-        medsOtherConstruct=8576
-        exposeHistory=8571
-        alcoholHistory=1552
-        current=1550
+        alcoholConstruct=655e1cbc-977f-11e1-8993-905e29aff6c1
+        mjConstruct=59d876a4-5444-11e6-beb8-9e71128cae77
+        medsOtherConstruct=625b029c-5377-11e6-beb8-9e71128cae77
+        exposeHistory=625afe8c-5377-11e6-beb8-9e71128cae77
+        alcoholHistory=655a4ed4-977f-11e1-8993-905e29aff6c1
+        current=655a4cc2-977f-11e1-8993-905e29aff6c1
 
-        pregnant=6131
-        familyPlan=5271
-        suicideRisk=8497
-        sideEffects=2146
-        hospitalized=8615
-        drugsNow=1193
-        drugSet=8501
-        cpz=914
-        hlp=4047
-        fpz=927
-        cbz=920
-        sv=4060
-        ris=8498
-        flx=4045
-        olanzapine=8582
-        clozapine=8583
-        trifluo=8237
-        clopixol=8584
-        noncodedText=8575
-        clinicalImpression=1364
-        nextAppt=5096
-        amitriptyline=931
+        pregnant=656fbd28-977f-11e1-8993-905e29aff6c1
+        familyPlan=656ad7c2-977f-11e1-8993-905e29aff6c1
+        suicideRisk=112411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        sideEffects=655d762c-977f-11e1-8993-905e29aff6c1
+        hospitalized=b36bc9d2-8288-11e7-bb31-be2e44b06b34
+        drugsNow=65585192-977f-11e1-8993-905e29aff6c1
+        drugSet=447aaa7a-cd03-11e5-9956-625662870761
+        cpz=654b00aa-977f-11e1-8993-905e29aff6c1
+        hlp=65693df4-977f-11e1-8993-905e29aff6c1
+        fpz=654b0eb0-977f-11e1-8993-905e29aff6c1
+        cbz=654b0726-977f-11e1-8993-905e29aff6c1
+        sv=65694b32-977f-11e1-8993-905e29aff6c1
+        ris=83405AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        flx=65693bec-977f-11e1-8993-905e29aff6c1
+        olanzapine=dae4e2e4-659e-11e6-8b77-86f30ca893d3
+        clozapine=dae4e5e6-659e-11e6-8b77-86f30ca893d3
+        trifluo=657b0bba-977f-11e1-8993-905e29aff6c1
+        clopixol=dae4eb4a-659e-11e6-8b77-86f30ca893d3
+        noncodedText=d57e3a20-5802-11e6-8b77-86f30ca893d3
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
+        amitriptyline=654b12fc-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="D51F45F8-0EEA-4231-A7E9-C45D57F1CBA1"/>
 

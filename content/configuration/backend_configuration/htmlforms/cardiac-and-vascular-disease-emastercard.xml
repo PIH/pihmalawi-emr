@@ -93,9 +93,9 @@
         <macro key="otherDx" value="656cce7e-977f-11e1-8993-905e29aff6c1" />
         <macro key="otherCCF" value="65780d0c-977f-11e1-8993-905e29aff6c1" />
         <macro key="comorbidity" value="655a8d90-977f-11e1-8993-905e29aff6c1" />
-        <macro key="hypertension" value="654abfc8-977f-11e1-8993-905e29aff6c1" />
+        <macro key="hypertensionAnswer" value="654abfc8-977f-11e1-8993-905e29aff6c1" />
         <macro key="diabetes" value="6567426a-977f-11e1-8993-905e29aff6c1" />
-        <macro key="ckd" value="6577c7a2-977f-11e1-8993-905e29aff6c1" />
+        <macro key="ckdAnswer" value="6577c7a2-977f-11e1-8993-905e29aff6c1" />
         <macro key="otherComorbidity" value="65780d0c-977f-11e1-8993-905e29aff6c1" />
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
@@ -410,9 +410,9 @@
                             <!-- Comorbidities -->
                             <th style="vertical-align:top;">Comorbidities</th>
                             <td>
-                                <obs conceptId="$comorbidity" answerConceptId="$ckd" style = "checkbox"/><br />
+                                <obs conceptId="$comorbidity" answerConceptId="$ckdAnswer" style = "checkbox"/><br />
                                 <obs conceptId="$comorbidity" answerConceptId="$diabetes" style = "checkbox"/><br />
-                                <obs conceptId="$comorbidity" answerConceptId="$hypertension" style = "checkbox"/><br />
+                                <obs conceptId="$comorbidity" answerConceptId="$hypertensionAnswer" style = "checkbox"/><br />
                                 <obs conceptId="$otherComorbidity" labelText="Other: " /><br />
                             </td>
                             <td></td>

@@ -11,37 +11,37 @@
 
           
     <macros>
-        height=5090
-        weight=5089
-        tbStatus=7459
-        tbNotSuspected=7454
-        tbSuspected=7455
-        tbConfirmedNoTx=7456
-        tbConfirmedTx=7458
-        nextAppt=5096
-        wasting=8033
-        mod=1900
-        severe=1903
-        whoStageQuestion=7562
-        whoStage1=7041
-        whoStage2=7042
-        whoStage3=7043
-        whoStage4=7044
-        cd4SampleTaken=8555
-        pregnant=6131
-        ipt=8032
-        numCptGiven=6319
-        depoGiven=8029
-        numCondoms=8080
-        sideEffect=7755
-        no=1066
-        yes=1065
-        pn=821
-        hp=29
-        sk=512
-        lip=2148
-        other=6408
-        cd4Value=3434
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        tbStatus=65770db2-977f-11e1-8993-905e29aff6c1
+        tbNotSuspected=6577084e-977f-11e1-8993-905e29aff6c1
+        tbSuspected=65770966-977f-11e1-8993-905e29aff6c1
+        tbConfirmedNoTx=65770a7e-977f-11e1-8993-905e29aff6c1
+        tbConfirmedTx=65770ca4-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
+        wasting=657a2268-977f-11e1-8993-905e29aff6c1
+        mod=655c243e-977f-11e1-8993-905e29aff6c1
+        severe=655c28b2-977f-11e1-8993-905e29aff6c1
+        whoStageQuestion=65778170-977f-11e1-8993-905e29aff6c1
+        whoStage1=657499f6-977f-11e1-8993-905e29aff6c1
+        whoStage2=65749afa-977f-11e1-8993-905e29aff6c1
+        whoStage3=65749bfe-977f-11e1-8993-905e29aff6c1
+        whoStage4=65749d02-977f-11e1-8993-905e29aff6c1
+        cd4SampleTaken=5ff3ca52-0651-11e6-b512-3e1d05defe78
+        pregnant=656fbd28-977f-11e1-8993-905e29aff6c1
+        ipt=657a2164-977f-11e1-8993-905e29aff6c1
+        numCptGiven=6570b82c-977f-11e1-8993-905e29aff6c1
+        depoGiven=657a1e44-977f-11e1-8993-905e29aff6c1
+        numCondoms=657a52ce-977f-11e1-8993-905e29aff6c1
+        sideEffect=65789d4e-977f-11e1-8993-905e29aff6c1
+        no=6557646c-977f-11e1-8993-905e29aff6c1
+        yes=65576354-977f-11e1-8993-905e29aff6c1
+        pn=654a4ade-977f-11e1-8993-905e29aff6c1
+        hp=6545b33e-977f-11e1-8993-905e29aff6c1
+        sk=65489e00-977f-11e1-8993-905e29aff6c1
+        lip=655d81f8-977f-11e1-8993-905e29aff6c1
+        other=657140f8-977f-11e1-8993-905e29aff6c1
+        cd4Value=6565b94a-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
 

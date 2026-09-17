@@ -11,8 +11,8 @@
 
 
     <macros>
-        diagnosisSet=8445
-        chronicCareDiagnosis=3683
+        diagnosisSet=6db168f1-0f38-42d9-9f0e-90946a3d8e72
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
         <macro key="sickleCellDiagnosis" value="65774b06-977f-11e1-8993-905e29aff6c1"/>
         <macro key="yesAnswer" value="65576354-977f-11e1-8993-905e29aff6c1" />
         <macro key="noAnswer" value="6557646c-977f-11e1-8993-905e29aff6c1" />

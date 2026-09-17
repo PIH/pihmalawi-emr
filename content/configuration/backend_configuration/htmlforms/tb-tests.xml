@@ -13,7 +13,7 @@
     <macros>
         <macro key="month" value="b2fafb7e-ce9f-11e5-ab30-625662870761"/>
         <macro key="tbTestType" value="38c4512a-5aef-487d-a450-ecea4bc5df7e"/>
-        <macro key="smear" value="6559cd56-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="smearAnswer" value="6559cd56-977f-11e1-8993-905e29aff6c1"/>
         <macro key="culture" value="65627d3e-977f-11e1-8993-905e29aff6c1"/>
         <macro key="xpert" value="2eedf1c7-1c59-4f77-83ea-1196ebf14e12"/>
         <macro key="lam" value="a047e2ec-f07e-47a6-8849-7c5150550e9e"/>
@@ -23,9 +23,9 @@
         <macro key="weight" value="6569c44a-977f-11e1-8993-905e29aff6c1"/>
         <macro key="smearResult" value="65628568-977f-11e1-8993-905e29aff6c1"/>
 
-        noAnswer=1066
-        yesAnswer=1065
-        nextAppt=5096
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="61545FD5-4EBC-4E01-B349-304195254A73"/>
@@ -67,7 +67,7 @@
                     </td>
                     <!-- Initiation test type -->
                     <td>
-                        <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$smear" answerLabel="Smear" />
+                        <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$smearAnswer" answerLabel="Smear" />
                     </td>
                     <td>
                         <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$culture" answerLabel="Culture" />
@@ -133,7 +133,7 @@
                 <th>Test</th>
                 <td>
                     <!-- Initiation test type -->
-                    <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$smear" answerLabel="Smear" />
+                    <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$smearAnswer" answerLabel="Smear" />
                     <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$culture" answerLabel="Culture" />
                     <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$xpert" answerLabel="XPERT" />
                     <obs conceptId="$tbTestType" style="checkbox" answerConceptId="$lam" answerLabel="LAM" />

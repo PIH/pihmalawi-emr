@@ -64,9 +64,9 @@
         <macro key="drugsNow" value="65585192-977f-11e1-8993-905e29aff6c1" />
         <!-- statins=162307AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-->
         <!-- i don't know why UUIDs are not working for those statins drugs, i had to use Integers-->
-        simvastatin=8613
-        pravastatin=8614
-        atorvastatin=8210
+        simvastatin=83936AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        pravastatin=82411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        atorvastatin=657aefc2-977f-11e1-8993-905e29aff6c1
         <!-- diuretic=8466 -->
         <macro key="hydrochlorothiazide" value="65588df6-977f-11e1-8993-905e29aff6c1" />
         <macro key="furosemide" value="6546003c-977f-11e1-8993-905e29aff6c1" />
@@ -80,7 +80,7 @@
         <macro key="lisinopril" value="65635a74-977f-11e1-8993-905e29aff6c1" />
         <!-- betaBlocker=8463 -->
         <macro key="atenolol" value="65635d58-977f-11e1-8993-905e29aff6c1" />
-        bisoprolol=8612
+        bisoprolol=72247AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         <macro key="propranolol" value="65470f18-977f-11e1-8993-905e29aff6c1" />
         <macro key="aspirin" value="6545efde-977f-11e1-8993-905e29aff6c1" />
         <macro key="benzathinePcn" value="656930ac-977f-11e1-8993-905e29aff6c1" />
@@ -800,14 +800,14 @@
             <tr>
                 <th>Bibasilar crackles</th>
                 <td>
-                    <obs conceptId="$bibasilarCrackles" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes, No" />
+                    <obs conceptId="$bibasilarCrackles" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes, No" />
                 </td>
             </tr>
 
             <tr>
                 <th>JVP Elevated</th>
                 <td>
-                    <obs conceptId="$jvpElevated" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes, No" />
+                    <obs conceptId="$jvpElevated" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes, No" />
                 </td>
             </tr>
 
@@ -821,7 +821,7 @@
             <tr>
                 <th>NYHA stage</th>
                 <td style="text-align: left">
-                    <obs conceptId="$nyhastage" answerConceptIds="$stageOne,$stageTwo,$stageThree, $stageFour" answerLabels="I,II,III, IV" style="radio" />
+                    <obs conceptId="$nyhastage" answerConceptIds="$stageOne,$stageTwo,$stageThree,$stageFour" answerLabels="I,II,III, IV" style="radio" />
                 </td>
             </tr>
 
@@ -843,7 +843,7 @@
                 <th>Salt or Fluid restricted</th> 
                 <td style="text-align: left">
                     <obs conceptId="$restrictedSaltFluid" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -851,7 +851,7 @@
                 <th>Concern for depression or anxiety</th>
                 <td style="text-align: left">
                     <obs conceptId="$concernForDepression" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -1511,7 +1511,7 @@
                 <th><span class="rotate">Took medication today?</span></th>
                 <td>
                     <obs conceptId="$tookMedicToday" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
@@ -1519,14 +1519,14 @@
                 <th>Diet - Salt or Fluid</th>
                 <td>
                     <obs conceptId="$dietSaltFluid" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 
             <tr>
                 <th>Mental Health Referral</th> 
                 <td>
-                    <obs conceptId="$mhReferral" style="radio" answerConceptIds="$yesAnswer, $noAnswer" 
+                    <obs conceptId="$mhReferral" style="radio" answerConceptIds="$yesAnswer,$noAnswer" 
                     answerLabel="Yes, No" />
                 </td>
             </tr>
@@ -1534,7 +1534,7 @@
             <tr>
                 <th>Palliative Referral</th>
                 <td>
-                    <obs conceptId="$palliativeReferral" style="radio" answerConceptIds="$yesAnswer, $noAnswer" answerLabels="Yes, No" />
+                    <obs conceptId="$palliativeReferral" style="radio" answerConceptIds="$yesAnswer,$noAnswer" answerLabels="Yes, No" />
                 </td>
             </tr>
 
@@ -1542,7 +1542,7 @@
                 <th>Request CHW F/U</th>
                 <td>
                     <obs conceptId="$agreesToFollowup" style="radio" answerLabels="Yes, No"
-                                     answerConceptIds="$yesAnswer, $noAnswer"/>
+                                     answerConceptIds="$yesAnswer,$noAnswer"/>
                 </td>
             </tr>
 

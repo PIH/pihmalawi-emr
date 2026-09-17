@@ -11,13 +11,13 @@
 
 
     <macros>
-        chronicCareDiagnosis=3683
-        plannedVisit=1246
-        noAnswer=1066
-        yesAnswer=1065
-        height=5090
-        weight=5089
-        nextAppt=5096
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
+        plannedVisit=6558913e-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <macro key="month" value="b2fafb7e-ce9f-11e5-ab30-625662870761"/>
         <macro key="regimen" value="89a51505-984f-41e3-af75-bfd80295a4ae"/>

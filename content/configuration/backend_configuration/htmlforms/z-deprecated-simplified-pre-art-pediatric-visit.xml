@@ -49,13 +49,13 @@
 		<tr>
 			<th>Height</th>
 			<td>
-				<obs conceptId="5090" />
+				<obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
 			</td>
 		</tr>
 		<tr>
 			<th>Weight</th>
 			<td>
-				<obs conceptId="5089" />
+				<obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 		</tr>
 		<tr>
@@ -65,13 +65,13 @@
 				)
 			</th>
 			<td>
-				<obs conceptId="5497" />
+				<obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1" />
 			</td>
 		</tr>
 		<tr>
 			<th>Next appointment</th>
 			<td>
-				<obs conceptId="5096" allowFutureDates="true" />
+				<obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true" />
 			</td>
 		</tr>
 		<tr>

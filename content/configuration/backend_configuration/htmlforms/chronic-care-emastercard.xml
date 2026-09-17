@@ -31,7 +31,7 @@
     </style>
 
     <macros>
-      otherDiagnosis=7685
+      otherDiagnosis=65780d0c-977f-11e1-8993-905e29aff6c1
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
@@ -104,7 +104,7 @@
                     <tr>
                         <td>Clinic</td>
                         <td>
-                            <encounterLocation default="2" />
+                            <encounterLocation default="0d414ce2-5ab4-11e0-870c-9f6107fee88e" />
                         </td>
                     </tr>
                     <tr>
@@ -116,7 +116,7 @@
                     <tr>
                         <td>Referred From</td>
                         <td>
-                            <obs conceptId="3509" answerConceptIds="1651,7829,3566,2232,8397,6408" answerLabels="OPD,Inpatient Ward,Health Center,ANC,Community Event,Other" />
+                            <obs conceptId="65664fc2-977f-11e1-8993-905e29aff6c1" answerConceptIds="655ac68e-977f-11e1-8993-905e29aff6c1,6578ee5c-977f-11e1-8993-905e29aff6c1,6566905e-977f-11e1-8993-905e29aff6c1,655e0cea-977f-11e1-8993-905e29aff6c1,5fdce932-6a8c-4658-8b53-f8f893f0b217,657140f8-977f-11e1-8993-905e29aff6c1" answerLabels="OPD,Inpatient Ward,Health Center,ANC,Community Event,Other" />
                         </td>
                     </tr>
                     <tr>
@@ -126,79 +126,79 @@
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td class="borderless-grey">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="5" answerLabel="Asthma"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="65459124-977f-11e1-8993-905e29aff6c1" answerLabel="Asthma"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless-grey">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="903" answerLabel="Hypertension"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="654abfc8-977f-11e1-8993-905e29aff6c1" answerLabel="Hypertension"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="borderless-grey">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="155" answerLabel="Epilepsy"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6546938a-977f-11e1-8993-905e29aff6c1" answerLabel="Epilepsy"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless-grey">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="3720" answerLabel="Diabetes"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6567426a-977f-11e1-8993-905e29aff6c1" answerLabel="Diabetes"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <!-- TO HERE -->
                                 <tr>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="3468" answerLabel="Heart failure"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6566257e-977f-11e1-8993-905e29aff6c1" answerLabel="Heart failure"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="3714" answerLabel="Cirrhosis"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="65673cac-977f-11e1-8993-905e29aff6c1" answerLabel="Cirrhosis"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="borderless">
                                         <!-- ToDo:  This is a synonym as Heart Failure.  Checking with Beth  -->
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="2720" answerLabel="Congestive heart disease"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6560c016-977f-11e1-8993-905e29aff6c1" answerLabel="Congestive heart disease"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="27" answerLabel="Hepatitis B"
-                                             style="checkbox"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="221" answerLabel="Rheumatic heart disease"
-                                             style="checkbox"/>
-                                    </td>
-                                    <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="7623" answerLabel="Chronic kidney disease"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6545b140-977f-11e1-8993-905e29aff6c1" answerLabel="Hepatitis B"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="7518" answerLabel="Sickle cell disease"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6546dad4-977f-11e1-8993-905e29aff6c1" answerLabel="Rheumatic heart disease"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="8595" answerLabel="Polycystic kidney disease"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6577c7a2-977f-11e1-8993-905e29aff6c1" answerLabel="Chronic kidney disease"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="202" answerLabel="Rheumatoid arthritis"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="65774b06-977f-11e1-8993-905e29aff6c1" answerLabel="Sickle cell disease"
                                              style="checkbox"/>
                                     </td>
                                     <td class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="3779" answerLabel="Tropical splenomegaly"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="dae4eed8-659e-11e6-8b77-86f30ca893d3" answerLabel="Polycystic kidney disease"
+                                             style="checkbox"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="borderless">
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6546c670-977f-11e1-8993-905e29aff6c1" answerLabel="Rheumatoid arthritis"
+                                             style="checkbox"/>
+                                    </td>
+                                    <td class="borderless">
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="6567c9d8-977f-11e1-8993-905e29aff6c1" answerLabel="Tropical splenomegaly"
                                              style="checkbox"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="borderless">
-                                        <obs class="dx-checkbox-item" conceptId="3683" answerConceptId="5622" answerLabel="Other"
+                                        <obs class="dx-checkbox-item" conceptId="65671c9a-977f-11e1-8993-905e29aff6c1" answerConceptId="656cce7e-977f-11e1-8993-905e29aff6c1" answerLabel="Other"
                                              style="checkbox"/>
                                         <obs conceptId="$otherDiagnosis" />
                                     </td>
@@ -217,13 +217,13 @@
                         <tr>
                             <td>Type of building where you sleep:</td>
                             <td>
-                                <obs conceptId="1668" answerConceptIds="1671,8393"/>
+                                <obs conceptId="655b0e14-977f-11e1-8993-905e29aff6c1" answerConceptIds="655b1120-977f-11e1-8993-905e29aff6c1,2853cd9e-3a49-4caa-a33a-d6b795040ea8"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Type of roof:</td>
                             <td>
-                                <obs conceptId="1319" answerConceptIds="1321,1320" answerLabels="Thatch,Tin"/>
+                                <obs conceptId="6558eecc-977f-11e1-8993-905e29aff6c1" answerConceptIds="6558f0de-977f-11e1-8993-905e29aff6c1,6558efd0-977f-11e1-8993-905e29aff6c1" answerLabels="Thatch,Tin"/>
                             </td>
                         </tr>
                         <tr>
@@ -232,34 +232,34 @@
                         <tr>
                             <td>Electricity:</td>
                             <td>
-                                <obs conceptId="5609" style="yes_no" />
+                                <obs conceptId="656cb808-977f-11e1-8993-905e29aff6c1" style="yes_no" />
                             </td>
                         </tr>
                         <tr>
                             <td>Radio:</td>
                             <td>
-                                <obs conceptId="1318" style="yes_no" />
+                                <obs conceptId="6558edc8-977f-11e1-8993-905e29aff6c1" style="yes_no" />
                             </td>
                         </tr>
                         <tr>
                             <td>Bicycle:</td>
                             <td>
-                                <obs conceptId="8394" style="radio" answerConceptIds="1065,1066"/>
+                                <obs conceptId="4d7a39c6-7766-4fda-9797-7de19a13fc75" style="radio" answerConceptIds="65576354-977f-11e1-8993-905e29aff6c1,6557646c-977f-11e1-8993-905e29aff6c1"/>
                             </td>
                         </tr>
                         <tr>
                             <td style="padding-top:10px;">Time spent traveling to clinic:</td>
                             <td style="padding-top:10px; white-space:nowrap;">
-                                <obs conceptId="3463" size="2"/>
+                                <obs conceptId="65661fc0-977f-11e1-8993-905e29aff6c1" size="2"/>
                                 h
-                                <obs conceptId="2980" size="2"/>
+                                <obs conceptId="65622e06-977f-11e1-8993-905e29aff6c1" size="2"/>
                                 m
                             </td>
                         </tr>
                         <tr>
                             <td>What is the patients cooking source?</td>
                             <td>
-                                <obs conceptId="8404"/>
+                                <obs conceptId="94498de6-6ea7-441f-8d79-d2ef3c3df30f"/>
                             </td>
                         </tr>
                         <tr>
@@ -268,17 +268,17 @@
                                 <table>
                                     <tr>
                                         <td class="borderless">
-                                            <obs conceptId="2940" answerConceptId="2938" style="checkbox"/>
+                                            <obs conceptId="65620566-977f-11e1-8993-905e29aff6c1" answerConceptId="6562035e-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="borderless">
-                                            <obs conceptId="2940" answerConceptId="2937" style="checkbox"/>
+                                            <obs conceptId="65620566-977f-11e1-8993-905e29aff6c1" answerConceptId="65620250-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="borderless">
-                                            <obs conceptId="2940" answerConceptId="1067" style="checkbox"/>
+                                            <obs conceptId="65620566-977f-11e1-8993-905e29aff6c1" answerConceptId="65576584-977f-11e1-8993-905e29aff6c1" style="checkbox"/>
                                         </td>
                                     </tr>
                                 </table>
@@ -294,41 +294,41 @@
                         <tr>
                             <td>HIV status:</td>
                             <td>
-                                <obs conceptId="3753" answerConceptIds="1228,1229,1067"/>
+                                <obs conceptId="6567ae62-977f-11e1-8993-905e29aff6c1" answerConceptIds="65587802-977f-11e1-8993-905e29aff6c1,6558791a-977f-11e1-8993-905e29aff6c1,65576584-977f-11e1-8993-905e29aff6c1"/>
                             </td>
                             <td style="padding-left:20px;border-right: 1px solid #ffffff;">On ART?</td>
                             <td style="white-space:nowrap;border-left: 1px solid #ffffff;">
-                                <obs conceptId="7010" style="yes_no"/>
+                                <obs conceptId="65747a84-977f-11e1-8993-905e29aff6c1" style="yes_no"/>
                             </td>
                         </tr>
                         <tr>
                             <td>TB status:</td>
                             <td colspan="3">
-                                <obs conceptId="7459" answerConceptIds="1090,1548,1550"
+                                <obs conceptId="65770db2-977f-11e1-8993-905e29aff6c1" answerConceptIds="65577f4c-977f-11e1-8993-905e29aff6c1,655a4ab0-977f-11e1-8993-905e29aff6c1,655a4cc2-977f-11e1-8993-905e29aff6c1"
                                      answerLabels="Never had TB,Previous treatment,Currently on treatment"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Does patient smoke?</td>
                             <td>
-                                <obs conceptId="1551" answerConceptIds="1550,1090,1548"
+                                <obs conceptId="655a4dc6-977f-11e1-8993-905e29aff6c1" answerConceptIds="655a4cc2-977f-11e1-8993-905e29aff6c1,65577f4c-977f-11e1-8993-905e29aff6c1,655a4ab0-977f-11e1-8993-905e29aff6c1"
                                      answerLabels="Yes,No,Past smoker"/>
                             </td>
-                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="6161"/>cigarettes/day
+                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="656fe064-977f-11e1-8993-905e29aff6c1"/>cigarettes/day
                             </td>
                         </tr>
                         <tr>
                             <td>Does patient drink alcohol?</td>
                             <td>
-                                <obs conceptId="1552" answerConceptIds="1550,1090,1548"
+                                <obs conceptId="655a4ed4-977f-11e1-8993-905e29aff6c1" answerConceptIds="655a4cc2-977f-11e1-8993-905e29aff6c1,65577f4c-977f-11e1-8993-905e29aff6c1,655a4ab0-977f-11e1-8993-905e29aff6c1"
                                      answerLabels="Yes,No,Past drinker"/>
                             </td>
-                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="3341" /> liters/day
+                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="65641090-977f-11e1-8993-905e29aff6c1" /> liters/day
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">Number of fruit and vegetable servings/day:</td>
-                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="8396"/> servings/day
+                            <td colspan="2" style="white-space:nowrap;"><obs conceptId="c65523dd-0c6b-41f6-a59f-a16fe544b22d"/> servings/day
                             </td>
                         </tr>
                     </table>
@@ -338,23 +338,23 @@
                     <table>
                         <tr>
                             <td>Diabetes</td>
-                            <td style="padding-right:10px;"><obs conceptId="8399" size="2"/> yrs
+                            <td style="padding-right:10px;"><obs conceptId="0e47ce48-5714-4bad-93f4-203f49acb821" size="2"/> yrs
                             </td>
                             <td>Hypertension</td>
-                            <td style="padding-right:10px;"><obs conceptId="8400" size="2"/> yrs
+                            <td style="padding-right:10px;"><obs conceptId="953b9c5a-9356-40df-948b-f6aa85794c87" size="2"/> yrs
                             </td>
                         </tr>
                         <tr>
                             <td>Epilepsy</td>
-                            <td style="padding-right:10px;"><obs conceptId="8403" size="2"/> yrs
+                            <td style="padding-right:10px;"><obs conceptId="60cc004f-ab6a-4bd7-836a-4683856c0d11" size="2"/> yrs
                             </td>
                             <td>Heart Failure</td>
-                            <td style="padding-right:10px;"><obs conceptId="8402" size="2"/> yrs
+                            <td style="padding-right:10px;"><obs conceptId="5c75185c-d98f-4a03-9a96-2e1c68d518f9" size="2"/> yrs
                             </td>
                         </tr>
                         <tr>
                             <td>Asthma</td>
-                            <td style="padding-right:10px;"><obs conceptId="8401" size="2"/> yrs
+                            <td style="padding-right:10px;"><obs conceptId="ce102ae6-c471-4e6a-8acc-04baa008d08b" size="2"/> yrs
                             </td>
                             <td></td>
                         </tr>

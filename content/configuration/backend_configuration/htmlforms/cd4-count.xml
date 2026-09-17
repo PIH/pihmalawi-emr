@@ -73,13 +73,13 @@
 		<tr>
 			<th>CD4 Count</th>
 			<td>
-				<obs conceptId="5497" labelText="" />
+				<obs conceptId="656c327a-977f-11e1-8993-905e29aff6c1" labelText="" />
 			</td>
 		</tr>
 		<tr>
 			<th>CD4 Percent</th>
 			<td>
-				<obs conceptId="730" labelText="" />
+				<obs conceptId="6549db44-977f-11e1-8993-905e29aff6c1" labelText="" />
 			</td>
 		</tr>
 		<tr>

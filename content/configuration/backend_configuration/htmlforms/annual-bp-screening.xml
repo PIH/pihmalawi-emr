@@ -11,8 +11,8 @@
 
 
     <macros>
-        systolic=5085
-        diastolic=5086
+        systolic=6569bffe-977f-11e1-8993-905e29aff6c1
+        diastolic=6569c116-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
 

@@ -11,36 +11,36 @@
 
 
     <macros>
-        guardianName=1824
-        patientPhone=6194
-        guardianPhone=3294
-        relationToPatient=1328
-        agreesToFollowup=2552
-        noAnswer=1066
-        yesAnswer=1065
-        whoStage=7562
-        everTakenArvs=7754
-        ageAtInitiation=3467
-        lastArvsTaken=7753
-        lastArvsDate=7751
-        hivRapidTest=1040
-        hivDnaPcr=844
-        chwName=8431
-        site=7881
-        testDate=7882
-        testTypeQuestion=7880
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        patientPhone=65700e2c-977f-11e1-8993-905e29aff6c1
+        guardianPhone=6563d2c4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        whoStage=65778170-977f-11e1-8993-905e29aff6c1
+        everTakenArvs=65789c4a-977f-11e1-8993-905e29aff6c1
+        ageAtInitiation=6566247a-977f-11e1-8993-905e29aff6c1
+        lastArvsTaken=65789b46-977f-11e1-8993-905e29aff6c1
+        lastArvsDate=65789934-977f-11e1-8993-905e29aff6c1
+        hivRapidTest=654b983a-977f-11e1-8993-905e29aff6c1
+        hivDnaPcr=654a6960-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
+        site=65792e58-977f-11e1-8993-905e29aff6c1
+        testDate=65792f5c-977f-11e1-8993-905e29aff6c1
+        testTypeQuestion=65792d4a-977f-11e1-8993-905e29aff6c1
         testTypeLabelRapid=Rapid
         testTypeLabelDNAPCR=PCR
-        whoClinicalConditions=8081
-        stage1=7041
-        stage2=7042
+        whoClinicalConditions=657a53d2-977f-11e1-8993-905e29aff6c1
+        stage1=657499f6-977f-11e1-8993-905e29aff6c1
+        stage2=65749afa-977f-11e1-8993-905e29aff6c1
         noLabel=N
         yesLabel=Y
-        iptTreatment=8030
-        iptDate=8031
-        tbTreatmentQuestion=7850
-        tbRegistrationNumber=7930
-        tbTreatmentStartDate=1113
+        iptTreatment=657a1f52-977f-11e1-8993-905e29aff6c1
+        iptDate=657a2060-977f-11e1-8993-905e29aff6c1
+        tbTreatmentQuestion=657904fa-977f-11e1-8993-905e29aff6c1
+        tbRegistrationNumber=65796184-977f-11e1-8993-905e29aff6c1
+        tbTreatmentStartDate=65579f22-977f-11e1-8993-905e29aff6c1
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
 

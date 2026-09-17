@@ -21,8 +21,8 @@
         <macro key="literate" value="6a8daa8a-d0d7-493b-ab12-521a9bc18fce"/>
         <macro key="currentlyInSchool" value="f39717e7-b68b-4ec1-8094-a6c0ae930c7f"/>
         <macro key="currentSchoolClass" value="9715e824-23d7-44ed-a6a8-ea6fbeced93f"/>
-        <macro key="no" value="6557646c-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="yes" value="65576354-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="noAnswer" value="6557646c-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="yesAnswer" value="65576354-977f-11e1-8993-905e29aff6c1"/>
         <macro key="dropSchoolClass" value="80f130e3-a53b-4306-a8c9-ee1731575684"/>
         <macro key="getaJob" value="b0cccb19-5744-4d7c-a20f-5357d8eedfa8"/>
         <macro key="business" value="3b7d62ef-c044-4cfa-bf44-ba3fcdea70ee"/>
@@ -539,13 +539,13 @@
                 <tr>
                     <th>Are you literate ?</th>
                     <td>
-                        <obs conceptId="$literate" style="radio" answerConceptIds="$yes,$no" />
+                        <obs conceptId="$literate" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr>
                     <th>Are you in school? </th>
                     <td>
-                        <obs conceptId="$currentlyInSchool" style="radio" answerConceptIds="$yes,$no" />
+                        <obs conceptId="$currentlyInSchool" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -563,13 +563,13 @@
                 <tr class="focus-field">
                     <th>Plans after school</th>
                     <td>
-                        <obs conceptId="$plansAfterSchool" style="radio" answerConceptIds="$getaJob, $business, $furtherEducation, $other" />
+                        <obs conceptId="$plansAfterSchool" style="radio" answerConceptIds="$getaJob,$business,$furtherEducation,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Primary Guardian</th>
                     <td>
-                        <obs conceptId="$primaryGuardian" style="radio" answerConceptIds="$biologicalParent, $bothParents, $grandParents, $elderRelative, $relatives, $other" />
+                        <obs conceptId="$primaryGuardian" style="radio" answerConceptIds="$biologicalParent,$bothParents,$grandParents,$elderRelative,$relatives,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -581,7 +581,7 @@
                 <tr class="focus-field">
                     <th>Reason for staying with single parent</th>
                     <td>
-                        <obs conceptId="$reasonForSingleParent" style="radio" answerConceptIds="$parentsDivorced, $parentsDied, $other" />
+                        <obs conceptId="$reasonForSingleParent" style="radio" answerConceptIds="$parentsDivorced,$parentsDied,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -593,88 +593,88 @@
                 <tr class="focus-field">
                     <th>Do you or any member of your household own a ... </th>
                     <td> Radio
-                        <obs conceptId="$radio" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$radio" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Television
-                        <obs conceptId="$tv" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$tv" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Mobile Phone
-                        <obs conceptId="$phone" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$phone" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Refrigerator
-                        <obs conceptId="$fridge" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$fridge" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Bicycle
-                        <obs conceptId="$bike" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$bike" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Motorcycle
-                        <obs conceptId="$motorBike" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$motorBike" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Animal-drawn cart
-                        <obs conceptId="$cart" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$cart" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                     <td> Car/Truck
-                        <obs conceptId="$truck" style="radio" answerConceptIds="$yes, $no,$doNotKNow" />
+                        <obs conceptId="$truck" style="radio" answerConceptIds="$yesAnswer,$noAnswer,$doNotKNow" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What is the main source of energy for lighting in the household?</th>
                     <td>
-                        <obs conceptId="$lightingSource" style="radio" answerConceptIds="$electricity, $solar,$gas,$paraffinLamp,$torch, $other" />
+                        <obs conceptId="$lightingSource" style="radio" answerConceptIds="$electricity,$solar,$gas,$paraffinLamp,$torch,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What is the main source of drinking water in the household?</th>
                     <td>
-                        <obs conceptId="$drinkingWaterSource" style="radio" answerConceptIds="$pipedWater, $dugWell, $springWater,$bottledWater,$borehole, $other" />
+                        <obs conceptId="$drinkingWaterSource" style="radio" answerConceptIds="$pipedWater,$dugWell,$springWater,$bottledWater,$borehole,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Do you have a toilet at home?</th>
                     <td>
-                        <obs conceptId="$toiletAtHome" style="radio" answerConceptIds="$yes, $no" />
+                        <obs conceptId="$toiletAtHome" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What kind of toilet facility do members of your household usually use?</th>
                     <td>
-                        <obs conceptId="$kindOfToilet" style="radio" answerConceptIds="$flushToilet, $pitLatrine, $other" />
+                        <obs conceptId="$kindOfToilet" style="radio" answerConceptIds="$flushToilet,$pitLatrine,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What type of fuel does your household mainly use for cooking?</th>
                     <td>
-                        <obs conceptId="$cookingEnergy" style="radio" answerConceptIds="$electricity, $firewood, $charcoal,$bottledGas, $parffn, $other" />
+                        <obs conceptId="$cookingEnergy" style="radio" answerConceptIds="$electricity,$firewood,$charcoal,$bottledGas,$parffn,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What type of flooring does your home have?</th>
                     <td>
-                        <obs conceptId="$typeOfHouseFloor" style="radio" answerConceptIds="$earth, $cement, $tiles, $other" />
+                        <obs conceptId="$typeOfHouseFloor" style="radio" answerConceptIds="$earth,$cement,$tiles,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What type of walls does is your house made of?</th>
                     <td>
-                        <obs conceptId="$typeOfHouseWalls" style="radio" answerConceptIds="$cement, $mud, $other" />
+                        <obs conceptId="$typeOfHouseWalls" style="radio" answerConceptIds="$cement,$mud,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What type of roof is your house made of?</th>
                     <td>
-                        <obs conceptId="$typeOfHouseRoof" style="radio" answerConceptIds="$tiles, $grass, $other" />
+                        <obs conceptId="$typeOfHouseRoof" style="radio" answerConceptIds="$tiles,$grass,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Are you already enrolled in teen club?</th>
                     <td>
-                        <obs conceptId="$enrolledInTeenClub" style="radio" answerConceptIds="$yes, $no" />
+                        <obs conceptId="$enrolledInTeenClub" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>What do you understand as the purpose of teen club?</th>
                     <td>
-                        <obs conceptId="$purpose" style="radio" answerConceptIds="$empowerAdoleToBuildPosRelationships, $improveSelfEsteem, $acquireLifeSkills, $other" />
+                        <obs conceptId="$purpose" style="radio" answerConceptIds="$empowerAdoleToBuildPosRelationships,$improveSelfEsteem,$acquireLifeSkills,$other" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -692,7 +692,7 @@
                 <tr class="focus-field">
                     <th>Did you get any social support from teens' club?</th>
                     <td>
-                        <obs conceptId="$socialSupport" style="radio" answerConceptIds="$yes, $no" />
+                        <obs conceptId="$socialSupport" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -704,7 +704,7 @@
                 <tr class="focus-field">
                     <th>Are you happy with teen club?</th>
                     <td>
-                        <obs conceptId="$happy" style="radio" answerConceptIds="$yes, $no" />
+                        <obs conceptId="$happy" style="radio" answerConceptIds="$yesAnswer,$noAnswer" />
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -722,13 +722,13 @@
                 <tr class="focus-field">
                     <th>How do you rate the support on a scale of 1 to 3?</th>
                     <td>
-                        <obs conceptId="$rateSupport" style="radio" answerConceptIds="$verySatisfied, $ntSatisfied, $littleSatisfied"/>
+                        <obs conceptId="$rateSupport" style="radio" answerConceptIds="$verySatisfied,$ntSatisfied,$littleSatisfied"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Can you rate the changes that happened to your life from the social support on a scale of 1 to 3?</th>
                     <td>
-                        <obs conceptId="$rateLifeChanges" style="radio" answerConceptIds="$verySatisfied, $ntSatisfied, $littleSatisfied"/>
+                        <obs conceptId="$rateLifeChanges" style="radio" answerConceptIds="$verySatisfied,$ntSatisfied,$littleSatisfied"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -746,7 +746,7 @@
                 <tr class="focus-field">
                     <th>How would you rate your level of knowledge about HIV?</th>
                     <td>
-                        <obs conceptId="$rateHIVKnowledge" style="radio" answerConceptIds="$veryLow, $low, $high, $nResponse"/>
+                        <obs conceptId="$rateHIVKnowledge" style="radio" answerConceptIds="$veryLow,$low,$high,$nResponse"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -758,85 +758,85 @@
                 <tr class="focus-field">
                     <th>How is HIV/AIDS prevented?</th>
                     <td>
-                        <obs conceptId="$prevention" style="radio" answerConceptIds="$condom, $abstinence, $fidelity, $doNotKNow"/>
+                        <obs conceptId="$prevention" style="radio" answerConceptIds="$condom,$abstinence,$fidelity,$doNotKNow"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Can HIV/AIDS be cured?</th>
                     <td>
-                        <obs conceptId="$cured" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$cured" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Can a healthy-looking person have HIV infection?</th>
                     <td>
-                        <obs conceptId="$healthyPerson" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$healthyPerson" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Should an HIV+ student be allowed to continue studying at your school?</th>
                     <td>
-                        <obs conceptId="$positiveStudent" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$positiveStudent" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Is HIV is a punishment for bad behavior?</th>
                     <td>
-                        <obs conceptId="$punishment" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$punishment" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Is HIV just a matter of bad luck?</th>
                     <td>
-                        <obs conceptId="$badLuck" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$badLuck" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Can HIV infected person live longer?</th>
                     <td>
-                        <obs conceptId="$infectedPerson" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$infectedPerson" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Are people afraid to be around you?</th>
                     <td>
-                        <obs conceptId="$aroundYou" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$aroundYou" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Have you ever used injectable drugs??</th>
                     <td>
-                        <obs conceptId="$injectableDrugs" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$injectableDrugs" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Have you ever used elicit drugs?</th>
                     <td>
-                        <obs conceptId="$elicitDrugs" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$elicitDrugs" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Do you have sex when you are under the influence of alcohol?</th>
                     <td>
-                        <obs conceptId="$alcoholInfluence" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$alcoholInfluence" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Did you ever had sex in exchange for money, goods or favor?</th>
                     <td>
-                        <obs conceptId="$exchange" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$exchange" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Did you ever had sex with someone who is younger or older than them by 5 years</th>
                     <td>
-                        <obs conceptId="$older" style="radio" answerConceptIds="$yes,$no"/>
+                        <obs conceptId="$older" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Have you started thinking about your future career or job aspirations? </th>
                     <td>
-                        <obs conceptId="$thinkingAboutFuture" style="radio" answerConceptIds="$yes, $no"/>
+                        <obs conceptId="$thinkingAboutFuture" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -848,13 +848,13 @@
                 <tr class="focus-field">
                     <th>What subjects or areas of study interest you the most? </th>
                     <td>
-                        <obs conceptId="$areasOfStudyInterest" style="radio" answerConceptIds="$scienceAndMath, $artsAndHumanities, $bsnssAndEntrepreneurship, $other"/>
+                        <obs conceptId="$areasOfStudyInterest" style="radio" answerConceptIds="$scienceAndMath,$artsAndHumanities,$bsnssAndEntrepreneurship,$other"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Are you currently involved in any extracurricular activities or clubs related to your career interests? </th>
                     <td>
-                        <obs conceptId="$extracurricular" style="radio" answerConceptIds="$yes, $no"/>
+                        <obs conceptId="$extracurricular" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -866,13 +866,13 @@
                 <tr class="focus-field">
                     <th>Are there any specific careers or industries that you are curious about or would like to learn more about?</th>
                     <td>
-                        <obs conceptId="$industries" style="radio" answerConceptIds="$healthAndMedicine, $techAndIT, $artsAndDesign, $bsnssAndEntrepreneurship, $other"/>
+                        <obs conceptId="$industries" style="radio" answerConceptIds="$healthAndMedicine,$techAndIT,$artsAndDesign,$bsnssAndEntrepreneurship,$other"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Are there any role models or professionals in your desired field that you admire or look up to?</th>
                     <td>
-                        <obs conceptId="$haveRoleModels" style="radio" answerConceptIds="$yes, $no"/>
+                        <obs conceptId="$haveRoleModels" style="radio" answerConceptIds="$yesAnswer,$noAnswer"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -884,19 +884,19 @@
                 <tr class="focus-field">
                     <th>What kind of support or resources would you feel would be helpful in achieving your aspirations and goals?</th>
                     <td>
-                        <obs conceptId="$resources" style="radio" answerConceptIds="$mentorship, $educationalScholarship, $peerSupport, $finacialSupport, $other"/>
+                        <obs conceptId="$resources" style="radio" answerConceptIds="$mentorship,$educationalScholarship,$peerSupport,$finacialSupport,$other"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Have you obtained any vocational training or certifications in your desired field?</th>
                     <td>
-                        <obs conceptId="$gotTraining" style="radio" answerConceptIds="$yesRelevantTraining, $ysPlanning, $notInterested"/>
+                        <obs conceptId="$gotTraining" style="radio" answerConceptIds="$yesRelevantTraining,$ysPlanning,$notInterested"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
                     <th>Have you obtained any vocational training or certifications in your desired field?</th>
                     <td>
-                        <obs conceptId="$gotTraining" style="radio" answerConceptIds="$yesRelevantTraining, $ysPlanning, $notInterested"/>
+                        <obs conceptId="$gotTraining" style="radio" answerConceptIds="$yesRelevantTraining,$ysPlanning,$notInterested"/>
                     </td>
                 </tr>
                 <tr class="focus-field">
@@ -914,7 +914,7 @@
                 <tr class="focus-field">
                     <th>What are some challenges you face or have faced in pursuing your career goals outside of school?</th>
                     <td>
-                        <obs conceptId="$chllngsInPursuingGoals" style="radio" answerConceptIds="$limitedJobOpp, $lackOfExp, $financialConstraints, $lackOfMentorship, $other"/>
+                        <obs conceptId="$chllngsInPursuingGoals" style="radio" answerConceptIds="$limitedJobOpp,$lackOfExp,$financialConstraints,$lackOfMentorship,$other"/>
                     </td>
                 </tr>
             </table>

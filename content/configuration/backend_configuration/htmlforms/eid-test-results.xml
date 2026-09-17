@@ -13,21 +13,21 @@
     <macros>
         hivTestConstruct=PIH Malawi:2168
         hivTestType=PIH Malawi:1867
-        hivResult=PIH Malawi:2169
+        hivResultValue=PIH Malawi:2169
         hivSampleDate=PIH Malawi:6108
         labTestNumber=PIH Malawi:3564
         hivResultDate=PIH Malawi:6110
-        hivRapid=1040
-        notDone=1118
-        negative=664
-        positive=703
-        inconclusive=1138
-        hivPCR=844
-        labLocation=8627
-        testingReason=8623
-        exposed=822
-        presumed=1346
-        unknown=1067
+        hivRapid=654b983a-977f-11e1-8993-905e29aff6c1
+        notDone=6557a4ae-977f-11e1-8993-905e29aff6c1
+        negative=654994c2-977f-11e1-8993-905e29aff6c1
+        positive=6549be7a-977f-11e1-8993-905e29aff6c1
+        inconclusive=6557baa2-977f-11e1-8993-905e29aff6c1
+        hivPCR=654a6960-977f-11e1-8993-905e29aff6c1
+        labLocation=6fc0ab50-9492-11e7-abc4-cec278b6b50a
+        testingReason=164126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        exposed=654a4bf6-977f-11e1-8993-905e29aff6c1
+        presumed=655915f0-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
     </macros>
 
     <!-- Flowsheet table view -->
@@ -67,7 +67,7 @@
                         <td><obs conceptId="$hivTestType" answerConceptIds="$hivPCR,$hivRapid"
                                  answerLabels="DBS,RT" style="radio"/></td>
                         <td><obs conceptId="$labTestNumber" /></td>
-                        <td><obs conceptId="$hivResult"
+                        <td><obs conceptId="$hivResultValue"
                                  answerConceptIds="$negative,$positive,$inconclusive,$notDone"
                                  answerLabels="Neg,Pos,Inc,Not Done"
                                  style="radio" /></td>
@@ -122,7 +122,7 @@
                         <td><obs conceptId="$hivTestType" answerConceptIds="$hivPCR,$hivRapid"
                                  answerLabels="DBS,RT" style="radio"/></td>
                         <td><obs conceptId="$labTestNumber" /></td>
-                        <td><obs conceptId="$hivResult"
+                        <td><obs conceptId="$hivResultValue"
                                  answerConceptIds="$negative,$positive,$inconclusive,$notDone"
                                  answerLabels="Neg,Pos,Inc,Not Done"
                                  style="radio" /></td>

@@ -11,40 +11,40 @@
 
 
     <macros>
-        height=5090
-        weight=5089
-        no=1066
-        yes=1065
-        bmiCoded=8467
-        typical=1115
-        underWeight=3812
-        overWeight=8459
-        systolicBP=5085
-        diastolicBP=5086
-        pulse=5087
-        hbA1c=6422
-        serumGlucose=887
-        glucoseTestType=6381
-        fastingTest=6379
-        randomTest=6380
-        tobacco=1551
-        alcohol=1552
-        current=1550
-        never=1090
-        stopped=1548
-        fruitVeggies=8396
-        exercise=8446
-        cvRisk=8460
-        visualAcuityText=8468
-        neuroPVD=8451
-        footDeform=8456
-        footUlcer=6566
-        hospitalSinceLast=1715
-        drugsNow=1193
-        drugSet=8501
+        height=6569c562-977f-11e1-8993-905e29aff6c1
+        weight=6569c44a-977f-11e1-8993-905e29aff6c1
+        no=6557646c-977f-11e1-8993-905e29aff6c1
+        yes=65576354-977f-11e1-8993-905e29aff6c1
+        bmiCoded=484499f2-b58b-11e5-9f22-ba0be0483c18
+        typical=6557a15c-977f-11e1-8993-905e29aff6c1
+        underWeight=6567eb98-977f-11e1-8993-905e29aff6c1
+        overWeight=158204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        systolicBP=6569bffe-977f-11e1-8993-905e29aff6c1
+        diastolicBP=6569c116-977f-11e1-8993-905e29aff6c1
+        pulse=6569c224-977f-11e1-8993-905e29aff6c1
+        hbA1c=65714f76-977f-11e1-8993-905e29aff6c1
+        serumGlucose=654a98b8-977f-11e1-8993-905e29aff6c1
+        glucoseTestType=65711e3e-977f-11e1-8993-905e29aff6c1
+        fastingTest=65711c2c-977f-11e1-8993-905e29aff6c1
+        randomTest=65711d3a-977f-11e1-8993-905e29aff6c1
+        tobacco=655a4dc6-977f-11e1-8993-905e29aff6c1
+        alcohol=655a4ed4-977f-11e1-8993-905e29aff6c1
+        current=655a4cc2-977f-11e1-8993-905e29aff6c1
+        never=65577f4c-977f-11e1-8993-905e29aff6c1
+        stopped=655a4ab0-977f-11e1-8993-905e29aff6c1
+        fruitVeggies=c65523dd-0c6b-41f6-a59f-a16fe544b22d
+        exercise=161261AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        cvRisk=163214AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        visualAcuityText=48449ca4-b58b-11e5-9f22-ba0be0483c18
+        neuroPVD=3237c804-ada3-11e5-bf7f-feff819cdc9f
+        footDeform=142677AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        footUlcer=6571f8b8-977f-11e1-8993-905e29aff6c1
+        hospitalSinceLast=655b3dc6-977f-11e1-8993-905e29aff6c1
+        drugsNow=65585192-977f-11e1-8993-905e29aff6c1
+        drugSet=447aaa7a-cd03-11e5-9956-625662870761
 
-        clinicalImpression=1364
-        nextAppt=5096
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
 
         <!-- medications -->
         <macro key="longActingInsulin" value="6573132e-977f-11e1-8993-905e29aff6c1"/>
@@ -65,12 +65,12 @@
         <macro key="lisinopril" value="65635a74-977f-11e1-8993-905e29aff6c1"/>
         <!-- betaBlocker=8463 -->
         <macro key="atenolol" value="65635d58-977f-11e1-8993-905e29aff6c1"/>
-        bisoprolol=8612
+        bisoprolol=72247AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         <!-- <macro key="bisoprolol" value="72247AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/> -->
         <macro key="propranolol" value="65470f18-977f-11e1-8993-905e29aff6c1"/>
         <!-- statin=8462 -->
-        simvastatin=8613
-        pravastatin=8614
+        simvastatin=83936AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        pravastatin=82411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         <!--
         <macro key="simvastatin" value="83936AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
         <macro key="pravastatin" value="82411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>

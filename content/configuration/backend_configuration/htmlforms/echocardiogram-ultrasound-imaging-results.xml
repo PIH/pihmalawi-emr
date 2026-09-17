@@ -30,7 +30,7 @@
         <macro key="noEffusion" value="ed61396e-0835-4237-bc3d-93e990f64d1d" />
         <macro key="small" value="656593b6-977f-11e1-8993-905e29aff6c1" />
         <macro key="peModerate" value="655c243e-977f-11e1-8993-905e29aff6c1" />
-        <macro key="severe" value="655c28b2-977f-11e1-8993-905e29aff6c1" />
+        <macro key="severeAnswer" value="655c28b2-977f-11e1-8993-905e29aff6c1" />
 
         <macro key="inferiorVenaCava" value="6568bd8e-977f-11e1-8993-905e29aff6c1" />
 
@@ -92,7 +92,7 @@
                                 ['$notWellVisualized','Not well visualized'],
                                 ['$small','Small( &lt; 1cm)'],
                                 ['$peModerate','Moderate(1 - 2 cm)'],
-                                ['$severe','Severe( &gt; 2cm)']">
+                                ['$severeAnswer','Severe( &gt; 2cm)']">
                             <obs conceptId="$pericardialEffusion" answerConceptId="{0}" answerLabel="{1}" style="checkbox" />
                             <br/>
                         </repeat>
@@ -163,7 +163,7 @@
                 <th>Pericardial effusion (PE)</th>
                 <td>
                     <obs conceptId="$pericardialEffusion"
-                         answerConceptIds="$noEffusion,$notWellVisualized,$small,$peModerate,$severe"
+                         answerConceptIds="$noEffusion,$notWellVisualized,$small,$peModerate,$severeAnswer"
                          answerLabels="No effusion,Not well visualized,Small( &lt; 1cm),Moderate(1 - 2 cm),Severe( &gt; 2cm)" style="radio"/>
                 </td>
             </tr>

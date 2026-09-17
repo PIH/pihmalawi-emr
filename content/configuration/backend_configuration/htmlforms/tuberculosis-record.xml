@@ -57,7 +57,7 @@
 		<tr>
 			<th>Clinic</th>
 			<td>
-				<encounterLocation default="2" />
+				<encounterLocation default="0d414ce2-5ab4-11e0-870c-9f6107fee88e" />
 			</td>
 		</tr>
 		<tr>
@@ -84,33 +84,33 @@
 		<tr>
 			<th>Treatment unit</th>
 			<td>
-				<obs conceptId="3452" style="location"/>
+				<obs conceptId="6565e4e2-977f-11e1-8993-905e29aff6c1" style="location"/>
 			</td>
 		</tr>
 		<tr>
 			<th>DOT Option</th>
 			<td>
-				<obs conceptId="3567" answerConceptIds="3565,2070,3566" style="radio"
+				<obs conceptId="6566916c-977f-11e1-8993-905e29aff6c1" answerConceptIds="65668f5a-977f-11e1-8993-905e29aff6c1,655d1772-977f-11e1-8993-905e29aff6c1,6566905e-977f-11e1-8993-905e29aff6c1" style="radio"
 					answerLabels="Guardian,Hospital,Health Center" /> ?VHW?
 			</td>
 		</tr>
 		<tr>
 			<th>Duration current cough</th>
 			<td>
-				<obs conceptId="7931"/>
+				<obs conceptId="65796292-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 		</tr>
 		<tr>
 			<th>TB Classification</th>
 			<td>
-				<obs conceptId="1452" answerConceptIds="1347,5042" answerLabels="P,EP"
+				<obs conceptId="6559d59e-977f-11e1-8993-905e29aff6c1" answerConceptIds="65591708-977f-11e1-8993-905e29aff6c1,65698728-977f-11e1-8993-905e29aff6c1" answerLabels="P,EP"
 					style="radio" />
 			</td>
 		</tr>
 		<tr>
 			<th>Patient Category</th>
 			<td>
-				<obs conceptId="2407" answerConceptIds="2406,2408,2414,2413,2411,5622"
+				<obs conceptId="655f1ee6-977f-11e1-8993-905e29aff6c1" answerConceptIds="655f1dd8-977f-11e1-8993-905e29aff6c1,655f1fe0-977f-11e1-8993-905e29aff6c1,655f2616-977f-11e1-8993-905e29aff6c1,655f2508-977f-11e1-8993-905e29aff6c1,655f2300-977f-11e1-8993-905e29aff6c1,656cce7e-977f-11e1-8993-905e29aff6c1"
 					answerLabels="New,Relapse,TI,Retreat,Fail,Oth" style="radio" />
 			</td>
 		</tr>
@@ -123,9 +123,9 @@
 		<tr>
 			<th>Initiation</th>
 			<td>
-				Smear: Date: ... Serial No: <obs conceptId="3564"/> Result: <obs conceptId="3052" />
+				Smear: Date: ... Serial No: <obs conceptId="65668e56-977f-11e1-8993-905e29aff6c1"/> Result: <obs conceptId="65628568-977f-11e1-8993-905e29aff6c1" />
 				<br/>
-				Culture: Date: ... Serial No: ... Result: <obs conceptId="3046" />
+				Culture: Date: ... Serial No: ... Result: <obs conceptId="65627f46-977f-11e1-8993-905e29aff6c1" />
 			</td>
 		</tr>
 		<tr>
@@ -180,10 +180,10 @@
 		<tr>
 			<th>HIV Test Status</th>
 			<td>
-				Test at Registration: <obs conceptId="3560" answerConceptIds="1118,3558,3559,1228"
+				Test at Registration: <obs conceptId="65668a32-977f-11e1-8993-905e29aff6c1" answerConceptIds="6557a4ae-977f-11e1-8993-905e29aff6c1,6566882a-977f-11e1-8993-905e29aff6c1,6566892e-977f-11e1-8993-905e29aff6c1,65587802-977f-11e1-8993-905e29aff6c1"
 					answerLabels="Not Done,Non-Reactive &gt;3 months,Non-Reactive &lt;3 months,Reactive" style="radio" />
 				<br/>
-				New test: <obs conceptId="2169" answerConceptIds="3083,664,703"
+				New test: <obs conceptId="655dcb7c-977f-11e1-8993-905e29aff6c1" answerConceptIds="6562a548-977f-11e1-8993-905e29aff6c1,654994c2-977f-11e1-8993-905e29aff6c1,6549be7a-977f-11e1-8993-905e29aff6c1"
 					answerLabels="No test,Negative,Positive" style="radio" />
 				<br/>
 				(should be: neg pos unknown and time of hiv test: before after)
@@ -192,9 +192,9 @@
 		<tr>
 			<th>ARV Status</th>
 			<td>
-				<obs conceptId="2516" labelText="ART Start Date: " />
+				<obs conceptId="655f9eb6-977f-11e1-8993-905e29aff6c1" labelText="ART Start Date: " />
 				<br/>
-				<obs conceptId="1622" labelText="Started ARV before TB treatment"
+				<obs conceptId="655a9d30-977f-11e1-8993-905e29aff6c1" labelText="Started ARV before TB treatment"
 					style="yes_no" yesLabel="Y" noLabel="N" />
 				<br/>
 				(should be: a (started arv before tb treatment) b (started arv while on treatment) c (arv not started by the time when discharged from tb treatment))
@@ -203,20 +203,20 @@
 		<tr>
 			<th>ARV number</th>
 			<td>
-				<obs conceptId="7014"/>
+				<obs conceptId="65747e94-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 		</tr>
 		<tr>
 			<th>CPT Status</th>
 			<td>
-				<obs conceptId="1623" style="radio" noLabel="N"
+				<obs conceptId="655a9e34-977f-11e1-8993-905e29aff6c1" style="radio" noLabel="N"
 					yesLabel="Y" dateLabel=", Start Date: " /><br/>
 			</td>
 		</tr>
 		<tr>
 			<th>Remarks</th>
 			<td>
-				<obs conceptId="1620"/>
+				<obs conceptId="655a9b1e-977f-11e1-8993-905e29aff6c1"/>
 			</td>
 		</tr>
 		<tr>

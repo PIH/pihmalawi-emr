@@ -41,42 +41,42 @@
                         <encounterDate />
                     </td>             
                     <td>
-                        <obs conceptId="3648" />
+                        <obs conceptId="6566f256-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="5090" />
+                        <obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="5089" />
+                        <obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="848" />
+                        <obs conceptId="654a6db6-977f-11e1-8993-905e29aff6c1" />
                     </td>
-                    <obsgroup groupingConceptId="1337">
+                    <obsgroup groupingConceptId="65590696-977f-11e1-8993-905e29aff6c1">
                     <td>
-                        <obs conceptId="21" />
-                    </td>
-                    <td>
-                        <obs conceptId="678" />
+                        <obs conceptId="6545ab32-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="1022" />
+                        <obs conceptId="6549a3b8-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="729" />
+                        <obs conceptId="654b81b0-977f-11e1-8993-905e29aff6c1" />
+                    </td>
+                    <td>
+                        <obs conceptId="6549da2c-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     </obsgroup>
                     <td>
-                        <obs conceptId="3651" />
+                        <obs conceptId="6566f576-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="3652" />
+                        <obs conceptId="6566f684-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="3653" />
+                        <obs conceptId="6566f788-977f-11e1-8993-905e29aff6c1" />
                     </td>
                     <td>
-                        <obs conceptId="5096" allowFutureDates="true" id="nextAppointmentDate"/>
+                        <obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true" id="nextAppointmentDate"/>
                     </td>
                 </tr>
             </tbody>
@@ -114,53 +114,53 @@
             </tr>
             <tr>
                 <th>Cycle number</th>
-                <td><obs conceptId="3648" /></td>
+                <td><obs conceptId="6566f256-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Height</th>
-                <td><obs conceptId="5090" /></td>
+                <td><obs conceptId="6569c562-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Weight</th>
-                <td><obs conceptId="5089" /></td>
+                <td><obs conceptId="6569c44a-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>BSA (m<sup>2</sup>)</th>
-                <td><obs conceptId="848" /></td>
+                <td><obs conceptId="654a6db6-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
-            <obsgroup groupingConceptId="1337">
+            <obsgroup groupingConceptId="65590696-977f-11e1-8993-905e29aff6c1">
             <tr>
                 <th>Hgb</th>
-                <td><obs conceptId="21" /></td>
+                <td><obs conceptId="6545ab32-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>WBC</th>
-                <td><obs conceptId="678" /></td>
+                <td><obs conceptId="6549a3b8-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>ANC</th>
-                <td><obs conceptId="1022" /></td>
+                <td><obs conceptId="654b81b0-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Platelets</th>
-                <td><obs conceptId="729" /></td>
+                <td><obs conceptId="6549da2c-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             </obsgroup>
             <tr>
                 <th>Vincristine Sulphate dose</th>
-                <td><obs conceptId="3651" /></td>
+                <td><obs conceptId="6566f576-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Bleomycin dose</th>
-                <td><obs conceptId="3652" /></td>
+                <td><obs conceptId="6566f684-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Paclitaxel (taxol) dose</th>
-                <td><obs conceptId="3653" /></td>
+                <td><obs conceptId="6566f788-977f-11e1-8993-905e29aff6c1" /></td>
             </tr>
             <tr>
                 <th>Next appointment</th>
-                <td><obs conceptId="5096" allowFutureDates="true" /></td>
+                <td><obs conceptId="6569cbd4-977f-11e1-8993-905e29aff6c1" allowFutureDates="true" /></td>
             </tr>
         </table>
 

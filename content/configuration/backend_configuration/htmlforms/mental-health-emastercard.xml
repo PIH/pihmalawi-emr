@@ -17,82 +17,82 @@
         }
     </style>
     <macros>
-        yesAnswer=1065
-        noAnswer=1066
-        positive=703
-        negative=664
-        unknown=1067
-        other=5622
-        noncodedOtherName=8575
+        yesAnswer=65576354-977f-11e1-8993-905e29aff6c1
+        noAnswer=6557646c-977f-11e1-8993-905e29aff6c1
+        positive=6549be7a-977f-11e1-8993-905e29aff6c1
+        negative=654994c2-977f-11e1-8993-905e29aff6c1
+        unknown=65576584-977f-11e1-8993-905e29aff6c1
+        other=656cce7e-977f-11e1-8993-905e29aff6c1
+        noncodedOtherName=d57e3a20-5802-11e6-8b77-86f30ca893d3
 
-        diagnosisSet=8445
-        chronicCareDiagnosis=3683
-        diagnosisDate=6774
-        schizo=467
-        depression=207
-        acutePsychotic=8419
-        schizoaffectiveDisorder=8487
-        anxiety=2719
-        acuteOrganicMentalDisorder=8488
-        chronicOrganicMentalDisorder=8489
-        alcoholUseMentalDisorder=8562
-        drugUseMentalDisorder=8563
-        manic=8491
-        mentalHealthOther0=8420
-        mentalHealthOther1=8580
-        mentalHealthOther2=8581
-        stressReact=8585
-        dissoc=8586
-        somato=8587
-        puerp=8588
-        personality=8589
-        retardation=8590
-        psychDev=8591
-        hyper=8592
+        diagnosisSet=6db168f1-0f38-42d9-9f0e-90946a3d8e72
+        chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
+        diagnosisDate=65732bf2-977f-11e1-8993-905e29aff6c1
+        schizoDiagnosis=654860c0-977f-11e1-8993-905e29aff6c1
+        depression=6546cbd4-977f-11e1-8993-905e29aff6c1
+        acutePsychotic=93e9be37-1369-11e4-a125-54ee7513a7ff
+        schizoaffectiveDisorder=127132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        anxiety=6560bf08-977f-11e1-8993-905e29aff6c1
+        acuteOrganicMentalDisorder=7057d712-c5dd-11e5-9912-ba0be0483c18
+        chronicOrganicMentalDisorder=7057d8b6-c5dd-11e5-9912-ba0be0483c18
+        alcoholUseMentalDisorder=121716AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        drugUseMentalDisorder=90ec5559-3ba2-4fc3-abc1-614727b17141
+        manic=115924AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        mentalHealthOther0=aad4c0e9-1369-11e4-a125-54ee7513a7ff
+        mentalHealthOther1=f97271c0-63ed-11e6-8b77-86f30ca893d3
+        mentalHealthOther2=f972763e-63ed-11e6-8b77-86f30ca893d3
+        stressReaction=160196AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        dissoc=115261AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        somato=112874AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        puerperium=dae4ec94-659e-11e6-8b77-86f30ca893d3
+        personality=114193AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        retardation=115809AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        psychDev=159238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        hyper=117468AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-        epilepsyFamilyHistory=8484
-        mentalIllFamilyHistory=8485
-        behaviorFamilyHistory=8486
+        epilepsyFamilyHistory=152450AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        mentalIllFamilyHistory=7057d000-c5dd-11e5-9912-ba0be0483c18
+        behaviorFamilyHistory=7057d3ac-c5dd-11e5-9912-ba0be0483c18
 
-        hivStatus=3753
-        reactive=1228
-        nReactive=1229
-        hivTestDate=1837
-        artStartDate=2516
-        tbStatus=7459
-        smearPos=2185
-        smearNeg=2186
-        eptb=1547
-        tbYear=8453
+        hivStatus=6567ae62-977f-11e1-8993-905e29aff6c1
+        reactive=65587802-977f-11e1-8993-905e29aff6c1
+        nReactive=6558791a-977f-11e1-8993-905e29aff6c1
+        hivTestDate=655bc9da-977f-11e1-8993-905e29aff6c1
+        artStartDate=655f9eb6-977f-11e1-8993-905e29aff6c1
+        tbStatus=65770db2-977f-11e1-8993-905e29aff6c1
+        smearPos=655ddc20-977f-11e1-8993-905e29aff6c1
+        smearNeg=655ddd24-977f-11e1-8993-905e29aff6c1
+        eptb=655a49ac-977f-11e1-8993-905e29aff6c1
+        tbYear=3237c2a0-ada3-11e5-bf7f-feff819cdc9f
 
-        chiefCompAnswer=8569
-        chiefCompConstruct=8570
-        hallucinate=8564
-        delusion=8565
-        disrupt=8566
-        abSpeech=8567
-        depressive=8568
+        chiefCompAnswer=0b7892bc-43bb-11e6-beb8-9e71128cae77
+        chiefCompConstruct=0b78965e-43bb-11e6-beb8-9e71128cae77
+        hallucinate=139146AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        delusion=142600AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        disrupt=118905AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        abSpeech=159538AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        depressive=142563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-        patientPhone=1426
-        guardianName=1824
-        guardianPhone=2616
-        relationToPatient=1328
-        agreesToFollowup=2552
-        chwName=8431
+        patientPhone=6559ba14-977f-11e1-8993-905e29aff6c1
+        guardianName=655bbc74-977f-11e1-8993-905e29aff6c1
+        guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
+        relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
+        agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
+        chwName=941bc17e-8c33-11e5-80a3-c0430f805837
 
-        exposure=8495
-        exposeHistory=8571
-        alcoholHistory=1552
-        past=1548
-        current=1550
-        never=1090
-        expoYears=2241
-        expoDate=8545
-        alcoholConstruct=2242
-        mjConstruct=8574
-        medsOtherConstruct=8576
-        tradMedsConstruct=8573
-        bipolarMood=9046
+        exposure=7057db5e-c5dd-11e5-9912-ba0be0483c18
+        exposeHistory=625afe8c-5377-11e6-beb8-9e71128cae77
+        alcoholHistory=655a4ed4-977f-11e1-8993-905e29aff6c1
+        past=655a4ab0-977f-11e1-8993-905e29aff6c1
+        current=655a4cc2-977f-11e1-8993-905e29aff6c1
+        never=65577f4c-977f-11e1-8993-905e29aff6c1
+        expoYears=655e1bae-977f-11e1-8993-905e29aff6c1
+        expoDate=5f521038-cf63-11e5-ab30-625662870761
+        alcoholConstruct=655e1cbc-977f-11e1-8993-905e29aff6c1
+        mjConstruct=59d876a4-5444-11e6-beb8-9e71128cae77
+        medsOtherConstruct=625b029c-5377-11e6-beb8-9e71128cae77
+        tradMedsConstruct=625b081e-5377-11e6-beb8-9e71128cae77
+        bipolarMood=a0d3ad80-f290-437c-8be3-7440dfdb7299
 
         <macro key="mhCodedDx" value="0459F64A-611C-4687-9C0A-7B6B57F121A2"/>
         <macro key="bipolarMood" value="a0d3ad80-f290-437c-8be3-7440dfdb7299" />
@@ -257,7 +257,7 @@
                                 <obsgroup groupingConceptId="$diagnosisSet">
                                     <td data-toggle-source="schizo" data-toggle-target="schizo-date" style="border-right: 1px solid #ffffff;">
                                         <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
-                                             answerConceptId="$schizo" answerLabel="Schizophrenia"/>
+                                             answerConceptId="$schizoDiagnosis" answerLabel="Schizophrenia"/>
                                     </td>
                                     <td id="schizo-date" style="border-left: 1px solid #ffffff;">
                                         <obs conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
@@ -349,7 +349,7 @@
                                     <obs class="dx-checkbox-item" conceptId="$mhCodedDx" style="checkbox"
                                          answerConceptId="$yesAnswer" answerLabel="Other"/>
                                     <obs conceptId="$chronicCareDiagnosis"
-                                         answerConceptIds="$stressReact,$dissoc,$puerp,$hyper"
+                                         answerConceptIds="$stressReaction,$dissoc,$puerperium,$hyper"
                                          answerLabels="Stress reaction disorder,Dissociative disorder,Puerperal disorder,Hyperkinetic behavior"/>
                                 </td>
                                 <td id="other-ccDiagnosis-date" style="border-left: 1px solid #ffffff;">
@@ -396,7 +396,7 @@
                                             <strong>Alcohol</strong>
                                         </td>
                                         <td style="border: 1px solid #ffffff;">
-                                            <obs conceptId="$alcoholHistory" style="radio" answerConceptIds="$current, $past, $never" answerLabels="Current,Past,Never" />
+                                            <obs conceptId="$alcoholHistory" style="radio" answerConceptIds="$current,$past,$never" answerLabels="Current,Past,Never" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -440,7 +440,7 @@
                                                 <small>(Marijuana)</small>
                                             </td>
                                             <td style="border: 1px solid #ffffff;">
-                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current, $past, $never" answerLabels="Current,Past,Never" />
+                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current,$past,$never" answerLabels="Current,Past,Never" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -487,7 +487,7 @@
                                                 <obs conceptId="$noncodedOtherName" />
                                             </td>
                                             <td style="border: 1px solid #ffffff;">
-                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current, $past, $never" answerLabels="Current,Past,Never" />
+                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current,$past,$never" answerLabels="Current,Past,Never" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -535,7 +535,7 @@
                                                 <strong>Traditional<br/>medicine</strong>
                                             </td>
                                             <td style="border: 1px solid #ffffff;">
-                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current, $past, $never" answerLabels="Current,Past,Never" />
+                                                <obs conceptId="$exposeHistory" style="radio" answerConceptIds="$current,$past,$never" answerLabels="Current,Past,Never" />
                                             </td>
                                         </tr>
                                         <tr>

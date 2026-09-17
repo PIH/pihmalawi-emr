@@ -11,12 +11,12 @@
 
 
     <macros>
-        <macro key="height" value="5090"/>
-        <macro key="weight" value="5089"/>
-        <macro key="noAnswer" value="1066"/>
-        <macro key="yesAnswer" value="1065"/>
-        <macro key="systolicBP" value="5085"/>
-        <macro key="diastolicBP" value="5086"/>
+        <macro key="height" value="6569c562-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="weight" value="6569c44a-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="noAnswer" value="6557646c-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="yesAnswer" value="65576354-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="systolicBP" value="6569bffe-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="diastolicBP" value="6569c116-977f-11e1-8993-905e29aff6c1"/>
 
         <macro key="locationOfVisit" value="1F5A206E-9E08-4CDA-BC83-3B1DB492F3C5"/>
         <macro key="homeLocation" value="29EB5E06-9815-42D8-A3B1-37A5FE88B4F8"/>
@@ -52,11 +52,11 @@
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="formEncTypeUuid" value="e082235c-955d-11e7-abc4-cec278b6b50a"/>
 
-        hospitalSinceLast=1715
-        drugsNow=1193
-        drugSet=8501
-        clinicalImpression=1364
-        nextAppt=5096
+        hospitalSinceLast=655b3dc6-977f-11e1-8993-905e29aff6c1
+        drugsNow=65585192-977f-11e1-8993-905e29aff6c1
+        drugSet=447aaa7a-cd03-11e5-9956-625662870761
+        clinicalImpression=655928e2-977f-11e1-8993-905e29aff6c1
+        nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
     </macros>
 
     <style>
