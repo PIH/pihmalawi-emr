@@ -124,21 +124,31 @@
     "links": {
       "submitButton": "${openmrsSpaBase}/patient-registration"
     },
-    "defaultPatientIdentifierTypes": ["66784d84-977f-11e1-8993-905e29aff6c1","11a76c3e-1db8-4d16-9252-9a18b5ed1843","f7de1b97-013e-49ad-a596-4ada6ede1053"],
-    "address": {
-      "useAddressHierarchy": {
-        "enabled": true,
-        "useQuickSearch": true,
-        "searchAddressByLevel": true
+    "fieldConfigurations": {
+      "name": {
+        "displayCapturePhoto": false
+      },
+      "address": {
+        "useAddressHierarchy": {
+          "enabled": true,
+          "useQuickSearch": true,
+          "searchAddressByLevel": true
+        }
       }
     },
+    "defaultPatientIdentifierTypes": [
+      "66784d84-977f-11e1-8993-905e29aff6c1",
+      "11a76c3e-1db8-4d16-9252-9a18b5ed1843",
+      "f7de1b97-013e-49ad-a596-4ada6ede1053"
+    ],
     "sections": ["demographics", "death"],
     "fieldDefinitions": [
         {
           "id": "healthCenter",
           "type": "person attribute",
           "uuid": "8d87236c-c2cc-11de-8d13-0010c6dffd0f",
-          "placeholder": "placeholder"
+          "label": "Health Center",
+          "locationTag": "Login Location"
         },
         {
           "id": "gender",
@@ -156,17 +166,12 @@
         {
           "id": "demographics",
           "name": "Basic Info",
-          "fields": ["name", "gender", "dob", "id"]
-        },
-        { 
-          "id": "contact", 
-          "name": "Contact Details", 
-          "fields": ["address"] 
+          "fields": ["name", "gender", "dob", "address", "id", "healthCenter"]
         },
         { 
           "id": "death", 
           "name": "Deceased", 
-          "fields": [] 
+          "fields": ["dateAndTimeOfDeath"] 
         }        
     ],
     "Translation overrides": {
