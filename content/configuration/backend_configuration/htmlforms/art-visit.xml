@@ -34,7 +34,7 @@
         numArvsGiven=6561fa3a-977f-11e1-8993-905e29aff6c1
         arvsGivenTo=655d5246-977f-11e1-8993-905e29aff6c1
         hivPreventiveTherapyGroup=e87bb1c5-b6da-43dd-988b-50def171fa9f
-        hivPreventiveTherapy=fef29061-1ad7-4cf3-87e8-6bf0b03b3332
+        hivPreventiveTherapyStatus=fef29061-1ad7-4cf3-87e8-6bf0b03b3332
         hivPreventiveTherapyPills=65614392-977f-11e1-8993-905e29aff6c1
         depoGiven=657a1e44-977f-11e1-8993-905e29aff6c1
         numCondoms=657a52ce-977f-11e1-8993-905e29aff6c1
@@ -372,7 +372,7 @@ jq(function() {
 
                         <obsgroup groupingConceptId="$hivPreventiveTherapyGroup">
                             <td>
-                                <obs style="radio" conceptId="$hivPreventiveTherapy" answerConceptIds="{0}" answerLabels="" />
+                                <obs style="radio" conceptId="$hivPreventiveTherapyStatus" answerConceptIds="{0}" answerLabels="" />
                             </td>
                             <td>
                                 <obs conceptId="$hivPreventiveTherapyPills"/>
@@ -508,7 +508,7 @@ jq(function() {
                                   ['$pyridoxine','Pyridoxine','pyridoxine']">
 
                         <obsgroup groupingConceptId="$hivPreventiveTherapyGroup">
-                            <obs class="dx-checkbox-item" style="radio" id="{2}" conceptId="$hivPreventiveTherapy" answerConceptIds="{0}" answerLabels="{1}"/>
+                            <obs class="dx-checkbox-item" style="radio" id="{2}" conceptId="$hivPreventiveTherapyStatus" answerConceptIds="{0}" answerLabels="{1}"/>
                             <span style="padding-left:10px">No. of pills</span>
                             <obs conceptId="$hivPreventiveTherapyPills"/>
                             <br/>

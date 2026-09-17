@@ -28,7 +28,7 @@
         diagnosisSet=6db168f1-0f38-42d9-9f0e-90946a3d8e72
         chronicCareDiagnosis=65671c9a-977f-11e1-8993-905e29aff6c1
         diagnosisDate=65732bf2-977f-11e1-8993-905e29aff6c1
-        schizo=654860c0-977f-11e1-8993-905e29aff6c1
+        schizoDiagnosis=654860c0-977f-11e1-8993-905e29aff6c1
         depression=6546cbd4-977f-11e1-8993-905e29aff6c1
         acutePsychotic=93e9be37-1369-11e4-a125-54ee7513a7ff
         schizoaffectiveDisorder=127132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -41,10 +41,10 @@
         mentalHealthOther0=aad4c0e9-1369-11e4-a125-54ee7513a7ff
         mentalHealthOther1=f97271c0-63ed-11e6-8b77-86f30ca893d3
         mentalHealthOther2=f972763e-63ed-11e6-8b77-86f30ca893d3
-        stressReact=160196AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        stressReaction=160196AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         dissoc=115261AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         somato=112874AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        puerp=dae4ec94-659e-11e6-8b77-86f30ca893d3
+        puerperium=dae4ec94-659e-11e6-8b77-86f30ca893d3
         personality=114193AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         retardation=115809AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         psychDev=159238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -257,7 +257,7 @@
                                 <obsgroup groupingConceptId="$diagnosisSet">
                                     <td data-toggle-source="schizo" data-toggle-target="schizo-date" style="border-right: 1px solid #ffffff;">
                                         <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
-                                             answerConceptId="$schizo" answerLabel="Schizophrenia"/>
+                                             answerConceptId="$schizoDiagnosis" answerLabel="Schizophrenia"/>
                                     </td>
                                     <td id="schizo-date" style="border-left: 1px solid #ffffff;">
                                         <obs conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
@@ -349,7 +349,7 @@
                                     <obs class="dx-checkbox-item" conceptId="$mhCodedDx" style="checkbox"
                                          answerConceptId="$yesAnswer" answerLabel="Other"/>
                                     <obs conceptId="$chronicCareDiagnosis"
-                                         answerConceptIds="$stressReact,$dissoc,$puerp,$hyper"
+                                         answerConceptIds="$stressReaction,$dissoc,$puerperium,$hyper"
                                          answerLabels="Stress reaction disorder,Dissociative disorder,Puerperal disorder,Hyperkinetic behavior"/>
                                 </td>
                                 <td id="other-ccDiagnosis-date" style="border-left: 1px solid #ffffff;">

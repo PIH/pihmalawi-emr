@@ -119,7 +119,7 @@
         <macro key="weeks" value="27baf9f0-eae3-4d98-a1ad-258e82b91285" />
         <macro key="months" value="31bf4e2a-0574-47f3-9c68-9d530ebff898" />
         <macro key="dateOfEnrollment" value="71C441A7-08EF-4B4C-90DC-0EA36751556B" />
-        <macro key="clt" value="24C2F817-C37B-4746-A052-18C4E0C2D93E" />
+        <macro key="cltQuestion" value="24C2F817-C37B-4746-A052-18C4E0C2D93E" />
         <macro key="cltict" value="3064BCF8-56F7-43C9-A8CF-D90D42EEF739" />
         <macro key="cltAdvNcd" value="2bc82b28-e84f-11e8-9f32-f2801f1b9fd1" />
         <macro key="cltMH" value="9CA705D5-5DAA-40E8-8B69-F3F7C0B29E95" />
@@ -688,32 +688,32 @@
                                  answerLabels="Yes,No"/>
                         </td>
                         <td>
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$clinicalCare"
                                  answerLabel="Clinical Care" />
                         </td>
                         <td>
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$nru"
                                  answerLabel="NRU" />
                         </td>
                         <td>
 
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$cltict"
                                  answerLabel="IC3" />
 
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$cltAdvNcd"
                                  answerLabel="Advanced NCD" /><br/>
 
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$cltMH"
                                  answerLabel="Mental Health" />
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$cltPC"
                                  answerLabel="Palliative" /><br/>
-                            <obs conceptId="$clt"
+                            <obs conceptId="$cltQuestion"
                                  answerConceptId="$cltz"
                                  answerLabel="Physiotherapy" />
 

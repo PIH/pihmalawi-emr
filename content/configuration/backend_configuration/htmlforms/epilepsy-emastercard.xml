@@ -61,7 +61,7 @@
         exposureGroup=5f52124a-cf63-11e5-ab30-625662870761
         exposureAns=7057db5e-c5dd-11e5-9912-ba0be0483c18
         exposureDate=5f521038-cf63-11e5-ab30-625662870761
-        smoking=7057de06-c5dd-11e5-9912-ba0be0483c18
+        smokingStatus=7057de06-c5dd-11e5-9912-ba0be0483c18
         alcohol=65743a88-977f-11e1-8993-905e29aff6c1
         pig=65671452-977f-11e1-8993-905e29aff6c1
         tradMeds=7057e27a-c5dd-11e5-9912-ba0be0483c18
@@ -73,7 +73,7 @@
         statusEpil=657849fc-977f-11e1-8993-905e29aff6c1
         psychosis=6546d8ae-977f-11e1-8993-905e29aff6c1
         drugRelated=655a6cde-977f-11e1-8993-905e29aff6c1
-        other=657140f8-977f-11e1-8993-905e29aff6c1
+        otherAnswer=657140f8-977f-11e1-8993-905e29aff6c1
         preIctalWarn=82b48d50-cf4d-11e5-ab30-625662870761
         postIcHeadache=82b48f4e-cf4d-11e5-ab30-625662870761
         postIcDrows=82b49106-cf4d-11e5-ab30-625662870761
@@ -390,7 +390,7 @@
                             <td rowspan="5">
                                 <table>
                                     <!-- ToDo:  Add free-text for other -->
-                                    <repeat with="['$smoking','Smoking'],
+                                    <repeat with="['$smokingStatus','Smoking'],
                                                   ['$alcohol','Alcohol'],
                                                   ['$pig','Pigs/Pork'],
                                                   ['$tradMeds','Traditional medicine']">
@@ -408,7 +408,7 @@
                                     <tr>
                                         <obsgroup groupingConceptId="$exposureGroup">
                                             <td data-toggle-source="exposure-other" data-toggle-target="exposure-other-date">
-                                                <obs id="exposure-other" conceptId="$exposureAns" answerConceptId="$other" answerLabel="Other:" commentFieldLabel="" />
+                                                <obs id="exposure-other" conceptId="$exposureAns" answerConceptId="$otherAnswer" answerLabel="Other:" commentFieldLabel="" />
                                             </td>
                                             <td>
                                                 <obs id="exposure-other-date" conceptId="$exposureDate" allowFutureDates="true"/>
@@ -501,7 +501,7 @@
                                     <tr>
                                         <obsgroup groupingConceptId="$complicationGroup">
                                             <td data-toggle-source="complication-other" data-toggle-target="complication-other-date">
-                                                <obs id="complication-other" conceptId="$complicationAns" answerConceptId="$other" answerLabel="Other:" commentFieldLabel="" />
+                                                <obs id="complication-other" conceptId="$complicationAns" answerConceptId="$otherAnswer" answerLabel="Other:" commentFieldLabel="" />
                                             </td>
                                             <td>
                                                 <obs id="complication-other-date" conceptId="$complicationDate" allowFutureDates="true"/>

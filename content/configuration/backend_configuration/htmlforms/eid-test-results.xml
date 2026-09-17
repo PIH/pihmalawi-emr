@@ -13,7 +13,7 @@
     <macros>
         hivTestConstruct=PIH Malawi:2168
         hivTestType=PIH Malawi:1867
-        hivResult=PIH Malawi:2169
+        hivResultValue=PIH Malawi:2169
         hivSampleDate=PIH Malawi:6108
         labTestNumber=PIH Malawi:3564
         hivResultDate=PIH Malawi:6110
@@ -67,7 +67,7 @@
                         <td><obs conceptId="$hivTestType" answerConceptIds="$hivPCR,$hivRapid"
                                  answerLabels="DBS,RT" style="radio"/></td>
                         <td><obs conceptId="$labTestNumber" /></td>
-                        <td><obs conceptId="$hivResult"
+                        <td><obs conceptId="$hivResultValue"
                                  answerConceptIds="$negative,$positive,$inconclusive,$notDone"
                                  answerLabels="Neg,Pos,Inc,Not Done"
                                  style="radio" /></td>
@@ -122,7 +122,7 @@
                         <td><obs conceptId="$hivTestType" answerConceptIds="$hivPCR,$hivRapid"
                                  answerLabels="DBS,RT" style="radio"/></td>
                         <td><obs conceptId="$labTestNumber" /></td>
-                        <td><obs conceptId="$hivResult"
+                        <td><obs conceptId="$hivResultValue"
                                  answerConceptIds="$negative,$positive,$inconclusive,$notDone"
                                  answerLabels="Neg,Pos,Inc,Not Done"
                                  style="radio" /></td>

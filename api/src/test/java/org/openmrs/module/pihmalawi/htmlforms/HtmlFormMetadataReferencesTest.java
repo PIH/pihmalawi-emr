@@ -395,4 +395,48 @@ public class HtmlFormMetadataReferencesTest {
                         + String.join("\n", violations),
                 violations.isEmpty());
     }
+
+    /**
+     * htmlformentry's macro substitution (HtmlFormEntryGenerator#applyMacros) loads a form's
+     * macros into a java.util.Properties and, for each key, does a plain
+     * {@code body.replace("$" + key, value)} - iterating java.util.Hashtable's keySet(), whose
+     * order is unspecified and not based on insertion order. If one macro key is a literal string
+     * prefix of another (e.g. "hivPreventiveTherapy" and "hivPreventiveTherapyGroup"), whichever
+     * gets substituted first can corrupt every occurrence of the other, silently, depending on
+     * hash-bucket order - exactly what broke ART Mastercard (MLW-1851). Since renaming per instance
+     * only fixes known cases, this guards every htmlform's macro key set, permanently, against any
+     * new prefix collision being introduced (whether or not it happens to misbehave under the
+     * current hash order).
+     */
+    @Test
+    public void noHtmlformShouldHaveAMacroKeyThatIsAPrefixOfAnotherMacroKey() throws Exception {
+        scanIfNeeded();
+
+        Map<String, List<String>> macroKeysByFile = new HashMap<>();
+        for (AttrFinding f : attrFindings) {
+            if ("macro.key".equals(f.key())) {
+                macroKeysByFile.computeIfAbsent(f.file, k -> new ArrayList<>()).add(f.value);
+            }
+        }
+        for (MacroFinding f : macroFindings) {
+            macroKeysByFile.computeIfAbsent(f.file, k -> new ArrayList<>()).add(f.name);
+        }
+
+        List<String> violations = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : macroKeysByFile.entrySet()) {
+            List<String> keys = entry.getValue();
+            for (String k1 : keys) {
+                for (String k2 : keys) {
+                    if (!k1.equals(k2) && k2.startsWith(k1)) {
+                        violations.add(entry.getKey() + ": macro key \"" + k1 + "\" is a prefix of \"" + k2 + "\"");
+                    }
+                }
+            }
+        }
+
+        Assert.assertTrue(
+                "Found macro keys that are a literal prefix of another macro key in the same htmlform "
+                        + "(unsafe under HtmlFormEntry's unordered macro substitution):\n" + String.join("\n", violations),
+                violations.isEmpty());
+    }
 }

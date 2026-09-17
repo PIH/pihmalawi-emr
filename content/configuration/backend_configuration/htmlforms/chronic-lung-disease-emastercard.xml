@@ -52,7 +52,7 @@
         inPast=655a4ab0-977f-11e1-8993-905e29aff6c1
         lastTimeSmoking=af397d66-8c33-11e5-80a3-c0430f805837
         guardianPhone=65600cd4-977f-11e1-8993-905e29aff6c1
-        occupation=6558df36-977f-11e1-8993-905e29aff6c1
+        patientOccupation=6558df36-977f-11e1-8993-905e29aff6c1
         relationToPatient=6558fd0e-977f-11e1-8993-905e29aff6c1
         agreesToFollowup=655fc526-977f-11e1-8993-905e29aff6c1
         chwName=941bc17e-8c33-11e5-80a3-c0430f805837
@@ -247,7 +247,7 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <obs conceptId="$occupation" labelText="Occupation"/>
+                                <obs conceptId="$patientOccupation" labelText="Occupation"/>
                             </td>
                             <obsgroup groupingConceptId="$exposureGroup">
                             <td data-toggle-source="shsmoke-expo" data-toggle-target="shsmoke-expo-date">
