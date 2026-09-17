@@ -198,7 +198,7 @@
                 </obsgroup>
        </table><br/><br/>	
 	<table border="1" cellpadding="0" cellspacing="0" width="100%">
-		<tr><td>Form completed today by:<br/>(Enter name of clinician if signature is legible, put your name if info is not available) <encounterProvider default="16576"/></td></tr>
+		<tr><td>Form completed today by:<br/>(Enter name of clinician if signature is legible, put your name if info is not available) <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54"/></td></tr>
 	</table><br/><br/>
 	
 <submit/><br/><br/><br/>

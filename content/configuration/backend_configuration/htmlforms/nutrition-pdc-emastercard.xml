@@ -27,7 +27,7 @@
     <macro key="otherNoneCodedText" value="d57e3a20-5802-11e6-8b77-86f30ca893d3" />
 </macros>
     <span style="display:none">
-        <encounterProvider default="16576" /><!-- Set provider to a default as not used -->
+        <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54" /><!-- Set provider to a default as not used -->
         <span id="patientBirthdate"><lookup expression="patient.birthdate"/></span>
     </span>
     <div>
