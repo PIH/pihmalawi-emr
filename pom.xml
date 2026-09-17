@@ -46,7 +46,7 @@
 		<emrapiVersion>3.4.0</emrapiVersion>
 		<eventVersion>4.0.0</eventVersion>
 		<fhir2Version>4.2.0</fhir2Version>
-		<htmlformentryVersion>7.2.1</htmlformentryVersion>
+		<htmlformentryVersion>7.3.0-SNAPSHOT</htmlformentryVersion>
 		<htmlformentryuiVersion>3.2.0</htmlformentryuiVersion>
 		<htmlwidgetsVersion>2.0.1</htmlwidgetsVersion>
 		<idgenVersion>5.0.4</idgenVersion>
