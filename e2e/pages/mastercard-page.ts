@@ -300,6 +300,145 @@ export class MastercardGatePage {
 //    (dropdown + paired start date).
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Task 13) — expanding visit-mastercard.spec.ts to cover
+// the rest of art-visit.xml's data-entry fields. Confirmed against a live
+// instance the same way as Tasks 8-11: dumping the rendered
+// `table.visit-edit-table`'s `innerHTML` for a freshly-opened "Enter New ART
+// Visit" flowsheet (real `eligibleHivArtPatient` fixture patient), then
+// actually filling and saving the form and checking the resulting REST
+// `encounter`/`obs`.
+//
+// 1. Systolic BP / Diastolic BP (`systolicBPInput`/`diastolicBPInput`) are
+//    plain `<input>`s wrapped in id'd `<span>`s, same shape as
+//    `heightInput`/`weightInput` (Task 10 note 2) — no new handling needed,
+//    `fillField`'s existing byId path just works.
+//
+// 2. Pregnant/Breastfeed. (`pregnantBf`) — the brief (per the XML's
+//    `style="checkbox"`) expected a checkbox letting BOTH "Preg" and "Bf" be
+//    selected. It does NOT render that way: confirmed live it's an ordinary
+//    single-select `<select id="w16"><option value="">/<option>Preg</option>
+//    <option>Bf</option></select>` wrapped in `<span id="pregnantBf">` — only
+//    one of the two answers can ever be chosen. `selectDropdown('pregnantBf',
+//    'Preg')` (the existing helper, already handling this exact id/select
+//    shape) is what this needs, not a checkbox-specific check.
+//
+// 3. TB Status (Curr.)* — confirmed live this does NOT render as a single
+//    mutually-exclusive radio group despite the row's "No"/"Yes"/"noRx"/"Rx"
+//    look. Each of the 4 XML `<obs style="radio">` tags gets rendered as an
+//    `<input type="checkbox">` (not radio!) with its OWN distinct `name`
+//    attribute (`w18`/`w20`/`w22`/`w24`) — htmlformentry does not group
+//    same-concept radios sharing no common `name` here, so all 4 toggle
+//    completely independently; nothing stops a user from checking both "No"
+//    and "Yes" at once. All 4 share the row's single `<td>` though (no
+//    separate label per option, "Suspected"/"Confirmed" are plain `<b>`
+//    text, not obs labels), so the existing `selectRadio(groupLabel,
+//    optionLabel)` — which just does `cellAt(label).getByLabel(optionLabel,
+//    {exact:true}).check()` — reaches any one of the 4 fine by its rendered
+//    label text ("No"/"Yes"/"noRx"/"Rx", all unique within that cell).
+//    `.check()` works identically on a checkbox or radio input, so no new
+//    method was needed. The test below selects "Yes" only, and the resulting
+//    encounter shows exactly one "TB status: TB suspected" obs — confirming
+//    single-selection is what a real user would do even though the widget
+//    doesn't enforce it.
+//
+// 4. Side Effects (Current) — same "6 independent `<input
+//    type=checkbox>`s, each its own `name`, sharing one `<td>`" shape as TB
+//    Status, but genuinely meant to be multi-select per the XML's
+//    `style="checkbox"`. The row's own `<th>` text is the labels'
+//    "Side Effects (Current)" PLUS its child `<span>`'s "Specifiy Other In
+//    Notes" concatenated with NO space (same pattern as Task 11 note 3) —
+//    confirmed live the exact rendered text is
+//    "Side Effects (Current)Specifiy Other In Notes". `selectRadio` called
+//    twice with that literal label and two different option labels (e.g.
+//    "PN" then "SK") checks both independently, and the resulting encounter
+//    shows two separate "Malawi ART side effects: ..." obs, one per
+//    selection — confirming they don't clobber each other.
+//
+// 5. Pill Count (`pillCount`) — explicit id wrapping a plain `<input>`, same
+//    shape as note 1. Displays in the REST obs as "Amount of drug brought to
+//    clinic: <value>" (the underlying concept's own name, not "Pill Count").
+//
+// 6. Doses Missed — no explicit id (confirmed: a bare `<obs
+//    conceptId="$dosesMissed"/>` with no `id` attribute in the XML, and no
+//    id in the rendered DOM either), reached via `fillField`'s plain-label
+//    fallback branch using the row's own `<th>` text "Doses Missed" — already
+//    generalizes, no new handling needed. Displays as "Number of HIV drug
+//    doses missed: <value>".
+//
+// 7. ARVs given — "To:" field. Confirmed live this is a REAL two-option
+//    `<input type="radio">` pair (`name="w46"`, values "false"/"true",
+//    labels "P"/"G") sharing the SAME single `<td>` as `noTabletsGiven` (the
+//    XML's `<th>ARVs given</th><td>No. of tablets: <obs .../> To: <obs
+//    style="no_yes" .../></td>` has only one `<td>` for the whole row, not
+//    two). "ARVs given" as a `<th>` text is unique on the rendered page (verified
+//    via `getByText(..., {exact:true}).count() === 1`), and label text "P"/"G"
+//    is unique too, so the existing `selectRadio('ARVs given', 'G')` (default
+//    `cellIndex` of 1, i.e. the row's one and only `<td>`) reaches it with no
+//    new code — `.getByLabel('G', {exact:true})` inside that cell finds only
+//    the "To:" radio, not `noTabletsGiven`'s plain number input. Confirmed
+//    live the underlying concept's real REST display name is "Responsible
+//    person present" (NOT "ARVs given to" or similar) — e.g. "Responsible
+//    person present: true" for "G".
+//
+// 8. CPT/IPT Given — the 5 repeated `<obsgroup>`s render with only ONE `<td>`
+//    for the WHOLE "CPT/IPT Given" row (all 5 groups + their "No. of pills"
+//    inputs are siblings inside it, separated by `<br>`), each group's own
+//    "given" toggle rendering as a SINGLE-OPTION `<input type="radio">`
+//    wrapped in `<span id="ctx"|"inh"|"rfp"|"rfp/inh"|"pyridoxine">`
+//    (id'd on the span, matching `guardianNameField`'s shape from Task 9 note
+//    1) with its own distinct `name`, so checking one never affects another.
+//    Note `id="rfp/inh"` contains a literal `/`, which is not valid
+//    unescaped bare-`#id` CSS selector syntax — the new
+//    `checkCptIptGiven`/`fillCptIptPills` helpers below always use an
+//    attribute selector (`[id="..."]`) rather than `#${id}` for this reason
+//    (unlike `fillField`'s `ID_LIKE`-gated byId path, which would reject
+//    `rfp/inh` outright since it fails that regex).
+//
+//    IMPORTANTLY: each group's own "No. of pills" input (`conceptId=
+//    $hivPreventiveTherapyPills`, no XML `required` attribute at all) still
+//    renders with `checkNumber(..., true, ...)` — required=true — for EVERY
+//    ONE of the 5 groups, REGARDLESS of whether that group's own toggle is
+//    checked. Confirmed live: leaving any of the 5 "No. of pills" inputs
+//    blank leaves `.submitButton` permanently disabled, even for groups whose
+//    toggle was never touched. This is unlike the row's own toggle, which is
+//    never required. Practical effect: filling only 1-2 of the 5 groups'
+//    toggles (chosen: CTX 960 and RFP/INH (3HP), which also exercises the
+//    `rfp/inh` slash-in-id case) still requires filling all 5 pills inputs —
+//    the other 3 get `0`. The REST display for a toggled group concatenates
+//    the pills value with the given drug's own concept name, e.g.
+//    "HIV Preventive Therapy Construct: 30.0, Trimethoprim and
+//    sulfamethoxazole" (CTX) / "...: 12.0, 3HP (Rifapentine and Isoniazid)"
+//    (RFP/INH) — confirmed live; an untouched group shows just
+//    "...: 0.0" with no drug name, which is why the assertions below anchor
+//    on the drug-name half of the string, not just the number.
+//
+// 9. Filling all of the above (many more fields than the original 6-field
+//    test) intermittently left `.submitButton` permanently disabled even
+//    though every required field had a valid value — confirmed NOT a
+//    field-order or missing-field bug: dumping every visible
+//    `span.field-error` right after filling showed exactly one, on
+//    `noTabletsGiven`'s own error span (id `w43` in one observed render),
+//    reading "Required" — while the field it belongs to (`w44`) already
+//    held "30". Root cause is a genuine race in art-visit.xml's OWN legacy
+//    JS (see Task 10 verification note 4's `checkNoTabletsGiven`): a
+//    one-shot `setInterval` armed the first time `#noTabletsGiven`'s error
+//    span exists in the DOM fires ~1s later and unconditionally paints
+//    "Required" onto it, with NO re-check of the field's actual value at
+//    that point — it only exists to surface the error for a user who
+//    genuinely left the field blank. A fast fill (whether by this test or,
+//    in principle, a fast typist) can "win" against that timer, so the
+//    stale error still gets painted on afterwards and never clears itself,
+//    since nothing re-fires `validateNoTabletsGiven()` after that point.
+//    Confirmed live: waiting out the timer (~1.6s) and then dispatching a
+//    real `change` event on the input (`.fill()` with the value already
+//    unchanged does NOT dispatch one) reliably clears it by re-running the
+//    form's own validator. `save()` below does this defensively whenever
+//    `#noTabletsGiven` exists, so it's harmless for the original 6-field
+//    test too (just an extra ~1.6s), and self-contained rather than
+//    depending on every caller to remember it.
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
@@ -428,6 +567,25 @@ export class MastercardFormPage {
     await this.cellAt(groupLabel, cellIndex).getByLabel(optionLabel, { exact: true }).check();
   }
 
+  // Checks one CPT/IPT obsgroup's own "given" toggle — a single-option
+  // radio wrapped in a `<span id="ctx"|"inh"|"rfp"|"rfp/inh"|"pyridoxine">`
+  // — see Task 13 verification note 8. Uses an attribute selector rather
+  // than `#${id}` since `rfp/inh`'s `/` isn't valid unescaped bare-`#id` CSS
+  // selector syntax.
+  async checkCptIptGiven(id: string): Promise<void> {
+    await this.page.locator(`[id="${id}"]`).locator('input[type="radio"]').first().check();
+  }
+
+  // Fills the "No. of pills" input immediately following a CPT/IPT group's
+  // id'd toggle span — the only reliable anchor, since "No. of pills" text
+  // itself repeats 5x with no id of its own — see Task 13 verification note
+  // 8. Required for ALL 5 groups regardless of whether that group's toggle
+  // is checked (confirmed live), so this is called for every group, not
+  // just the ones `checkCptIptGiven` is also called for.
+  async fillCptIptPills(id: string, value: string): Promise<void> {
+    await this.page.locator(`[id="${id}"]`).locator('xpath=following-sibling::input[1]').fill(value);
+  }
+
   // Handles `<select>` fields either by real DOM id (e.g. `visitLocation`,
   // `artRegimenObs` — both wrap a `<select>` in an id'd `<span>`, same shape
   // as fillField's by-id fields) or, falling back, by the plain-text label
@@ -467,6 +625,16 @@ export class MastercardFormPage {
   }
 
   async save(): Promise<void> {
+    // Defensively clear art-visit.xml's own stale-"Required"-error race on
+    // `noTabletsGiven` before submitting — see Task 13 verification note 9.
+    // A no-op (aside from the `count()` check) for forms without this field
+    // (e.g. the header form).
+    const noTabletsGivenInput = this.page.locator('#noTabletsGiven input').first();
+    if (await noTabletsGivenInput.count()) {
+      await this.page.waitForTimeout(1600);
+      await noTabletsGivenInput.evaluate((el) => el.dispatchEvent(new Event('change', { bubbles: true })));
+    }
+
     // `.submitButton` is the stable class htmlformentry always applies to
     // its generated submit control, regardless of visible label — see
     // verification note 5 above (art-visit.xml's bare `<submit/>` renders
