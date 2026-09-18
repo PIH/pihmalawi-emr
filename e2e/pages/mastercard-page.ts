@@ -1,4 +1,4 @@
-import { type Page, expect } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 
 // ---------------------------------------------------------------------------
 // Verification notes (Task 8) — confirmed against a live instance
@@ -216,8 +216,99 @@ export class MastercardGatePage {
 //    for the visit form.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Task 11) — expanding header-mastercard.spec.ts to cover
+// the rest of art-emastercard.xml's fields. Confirmed against a live
+// instance by dumping `page.content()` for a freshly-opened create form
+// (real `eligibleHivArtPatient` fixture patient, female by default — see
+// `createPatient`'s default `gender: 'F'` — so the `Preg/Breastf` field,
+// which is gated by `velocityTest="$patient.gender == 'F'"`, does render).
+//
+// 1. EVERY date field in this form except art-visit.xml's `appointmentDate`
+//    renders as a readonly jQuery-UI-datepicker input with NO id'd wrapping
+//    <span> at all (only `guardianNameField` has an explicit `id` anywhere
+//    in art-emastercard.xml). That means the byId branch's datepicker
+//    handling (Task 9/10) never actually fires for any of this form's own
+//    date fields — they all fall into the plain-label fallback branch,
+//    which used to blindly call `.fill()` and would have failed (readonly
+//    input) for all of them. Extracted the datepicker-vs-plain-input
+//    dispatch into `fillInputOrDatePicker` and made the fallback branch use
+//    it too, instead of only the byId branch.
+//
+// 2. Transfer-In Date and Child HCC no. live in the page header (inside the
+//    `<h4>`, outside `table.data-entry-table` entirely), each shaped as
+//    `<b>Label: </b><b>...input...</b>` — sibling `<b>` tags, not a `<td>`
+//    pair. `inputCellFor`'s `following-sibling::td[1]` xpath cannot match
+//    this. Added `fillHeaderField`, using `following-sibling::b[1]` instead.
+//    Confirmed live: Transfer-In Date renders as a readonly datepicker
+//    (`id="wN-display"`), Child HCC no. as a plain text input — both go
+//    through `fillInputOrDatePicker` so either shape works.
+//
+// 3. Labels containing an XML `<br/>` (`HIV-related<br/> diseases`,
+//    `Urine LAM/<br/>Crag Result`) render with the `<br/>` contributing no
+//    text at all — confirmed via the dumped DOM the rendered `<td>`'s own
+//    text is exactly the concatenation of the surrounding text nodes
+//    (`"HIV-related diseases"` — one space, from the leading space in the
+//    XML's `<br/> diseases`; `"Urine LAM/Crag Result"` — no space, since
+//    neither text node around that `<br/>` has one). `getByText(..., {
+//    exact: true })` matches this concatenated string directly; no special
+//    handling needed beyond using the right literal string.
+//
+// 4. The "Pres" checkbox shares WHO Stage's own `<td>` (no separate label).
+//    `selectRadio`'s `inputCellFor(groupLabel).getByLabel(optionLabel, {
+//    exact: true }).check()` already generalizes to this: calling
+//    `selectRadio('WHO Stage', 'Pres')` targets the checkbox fine, since
+//    `.getByLabel().check()` works on `<input type="checkbox">` exactly like
+//    `<input type="radio">`, and both live in the same `<td>` reached by the
+//    same "WHO Stage" label lookup.
+//
+// 5. `style="no_yes"` (KS) renders as an ordinary two-option radio pair with
+//    labels "N"/"Y" (values `"false"`/`"true"` rather than concept-id
+//    numbers, but that's invisible to `selectRadio`) — confirmed live, no
+//    new handling needed; `selectRadio('KS', 'Y')` just works.
+//
+// 6. CD4 (`$cd4Count` / `$cd4Pct`) shares one `<td>` labeled "CD4" via the
+//    exact same `.left-cell` / `.right-cell` shape Height/Weight already
+//    use — added a second magic-string branch in `fillField` following that
+//    same pattern (`'CD4Count'` / `'CD4Pct'`).
+//
+// 7. "Last ARVs (drug, date)" (`$lastArvsTaken` then `$lastArvsDate`) is the
+//    one row where TWO obs share a single `<td>` with no sub-labels or
+//    left/right-cell wrapper spans at all — just two bare `<input>`s back to
+//    back. Targeted positionally by input order within that one cell
+//    (`'LastArvsDrug'` / `'LastArvsDate'` magic-string branches, same style
+//    as CD4/Height/Weight above).
+//
+// 8. Several rows have a SECOND data `<td>` with no label of its own,
+//    immediately after a real labeled cell in the same `<tr>`
+//    (confirmatory-test-type radio after "Test Date"; ART education date
+//    after "ART educat. done"; TB treatment start date after "TB treatm.";
+//    first-line ARV start date after "ART Regimens"). These are reached
+//    reliably (not ambiguous — anchored to a real, unique row label) via a
+//    new `cellAt(label, n)` helper generalizing `inputCellFor` to the nth
+//    following `<td>` sibling, exposed through an optional `cellIndex` param
+//    on `fillField`/`selectRadio` (default 1, i.e. today's existing
+//    behavior, unchanged for every existing call site).
+//
+// 9. ART Regimens rows 2 and 3 (`$artRegimen2`/`$artRegimen3` +
+//    `$alternativeFirstLineArvStartDate`/`$secondLineArvStartDate`) have a
+//    genuinely empty `<td></td>` where a label would be — no text to anchor
+//    a lookup to at all, only sibling-row position relative to the "ART
+//    Regimens" `<th>`. Per the brief's own guidance, skipped these two rows
+//    as not worth a fragile positional selector — filling regimen 1 (which
+//    IS reliably labeled) already exercises this section's real behavior
+//    (dropdown + paired start date).
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
+const CD4_ROW_LABEL = 'CD4';
+const LAST_ARVS_ROW_LABEL = 'Last ARVs (drug, date)';
+// Real DOM ids used by this form/its siblings are always simple identifier
+// tokens; plain-text row labels (which can contain spaces/punctuation, and
+// are not valid bare CSS selector text) never match this — see the
+// `ID_LIKE` guard comments on `fillField`/`selectDropdown` below.
+const ID_LIKE = /^[A-Za-z_][\w-]*$/;
 
 export class MastercardFormPage {
   constructor(private page: Page) {}
@@ -238,38 +329,28 @@ export class MastercardFormPage {
   // `guardianNameField`, whose id is on a wrapping <span>, not the <input>
   // itself — see verification note 1 above) or, for fields with no id at
   // all (the overwhelming majority — see the same note), by the plain-text
-  // label immediately to the input's left in the same table row.
-  async fillField(labelOrId: string, value: string): Promise<void> {
-    const byId = this.page.locator(`#${labelOrId}`);
-    if (await byId.count()) {
-      const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
-      if (tagName === 'input' || tagName === 'textarea') {
-        await byId.first().fill(value);
+  // label immediately to the input's left in the same table row (or the
+  // `cellIndex`-th `<td>` sibling after it, for a second, unlabeled data
+  // cell in the same row — see Task 11 verification note 8).
+  async fillField(labelOrId: string, value: string, cellIndex = 1): Promise<void> {
+    // Task 11 addition: real DOM ids are always simple identifier tokens
+    // (`guardianNameField`, `appointmentDate`, ...) — the new plain-text
+    // labels this task added (e.g. "Age at Init. (yrs)") contain spaces and
+    // punctuation that are not valid CSS selector syntax and would throw
+    // when built into `#${labelOrId}` below, so only attempt the byId path
+    // for id-shaped strings.
+    if (ID_LIKE.test(labelOrId)) {
+      const byId = this.page.locator(`#${labelOrId}`);
+      if (await byId.count()) {
+        const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
+        if (tagName === 'input' || tagName === 'textarea') {
+          await byId.first().fill(value);
+          return;
+        }
+
+        await this.fillInputOrDatePicker(byId.first().locator('input').first(), value);
         return;
       }
-
-      const input = byId.first().locator('input').first();
-      const isDatePicker = await input.evaluate((el) => el.classList.contains('hasDatepicker'));
-      if (isDatePicker) {
-        // Readonly jQuery-UI-datepicker-driven field (e.g. art-visit.xml's
-        // `appointmentDate` — see verification note 3 above). Playwright's
-        // fill() refuses readonly inputs, so drive htmlformentry's own
-        // `setDatePickerValue()` global directly, then fire the `change`
-        // events real interaction would (some forms' own scripts hook
-        // `change` on these fields).
-        await byId.first().evaluate((el, val) => {
-          const display = el.querySelector('input') as HTMLInputElement;
-          const hidden = el.querySelector('input[type=hidden]') as HTMLInputElement | null;
-          // @ts-expect-error - global provided by htmlformentry's static JS (htmlFormEntry.js)
-          window.setDatePickerValue(`#${display.id}`, val);
-          display.dispatchEvent(new Event('change', { bubbles: true }));
-          hidden?.dispatchEvent(new Event('change', { bubbles: true }));
-        }, value);
-        return;
-      }
-
-      await input.fill(value);
-      return;
     }
 
     if (/^height$/i.test(labelOrId) || /^weight$/i.test(labelOrId)) {
@@ -282,11 +363,69 @@ export class MastercardFormPage {
       return;
     }
 
-    await this.inputCellFor(labelOrId).locator('input, textarea').first().fill(value);
+    if (/^cd4count$/i.test(labelOrId) || /^cd4pct$/i.test(labelOrId)) {
+      // Same left-cell/right-cell shape as Height/Weight above, under the
+      // shared "CD4" row label — see Task 11 verification note 6.
+      const cellClass = /^cd4count$/i.test(labelOrId) ? 'left-cell' : 'right-cell';
+      await this.rowFor(CD4_ROW_LABEL).locator(`.${cellClass} input`).fill(value);
+      return;
+    }
+
+    if (/^lastarvsdrug$/i.test(labelOrId) || /^lastarvsdate$/i.test(labelOrId)) {
+      // "Last ARVs (drug, date)" has two bare, unwrapped <input>s back to
+      // back in one <td> — targeted by input order — see Task 11
+      // verification note 7.
+      const inputIndex = /^lastarvsdrug$/i.test(labelOrId) ? 0 : 1;
+      await this.fillInputOrDatePicker(
+        this.inputCellFor(LAST_ARVS_ROW_LABEL).locator('input').nth(inputIndex),
+        value,
+      );
+      return;
+    }
+
+    await this.fillInputOrDatePicker(this.cellAt(labelOrId, cellIndex).locator('input, textarea').first(), value);
   }
 
-  async selectRadio(groupLabel: string, optionLabel: string): Promise<void> {
-    await this.inputCellFor(groupLabel).getByLabel(optionLabel, { exact: true }).check();
+  // Fills a value into `input`, using htmlformentry's own datepicker JS API
+  // if it's a readonly jQuery-UI-datepicker field (nearly every date field
+  // in this form — see Task 11 verification note 1), or a plain `.fill()`
+  // otherwise.
+  private async fillInputOrDatePicker(input: Locator, value: string): Promise<void> {
+    const isDatePicker = await input.evaluate((el) => el.classList.contains('hasDatepicker'));
+    if (!isDatePicker) {
+      await input.fill(value);
+      return;
+    }
+
+    // Readonly jQuery-UI-datepicker-driven field (e.g. art-visit.xml's
+    // `appointmentDate`, and — new in Task 11 — nearly every date field in
+    // art-emastercard.xml itself). Playwright's fill() refuses readonly
+    // inputs, so drive htmlformentry's own `setDatePickerValue()` global
+    // directly, then fire the `change` events real interaction would (some
+    // forms' own scripts hook `change` on these fields).
+    await input.evaluate((el, val) => {
+      const display = el as HTMLInputElement;
+      const hidden = display.parentElement?.querySelector('input[type=hidden]') as HTMLInputElement | null;
+      // @ts-expect-error - global provided by htmlformentry's static JS (htmlFormEntry.js)
+      window.setDatePickerValue(`#${display.id}`, val);
+      display.dispatchEvent(new Event('change', { bubbles: true }));
+      hidden?.dispatchEvent(new Event('change', { bubbles: true }));
+    }, value);
+  }
+
+  // Fills a field in the page header (the `<h4>`, outside
+  // `table.data-entry-table` entirely) whose label is a sibling `<b>` tag,
+  // not a `<td>` — e.g. "Transfer-In Date: " / "Child HCC no: " — see Task
+  // 11 verification note 2.
+  async fillHeaderField(labelText: string, value: string): Promise<void> {
+    await this.fillInputOrDatePicker(
+      this.page.getByText(labelText, { exact: true }).locator('xpath=following-sibling::b[1]//input').first(),
+      value,
+    );
+  }
+
+  async selectRadio(groupLabel: string, optionLabel: string, cellIndex = 1): Promise<void> {
+    await this.cellAt(groupLabel, cellIndex).getByLabel(optionLabel, { exact: true }).check();
   }
 
   // Handles `<select>` fields either by real DOM id (e.g. `visitLocation`,
@@ -294,10 +433,14 @@ export class MastercardFormPage {
   // as fillField's by-id fields) or, falling back, by the plain-text label
   // immediately to the select's left in the same table row.
   async selectDropdown(labelOrId: string, optionLabel: string): Promise<void> {
-    const byId = this.page.locator(`#${labelOrId} select`);
-    if (await byId.count()) {
-      await byId.first().selectOption({ label: optionLabel });
-      return;
+    // See the `ID_LIKE` guard comment in `fillField` — same reasoning
+    // applies here (e.g. the Task 11 label "ART Regimens" has a space).
+    if (ID_LIKE.test(labelOrId)) {
+      const byId = this.page.locator(`#${labelOrId} select`);
+      if (await byId.count()) {
+        await byId.first().selectOption({ label: optionLabel });
+        return;
+      }
     }
     await this.inputCellFor(labelOrId).locator('select').first().selectOption({ label: optionLabel });
   }
@@ -337,13 +480,22 @@ export class MastercardFormPage {
     await expect(this.page.getByText(/back to dashboard/i)).toBeVisible();
   }
 
-  // The leaf <td> whose OWN text is exactly `label` — `exact: true` is what
-  // keeps this from matching an ancestor <tr>/<table> that also contains it
-  // (see verification note 2 above) — followed by its immediate next <td>
-  // sibling, which is where htmlformentry always renders that field's
-  // input/radio group.
+  // The leaf <td> (or <th> — e.g. "TB treatm." / "ART Regimens", both <th>
+  // elements — `getByText` matches either) whose OWN text is exactly
+  // `label` — `exact: true` is what keeps this from matching an ancestor
+  // <tr>/<table> that also contains it (see verification note 2 above) —
+  // followed by its immediate next <td> sibling, which is where
+  // htmlformentry always renders that field's input/radio group.
   private inputCellFor(label: string) {
-    return this.page.getByText(label, { exact: true }).locator('xpath=following-sibling::td[1]');
+    return this.cellAt(label, 1);
+  }
+
+  // Generalizes `inputCellFor` to the `n`-th following <td> sibling, for a
+  // second (or third) data cell in the same row that has no label of its
+  // own — anchored to the row's one real, unique label rather than to raw
+  // DOM position — see Task 11 verification note 8.
+  private cellAt(label: string, n: number) {
+    return this.page.getByText(label, { exact: true }).locator(`xpath=following-sibling::td[${n}]`);
   }
 
   private rowFor(label: string) {
