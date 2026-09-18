@@ -16,7 +16,7 @@ Extracted from `EMastercardAccessTag.java`, `QuickProgramsTag.java`, and
 | Encounter types unlocked | ART_INITIAL (header), ART_FOLLOWUP (visit) | header encounter type `664b8574-977f-11e1-8993-905e29aff6c1`; visit encounter type `664b8650-977f-11e1-8993-905e29aff6c1` |
 | Forms | `art-emastercard.xml` (form uuid `a3cbdf5f-8c15-41b4-b97d-903ba3bd0532`), `art-visit.xml` (form uuid `64db7fd5-c28d-4b85-87c4-d01e92ae004a`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:122`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="ART eMastercard" initialEncounterType="ART_INITIAL" followupEncounterType="ART_FOLLOWUP" patientIdentifierType="ARV Number" programWorkflowStates="6687fa7c-977f-11e1-8993-905e29aff6c1"/>` | verbatim from the JSP |
-| Additional gate logic | Patient must not be dead; the "Create new" link only renders while ≤1 `ART_INITIAL` encounter exists for the patient (otherwise the tag renders an edit/view link instead) | `EMastercardAccessTag.doStartTag` |
+| Additional gate logic | Patient must not be dead; the "Create new" link only renders while **no** `ART_INITIAL` encounter exists for the patient (`initials.size() == 0`) — if exactly one exists, an edit/view link renders instead; if more than one exists, the tag renders "Multiple forms found" | `EMastercardAccessTag.doStartTag` |
 
 **Note on a historical inconsistency**: `programs.csv` marks the separate, older `ART PROGRAM`
 (`program.art.uuid`) as retired (`Void/Retire=true`), and there is a *different*, also-still-active
@@ -46,10 +46,19 @@ tab specifically (one of three flowsheet tabs alongside `viral-load-tests` and
 ## Quick-programs enrollment mechanics
 
 Plain HTML form POST: `/openmrs/module/quickprograms/enrollInProgramWithStateOnDateAtLocation.form`
-— hidden inputs `method=enroll`, `patientId`, `returnPage`, `programId`, `programworkflowStateId`
-(a `<select>` when a workflow offers multiple initial states — for HIV, `initialStateIds` includes
-both "On ARVs" (`6687fa7c-...`) and "Exposed Child" (`668847a2-...`)), a `dateEnrolled` text input,
-and a `locationId` `<select>`; submit button labeled "Enroll".
+— hidden inputs `method=enroll`, `patientId`, `returnPage`, `programId`, `programworkflowStateId`,
+a `dateEnrolled` text input, and a `locationId` `<select>`; submit button labeled "Enroll".
+
+Whether `programworkflowStateId` is a hidden input or a `<select>` depends on which JSP tag
+attribute is used, not on how many initial states a workflow has (`QuickProgramsTag.java`):
+- `initialStateIds` (used by the HIV row in `malawiPatientDashboard.jsp:329`) → `enrollForm()`
+  (~line 241) renders **one `<form>` per candidate initial state**, each with a **hidden**
+  `programworkflowStateId` input set to that state's id. For HIV, `initialStateIds` includes both
+  "On ARVs" (`6687fa7c-...`) and "Exposed Child" (`668847a2-...`), so two separate forms/buttons are
+  rendered — never a `<select>`.
+- `workflowIds` (used by other programs, e.g. Chronic Care / Mental Health rows) → a *different*
+  method, `enrollProgramWorkflowForm()` (~line 215), renders a single form with a `<select>`
+  populated from the workflow's initial states.
 
 **Changing state on an already-enrolled patient is not a form POST** — it's a DWR/AJAX call
 (`changeToState(patientProgramId, workflowId, stateId, dateField)` → page refresh triggered by
