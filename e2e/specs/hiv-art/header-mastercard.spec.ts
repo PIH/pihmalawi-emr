@@ -98,7 +98,15 @@ test('ART header mastercard saves the entered data as an ART_INITIAL encounter',
   // live (e.g. selecting "Last" for TB Status displays as "Treatment
   // complete" — the answer concept's own name, not the rendered radio
   // label; "Ever taken ARVs" displays as "Ever received ART?").
-  expect(obs.some((o) => /transfer in date/i.test(o.display))).toBeTruthy();
+  //
+  // Every date-field assertion below checks the field's own `display`
+  // AGAINST `encounterDate`, not just that some obs with that label exists
+  // — these all go through `fillInputOrDatePicker`'s readonly-datepicker
+  // branch (the newest, least-previously-exercised code path in this
+  // file), so a bug that silently wrote the wrong date needs to be
+  // catchable here.
+  const onDate = (label: string) => new RegExp(`${label}.*${encounterDate}`, 'i');
+  expect(obs.some((o) => onDate('transfer in date').test(o.display))).toBeTruthy();
   expect(obs.some((o) => /HCC-E2E-1234/.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /0991112222/.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /0993334444/.test(o.display))).toBeTruthy();
@@ -110,18 +118,28 @@ test('ART header mastercard saves the entered data as an ART_INITIAL encounter',
   expect(
     obs.some((o) => /tuberculosis treatment status/i.test(o.display) && /treatment complete/i.test(o.display)),
   ).toBeTruthy();
-  expect(obs.some((o) => /pregnant.*lactating/i.test(o.display))).toBeTruthy();
+  // "Preg" specifically (not "No"/"Bf") — the display text is the answer
+  // concept's own name, "Patient pregnant", confirmed live.
+  expect(obs.some((o) => /pregnant\/lactating.*patient pregnant/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /cd4 count.*350/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /cd4%.*18/i.test(o.display))).toBeTruthy();
-  expect(obs.some((o) => /date of cd4 count/i.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('date of cd4 count').test(o.display))).toBeTruthy();
   expect(obs.some((o) => /ever received art.*no/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /^age:? ?34/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /AZT\/3TC\/NVP/.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('date art last taken').test(o.display))).toBeTruthy();
   expect(obs.some((o) => /confirmatory hiv test location.*neno district hospital/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /HTC-E2E-5678/.test(o.display))).toBeTruthy();
-  expect(obs.some((o) => /date of hiv diagnosis/i.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('date of hiv diagnosis').test(o.display))).toBeTruthy();
   expect(obs.some((o) => /rapid/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /education.*done.*yes/i.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('art education date').test(o.display))).toBeTruthy();
   expect(obs.some((o) => /tb registration number.*12345/i.test(o.display))).toBeTruthy();
-  expect(obs.some((o) => /1A/.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('tuberculosis drug treatment start date').test(o.display))).toBeTruthy();
+  // Anchored to the concept's own name plus a trailing colon so a
+  // multi-char regimen label containing "1A" as a substring (e.g. "11A",
+  // "11PA") can't false-match — confirmed live display is exactly
+  // "...drugs change 1: 1A: d4T / 3TC / NVP (previous 1L)".
+  expect(obs.some((o) => /antiretroviral drugs change 1:\s*1a:/i.test(o.display))).toBeTruthy();
+  expect(obs.some((o) => onDate('start date 1st line arv').test(o.display))).toBeTruthy();
 });
