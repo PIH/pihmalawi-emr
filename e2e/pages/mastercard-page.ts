@@ -464,6 +464,7 @@ const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
 const LAST_ARVS_ROW_LABEL = 'Last ARVs (drug, date)';
+const BLOOD_PRESSURE_ROW_LABEL = 'Blood Pressure';
 // Real DOM ids used by this form/its siblings are always simple identifier
 // tokens; plain-text row labels (which can contain spaces/punctuation, and
 // are not valid bare CSS selector text) never match this — see the
@@ -561,6 +562,19 @@ export class MastercardFormPage {
       // "sibling input after an id'd span" shape `fillCptIptPills` already
       // targets, just named for this context instead of CPT/IPT.
       await this.page.locator('[id="nonCoded-dx"]').locator('xpath=following-sibling::input[1]').fill(value);
+      return;
+    }
+
+    if (/^systolicbp$/i.test(labelOrId) || /^diastolicbp$/i.test(labelOrId)) {
+      // NCD Other Visit's "Blood Pressure" row (ncd-other-visit.xml) renders
+      // two bare, unwrapped <input>s back to back in one <td> separated by a
+      // literal "/" text node — same "two inputs, one td, positional" shape
+      // as `LastArvsDrug`/`LastArvsDate` below (unlike ART's own
+      // systolicBPInput/diastolicBPInput, which DO have explicit ids — see
+      // Task 13's verification note 1 on that form). Targeted by input order
+      // within the row, same as Last ARVs.
+      const inputIndex = /^systolicbp$/i.test(labelOrId) ? 0 : 1;
+      await this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex).fill(value);
       return;
     }
 
