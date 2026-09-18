@@ -1,0 +1,78 @@
+name: E2E tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    if: github.repository_owner == 'PIH'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out pihmalawi-emr
+        uses: actions/checkout@v4
+
+      - name: Check out openmrs-contrib-distro-tools
+        uses: actions/checkout@v4
+        with:
+          repository: PIH/openmrs-contrib-distro-tools
+          path: .openmrs-contrib-distro-tools
+
+      - name: Add distro-tools bin to PATH
+        run: echo "${{ github.workspace }}/.openmrs-contrib-distro-tools/bin" >> "$GITHUB_PATH"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: pihci
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # Note: this tests the currently-published partnersinhealth/pihmalawi-emr Docker Hub
+      # image, not the checked-out branch/revision above — intentional for v1.
+      - name: Create ephemeral instance
+        env:
+          OPENMRS_IMAGE_NAME: partnersinhealth/pihmalawi-emr
+          SEED_IMAGE_NAME: partnersinhealth/pihmalawi-emr-seed-malawi
+        run: openmrs-docker create e2e-malawi
+
+      - name: Initialize from seed
+        run: openmrs-docker e2e-malawi initialize
+
+      - name: Start stack
+        run: openmrs-docker e2e-malawi start
+
+      - name: Wait for OpenMRS
+        run: openmrs-docker e2e-malawi wait
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: e2e/.nvmrc
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        working-directory: e2e
+        env:
+          E2E_BASE_URL: http://localhost:8080/openmrs
+          E2E_USER_ADMIN_USERNAME: admin
+          E2E_USER_ADMIN_PASSWORD: Admin123
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: e2e/playwright-report/
+          retention-days: 1
+
+      - name: Destroy instance
+        if: always()
+        run: openmrs-docker e2e-malawi destroy --force

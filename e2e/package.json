@@ -1,0 +1,19 @@
+{
+  "name": "pihmalawi-emr-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end regression tests for pihmalawi-emr",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test-e2e": "playwright test",
+    "test-e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.2",
+    "@types/node": "^22.20.3",
+    "dotenv": "^16.0.3",
+    "typescript": "^5.0.0"
+  }
+}
