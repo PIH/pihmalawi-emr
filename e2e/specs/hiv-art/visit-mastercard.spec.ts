@@ -99,6 +99,15 @@ test.describe('ART visit mastercard', () => {
     const obs = results[0].obs as Array<{ display: string }>;
     expect(obs.some((o) => /61/.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /166/.test(o.display))).toBeTruthy();
+    // `artRegimenObs` and `appointmentDate` were already being filled before
+    // Task 13 but had no value-bearing assertion — closing that gap here.
+    // Confirmed live displays: "Malawi Antiretroviral drugs received: 1A:
+    // d4T / 3TC / NVP (previous 1L)" and "Appointment date: <the computed
+    // date>". Anchored on "1a:" (with the trailing colon) so a multi-char
+    // regimen label containing "1A" as a substring (e.g. "11A") can't
+    // false-match — same reasoning as header-mastercard's regimen assertion.
+    expect(obs.some((o) => /antiretroviral drugs received.*1a:/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => new RegExp(`appointment date.*${appointmentDate}`, 'i').test(o.display))).toBeTruthy();
 
     // One assertion per Task 13 field, each checking the actual entered
     // VALUE against the real REST `display` string, confirmed live (see
