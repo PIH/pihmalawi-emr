@@ -41,7 +41,7 @@ two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to
 | Workflow | diabetesHypertensionTreatment | `programWorkflow.diabetesHypertensionTreatment.uuid` = `9b571347-8dc3-40fe-9994-e82071fa8290` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
 | Qualifying states | On Treatment | state uuid `d5d2d3bf-9cca-4a1f-9c69-f7713ed8fff4`, `Initial=true`; in Advance Care state uuid `00be3c91-ecd2-482e-8c7a-7bdd49c997e7`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
 | Encounter types unlocked | DIABETES HYPERTENSION INITIAL VISIT (header), DIABETES HYPERTENSION FOLLOWUP (visit) | header encounter type `664b9442-977f-11e1-8993-905e29aff6c1`; visit encounter type `66079de4-a8df-11e5-bf7f-feff819cdc9f` |
-| Forms | `diabetes-hypertension-emastercard.xml` (form uuid `8cfee016-cacb-11e5-9956-625662870761`), `diabetes-hypertension-visit.xml` (form uuid `8cfedcc4-cacb-11e5-9956-625662870761`) | `content/configuration/backend_configuration/htmlforms/` |
+| Forms | `hypertension-and-diabetes-emastercard.xml` (form uuid `8cfee016-cacb-11e5-9956-625662870761`), `hypertension-and-diabetes-visit.xml` (form uuid `8cfedcc4-cacb-11e5-9956-625662870761`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:176`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Hypertension and Diabetes eMastercard" initialEncounterType="DIABETES HYPERTENSION INITIAL VISIT" followupEncounterType="DIABETES HYPERTENSION FOLLOWUP" programWorkflowStates="${DIABETESHYPERTENSIONActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
 
 ### Chronic Lung Disease
@@ -128,6 +128,29 @@ A completely different `headerForm` and flowsheet list than ART's — confirmed 
 `malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
 transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
 too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
+
+### Hypertension and Diabetes
+
+Confirmed the same way as ART/NCD Other above — live-rendering `patientDashboard.form` for an
+eligible fixture patient (`eligibleHypertensionAndDiabetesPatient`) and dumping the "Create new
+Hypertension and Diabetes eMastercard" link's `onclick`:
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/hypertension-and-diabetes-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/hypertension-and-diabetes-quarterly-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/hypertension-and-diabetes-annual-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/hypertension-and-diabetes-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/hypertension-and-diabetes-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+Matches `EMastercardAccessTag.getNewMasterCardConfiguration`'s `flowsheetForms` map for
+`ENCOUNTERTYPE_HTN_DIABETES_INITIAL_NAME` exactly (own Java source, not just the JSP tag). This
+pilot's own e2e specs are scoped to the emastercard + `-visit.xml` flowsheet only (matching the NCD
+Other pilot's scope decision) — see `e2e/pages/hypertension-and-diabetes-mastercard-page.ts`'s
+`HypertensionAndDiabetesMastercardGatePage.buildCreateUrl`.
 
 ## Quick-programs enrollment mechanics
 
