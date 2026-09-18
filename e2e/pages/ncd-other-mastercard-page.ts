@@ -126,7 +126,10 @@ export class NcdOtherMastercardGatePage {
   }
 }
 
-// Fills every editable field on ncd-other-emastercard.xml's header form.
+// Fills every editable field on ncd-other-emastercard.xml's header form. The
+// literal values used below (names, phone numbers, diagnosis text, etc.) are
+// asserted against in e2e/specs/ncd-other/header-mastercard.spec.ts — keep
+// that spec's assertions in sync if any value here changes.
 // Exported standalone (not a save — callers decide when/whether to save) so
 // this exact field-filling logic is reusable by both this task's own spec
 // AND a later visit-mastercard spec that just needs *a* saved NCD_OTHER
@@ -181,4 +184,25 @@ export async function fillNcdOtherHeaderForm(form: MastercardFormPage, encounter
   await form.fillField('ECHO', 'Normal echo result', 2);
   await form.fillField('ECG', encounterDate, 1);
   await form.selectDropdown('ECG', 'Normal', 2);
+}
+
+// Fills only the minimum fields needed to save an NCD_OTHER header
+// encounter. Unlike ART's header form (where "Agrees to FUP" alone is
+// enough), NCD Other's own bundled JS (`setupChronicCareDiagnosisValidation`/
+// `ensureDiagnosisChecked` in omod/.../resources/scripts/mastercard.js) also
+// keeps `.submitButton` disabled with "Must enter at least one diagnosis!"
+// until at least one of the 5 `.dx-checkbox-item` diagnosis checkboxes
+// (rheumatoid-dx/cirrhosis-dx/deepV-dx/sickle-dx/nonCoded-dx) is checked —
+// confirmed live (this exact error appeared with only "Agrees to FUP"
+// filled). Checking `rheumatoid-dx` alone (its paired `rheumatoid-dx-date`
+// has no `required` XML attribute and isn't needed) clears it. So the true
+// minimum is: "Agrees to FUP" + one diagnosis checkbox — confirmed live this
+// saves successfully with no other fields filled. Used ONLY by
+// visit-mastercard.spec.ts's `beforeEach`, which needs a saved header
+// encounter as a prerequisite, not the header encounter's own content.
+// header-mastercard.spec.ts still uses `fillNcdOtherHeaderForm` (the full
+// fill) above, since it asserts on that form's own field values.
+export async function fillNcdOtherHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkById('rheumatoid-dx');
 }

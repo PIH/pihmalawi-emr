@@ -121,6 +121,13 @@ test('NCD Other header mastercard saves the entered data as an NCD_OTHER_INITIAL
         /chronic kidney disease/i.test(o.display),
     ),
   ).toBeTruthy();
+  // `otherComorbidity` (this assertion) and `otherDxText` (the "other
+  // non-coded" diagnosis assertion above) both resolve to the SAME concept
+  // uuid (65780d0c-977f-11e1-8993-905e29aff6c1) in
+  // ncd-other-emastercard.xml's own macros — pre-existing content, not a
+  // bug. These are two distinct obs with distinct text ("Chronic liver
+  // disease" vs. "Unspecified chronic condition"), so this assertion is NOT
+  // redundant with the other one despite sharing a concept name.
   expect(obs.some((o) => /other diagnosis.*chronic liver disease/i.test(o.display))).toBeTruthy();
 
   // Patient History row.

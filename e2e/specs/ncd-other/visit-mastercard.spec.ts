@@ -1,5 +1,5 @@
 import { test, expect } from '../../core';
-import { MastercardFormPage, NcdOtherMastercardGatePage, fillNcdOtherHeaderForm } from '../../pages';
+import { MastercardFormPage, NcdOtherMastercardGatePage, fillNcdOtherHeaderMinimum } from '../../pages';
 import { NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 
 // ---------------------------------------------------------------------------
@@ -47,17 +47,24 @@ import { NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 //    render as a real two-option radio group, but the XML's own
 //    `answerLabels="No, Yes"` / `answerConceptIds="$yesAnswer,$noAnswer"`
 //    are paired POSITIONALLY (1st label with 1st concept, 2nd with 2nd),
-//    which means the rendered "No" label is wired to the `yesAnswer`
-//    concept (legacy id 8347, display "Yes") and the rendered "Yes" label
-//    (rendered with a leading space, " Yes") is wired to `noAnswer` (id
-//    4797, display "No") — backwards from what the label text suggests.
+//    which means the rendered "No" label is wired to the `$yesAnswer`
+//    concept (uuid 65576354-977f-11e1-8993-905e29aff6c1, "Yes", reference id
+//    1065 in concepts.csv's SAME-AS/PIH Malawi mapping column) and the
+//    rendered "Yes" label (rendered with a leading space, " Yes") is wired
+//    to `$noAnswer` (uuid 6557646c-977f-11e1-8993-905e29aff6c1, "No",
+//    reference id 1066) — backwards from what the label text suggests.
 //    Confirmed live by selecting each and reading the real REST `display`:
 //    selecting the "No" radio produced "Patient hospitalized since last
 //    visit: Yes"; selecting the "Yes" radio on the other row produced "Has
 //    the treatment changed at this visit?: No". This is a genuine quirk in
 //    ncd-other-visit.xml itself (same swapped-pairing bug on both rows), not
 //    a selector bug — the test below selects one label per row and asserts
-//    the ACTUAL (swapped) resulting display, not the label clicked.
+//    the ACTUAL (swapped) resulting display, not the label clicked. If
+//    ncd-other-visit.xml's `answerConceptIds` ordering on these two rows is
+//    ever corrected (fixing the underlying production content bug), the two
+//    assertions below marked "Swapped-pairing quirk (verification note 5)"
+//    must be inverted (selecting "No" would then actually record "No", and
+//    selecting "Yes" would actually record "Yes") to match.
 //
 // 6. Next appointment (`appointmentDate`) has an explicit id and renders as
 //    the same readonly jQuery-UI-datepicker input ART's own `appointmentDate`
@@ -88,8 +95,13 @@ import { NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 // creates that header first, on the same `page` the test itself receives,
 // since reaching the visit form requires continuing on that same
 // already-loaded page (`enterNewFlowsheet`), not a fresh `openCreateAtUrl`
-// navigation. Reuses Task 3's `fillNcdOtherHeaderForm` rather than
-// duplicating its field list — same pattern as header-mastercard.spec.ts.
+// navigation. Uses `fillNcdOtherHeaderMinimum` (just "Agrees to FUP") rather
+// than the full `fillNcdOtherHeaderForm` field list, since all this beforeEach
+// needs is *a* saved header encounter to continue from, not any particular
+// content on it — same minimal-fill pattern as ART's own
+// visit-mastercard.spec.ts beforeEach (`selectRadio('Agrees to FUP', 'Y')`
+// on art-emastercard.xml). header-mastercard.spec.ts still uses the full
+// `fillNcdOtherHeaderForm` since it asserts on that form's field values.
 test.describe('NCD Other visit mastercard', () => {
   test.beforeEach(async ({ page, eligibleNcdOtherPatient }) => {
     const encounterDate = new Date().toISOString().slice(0, 10);
@@ -97,7 +109,7 @@ test.describe('NCD Other visit mastercard', () => {
       page,
       NcdOtherMastercardGatePage.buildCreateUrl(eligibleNcdOtherPatient.uuid, encounterDate),
     );
-    await fillNcdOtherHeaderForm(headerForm, encounterDate);
+    await fillNcdOtherHeaderMinimum(headerForm);
     await headerForm.save();
     await headerForm.expectSaveSuccess();
   });
@@ -115,6 +127,15 @@ test.describe('NCD Other visit mastercard', () => {
 
     await visitForm.selectDropdown('visitLocation', 'Neno District Hospital');
     await visitForm.fillField('heightInput', '165');
+    // `id="weightInput"` (unlike heightEntered/heightInput) also appears on
+    // the read-only VIEW-mode flowsheet table's row (ncd-other-visit.xml
+    // ~line 130), so `fillField`'s byId path (first DOM match) is only safe
+    // here because `eligibleNcdOtherPatient` is a fresh fixture with no
+    // prior NCD-Other visit encounter, so no VIEW-mode row renders above the
+    // edit table. Same applies to the plain-label lookups below ('Medications',
+    // 'Comments', 'Tobacco use', 'Alcohol use') — all also appear in the VIEW
+    // `<thead>`. A future spec reusing this pattern against a non-fresh
+    // patient must re-check this.
     await visitForm.fillField('weightInput', '70');
     await visitForm.fillField('Weight Change', 'Lost 2kg since last visit');
     await visitForm.fillField('systolicBP', '130');
