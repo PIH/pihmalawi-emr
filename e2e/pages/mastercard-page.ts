@@ -439,6 +439,27 @@ export class MastercardGatePage {
 //    depending on every caller to remember it.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (NCD Other pilot, this plan's Task 3) — extending this
+// shared page object to a SECOND program's mastercard
+// (content/configuration/backend_configuration/htmlforms/ncd-other-emastercard.xml),
+// confirmed against a live instance the same way as the ART pilot's own
+// notes above: reading the XML in full, then dumping the rendered DOM for a
+// freshly-opened create form (real `eligibleNcdOtherPatient` fixture
+// patient) and for the "Create new" dashboard link.
+//
+// The three additions here (`openCreateAtUrl`, `checkById`, `selectDropdown`'s
+// `cellIndex` param) plus two `fillField` magic-string branches
+// (`otherComorbidity`/`nonCodedDxText`) are all this program needed beyond
+// what already existed — every other field on ncd-other-emastercard.xml
+// (Patient Phone, Guardian Name/Phone/relation, "Agrees to FUP", the
+// "PatientHistory"-row fields, ECHO/ECG) reuses `fillField`/`selectRadio`/
+// `selectDropdown`/`fillHeaderField` completely unchanged. Full detail on
+// each new/changed piece is in e2e/pages/ncd-other-mastercard-page.ts's own
+// verification notes, since the NCD-Other-specific field list lives there,
+// not in this generic, program-agnostic file.
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
@@ -453,7 +474,17 @@ export class MastercardFormPage {
   constructor(private page: Page) {}
 
   static async openCreate(page: Page, patientUuid: string, encounterDate: string): Promise<MastercardFormPage> {
-    await page.goto(MastercardGatePage.buildCreateUrl(patientUuid, encounterDate));
+    return MastercardFormPage.openCreateAtUrl(page, MastercardGatePage.buildCreateUrl(patientUuid, encounterDate));
+  }
+
+  // Extracted from `openCreate` (NCD Other pilot, Task 3) so a second
+  // program's differently-shaped create URL (a different headerForm and
+  // flowsheet list — see e2e/pages/ncd-other-mastercard-page.ts's
+  // `NcdOtherMastercardGatePage.buildCreateUrl`) can reuse the same
+  // "navigate + pick a default location" steps without duplicating them.
+  // `openCreate`'s own behavior/signature is unchanged.
+  static async openCreateAtUrl(page: Page, url: string): Promise<MastercardFormPage> {
+    await page.goto(url);
     await page.waitForLoadState('networkidle');
 
     // Required — see verification note 3 above. Defaults to the same
@@ -507,6 +538,29 @@ export class MastercardFormPage {
       // shared "CD4" row label — see Task 11 verification note 6.
       const cellClass = /^cd4count$/i.test(labelOrId) ? 'left-cell' : 'right-cell';
       await this.rowFor(CD4_ROW_LABEL).locator(`.${cellClass} input`).fill(value);
+      return;
+    }
+
+    if (/^othercomorbidity$/i.test(labelOrId)) {
+      // NCD Other's "Other:" comorbidity free-text input (see
+      // ncd-other-mastercard-page.ts's Task 3 verification note 4) is a bare
+      // `<input type="text">` with no id or label of its own, sharing the
+      // rowspan'd "Comorbidities" `<td>` with 3 checkboxes — it's the only
+      // `input[type="text"]` in that cell, unlike `fillField`'s generic
+      // fallback below (`input, textarea` `.first()`), which would instead
+      // grab the first checkbox and fail (`.fill()` refuses a checkbox).
+      await this.cellAt('Comorbidities', 1).locator('input[type="text"]').first().fill(value);
+      return;
+    }
+
+    if (/^noncodeddxtext$/i.test(labelOrId)) {
+      // NCD Other's "Other non-coded" diagnosis free-text answer (see
+      // ncd-other-mastercard-page.ts's Task 3 verification note 4) is a bare
+      // `<input type="text">` immediately following the `nonCoded-dx`
+      // checkbox's own id'd `<span>`, inside the SAME `<td>` — same
+      // "sibling input after an id'd span" shape `fillCptIptPills` already
+      // targets, just named for this context instead of CPT/IPT.
+      await this.page.locator('[id="nonCoded-dx"]').locator('xpath=following-sibling::input[1]').fill(value);
       return;
     }
 
@@ -586,11 +640,31 @@ export class MastercardFormPage {
     await this.page.locator(`[id="${id}"]`).locator('xpath=following-sibling::input[1]').fill(value);
   }
 
+  // Checks a checkbox field addressed by real DOM id (NCD Other pilot,
+  // Task 3) — e.g. `rheumatoid-dx`/`cirrhosis-dx`/`deepV-dx`/`sickle-dx`/
+  // `nonCoded-dx`, each an id'd `<span>` wrapping a checkbox (same shape as
+  // `guardianNameField`), not a plain input `fillField`'s byId path can
+  // `.fill()`, and not the `input[type="radio"]` `checkCptIptGiven` targets.
+  // Each of these pairs with a `data-toggle-target` date field that starts
+  // `disabled` and is enabled by the page's own JS the moment this checkbox
+  // is checked — see ncd-other-mastercard-page.ts's Task 3 verification note
+  // 3. This shape (an id'd toggle checkbox paired with a disabled date
+  // field) recurs across several other chronic-care mastercard forms
+  // (epilepsy/CKD/cardiac-and-vascular-disease/...), so it's kept here as a
+  // shared helper rather than an NCD-Other-only one.
+  async checkById(id: string): Promise<void> {
+    await this.page.locator(`[id="${id}"]`).locator('input[type="checkbox"]').first().check();
+  }
+
   // Handles `<select>` fields either by real DOM id (e.g. `visitLocation`,
   // `artRegimenObs` — both wrap a `<select>` in an id'd `<span>`, same shape
   // as fillField's by-id fields) or, falling back, by the plain-text label
-  // immediately to the select's left in the same table row.
-  async selectDropdown(labelOrId: string, optionLabel: string): Promise<void> {
+  // immediately to the select's left in the same table row (or the
+  // `cellIndex`-th `<td>` sibling after it, for a select sharing a row with
+  // other fields at a non-1 position — NCD Other pilot, Task 3 addition,
+  // mirroring `fillField`/`selectRadio`'s existing `cellIndex` param; default
+  // of 1 keeps every prior call site's behavior unchanged).
+  async selectDropdown(labelOrId: string, optionLabel: string, cellIndex = 1): Promise<void> {
     // See the `ID_LIKE` guard comment in `fillField` — same reasoning
     // applies here (e.g. the Task 11 label "ART Regimens" has a space).
     if (ID_LIKE.test(labelOrId)) {
@@ -600,7 +674,7 @@ export class MastercardFormPage {
         return;
       }
     }
-    await this.inputCellFor(labelOrId).locator('select').first().selectOption({ label: optionLabel });
+    await this.cellAt(labelOrId, cellIndex).locator('select').first().selectOption({ label: optionLabel });
   }
 
   // Reaches a flowsheet form (e.g. "ART Visit") from an already-loaded

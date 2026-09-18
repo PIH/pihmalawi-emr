@@ -106,6 +106,29 @@ View mode appends `&viewOnly=true`. The pilot's "visit encounter" scenario targe
 tab specifically (one of three flowsheet tabs alongside `viral-load-tests` and
 `art-follow-up-testing`).
 
+### NCD Other
+
+Confirmed the same way as the HIV/ART pattern above — live-rendering `patientDashboard.form` for
+an eligible fixture patient (`eligibleNcdOtherPatient`) and dumping the "Create new NCD Other
+eMastercard" link's `onclick` (it has no `href` attribute either, same as ART's link):
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/ncd-other-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-quarterly-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-annual-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+A completely different `headerForm` and flowsheet list than ART's — confirmed NOT reusable from
+`EMastercardAccessTag.getNewMasterCardConfiguration`'s generic shape alone, since each program's
+`malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
+transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
+too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
+
 ## Quick-programs enrollment mechanics
 
 Plain HTML form POST: `/openmrs/module/quickprograms/enrollInProgramWithStateOnDateAtLocation.form`
