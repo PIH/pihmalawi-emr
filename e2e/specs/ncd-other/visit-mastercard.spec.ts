@@ -44,27 +44,14 @@ import { NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 //    radio group here. `selectRadio` reaches it with no new handling.
 //
 // 5. Hospitalized since last visit for NCD? / Medications changed — BOTH
-//    render as a real two-option radio group, but the XML's own
-//    `answerLabels="No, Yes"` / `answerConceptIds="$yesAnswer,$noAnswer"`
-//    are paired POSITIONALLY (1st label with 1st concept, 2nd with 2nd),
-//    which means the rendered "No" label is wired to the `$yesAnswer`
-//    concept (uuid 65576354-977f-11e1-8993-905e29aff6c1, "Yes", reference id
-//    1065 in concepts.csv's SAME-AS/PIH Malawi mapping column) and the
-//    rendered "Yes" label (rendered with a leading space, " Yes") is wired
-//    to `$noAnswer` (uuid 6557646c-977f-11e1-8993-905e29aff6c1, "No",
-//    reference id 1066) — backwards from what the label text suggests.
-//    Confirmed live by selecting each and reading the real REST `display`:
-//    selecting the "No" radio produced "Patient hospitalized since last
-//    visit: Yes"; selecting the "Yes" radio on the other row produced "Has
-//    the treatment changed at this visit?: No". This is a genuine quirk in
-//    ncd-other-visit.xml itself (same swapped-pairing bug on both rows), not
-//    a selector bug — the test below selects one label per row and asserts
-//    the ACTUAL (swapped) resulting display, not the label clicked. If
-//    ncd-other-visit.xml's `answerConceptIds` ordering on these two rows is
-//    ever corrected (fixing the underlying production content bug), the two
-//    assertions below marked "Swapped-pairing quirk (verification note 5)"
-//    must be inverted (selecting "No" would then actually record "No", and
-//    selecting "Yes" would actually record "Yes") to match.
+//    render as a real two-option radio group. Until MLW-1856, this row's
+//    `answerLabels="No, Yes"` / `answerConceptIds` were paired positionally
+//    backwards ("No" wired to the "Yes" concept and vice versa) — a genuine
+//    production content bug in ncd-other-visit.xml itself, found while
+//    writing this spec (see MLW-1854/PR #292) and fixed in MLW-1856, which
+//    reordered `answerConceptIds` to `$noAnswer,$yesAnswer` on both rows to
+//    match the label order. The assertions below now expect the correct,
+//    non-swapped display for each selection.
 //
 // 6. Next appointment (`appointmentDate`) has an explicit id and renders as
 //    the same readonly jQuery-UI-datepicker input ART's own `appointmentDate`
@@ -146,11 +133,8 @@ test.describe('NCD Other visit mastercard', () => {
     await visitForm.selectRadio('Alcohol use', 'Stopped');
     await visitForm.fillField('Number of fruit and vegetable portions', '3');
     await visitForm.fillField('Days per week with 30 minutes of exercise', '4');
-    // See verification note 5 above — the rendered "No" label is wired to
-    // the "Yes" concept for this row.
     await visitForm.selectRadio('Hospitalized since last visit for NCD?', 'No');
     await visitForm.fillField('Medications', 'Amlodipine 5mg daily');
-    // Same swapped-pairing quirk as above, on this row's "Yes" label.
     await visitForm.selectRadio('Medications changed', 'Yes');
     await visitForm.fillField('Comments', 'Patient reports improved symptoms');
     const appointmentDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -194,13 +178,9 @@ test.describe('NCD Other visit mastercard', () => {
       obs.some((o) => /fruits and vegetables consumed per day.*3/i.test(o.display)),
     ).toBeTruthy();
     expect(obs.some((o) => /days per week of moderate exercise.*4/i.test(o.display))).toBeTruthy();
-    // Swapped-pairing quirk (verification note 5): selecting "No" above
-    // actually records the "Yes" concept.
-    expect(obs.some((o) => /hospitalized since last visit.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /hospitalized since last visit.*no/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /medications dispensed.*amlodipine 5mg daily/i.test(o.display))).toBeTruthy();
-    // Swapped-pairing quirk (verification note 5): selecting "Yes" above
-    // actually records the "No" concept.
-    expect(obs.some((o) => /treatment changed at this visit.*no/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /treatment changed at this visit.*yes/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /general comment.*patient reports improved symptoms/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => new RegExp(`appointment date.*${appointmentDate}`, 'i').test(o.display))).toBeTruthy();
     expect(obs.some((o) => /next appointment location.*advanced ncd clinic/i.test(o.display))).toBeTruthy();

@@ -301,7 +301,7 @@
             <tr>
                 <th>Hospitalized since last visit for NCD?</th>
                 <td><obs conceptId="$hospitalSince" style="radio" answerLabels="No, Yes"
-                         answerConceptIds="$yesAnswer,$noAnswer" /></td>
+                         answerConceptIds="$noAnswer,$yesAnswer" /></td>
             </tr>
 
             <tr>
@@ -312,7 +312,7 @@
             <tr>
                 <th>Medications changed</th>
                 <td><obs conceptId="$medsChanged" style="radio" answerLabels="No, Yes"
-                         answerConceptIds="$yesAnswer,$noAnswer"/></td>
+                         answerConceptIds="$noAnswer,$yesAnswer"/></td>
             </tr>
 
             <tr>
