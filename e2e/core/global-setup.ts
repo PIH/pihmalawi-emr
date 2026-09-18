@@ -21,7 +21,7 @@ async function globalSetup() {
     throw new Error(`Global setup login failed: ${res.status()} ${await res.text()}`);
   }
 
-  await requestContext.storageState({ path: 'e2e/storageState.json' });
+  await requestContext.storageState({ path: 'storageState.json' });
   await requestContext.dispose();
 }
 

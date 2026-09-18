@@ -50,12 +50,15 @@ jobs:
           node-version: 20
 
       - name: Install e2e dependencies
+        working-directory: e2e
         run: npm ci
 
       - name: Install Playwright browsers
+        working-directory: e2e
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
+        working-directory: e2e
         env:
           E2E_BASE_URL: http://localhost:8080/openmrs
           E2E_USER_ADMIN_USERNAME: admin
@@ -67,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-report
-          path: playwright-report/
+          path: e2e/playwright-report/
           retention-days: 1
 
       - name: Destroy instance
