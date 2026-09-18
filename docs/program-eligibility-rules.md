@@ -25,6 +25,69 @@ Extracted from `EMastercardAccessTag.java`, `QuickProgramsTag.java`, and
 JSP line above and confirmed directly against `programWorkflowStates.csv:50`. Do not confuse the
 two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to the old model).
 
+## Chronic Care Program
+
+| Condition | Value | Source |
+|---|---|---|
+| Program | Chronic Care Program | `program.chronicCare.uuid` = `6685164a-977f-11e1-8993-905e29aff6c1` (`content/configuration/backend_configuration/programs/programs.csv`) |
+| Identifier type | Chronic Care Number | `11a76c3e-1db8-4d16-9252-9a18b5ed1843` (`content/configuration/backend_configuration/patientidentifiertypes/identifierTypes.csv`) |
+| Identifier location | Must equal the program enrollment's location | `EMastercardAccessTag` / `Helper.hasIdentifierForEnrollmentLocation` |
+| Additional gate logic | Patient must not be dead; the "Create new" link only renders while **no** initial encounter exists for the respective condition (`initials.size() == 0`) — if exactly one exists, an edit/view link renders instead; if more than one exists, the tag renders "Multiple forms found" | `EMastercardAccessTag.doStartTag` |
+
+### Hypertension and Diabetes
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | diabetesHypertensionTreatment | `programWorkflow.diabetesHypertensionTreatment.uuid` = `9b571347-8dc3-40fe-9994-e82071fa8290` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `d5d2d3bf-9cca-4a1f-9c69-f7713ed8fff4`, `Initial=true`; in Advance Care state uuid `00be3c91-ecd2-482e-8c7a-7bdd49c997e7`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | DIABETES HYPERTENSION INITIAL VISIT (header), DIABETES HYPERTENSION FOLLOWUP (visit) | header encounter type `664b9442-977f-11e1-8993-905e29aff6c1`; visit encounter type `66079de4-a8df-11e5-bf7f-feff819cdc9f` |
+| Forms | `diabetes-hypertension-emastercard.xml` (form uuid `8cfee016-cacb-11e5-9956-625662870761`), `diabetes-hypertension-visit.xml` (form uuid `8cfedcc4-cacb-11e5-9956-625662870761`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:176`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Hypertension and Diabetes eMastercard" initialEncounterType="DIABETES HYPERTENSION INITIAL VISIT" followupEncounterType="DIABETES HYPERTENSION FOLLOWUP" programWorkflowStates="${DIABETESHYPERTENSIONActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
+
+### Chronic Lung Disease
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | asthmaTreatment | `programWorkflow.asthmaTreatment.uuid` = `319838b7-23cb-4e04-9b36-ad1e83cbeaaf` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `7f2fc125-f9bc-4195-b879-3060a386468a`, `Initial=true`; in Advance Care state uuid `8f395143-5f5a-4171-8e10-aef931e16bcf`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | ASTHMA_INITIAL (header), ASTHMA_FOLLOWUP (visit) | header encounter type `a95dc43f-925c-11e5-a1de-e82aea237783`; visit encounter type `f4596df5-925c-11e5-a1de-e82aea237783` |
+| Forms | `asthma-emastercard.xml` (form uuid `08f273c2-8c38-11e5-80a3-c0430f805837`), `asthma-visit.xml` (form uuid `fcf29c1a-8c45-11e5-80a3-c0430f805837`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:180`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Chronic Lung Disease eMastercard" initialEncounterType="ASTHMA_INITIAL" followupEncounterType="ASTHMA_FOLLOWUP" programWorkflowStates="${ASTHMASTATEActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
+
+### Cardiac and Vascular Disease
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | chfTreatment | `programWorkflow.chfTreatment.uuid` = `cc76c7c2-8760-4ff6-8ed7-617a7378915b` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `3a9724e5-fc65-4a48-8d0b-2b1265106552`, `Initial=true`; in Advance Care state uuid `b002c86b-e22c-484a-a9a5-a12543b4a1b1`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | CHF_INITIAL (header), CHF_FOLLOWUP (visit) | header encounter type `cb337ef3-f5cb-4e10-af8d-8d717a3a139f`; visit encounter type `1f6ad830-6e94-4819-b1fd-8c4146e77280` |
+| Forms | `chf-emastercard.xml` (form uuid `40c59f30-794e-11e8-adc0-fa7ae01bbebc`), `chf-visit.xml` (form uuid `4a5c17b8-794e-11e8-adc0-fa7ae01bbebc`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:184`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Cardiac and Vascular Disease eMastercard" initialEncounterType="CHF_INITIAL" followupEncounterType="CHF_FOLLOWUP" programWorkflowStates="${CHFActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
+
+### Chronic Kidney Disease
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | ckdTreatment | `programWorkflow.ckdTreatment.uuid` = `4eda02b2-48ca-47dc-9166-483a6499bcbd` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `908552d7-2bb3-4e4f-9ba1-ec22c2c3f2b6`, `Initial=true`; in Advance Care state uuid `c5ddd2d0-33f3-4d1e-8f7d-f58beec5ece9`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | CKD_INITIAL (header), CKD_FOLLOWUP (visit) | header encounter type `0a3621e2-974e-11e8-9eb6-529269fb1459`; visit encounter type `1ebe2272-974e-11e8-9eb6-529269fb1459` |
+| Forms | `ckd-emastercard.xml` (form uuid `ec0a340c-9751-11e8-9eb6-529269fb1459`), `ckd-visit.xml` (form uuid `ec0a1fb2-9751-11e8-9eb6-529269fb1459`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:188`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Chronic Kidney Disease eMastercard" initialEncounterType="CKD_INITIAL" followupEncounterType="CKD_FOLLOWUP" programWorkflowStates="${CKDActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
+
+### NCD Other
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | ncdOtherTreatment | `programWorkflow.ncdOtherTreatment.uuid` = `62481c50-155c-45be-b4e9-39a38a9cbfda` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `cfec993e-ae2f-4f16-bea5-4bd26752bc89`, `Initial=true`; in Advance Care state uuid `05865dda-5934-4fcd-93eb-3d149edbdba0`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | NCD_OTHER_INITIAL (header), NCD_OTHER_FOLLOWUP (visit) | header encounter type `b562295c-e335-11e8-9f32-f2801f1b9fd1`; visit encounter type `b5622bf0-e335-11e8-9f32-f2801f1b9fd1` |
+| Forms | `ncd-other-emastercard.xml` (form uuid `766c92e8-e35b-11e8-9f32-f2801f1b9fd1`), `ncd-other-visit.xml` (form uuid `766c8c30-e35b-11e8-9f32-f2801f1b9fd1`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:198`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="NCD Other eMastercard" initialEncounterType="NCD_OTHER_INITIAL" followupEncounterType="NCD_OTHER_FOLLOWUP" programWorkflowStates="${NCDOTHERActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
+
+**Note on Sickle Cell Disease**: Uses the same program but is commented out in the JSP (`SCDActiveStates` gate, `malawiPatientDashboard.jsp:190` — see MLW-1568's comment "uncomment when all related forms complete") — not live, excluded here.
+
+**Note on the generic Chronic Care eMastercard**: The `CHRONIC_CARE_INITIAL`/`CHRONIC_CARE_FOLLOWUP` workflow row (workflow `chronicCareTreatmentStatus` = `6687086a-977f-11e1-8993-905e29aff6c1`, states `66882650-977f-11e1-8993-905e29aff6c1`/`7c4d2e56-c8c2-11e8-9bc6-0242ac110001`) is a separate, generic mastercard not covered by this doc's condition-specific tables.
+
 ## Mastercard launch URL pattern
 
 Built by `EMastercardAccessTag.getNewMasterCardConfiguration`:
@@ -42,6 +105,29 @@ Built by `EMastercardAccessTag.getNewMasterCardConfiguration`:
 View mode appends `&viewOnly=true`. The pilot's "visit encounter" scenario targets the `art-visit`
 tab specifically (one of three flowsheet tabs alongside `viral-load-tests` and
 `art-follow-up-testing`).
+
+### NCD Other
+
+Confirmed the same way as the HIV/ART pattern above — live-rendering `patientDashboard.form` for
+an eligible fixture patient (`eligibleNcdOtherPatient`) and dumping the "Create new NCD Other
+eMastercard" link's `onclick` (it has no `href` attribute either, same as ART's link):
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/ncd-other-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-quarterly-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-annual-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/ncd-other-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+A completely different `headerForm` and flowsheet list than ART's — confirmed NOT reusable from
+`EMastercardAccessTag.getNewMasterCardConfiguration`'s generic shape alone, since each program's
+`malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
+transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
+too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
 
 ## Quick-programs enrollment mechanics
 
@@ -70,4 +156,4 @@ the resulting reload; there is no plain-form path for this once a patient is alr
 Not documented yet — out of scope for this pilot. Follow the same extraction method
 (`EMastercardAccessTag` usages in `malawiPatientDashboard.jsp`, cross-referenced against
 `programs.csv`/`programWorkflows.csv`/`programWorkflowStates.csv`) when a given program's tests
-are built.
+are built. (Mental Health, TB, and other programs in `malawiPatientDashboard.jsp` remain to be documented.)

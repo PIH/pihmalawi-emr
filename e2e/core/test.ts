@@ -6,6 +6,7 @@ import {
   getPatient,
   addPatientIdentifier,
   enrollInProgram,
+  createEligibleChronicCarePatient,
   purgeProgramEnrollments,
   purgeEncountersForPatient,
   type TestPatient,
@@ -15,10 +16,12 @@ import {
   ON_ARVS_STATE_UUID,
   ARV_NUMBER_IDENTIFIER_TYPE_UUID,
   NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
+  NCD_OTHER_ON_TREATMENT_STATE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
   eligibleHivArtPatient: TestPatient;
+  eligibleNcdOtherPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -58,6 +61,23 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       // Task 9's MastercardFormPage) and program enrollments must be purged
       // first. See Task 5's purgeProgramEnrollments and Task 9's
       // purgeEncountersForPatient for the verified FK chain.
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleNcdOtherPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleChronicCarePatient(api, {
+        workflowStateUuid: NCD_OTHER_ON_TREATMENT_STATE_UUID,
+        identifierPrefix: 'CCN',
+      });
+
+      await use(patient);
+
+      // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
       await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
