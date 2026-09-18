@@ -1,5 +1,5 @@
 import { test, expect } from '../../core';
-import { createPatient, addPatientIdentifier } from '../../commands';
+import { createPatient, addPatientIdentifier, purgeProgramEnrollments, deletePatient } from '../../commands';
 import { QuickProgramsPage, MastercardGatePage } from '../../pages';
 import { ARV_NUMBER_IDENTIFIER_TYPE_UUID, NENO_DISTRICT_HOSPITAL_LOCATION_UUID } from '../../core/constants';
 
@@ -35,4 +35,7 @@ test('ART mastercard is only offered once program, state, and identifier criteri
 
   // 4. Now the gate should be open ("Create new ART eMastercard" link visible)
   expect(await MastercardGatePage.isCreateLinkVisibleOnDashboard(page, patient.uuid)).toBe(true);
+
+  await purgeProgramEnrollments(api, patient.uuid);
+  await deletePatient(api, patient.uuid);
 });
