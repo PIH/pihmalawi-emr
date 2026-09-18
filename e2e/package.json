@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "End-to-end regression tests for pihmalawi-emr",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test-e2e": "playwright test",
     "test-e2e:ui": "playwright test --ui"

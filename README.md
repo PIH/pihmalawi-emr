@@ -118,7 +118,8 @@ in the HIV program, and completing the ART mastercard (header and visit forms) â
 legacy web UI. See [`docs/program-eligibility-rules.md`](docs/program-eligibility-rules.md) for the
 underlying program/mastercard eligibility rules the tests exercise.
 
-The suite needs a running local instance to test against (see "Using Docker" above).
+The suite needs a running local instance to test against (see "Using Docker" above), and Node.js
+22+ (see [`e2e/.nvmrc`](e2e/.nvmrc); `nvm use` picks it up automatically if you use nvm).
 
 ```bash
 cd e2e

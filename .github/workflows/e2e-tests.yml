@@ -47,7 +47,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: e2e/.nvmrc
 
       - name: Install e2e dependencies
         working-directory: e2e
