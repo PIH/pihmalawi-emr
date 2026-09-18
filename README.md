@@ -110,6 +110,29 @@ openmrs-docker neno-ci logs
 openmrs-docker neno-ci destroy
 ```
 
+## End-to-End Tests
+
+A standalone Playwright/TypeScript E2E test suite lives under [`e2e/`](e2e), separate from the
+Maven build. It currently pilots one full workflow end-to-end — creating a patient, enrolling them
+in the HIV program, and completing the ART mastercard (header and visit forms) — against the
+legacy web UI. See [`docs/program-eligibility-rules.md`](docs/program-eligibility-rules.md) for the
+underlying program/mastercard eligibility rules the tests exercise.
+
+The suite needs a running local instance to test against (see "Using Docker" above).
+
+```bash
+cd e2e
+npm install
+npx playwright install chromium
+cp .env.example .env   # edit if your instance's URL/credentials differ from the defaults
+npx playwright test
+```
+
+A `workflow_dispatch`-only GitHub Actions workflow
+([`e2e-tests.yml`](.github/workflows/e2e-tests.yml)) runs the same suite against an ephemeral
+`openmrs-docker` instance; trigger it manually from the Actions tab when you want to validate a
+change without running locally.
+
 ## CI and Publishing
 
 CI is handled by GitHub Actions. On every push to `master`, the
