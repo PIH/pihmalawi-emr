@@ -51,7 +51,7 @@ two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to
 | Workflow | asthmaTreatment | `programWorkflow.asthmaTreatment.uuid` = `319838b7-23cb-4e04-9b36-ad1e83cbeaaf` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
 | Qualifying states | On Treatment | state uuid `7f2fc125-f9bc-4195-b879-3060a386468a`, `Initial=true`; in Advance Care state uuid `8f395143-5f5a-4171-8e10-aef931e16bcf`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
 | Encounter types unlocked | ASTHMA_INITIAL (header), ASTHMA_FOLLOWUP (visit) | header encounter type `a95dc43f-925c-11e5-a1de-e82aea237783`; visit encounter type `f4596df5-925c-11e5-a1de-e82aea237783` |
-| Forms | `asthma-emastercard.xml` (form uuid `08f273c2-8c38-11e5-80a3-c0430f805837`), `asthma-visit.xml` (form uuid `fcf29c1a-8c45-11e5-80a3-c0430f805837`) | `content/configuration/backend_configuration/htmlforms/` |
+| Forms | `chronic-lung-disease-emastercard.xml` (form uuid `08f273c2-8c38-11e5-80a3-c0430f805837`), `chronic-lung-disease-visit.xml` (form uuid `fcf29c1a-8c45-11e5-80a3-c0430f805837`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:180`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Chronic Lung Disease eMastercard" initialEncounterType="ASTHMA_INITIAL" followupEncounterType="ASTHMA_FOLLOWUP" programWorkflowStates="${ASTHMASTATEActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
 
 ### Cardiac and Vascular Disease
@@ -128,6 +128,25 @@ A completely different `headerForm` and flowsheet list than ART's — confirmed 
 `malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
 transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
 too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
+
+### Chronic Lung Disease
+
+Confirmed against `EMastercardAccessTag.getNewMasterCardConfiguration`'s `flowsheetForms` map
+(keyed by `PihMalawiConfigConstants.ENCOUNTERTYPE_ASTHMA_INITIAL_NAME`), not live-rendered:
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/chronic-lung-disease-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/chronic-lung-disease-visit.xml
+  &flowsheets=file:configuration/htmlforms/chronic-lung-disease-peak-flow.xml
+  &flowsheets=file:configuration/htmlforms/chronic-lung-disease-hospitalization.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+Note the `chronic-lung-disease-visit` flowsheet tab is listed *first* here (unlike NCD Other/ART
+where the "visit" form is listed last) — order matters only for which tab is initially selected in
+the UI, not for form availability.
 
 ## Quick-programs enrollment mechanics
 
