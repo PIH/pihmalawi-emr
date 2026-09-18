@@ -142,4 +142,22 @@
 		</delete>
 	</changeSet>
 
+	<changeSet id="20260917-remove-unused-concept-sources" author="mseaton">
+		<comment>MLW-1774 - Remove unused concept sources</comment>
+		<delete tableName="concept_reference_source">
+			<where>name in (
+				'ICD-10',
+				'ICD-10-WHO',
+				'IMO ProblemIT',
+				'IMO ProcedureIT',
+				'Millenium Village Project',
+				'RxNORM',
+				'SNOMED MVP',
+				'local',
+				'org.openmrs.module.mdrtb',
+				'org.openmrs.module.mirebalaisreports'
+			)</where>
+		</delete>
+	</changeSet>
+
 </databaseChangeLog>
