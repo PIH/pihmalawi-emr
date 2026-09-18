@@ -53,7 +53,7 @@ export const getProgramEnrollments = async (
   api: APIRequestContext,
   patientUuid: string,
 ): Promise<ProgramEnrollment[]> => {
-  const res = await api.get(`programenrollment?patient=${patientUuid}&v=full`);
+  const res = await api.get(`programenrollment?patient=${patientUuid}&v=full&limit=100`);
   expect(res.ok()).toBeTruthy();
   const body = await res.json();
   return body.results;

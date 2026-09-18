@@ -16,12 +16,12 @@ import { type APIRequestContext, expect } from '@playwright/test';
 // `encounter`, CONSTRAINT `encounter_patient` FOREIGN KEY (patient_id)
 // REFERENCES `patient`.
 export const purgeEncountersForPatient = async (api: APIRequestContext, patientUuid: string): Promise<void> => {
-  const encountersRes = await api.get(`encounter?patient=${patientUuid}`);
+  const encountersRes = await api.get(`encounter?patient=${patientUuid}&limit=100`);
   expect(encountersRes.ok()).toBeTruthy();
   const { results: encounters } = await encountersRes.json();
 
   for (const encounter of encounters) {
-    const obsRes = await api.get(`obs?encounter=${encounter.uuid}`);
+    const obsRes = await api.get(`obs?encounter=${encounter.uuid}&limit=100`);
     expect(obsRes.ok()).toBeTruthy();
     const { results: obs } = await obsRes.json();
     for (const o of obs) {
