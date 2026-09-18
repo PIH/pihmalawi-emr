@@ -129,6 +129,17 @@ cp .env.example .env   # edit if your instance's URL/credentials differ from the
 npx playwright test
 ```
 
+To watch the tests run in a real, visible browser instead of headless, on a machine with a
+display:
+
+```bash
+npx playwright test --headed     # runs headed, but fast — the suite has no slowMo configured
+npx playwright test --ui         # or: npm run test-e2e:ui — live preview, timeline, step-through
+npx playwright test --debug      # pauses at each action via the Playwright Inspector
+```
+
+`--ui` is the most comfortable way to actually watch a run, since plain `--headed` tends to fly by.
+
 A `workflow_dispatch`-only GitHub Actions workflow
 ([`e2e-tests.yml`](.github/workflows/e2e-tests.yml)) runs the same suite against an ephemeral
 `openmrs-docker` instance; trigger it manually from the Actions tab when you want to validate a
