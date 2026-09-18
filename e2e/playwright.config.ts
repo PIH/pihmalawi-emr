@@ -9,13 +9,22 @@ const config: PlaywrightTestConfig = {
     timeout: 40 * 1000,
   },
   fullyParallel: true,
-  // Pinned to 1 worker: this OpenMRS instance's webservices.rest stack has a
-  // verified concurrency bug under simultaneous multi-step REST writes (e.g.
-  // two concurrent create-patient-then-enroll chains) — reproduced directly
-  // via raw concurrent curl requests, outside Playwright entirely, ~50%
-  // failure rate ("Patient is required" on a POST that demonstrably included
-  // a valid patient uuid). Not a bug in this test suite's code. Revisit if
-  // the underlying OpenMRS/webservices.rest race is ever root-caused and fixed.
+  // Still pinned to 1 worker — NOT the same reason as before. The original
+  // REST-level concurrency bug (concurrent create-patient-then-enroll chains
+  // failing with a spurious "Patient is required") was root-caused to
+  // openmrs-module-namephonetics (an unsafe write inside a Hibernate
+  // pre-commit hook, not webservices.rest) and a fix was validated directly
+  // against this repo's REST API (raw concurrent curl, 0/24 failures) — see
+  // ~/environments/claude/2026-09-18-openmrs-rest-concurrency-bug-investigation.md.
+  // But re-validating the actual Playwright suite under real parallelism
+  // surfaced a SECOND, separate, still-unresolved flake: `save()`'s
+  // `expectSaveSuccess()` step can intermittently see the "Back to
+  // Dashboard" link stuck at `visibility: hidden` for the full 40s
+  // assertion timeout under real parallel load (~1/12 runs observed) — a
+  // different mechanism than the noTabletsGiven stale-error race already
+  // fixed in mastercard-page.ts's save(). Root cause not yet found. Revisit
+  // removing this pin once that second flake is also fixed and the suite
+  // has been stress-tested clean across many real-parallel runs.
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: 0,

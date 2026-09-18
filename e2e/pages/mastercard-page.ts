@@ -625,21 +625,42 @@ export class MastercardFormPage {
   }
 
   async save(): Promise<void> {
-    // Defensively clear art-visit.xml's own stale-"Required"-error race on
-    // `noTabletsGiven` before submitting — see Task 13 verification note 9.
-    // A no-op (aside from the `count()` check) for forms without this field
-    // (e.g. the header form).
+    // art-visit.xml's own bundled JS has a stale-"Required"-error mechanism
+    // on `noTabletsGiven` that can repaint AFTER it's been cleared, not just
+    // before — see Task 14 verification note 10 for the full evidence (a
+    // live trace under real parallel load caught the error reappearing on a
+    // correctly-filled field between a verified clear and the click that
+    // immediately followed it, something a single clear-then-click could
+    // never observe or recover from). Rather than model this third-party
+    // script's exact timing (its full source isn't in this repo), retry the
+    // whole clear-and-click sequence: `.click()` only ever dispatches a
+    // real click once the button is actually visible/enabled/stable, so a
+    // short per-attempt timeout that throws means zero clicks happened —
+    // safe to re-clear and retry with no double-submit risk. A no-op
+    // clear step (aside from the `count()` check) for forms without this
+    // field (e.g. the header form).
     const noTabletsGivenInput = this.page.locator('#noTabletsGiven input').first();
-    if (await noTabletsGivenInput.count()) {
-      await this.page.waitForTimeout(1600);
-      await noTabletsGivenInput.evaluate((el) => el.dispatchEvent(new Event('change', { bubbles: true })));
-    }
+    const hasNoTabletsGiven = (await noTabletsGivenInput.count()) > 0;
+    const submitButton = this.page.locator('.submitButton').first();
 
-    // `.submitButton` is the stable class htmlformentry always applies to
-    // its generated submit control, regardless of visible label — see
-    // verification note 5 above (art-visit.xml's bare `<submit/>` renders
-    // as "Enter Form", not "Save").
-    await this.page.locator('.submitButton').first().click();
+    for (let attempt = 1; attempt <= 6; attempt++) {
+      if (hasNoTabletsGiven) {
+        await noTabletsGivenInput.evaluate((el) => el.dispatchEvent(new Event('change', { bubbles: true })));
+      }
+      try {
+        await submitButton.click({ timeout: 3000 });
+        return;
+      } catch (e) {
+        if (attempt === 6) {
+          throw new Error(
+            `submitButton never became clickable after 6 retries (likely noTabletsGiven's stale 'Required' error) — see save()'s verification note. Original: ${e}`,
+          );
+        }
+        // Button still disabled — the stale error was (re)painted after our
+        // clear. No click was dispatched (click() only clicks once
+        // actionable), so it's safe to re-clear and retry.
+      }
+    }
   }
 
   async expectSaveSuccess(): Promise<void> {
