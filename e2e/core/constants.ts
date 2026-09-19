@@ -79,3 +79,45 @@ export const SCD_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'd4073eb7-60b1-4586-b062-13fce4c
 
 export const SCD_EMASTERCARD_FORM_UUID = '7afec71b-15d3-4e2d-8c42-d8cb2b75bc54';
 export const SCD_VISIT_FORM_UUID = 'e68275d4-c300-46b0-8754-4c2cf2598b78';
+
+// TB Program — own program/workflow (not Chronic Care Program). The
+// programs.csv/programworkflows.csv `${program.tb.uuid}` token does NOT match
+// this live instance's actual "TB PROGRAM" uuid (confirmed via REST — that
+// token resolves to a different, non-existent uuid here); the real program
+// uuid and its "On treatment" state below were confirmed live via
+// `GET program/<uuid>?v=full`, matching malawiPatientDashboard.jsp's
+// TbActiveStates state list.
+export const TB_PROGRAM_UUID = '52D0036A-AB35-475E-A4D4-1826CCD985D6';
+export const TB_ON_TREATMENT_STATE_UUID = '5088F779-AD8D-4EEF-A504-9B5C2D96ED62';
+export const TB_PROGRAM_IDENTIFIER_TYPE_UUID = 'F4319B47-4141-48DF-9F41-5CF7E6301EC6';
+
+export const TB_INITIAL_ENCOUNTER_TYPE_UUID = '853B7AF6-FFC6-452A-9178-6A48BBA752EF';
+export const TB_FOLLOWUP_ENCOUNTER_TYPE_UUID = '61545FD5-4EBC-4E01-B349-304195254A73';
+
+// Mental Health Care Program — own program/workflow. Same caveat as TB
+// above: the programs.csv token's uuid doesn't match this live instance's
+// actual program uuid. Confirmed live via `GET program/<uuid>?v=full`: the
+// real "MENTAL HEALTH CARE PROGRAM" uuid below has a workflow
+// (da69bbcb-01fe-4c59-9d46-8a2659abbd73) whose "On treatment" state matches
+// mental-health-emastercard.xml's own hardcoded Outcome lookup — the
+// strongest available confirmation this is the workflow the mastercard
+// actually gates on (of MentalHealthActiveStates' 4 listed states, this is
+// the only "On treatment" one live in this program). Uses the Chronic Care
+// Number identifier type, same as the Chronic Care Program conditions.
+export const MENTAL_HEALTH_PROGRAM_UUID = '60357F01-536E-4B59-A851-B000F801FB13';
+export const MENTAL_HEALTH_ON_TREATMENT_STATE_UUID = '2F76D426-56A9-4651-B253-A2299B442C09';
+
+export const MENTAL_HEALTH_INITIAL_ENCOUNTER_TYPE_UUID = '3F94849C-F245-4593-BCC8-879EAEA29168';
+export const MENTAL_HEALTH_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'D51F45F8-0EEA-4231-A7E9-C45D57F1CBA1';
+
+// Palliative Care Program — own program/workflow. Confirmed live via
+// `GET program/<uuid>?v=full` (matches PihMalawiConfigConstants.java's own
+// PROGRAM_PALLIATIVE_CARE_UUID constant) — programs.csv's own 5th column for
+// this program's row is a concept uuid (the program's "outcome" concept),
+// NOT the program's own uuid, unlike TB's/Mental Health's own rows above.
+export const PALLIATIVE_CARE_PROGRAM_UUID = 'acbd87f3-566f-4386-a11e-877e612d3911';
+export const PALLIATIVE_CARE_ON_TREATMENT_STATE_UUID = '7c1f852e-5120-4371-8136-f64614f5dfc7';
+export const PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID = 'f2b29f9b-69d0-4339-b1aa-55a511672558';
+
+export const PALLIATIVE_INITIAL_ENCOUNTER_TYPE_UUID = 'e0822140-955d-11e7-abc4-cec278b6b50a';
+export const PALLIATIVE_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'e082235c-955d-11e7-abc4-cec278b6b50a';

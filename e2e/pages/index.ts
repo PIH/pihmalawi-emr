@@ -7,5 +7,8 @@ export * from './hypertension-and-diabetes-mastercard-page';
 export * from './cardiac-and-vascular-disease-mastercard-page';
 export * from './chronic-kidney-disease-mastercard-page';
 export * from './sickle-cell-disease-mastercard-page';
+export * from './tb-mastercard-page';
+export * from './mental-health-mastercard-page';
+export * from './palliative-care-mastercard-page';
 export * from './hiv-patient-summary-page';
 export * from './reporting-page';

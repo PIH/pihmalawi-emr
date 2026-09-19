@@ -110,3 +110,37 @@ export const createEligibleChronicCarePatient = async (
   // Refresh patient data to include the added identifier
   return getPatient(api, patient.uuid);
 };
+
+export interface ProgramEligibilityOptions {
+  programUuid: string;
+  workflowStateUuid: string;
+  identifierTypeUuid: string;
+  identifierPrefix: string;
+}
+
+// Generalized version of createEligibleChronicCarePatient for programs OTHER
+// THAN the Chronic Care Program (e.g. TB, Mental Health, Palliative Care —
+// each its own program/workflow, per malawiPatientDashboard.jsp).
+export const createEligibleProgramPatient = async (
+  api: APIRequestContext,
+  opts: ProgramEligibilityOptions,
+): Promise<TestPatient> => {
+  const patient = await createPatient(api, { givenName: 'AutoChronic', familyName: 'Pilot' });
+
+  await addPatientIdentifier(api, patient.uuid, {
+    identifierTypeUuid: opts.identifierTypeUuid,
+    identifier: `${opts.identifierPrefix}-E2E-${Date.now()}`,
+    locationUuid: NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
+    preferred: false,
+  });
+
+  await enrollInProgram(api, {
+    patientUuid: patient.uuid,
+    programUuid: opts.programUuid,
+    locationUuid: NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
+    dateEnrolled: new Date().toISOString().slice(0, 10),
+    initialState: { stateUuid: opts.workflowStateUuid, startDate: new Date().toISOString().slice(0, 10) },
+  });
+
+  return getPatient(api, patient.uuid);
+};

@@ -7,6 +7,7 @@ import {
   addPatientIdentifier,
   enrollInProgram,
   createEligibleChronicCarePatient,
+  createEligibleProgramPatient,
   purgeProgramEnrollments,
   purgeEncountersForPatient,
   type TestPatient,
@@ -22,6 +23,15 @@ import {
   CHF_ON_TREATMENT_STATE_UUID,
   CKD_ON_TREATMENT_STATE_UUID,
   SCD_ON_TREATMENT_STATE_UUID,
+  TB_PROGRAM_UUID,
+  TB_ON_TREATMENT_STATE_UUID,
+  TB_PROGRAM_IDENTIFIER_TYPE_UUID,
+  MENTAL_HEALTH_PROGRAM_UUID,
+  MENTAL_HEALTH_ON_TREATMENT_STATE_UUID,
+  CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+  PALLIATIVE_CARE_PROGRAM_UUID,
+  PALLIATIVE_CARE_ON_TREATMENT_STATE_UUID,
+  PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -32,6 +42,9 @@ export interface CustomTestFixtures {
   eligibleCardiacAndVascularDiseasePatient: TestPatient;
   eligibleChronicKidneyDiseasePatient: TestPatient;
   eligibleSickleCellDiseasePatient: TestPatient;
+  eligibleTbPatient: TestPatient;
+  eligibleMentalHealthPatient: TestPatient;
+  eligiblePalliativeCarePatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -173,6 +186,60 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       await use(patient);
 
       // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleTbPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: TB_PROGRAM_UUID,
+        workflowStateUuid: TB_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: TB_PROGRAM_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'TB',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleMentalHealthPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: MENTAL_HEALTH_PROGRAM_UUID,
+        workflowStateUuid: MENTAL_HEALTH_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'CCN',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligiblePalliativeCarePatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: PALLIATIVE_CARE_PROGRAM_UUID,
+        workflowStateUuid: PALLIATIVE_CARE_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'PC',
+      });
+
+      await use(patient);
+
       await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
