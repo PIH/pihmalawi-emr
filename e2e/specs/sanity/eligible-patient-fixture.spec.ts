@@ -20,3 +20,14 @@ test('eligibleNcdOtherPatient fixture creates a patient that meets the NCD Other
     ),
   ).toBeTruthy();
 });
+
+test('eligibleChronicKidneyDiseasePatient fixture creates a patient that meets the Chronic Kidney Disease mastercard gate', async ({
+  eligibleChronicKidneyDiseasePatient,
+}) => {
+  expect(eligibleChronicKidneyDiseasePatient.uuid).toBeTruthy();
+  expect(
+    eligibleChronicKidneyDiseasePatient.identifiers.some(
+      (i) => i.identifierType.uuid === CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+    ),
+  ).toBeTruthy();
+});
