@@ -157,10 +157,15 @@
                         <obs conceptId="$cd4SampleTaken" style="checkbox" answerConceptId="$yes" answerLabel="Bled" />
                     </td>
                     <td>
-                        <!-- CD4 result -->                
+                        <!-- CD4 result -->
+                        <!-- The unquoted $fn.latestObs($cd4Value) form here used to be a live Velocity parse
+                             error: macro substitution replaces $cd4Value with the bare, hyphenated concept
+                             uuid text, which isn't valid unquoted Velocity syntax as a method argument. Quoted
+                             it so the substituted uuid is a valid Velocity string literal (same fix applied to
+                             the identical sibling CD4 Value row below). -->
                         <lookup complexExpression="
                             #set ($obs = false)
-                            #set ($obs = $fn.latestObs($cd4Value))
+                            #set ($obs = $fn.latestObs('$cd4Value'))
                             #if (!$obs)
                                 #set ($obsResult = 'N/A')
                                 #set ($obsDate = 'N/A')
@@ -270,10 +275,14 @@
                     <td><obs conceptId="$cd4SampleTaken" style="checkbox" answerConceptId="$yes" answerLabel="Bled" /></td>
                 </tr>
                 <tr>
-                    <th>CD4 Value</th>    
+                    <th>CD4 Value</th>
+                    <!-- Was hardcoded to concept id 3434, which in this instance resolves to the unrelated
+                         "Hunger" concept (copy-paste leftover), not a CD4 count. This form already has a
+                         $cd4Value macro (used both by the sibling CD4 Value row above and by the
+                         conceptId="$cd4Value" widget on this very row), so switched to that. -->
                     <td><lookup complexExpression="
                         #set ($obs = false)
-                        #set ($obs = $fn.latestObs(3434))
+                        #set ($obs = $fn.latestObs('$cd4Value'))
                         #if (!$obs)
                             #set ($obsResult = 'N/A')
                             #set ($obsDate = 'N/A')
