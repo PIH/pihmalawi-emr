@@ -45,18 +45,7 @@ test.describe('Sickle Cell Disease visit mastercard', () => {
     const appointmentDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     await fillSickleCellDiseaseVisitForm(visitForm, { encounterDate, appointmentDate });
 
-    // `save(true)` — this form's own real app bug (see
-    // fillSickleCellDiseaseVisitForm's own verification note 0) leaves its
-    // entire edit section, submit button included, permanently
-    // `display:none`; `force: true` routes the click through a raw DOM
-    // `.click()` rather than a simulated mouse click, which needs no
-    // bounding box at all, AND waits for the real submit response directly
-    // (see `save()`'s own comment on why `expectSaveSuccess()`'s usual
-    // "Back to Dashboard" signal is meaningless for this specific form —
-    // it's still called below for consistency with every other pilot's own
-    // spec shape, but the REST assertions further down are what actually
-    // confirm the save).
-    await visitForm.save(true);
+    await visitForm.save();
     await visitForm.expectSaveSuccess();
 
     const res = await api.get(
@@ -91,18 +80,14 @@ test.describe('Sickle Cell Disease visit mastercard', () => {
     expect(obs.some((o) => /ascites.*no/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /lung exam findings.*no/i.test(o.display))).toBeTruthy();
 
-    // The following 4 assertions check the REAL (semantically mismatched —
-    // see fillSickleCellDiseaseVisitForm's own "CONTENT BUG CANDIDATE"
-    // verification note 5) concept names actually saved for these rows —
-    // NOT the on-screen row labels ("Jaundice"/"Irregular Conjunctiva"/
-    // "Enlarged Spleen"/"Absence from School"). Confirmed live these are the
-    // ACTUAL resulting `display` strings, not a typo in this spec.
-    expect(obs.some((o) => /extremity exam findings.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /diagnosis resolved.*no/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /complications since last visit.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /attended school ever.*yes/i.test(o.display))).toBeTruthy();
+    // Concept names actually saved for these rows now match their on-screen
+    // labels' clinical intent.
+    expect(obs.some((o) => /^jaundice.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /pink conjunctiva.*no/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /no presence of splenomegaly.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /are you in school.*yes/i.test(o.display))).toBeTruthy();
     // "Medication Rx" → real concept "Malaria" (thematically adjacent, not
-    // counted as a mismatch — see the same verification note).
+    // counted as a mismatch).
     expect(obs.some((o) => /^malaria.*yes/i.test(o.display))).toBeTruthy();
     // "Fever" → real concept name is the TB red-flag-symptom construct.
     expect(
@@ -110,7 +95,7 @@ test.describe('Sickle Cell Disease visit mastercard', () => {
     ).toBeTruthy();
 
     // 5 independent, single-drug "Prescription construct" obsgroups (not a
-    // multi-drug repeat — all 5 filled, see verification note 1). Component
+    // multi-drug repeat — all 5 filled, see verification note 0). Component
     // order is not consistent across rows (confirmed live), so each is
     // asserted via multiple independent substring checks on the SAME obs
     // rather than one fixed-order regex.

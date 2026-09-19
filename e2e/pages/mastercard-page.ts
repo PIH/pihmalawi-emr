@@ -887,17 +887,7 @@ export class MastercardFormPage {
   // label immediately to the input's left in the same table row (or the
   // `cellIndex`-th `<td>` sibling after it, for a second, unlabeled data
   // cell in the same row — see Task 11 verification note 8).
-  // `force`: Sickle Cell Disease pilot addition — bypasses Playwright's
-  // visibility/actionability checks. Needed ONLY for
-  // sickle-cell-disease-visit.xml's own fields: see this file's own
-  // "Sickle Cell Disease pilot (visit form)" verification note below for the
-  // full evidence chain (a genuine app bug — a jQuery selector syntax error
-  // thrown while rendering that form's own medication rows — leaves the
-  // ENTIRE flowsheet edit section, submit button included, permanently
-  // `display:none`, even though every field is present and fully functional
-  // in the DOM). Defaults to `false`, so every other call site/condition is
-  // completely unaffected.
-  async fillField(labelOrId: string, value: string, cellIndex = 1, force = false): Promise<void> {
+  async fillField(labelOrId: string, value: string, cellIndex = 1): Promise<void> {
     // Task 11 addition: real DOM ids are always simple identifier tokens
     // (`guardianNameField`, `appointmentDate`, ...) — the new plain-text
     // labels this task added (e.g. "Age at Init. (yrs)") contain spaces and
@@ -910,11 +900,11 @@ export class MastercardFormPage {
       if (await byId.count()) {
         const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
         if (tagName === 'input' || tagName === 'textarea') {
-          await this.fillPlainInput(byId.first(), value, force);
+          await this.fillPlainInput(byId.first(), value);
           return;
         }
 
-        await this.fillInputOrDatePicker(byId.first().locator('input').first(), value, force);
+        await this.fillInputOrDatePicker(byId.first().locator('input').first(), value);
         return;
       }
     }
@@ -982,7 +972,7 @@ export class MastercardFormPage {
       // Task 13's verification note 1 on that form). Targeted by input order
       // within the row, same as Last ARVs.
       const inputIndex = /^systolicbp$/i.test(labelOrId) ? 0 : 1;
-      await this.fillPlainInput(this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex), value, force);
+      await this.fillPlainInput(this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex), value);
       return;
     }
 
@@ -1035,33 +1025,17 @@ export class MastercardFormPage {
       return;
     }
 
-    await this.fillInputOrDatePicker(
-      this.cellAt(labelOrId, cellIndex).locator('input, textarea').first(),
-      value,
-      force,
-    );
+    await this.fillInputOrDatePicker(this.cellAt(labelOrId, cellIndex).locator('input, textarea').first(), value);
   }
 
   // Fills a value into `input`, using htmlformentry's own datepicker JS API
   // if it's a readonly jQuery-UI-datepicker field (nearly every date field
   // in this form — see Task 11 verification note 1), or a plain `.fill()`
-  // otherwise. `force` — see `fillField`'s own comment above; the datepicker
-  // branch already bypasses actionability checks entirely (pure
-  // `.evaluate()`). For the plain branch, `force:true` routes through a raw
-  // `.evaluate()` that sets `.value` and dispatches `input`/`change`
-  // directly, rather than `.fill({force:true})` — confirmed live that
-  // `{force:true}` alone silently does NOTHING on a genuinely
-  // `display:none`-ancestor element (no error, but the value is never
-  // actually set) for a plain `.fill()`, unlike `.check()`/`.click()`, which
-  // at least throw outright in that situation (see `selectRadio`'s own
-  // comment on why THOSE route through `forceCheck` instead). Only
-  // discovered by directly re-reading the field's own `.value` right after
-  // an apparently-successful, error-free `.fill({force:true})` call and
-  // finding it still empty.
-  private async fillInputOrDatePicker(input: Locator, value: string, force = false): Promise<void> {
+  // otherwise.
+  private async fillInputOrDatePicker(input: Locator, value: string): Promise<void> {
     const isDatePicker = await input.evaluate((el) => el.classList.contains('hasDatepicker'));
     if (!isDatePicker) {
-      await this.fillPlainInput(input, value, force);
+      await this.fillPlainInput(input, value);
       return;
     }
 
@@ -1081,21 +1055,9 @@ export class MastercardFormPage {
     }, value);
   }
 
-  // Fills a plain (non-datepicker) `<input>`/`<textarea>` — `.fill()`
-  // normally, or a raw `.evaluate()` that sets `.value` and dispatches
-  // `input`/`change` when `force` is true — see `fillInputOrDatePicker`'s
-  // own comment on why plain `{force:true}` doesn't work here.
-  private async fillPlainInput(input: Locator, value: string, force = false): Promise<void> {
-    if (!force) {
-      await input.fill(value);
-      return;
-    }
-    await input.evaluate((el, val) => {
-      const field = el as HTMLInputElement | HTMLTextAreaElement;
-      field.value = val;
-      field.dispatchEvent(new Event('input', { bubbles: true }));
-      field.dispatchEvent(new Event('change', { bubbles: true }));
-    }, value);
+  // Fills a plain (non-datepicker) `<input>`/`<textarea>`.
+  private async fillPlainInput(input: Locator, value: string): Promise<void> {
+    await input.fill(value);
   }
 
   // Fills a field in the page header (the `<h4>`, outside
@@ -1109,35 +1071,8 @@ export class MastercardFormPage {
     );
   }
 
-  // `force` — see `fillField`'s own comment on this same parameter. Routes
-  // through `forceCheck` rather than `.check({force:true})`: Playwright's
-  // `force` option only bypasses OVERLAP/stability checks, not visibility —
-  // `.check()` always clicks via real mouse coordinates internally, which a
-  // genuinely `display:none` ancestor has none of, so `force:true` alone
-  // still throws "Element is not visible" (confirmed live). `forceCheck`
-  // instead sets `.checked` directly via `.evaluate()`, which needs no
-  // bounding box at all.
-  async selectRadio(groupLabel: string, optionLabel: string, cellIndex = 1, force = false): Promise<void> {
-    const input = this.cellAt(groupLabel, cellIndex).getByLabel(optionLabel, { exact: true });
-    if (force) {
-      await this.forceCheck(input);
-    } else {
-      await input.check();
-    }
-  }
-
-  // Checks a checkbox/radio purely via `.evaluate()` — sets `.checked` and
-  // dispatches `click`/`change` (the events htmlformentry's own listeners
-  // key off of), bypassing Playwright's actionability model entirely. See
-  // `selectRadio`'s own comment above for why plain `{force:true}` doesn't
-  // work here.
-  private async forceCheck(input: Locator): Promise<void> {
-    await input.evaluate((el) => {
-      const box = el as HTMLInputElement;
-      box.checked = true;
-      box.dispatchEvent(new Event('click', { bubbles: true }));
-      box.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+  async selectRadio(groupLabel: string, optionLabel: string, cellIndex = 1): Promise<void> {
+    await this.cellAt(groupLabel, cellIndex).getByLabel(optionLabel, { exact: true }).check();
   }
 
   // Checks a radio option in a group whose own label lives INSIDE the same
@@ -1222,19 +1157,12 @@ export class MastercardFormPage {
   // (HCTZ/ENAL/ATEN/AML/"Other, " — see this file's own verification note
   // 1a above), none of which have a stable id.
   //
-  // Also used, with `force` support added, by the Sickle Cell Disease
-  // pilot's own header-form Referral History checkboxes (In-Patient/IC3/
-  // OPD/Other), none of which have a stable id (only opaque render-order
-  // ids). `force` — see `fillField`'s own comment on this same parameter,
-  // and `selectRadio`'s own comment on why this routes through `forceCheck`
-  // rather than `.check({force:true})`.
-  async checkByLabel(label: string, force = false): Promise<void> {
-    const input = this.page.getByLabel(label, { exact: true });
-    if (force) {
-      await this.forceCheck(input);
-    } else {
-      await input.check();
-    }
+  // Also used, unchanged, by the Sickle Cell Disease pilot's own header-form
+  // Referral History checkboxes (In-Patient/IC3/OPD/Other) and visit form's
+  // medication checkboxes (SP/FCD/HYD/BZN/Other), none of which have a
+  // stable id (only opaque render-order ids).
+  async checkByLabel(label: string): Promise<void> {
+    await this.page.getByLabel(label, { exact: true }).check();
   }
 
   // Selects an option in the (only) <select> within the same <tr> as a real,
@@ -1331,15 +1259,13 @@ export class MastercardFormPage {
   // have no id either — only a real `<label>` (the XML's own literal
   // `answerLabel="Other, "`).
   //
-  // Also used, with `force` support added, by the Sickle Cell Disease
-  // pilot's own visit-form "Other" medication row (ported from the Chronic
-  // Kidney Disease pilot's identical helper). `force` — see `fillField`'s
-  // own comment on this same parameter.
-  async fillFieldAfterLabel(label: string, value: string, force = false): Promise<void> {
+  // Also used, unchanged, by the Sickle Cell Disease pilot's own visit-form
+  // "Other" medication row (ported from the Chronic Kidney Disease pilot's
+  // identical helper).
+  async fillFieldAfterLabel(label: string, value: string): Promise<void> {
     await this.fillInputOrDatePicker(
       this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::span[1]/following-sibling::input[1]'),
       value,
-      force,
     );
   }
 
@@ -1386,49 +1312,18 @@ export class MastercardFormPage {
   // other fields at a non-1 position — NCD Other pilot, Task 3 addition,
   // mirroring `fillField`/`selectRadio`'s existing `cellIndex` param; default
   // of 1 keeps every prior call site's behavior unchanged).
-  // `force` — see `fillField`'s own comment on this same parameter.
-  // `selectOption` itself has no `force` option (unlike `.fill()`/`.check()`),
-  // so `force: true` routes through `forceSelectOption` (a plain
-  // `.evaluate()` that sets `.value` and dispatches `change`/`input`
-  // directly), bypassing actionability checks entirely.
-  async selectDropdown(labelOrId: string, optionLabel: string, cellIndex = 1, force = false): Promise<void> {
+  async selectDropdown(labelOrId: string, optionLabel: string, cellIndex = 1): Promise<void> {
     // See the `ID_LIKE` guard comment in `fillField` — same reasoning
     // applies here (e.g. the Task 11 label "ART Regimens" has a space), plus
     // the same attribute-selector-not-`#id` reasoning for leading-digit ids.
     if (ID_LIKE.test(labelOrId)) {
       const byId = this.page.locator(`[id="${labelOrId}"] select`);
       if (await byId.count()) {
-        if (force) {
-          await this.forceSelectOption(byId.first(), optionLabel);
-        } else {
-          await byId.first().selectOption({ label: optionLabel });
-        }
+        await byId.first().selectOption({ label: optionLabel });
         return;
       }
     }
-    const select = this.cellAt(labelOrId, cellIndex).locator('select').first();
-    if (force) {
-      await this.forceSelectOption(select, optionLabel);
-    } else {
-      await select.selectOption({ label: optionLabel });
-    }
-  }
-
-  // Selects a `<select>` option by its visible text directly via JS, bypassing
-  // Playwright's actionability (visibility) checks entirely — see
-  // `fillField`'s own comment on the `force` parameter for why this exists
-  // (Sickle Cell Disease pilot's visit form).
-  private async forceSelectOption(select: Locator, optionLabel: string): Promise<void> {
-    await select.evaluate((el, label) => {
-      const s = el as HTMLSelectElement;
-      const opt = Array.from(s.options).find((o) => o.textContent?.trim() === label);
-      if (!opt) {
-        throw new Error(`forceSelectOption: no option with text "${label}" found`);
-      }
-      s.value = opt.value;
-      s.dispatchEvent(new Event('change', { bubbles: true }));
-      s.dispatchEvent(new Event('input', { bubbles: true }));
-    }, optionLabel);
+    await this.cellAt(labelOrId, cellIndex).locator('select').first().selectOption({ label: optionLabel });
   }
 
   // Fills the bare <input>/<textarea> immediately following, as a PLAIN
@@ -1443,120 +1338,13 @@ export class MastercardFormPage {
   // label itself, since there is no control/label pairing here to anchor on
   // — confirmed live via `getByText('Specify:', {exact:true})` matching the
   // `<b>` tag itself and its very next element sibling being the `<textarea>`.
-  // `force` — see `fillField`'s own comment on this same parameter.
-  async fillFieldAfterText(labelText: string, value: string, force = false): Promise<void> {
+  async fillFieldAfterText(labelText: string, value: string): Promise<void> {
     await this.fillInputOrDatePicker(
       this.page
         .getByText(labelText, { exact: true })
         .locator('xpath=following-sibling::*[self::input or self::textarea][1]'),
       value,
-      force,
     );
-  }
-
-  // Fills a byId field, but scoped to the currently-open flowsheet edit
-  // section rather than the whole page — Sickle Cell Disease pilot's own
-  // visit form: its "Next appointment" field reuses the SAME literal id
-  // (`appointmentDate`) as the HEADER form's own "Diagnosis Date" field (a
-  // real content bug — a copy-paste of the id, not a Chronic Care pilot
-  // template — see sickle-cell-disease-mastercard-page.ts's own verification
-  // note). Once a header encounter is saved, its read-only re-render KEEPS
-  // that same id on a plain `<span class="value">` with no `<input>` inside
-  // it at all — so a page-wide `#appointmentDate` lookup is genuinely
-  // ambiguous once both a saved header AND an open visit form share the
-  // page, and `.first()` resolves to the WRONG (header's, input-less) one,
-  // hanging forever waiting for an `<input>` that will never appear inside
-  // it. Scoping to `.flowsheet-edit-section` (which the header's own
-  // `#header-section` is never part of) resolves this unambiguously.
-  async fillFieldInFlowsheetSection(id: string, value: string, force = false): Promise<void> {
-    await this.fillInputOrDatePicker(
-      this.page.locator('.flowsheet-edit-section').locator(`[id="${id}"] input`).first(),
-      value,
-      force,
-    );
-  }
-
-  // Sets a date field's DISPLAY input (dd/mm/yyyy) AND hidden input (the
-  // ISO `yyyy-MM-dd` format htmlformentry actually parses on submit)
-  // directly via raw `.evaluate()`, bypassing BOTH Playwright's
-  // actionability checks AND htmlformentry's own `setDatePickerValue()`
-  // global entirely — Sickle Cell Disease pilot's own visit form: because
-  // `setupForm()` never runs on it at all (see this file's own "Sickle Cell
-  // Disease pilot (visit form)" verification note for the root cause), NONE
-  // of its date fields ever get the jQuery-UI datepicker WIDGET actually
-  // initialized on them (confirmed live: they never gain the
-  // `hasDatepicker` class other forms' equivalent fields have from the
-  // moment they're rendered). `setDatePickerValue()` calls jQuery UI's own
-  // `.datepicker('setDate', ...)`, which requires that prior
-  // initialization — calling it on an uninitialized field does nothing at
-  // all, but SILENTLY: `setDatePickerValue`'s own body wraps the call in a
-  // bare `try { ... } catch (err) {}` (confirmed live via
-  // `window.setDatePickerValue.toString()`), so neither `fillField`'s
-  // existing datepicker branch NOR a plain call to the global itself ever
-  // surfaces this failure — confirmed live this is exactly why an earlier,
-  // more "normal" attempt at this field silently left BOTH the display and
-  // hidden inputs untouched with no error at all. Scoped to
-  // `.flowsheet-edit-section` for the same duplicate-id reason
-  // `fillFieldInFlowsheetSection` is.
-  async forceFillDateFieldInFlowsheetSection(id: string, isoDate: string): Promise<void> {
-    await this.page
-      .locator('.flowsheet-edit-section')
-      .locator(`[id="${id}"]`)
-      .first()
-      .evaluate((wrapper, iso) => {
-        const display = wrapper.querySelector('input[type="text"]') as HTMLInputElement | null;
-        const hidden = wrapper.querySelector('input[type="hidden"]') as HTMLInputElement | null;
-        const [y, m, d] = iso.split('-');
-        if (display) {
-          display.value = `${d}/${m}/${y}`;
-          display.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        if (hidden) {
-          hidden.value = iso;
-          hidden.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      }, isoDate);
-  }
-
-  // Fills/selects a field addressed by a DUPLICATE id, disambiguated by
-  // scoping the lookup to the <tr> ancestor of a real, page-unique label —
-  // Sickle Cell Disease pilot's own visit-form medication rows
-  // (sickle-cell-disease-visit.xml's Malaria Prophylaxis/Folic Acid/
-  // Hydroxyurea/BZN rows all reuse the exact SAME literal ids —
-  // `dose_{0}`/`doseUnit_{0}`/`route_{0}`/`frequencyCoded_{0}`/
-  // `duration_{0}`/`durationUnit_{0}` — a genuine content bug, see this
-  // file's own "Sickle Cell Disease pilot (visit form)" verification note
-  // below for the full evidence). Each drug's own checkbox LABEL (SP/FCD/
-  // HYD/BZN) is real and page-unique, and is a sibling (within the same
-  // `<tr>`) of that SAME drug's own dose-detail cells, so scoping a
-  // `[id="..."]` lookup to `ancestor::tr[1]` of that label resolves to
-  // exactly that drug's own fields — never a positional/nth() guess, unlike
-  // a plain duplicate-id defect this codebase's own playbook says NOT to
-  // paper over with a fragile positional selector; this instead anchors on
-  // a real, meaningful, page-unique label already established as this
-  // codebase's convention for choosing an anchor.
-  private rowOfLabel(label: string) {
-    return this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::tr[1]');
-  }
-
-  // `force` — see `fillField`'s own comment on this same parameter.
-  async fillFieldInRowOfLabel(rowLabel: string, id: string, value: string, force = false): Promise<void> {
-    await this.fillInputOrDatePicker(this.rowOfLabel(rowLabel).locator(`[id="${id}"] input`).first(), value, force);
-  }
-
-  // `force` — see `fillField`'s own comment on this same parameter.
-  async selectDropdownInRowOfLabel(
-    rowLabel: string,
-    id: string,
-    optionLabel: string,
-    force = false,
-  ): Promise<void> {
-    const select = this.rowOfLabel(rowLabel).locator(`[id="${id}"] select`).first();
-    if (force) {
-      await this.forceSelectOption(select, optionLabel);
-    } else {
-      await select.selectOption({ label: optionLabel });
-    }
   }
 
   // Fills the `cellIndex`-th <td> in the row immediately FOLLOWING the
@@ -1605,16 +1393,7 @@ export class MastercardFormPage {
     await this.page.locator('.submitButton').first().waitFor({ state: 'attached' });
   }
 
-  // `force` — see `fillField`'s own comment on this same parameter. Routes
-  // the actual click through a raw `.evaluate()` call to the element's own
-  // `.click()` DOM method rather than `.click({force:true})`: Playwright's
-  // `click()` always simulates a real mouse click at the element's computed
-  // center, which a genuinely `display:none` ancestor has no bounding box
-  // for at all (confirmed live: even `force:true` still throws "Element is
-  // not visible" for this specific case) — `HTMLElement.click()` needs no
-  // bounding box and fires the exact same `onclick` handler a real click
-  // would.
-  async save(force = false): Promise<void> {
+  async save(): Promise<void> {
     // art-visit.xml's own bundled JS has a stale-"Required"-error mechanism
     // on `noTabletsGiven` that can repaint AFTER it's been cleared, not just
     // before — see Task 14 verification note 10 for the full evidence (a
@@ -1638,32 +1417,7 @@ export class MastercardFormPage {
         await noTabletsGivenInput.evaluate((el) => el.dispatchEvent(new Event('change', { bubbles: true })));
       }
       try {
-        if (force) {
-          // A raw JS `.click()` fires the `submitHtmlForm()` AJAX POST
-          // asynchronously and returns immediately — unlike a real
-          // Playwright click, nothing here waits for that request to
-          // finish. Worse, `expectSaveSuccess()`'s own "Back to Dashboard"
-          // check is USELESS as a completion signal for this specific
-          // broken form: because `setupForm()` never ran (see this file's
-          // own "Sickle Cell Disease pilot (visit form)" verification
-          // note), `enterVisit()`'s own `jq("#header-section").hide();`
-          // call (meant to hide the header while a flowsheet is being
-          // edited) never runs either, so "Back to Dashboard" stays visible
-          // the ENTIRE time regardless of save outcome — confirmed live
-          // this caused a real race (the test's REST assertion ran, and the
-          // browser context was torn down, BEFORE the submit POST actually
-          // reached the server — confirmed via a captured trace showing
-          // that exact request with network status `-1`, i.e. cancelled
-          // mid-flight). Waiting for the real submit response directly
-          // (matched by URL, not by any UI signal) is the only reliable
-          // completion signal available here.
-          await Promise.all([
-            this.page.waitForResponse((res) => res.url().includes('/enterHtmlForm/submit.action')),
-            submitButton.evaluate((el) => (el as HTMLElement).click()),
-          ]);
-        } else {
-          await submitButton.click({ timeout: 3000 });
-        }
+        await submitButton.click({ timeout: 3000 });
         return;
       } catch (e) {
         if (attempt === 6) {
