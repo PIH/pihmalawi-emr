@@ -42,3 +42,15 @@ export const NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'b5622bf0-e335-11e8-9f32-f
 
 export const NCD_OTHER_EMASTERCARD_FORM_UUID = '766c92e8-e35b-11e8-9f32-f2801f1b9fd1';
 export const NCD_OTHER_VISIT_FORM_UUID = '766c8c30-e35b-11e8-9f32-f2801f1b9fd1';
+
+// Source CSVs/JSP spell these uuids in uppercase; lowercased here only for
+// consistency with every other constant in this file (OpenMRS's own uuid
+// matching is case-insensitive — confirmed live both forms work either way).
+export const SCD_TREATMENT_WORKFLOW_UUID = '1a6c2438-99d7-41ff-8eb4-516dfcd1d199';
+export const SCD_ON_TREATMENT_STATE_UUID = 'c2b106c6-18b6-4342-b2e7-faa0540e6dc2';
+
+export const SCD_INITIAL_ENCOUNTER_TYPE_UUID = '56c2d952-db11-4b47-b248-79c1b2a88e88';
+export const SCD_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'd4073eb7-60b1-4586-b062-13fce4cbc9e8';
+
+export const SCD_EMASTERCARD_FORM_UUID = '7afec71b-15d3-4e2d-8c42-d8cb2b75bc54';
+export const SCD_VISIT_FORM_UUID = 'e68275d4-c300-46b0-8754-4c2cf2598b78';

@@ -84,7 +84,17 @@ two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to
 | Forms | `ncd-other-emastercard.xml` (form uuid `766c92e8-e35b-11e8-9f32-f2801f1b9fd1`), `ncd-other-visit.xml` (form uuid `766c8c30-e35b-11e8-9f32-f2801f1b9fd1`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:198`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="NCD Other eMastercard" initialEncounterType="NCD_OTHER_INITIAL" followupEncounterType="NCD_OTHER_FOLLOWUP" programWorkflowStates="${NCDOTHERActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
 
-**Note on Sickle Cell Disease**: Uses the same program but is commented out in the JSP (`SCDActiveStates` gate, `malawiPatientDashboard.jsp:190` — see MLW-1568's comment "uncomment when all related forms complete") — not live, excluded here.
+### Sickle Cell Disease
+
+| Condition | Value | Source |
+|---|---|---|
+| Workflow | sickleCellDiseaseTreatment | `programWorkflow.sickleCellDiseaseTreatment.uuid` = `1A6C2438-99D7-41FF-8EB4-516DFCD1D199` (`content/content.properties:77`, resolved into `content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
+| Qualifying states | On Treatment | state uuid `C2B106C6-18B6-4342-B2E7-FAA0540E6DC2`, `Initial=true`; in Advance Care state uuid `03A8A8DF-E95E-4875-B730-2D3CD86502EF`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
+| Encounter types unlocked | SICKLE_CELL_DISEASE_INITIAL (header), SICKLE_CELL_DISEASE_FOLLOWUP (visit) | header encounter type `56C2D952-DB11-4B47-B248-79C1B2A88E88`; visit encounter type `D4073EB7-60B1-4586-B062-13FCE4CBC9E8` (`content/configuration/backend_configuration/encountertypes/encounterTypes.csv`) |
+| Forms | `sickle-cell-disease-emastercard.xml` (form uuid `7AFEC71B-15D3-4E2D-8C42-D8CB2B75BC54`), `sickle-cell-disease-visit.xml` (form uuid `E68275D4-C300-46B0-8754-4C2CF2598B78`) | `content/configuration/backend_configuration/htmlforms/` |
+| Gate on the tag itself | `malawiPatientDashboard.jsp:190-194`: `<td><pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Sickle Cell Disease eMastercard" initialEncounterType="SICKLE_CELL_DISEASE_INITIAL" followupEncounterType="SICKLE_CELL_DISEASE_FOLLOWUP" programWorkflowStates="${SCDActiveStates}" patientIdentifierType="Chronic Care Number"/></td>` | verbatim from the JSP |
+
+**Correction to an earlier assumption in this doc** (this pilot re-verified live and found a prior note here was wrong): line 190 immediately above the `<tr>` is only a ONE-LINE, self-closing HTML comment — `<!-- uncomment this when all related Sickle cell disease forms are complete MLW-1568 -->` — it does **not** open a comment block that wraps the `<tr>` on lines 191-194, which is live, unconditional markup (no `<c:if>`/`<c:when>` around it either). Confirmed live: navigating to `patientDashboard.form` for a real `eligibleSickleCellDiseasePatient` fixture patient shows the "Create new Sickle Cell Disease eMastercard" link is present and visible (`count: 1`), with an `onclick` that resolves to exactly the same `headerForm`/`flowsheets` list this doc's own "Mastercard launch URL pattern" section below documents. So, unlike what an earlier pass through this doc assumed, Sickle Cell Disease's gate behaves exactly like every other condition in this table — MLW-1568's own "uncomment when complete" comment is now stale text next to already-live code, worth a trivial doc/comment cleanup in the JSP itself (not fixed here, out of this pilot's scope) but not a functional gap.
 
 **Note on the generic Chronic Care eMastercard**: The `CHRONIC_CARE_INITIAL`/`CHRONIC_CARE_FOLLOWUP` workflow row (workflow `chronicCareTreatmentStatus` = `6687086a-977f-11e1-8993-905e29aff6c1`, states `66882650-977f-11e1-8993-905e29aff6c1`/`7c4d2e56-c8c2-11e8-9bc6-0242ac110001`) is a separate, generic mastercard not covered by this doc's condition-specific tables.
 
@@ -128,6 +138,49 @@ A completely different `headerForm` and flowsheet list than ART's — confirmed 
 `malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
 transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
 too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
+
+### Sickle Cell Disease
+
+Confirmed the same way as every other condition in this doc (see this doc's own correction above —
+the dashboard link is live, not commented out) — live-rendering `patientDashboard.form` for an
+eligible fixture patient (`eligibleSickleCellDiseasePatient`) and dumping the "Create new Sickle
+Cell Disease eMastercard" link's `onclick` (it has no `href` attribute either, same as every other
+condition's own link):
+
+```
+window.location.href='/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/sickle-cell-disease-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-quarterly-screening.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-annual-monitoring.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<legacy integer id>&encounterDate=' + ...'
+```
+
+`sickle-cell-disease-hospitalization-history.xml`, `sickle-cell-disease-annual-monitoring.xml`, and
+`sickle-cell-disease-quarterly-screening.xml` are all real flowsheets on this condition's own
+mastercard, confirmed present in the rendered `onclick` above — but, per this pilot's explicit
+scope, none of the three are exercised beyond appearing as unclicked "Enter New ..." links; only
+the header (emastercard) and visit forms are filled/saved by this pilot's specs. The normalized
+form below (used by `SickleCellDiseaseMastercardGatePage.buildCreateUrl`) matches the live
+`onclick` exactly:
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/sickle-cell-disease-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-quarterly-screening.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-annual-monitoring.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/sickle-cell-disease-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+`patientId` accepts a UUID transparently, same as every other condition's (Task 9's resolution in
+`e2e/pages/mastercard-page.ts` applies here too — see
+`e2e/pages/sickle-cell-disease-mastercard-page.ts`'s
+`SickleCellDiseaseMastercardGatePage.buildCreateUrl`).
 
 ## Quick-programs enrollment mechanics
 

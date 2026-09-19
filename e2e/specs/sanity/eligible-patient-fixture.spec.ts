@@ -20,3 +20,14 @@ test('eligibleNcdOtherPatient fixture creates a patient that meets the NCD Other
     ),
   ).toBeTruthy();
 });
+
+test('eligibleSickleCellDiseasePatient fixture creates a patient enrolled in the Chronic Care Program with a Chronic Care Number', async ({
+  eligibleSickleCellDiseasePatient,
+}) => {
+  expect(eligibleSickleCellDiseasePatient.uuid).toBeTruthy();
+  expect(
+    eligibleSickleCellDiseasePatient.identifiers.some(
+      (i) => i.identifierType.uuid === CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+    ),
+  ).toBeTruthy();
+});

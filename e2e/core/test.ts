@@ -17,11 +17,13 @@ import {
   ARV_NUMBER_IDENTIFIER_TYPE_UUID,
   NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
   NCD_OTHER_ON_TREATMENT_STATE_UUID,
+  SCD_ON_TREATMENT_STATE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
   eligibleHivArtPatient: TestPatient;
   eligibleNcdOtherPatient: TestPatient;
+  eligibleSickleCellDiseasePatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -73,6 +75,23 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       const patient = await createEligibleChronicCarePatient(api, {
         workflowStateUuid: NCD_OTHER_ON_TREATMENT_STATE_UUID,
         identifierPrefix: 'CCN',
+      });
+
+      await use(patient);
+
+      // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleSickleCellDiseasePatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleChronicCarePatient(api, {
+        workflowStateUuid: SCD_ON_TREATMENT_STATE_UUID,
+        identifierPrefix: 'SCD',
       });
 
       await use(patient);
