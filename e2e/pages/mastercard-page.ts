@@ -533,11 +533,165 @@ export class MastercardGatePage {
 //    radio groups on the visit form — see that file's own notes).
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Chronic Lung Disease pilot) — extending this shared
+// page object to a FOURTH program's mastercard
+// (content/configuration/backend_configuration/htmlforms/chronic-lung-disease-emastercard.xml
+// and chronic-lung-disease-visit.xml), confirmed against a live instance the
+// same way as the ART/NCD Other/Hypertension and Diabetes pilots: reading
+// both XML files in full, then dumping the rendered DOM
+// (`page.content()`/`innerHTML()`) for a freshly-opened create form (real
+// `eligibleChronicLungDiseasePatient` fixture patient), and actually filling
+// and saving each form and checking the resulting REST `encounter`/`obs`.
+//
+// 1. Diagnoses checkboxes (`asthma-dx`/`copd-dx` toggle sources on
+//    chronic-lung-disease-emastercard.xml) have NO explicit `id` at all on
+//    their own `<obs>` tag (only `class="dx-checkbox-item"` — unlike NCD
+//    Other's/Hypertension and Diabetes's own diagnosis checkboxes, which DO
+//    have an explicit id matching their `data-toggle-source`). Confirmed
+//    live each renders a REAL, non-empty `<label for="wNN">Asthma</label>` /
+//    `<label for="wNN">COPD</label>` though — unique accessible names on the
+//    page (the only OTHER place "Asthma"/"COPD" appears as page text is
+//    inside a same-row Family History `<td>` as a bare, unwrapped text node
+//    next to a `<select>`, not inside any `<label>`, so it never collides).
+//    Added `checkByLabel(label)` below (a thin `getByLabel(...).check()`
+//    wrapper) to reach these — and reused it for every other checkbox this
+//    pilot needed (`TB contact`, `Indoor`, `Smoking`, `Second hand smoking`,
+//    `Occupational exposure`, `Chronic dry cough` on the header form; the
+//    repeated medication checkboxes on the visit form, e.g. `Inhaled
+//    B-agonist`/`Inhaled steroid`/`Oral steroid`/`Other, ` — the last one's
+//    trailing ", " is the XML's own literal `answerLabel="Other, "`,
+//    confirmed live `getByLabel('Other, ', {exact:true})` still matches it).
+//    Their paired `*-dx-date` spans DO have explicit ids
+//    (`asthma-dx-date`/`copd-dx-date`), reached by `fillField`'s existing
+//    byId path with no new code.
+//
+// 2. Family History (Asthma/COPD) — each row's own "Family History" `<th
+//    rowspan="2">` only appears once (spanning both diagnosis sub-rows), so
+//    only the FIRST sub-row (Asthma) has a `cellAt`-reachable th label; the
+//    second (COPD) has no th/td label of its own at all, only bare text
+//    ("COPD ") sharing the `<select>`'s own `<td>` with no separate anchor.
+//    Neither select has an id. Added `selectDropdownInRow(anchorLabel,
+//    optionLabel)` below: finds the (unique, real) `<label>` element with
+//    `anchorLabel`'s exact text — reusing the SAME diagnosis checkbox labels
+//    from note 1 above as the anchor ("Asthma"/"COPD") since each is unique
+//    and lives in the SAME `<tr>` as its own row's family-history `<select>`
+//    — walks to that `<label>`'s ancestor `<tr>`, then selects the option in
+//    the (only) `<select>` in that row. Also reused for the header form's
+//    Occupation `<select>` (anchored on the same row's "Second hand smoking"
+//    checkbox label — confirmed live they share one `<tr>`), since Occupation
+//    has the exact same "bare text next to an unlabelled select" shape.
+//
+// 3. "Patient<br/>History &<br/>Exposures" — the `<br/>`s contribute no
+//    whitespace (same rule as ART/NCD Other/Hypertension and Diabetes's own
+//    `<br/>`-in-label precedent), but UNLIKE those prior pilots' own
+//    multi-word `<th>` labels, this one's rendered, Playwright-normalized
+//    text is "PatientHistory &Exposures" (no space before "Exposures" — the
+//    XML's `History &#38;<br/>Exposures` has no whitespace text node
+//    anywhere near the entity or the following `<br/>`) — confirmed live via
+//    `page.locator('th').allTextContents()`, not assumed. `cellAt` reaches
+//    its 4 data cells with zero new code: HIV dropdown + Date Test
+//    (cellIndex 1, sharing one `<td>` — same "two fields, one td" shape NCD
+//    Other's/Hypertension and Diabetes's own PatientHistory row already
+//    established), ART Start Date (cellIndex 2), TB dropdown (cellIndex 3),
+//    Year (cellIndex 4, a plain numeric input, NOT range-validated
+//    1950-2050 unlike Hypertension and Diabetes's own TB Year — confirmed
+//    live the rendered `onblur` here has null min/max).
+//
+// 4. "Duration"/"Age at onset" (paired with the "Chronic dry cough"
+//    checkbox) share ONE `<td>` that has no th/td label of its own — it's
+//    the `<td>` immediately following the checkbox's OWN `<td>` in the same
+//    `<tr>`, i.e. the exact same "cell reached from a sibling field's own
+//    label, not a real row/column label" shape as note 2 above, but for a
+//    SIBLING cell rather than the whole row's one-and-only select. Added
+//    `fillFieldAfterLabelledControl(controlLabel, value, inputIndex,
+//    cellIndex)` below: anchors on the checkbox's own `<label>` (exact text
+//    "Chronic dry cough"), walks to its ANCESTOR `<td>`, then the
+//    `cellIndex`-th following `<td>` sibling (default 1), then the
+//    `inputIndex`-th `<input>` within it (Duration=0, Age at onset=1 — both
+//    bare inputs, no ids, confirmed live via the rendered DOM's input order
+//    matching the XML's `<obs>` order).
+//
+// 5. Beta-agonist inhaler use: frequency (chronic-lung-disease-visit.xml) —
+//    FOUR independent numeric inputs (Daily/Weekly/Monthly/Yearly) share one
+//    `<td>` under a single `<th>`, none with an id — the same
+//    "several bare inputs, one td, positional" shape as
+//    `LastArvsDrug`/`LastArvsDate`/`systolicBP`/`diastolicBP` above, just
+//    with 4 positions instead of 2. Added 4 new magic-string branches to
+//    `fillField` (`betaAgonistDaily`/`Weekly`/`Monthly`/`Yearly`) reusing
+//    that identical mechanism.
+//
+// 6. "Planned Visit?", "Indoor cooking", AND "Passive smoking"
+//    (chronic-lung-disease-visit.xml's own data-entry rows only — NOT the
+//    read-only VIEW-mode flowsheet table) each wrap their `<th>`'s label
+//    text in an inline element — `<th><font>Planned Visit?</font></th>` /
+//    `<th><font>Indoor cooking</font></th>` / `<th><span
+//    class="rotate">Passive smoking</span></th>` — a markup quirk (two
+//    different wrapping tags, same underlying problem) confirmed live via
+//    the rendered DOM; the third case (Passive smoking's `<span
+//    class="rotate">`) was missed on the first pass and only surfaced as a
+//    real, reproducing test hang (`selectRadio` waiting forever on a
+//    locator that can never resolve — see point below), not caught by
+//    reading the XML alone, since `<span class="rotate">` is easy to skim
+//    past as pure styling. This defeats every existing `cellAt`-based
+//    helper: `getByText(label, {exact:true})` returns the INNERMOST element
+//    whose own text matches, i.e. the `<font>`/`<span>`, not the `<th>` —
+//    and `following-sibling::td` on that inner element finds nothing (its
+//    only siblings are absent; the wrapping element's PARENT `<th>` is what
+//    has the `<td>` sibling), so the locator never resolves and hangs until
+//    the test's own timeout. Added `selectRadioInWrappedLabelRow(labelText,
+//    optionLabel, cellIndex)` below, matching the exact `<th>`/`<td>` via an
+//    xpath `normalize-space(.)` text check (tag-agnostic of what's nested
+//    inside, so it covers `<font>`, `<span>`, or any other wrapper) instead
+//    of `getByText`. All three rows render as genuine two-option Yes/No
+//    radio groups (`style="radio"`, no `answerLabels` — falls back to each
+//    answer concept's own short name, which happens to literally be
+//    "Yes"/"No" for `$plannedVisit`'s, `$cookingLocation`'s, and
+//    `$secondHandSmoke`'s answers here) — confirmed live selecting "Yes" for
+//    Indoor cooking saves as "Location of cooking: Indoors" (i.e. "Yes"
+//    positionally selects `$indoor`, matching
+//    `answerConceptIds="$indoor,$outdoor"`'s declared order).
+//
+// 7. COPD (chronic-lung-disease-visit.xml's OWN row — a plain, ungrouped
+//    `<obs style="checkbox" answerConceptId="$copdDx" answerLabel=""/>`,
+//    unlike the header form's obsgroup'd COPD diagnosis) renders with an
+//    EMPTY `<label for="wNN"></label>` and no id of its own — `getByLabel`
+//    cannot reach it (empty accessible name). Added `checkCellCheckbox(label,
+//    cellIndex)` below: anchors on the row's own `<th>` text ("COPD", not
+//    font-wrapped here — see note 6 above for the row that IS), reusing the
+//    existing private `cellAt`, then checks the cell's only checkbox
+//    directly. Confirmed live this saves as "Chronic care diagnosis: Chronic
+//    obstructive pulmonary disease" (a single plain obs, not an obsgroup,
+//    unlike the header form's own COPD diagnosis).
+//
+// 8. Every other field on both forms reuses `fillField`/`selectRadio`/
+//    `selectDropdown`/`fillHeaderField`/`checkById` completely unchanged —
+//    Transfer-In Date (header `<b>` sibling shape, same as ART's own),
+//    Patient Phone/Guardian Name/Guardian Phone/Guardian relation/Agrees to
+//    FUP (identical shape to every prior pilot's own header form), Height/
+//    Weight/Visit Location/Steroid inhaler daily?/Passive smoking/
+//    Exacerbation today?/Asthma severity/Other dx/Comments/appointmentDate
+//    on the visit form (all either id'd or single-label rows with no new
+//    quirks). The medication rows' `dose_<uuid>`/`doseUnit_<uuid>`/
+//    `route_<uuid>`/`frequencyCoded_<uuid>`/`duration_<uuid>`/
+//    `durationUnit_<uuid>` ids follow the exact same shape Hypertension and
+//    Diabetes's own repeated medication rows established (concept-uuid-based
+//    ids, confirmed live NOT required unless their own row's checkbox is
+//    checked) — `fillField`/`selectDropdown`'s existing byId paths handle
+//    them with no new code; only `checkByLabel` (note 1) was needed to check
+//    each row's own toggle. All 4 medication rows (3 repeated drugs + the
+//    "Other" non-coded row) were filled simultaneously and confirmed live to
+//    save as 4 independent "Prescription construct" obsgroups with no
+//    cross-contamination, same non-collision behavior already confirmed for
+//    CPT/IPT (ART pilot) and Hypertension and Diabetes's own Diuretic row.
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
 const LAST_ARVS_ROW_LABEL = 'Last ARVs (drug, date)';
 const BLOOD_PRESSURE_ROW_LABEL = 'Blood Pressure';
+const BETA_AGONIST_ROW_LABEL = 'Beta-agonist inhaler use: frequency';
 const HTN_DM_BLOOD_PRESSURE_ROW_LABEL = 'Blood pressure';
 // Real DOM ids used by this form/its siblings are always simple identifier
 // tokens; plain-text row labels (which can contain spaces/punctuation, and
@@ -649,6 +803,17 @@ export class MastercardFormPage {
       // within the row, same as Last ARVs.
       const inputIndex = /^systolicbp$/i.test(labelOrId) ? 0 : 1;
       await this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex).fill(value);
+      return;
+    }
+
+    if (/^betaAgonist(Daily|Weekly|Monthly|Yearly)$/i.test(labelOrId)) {
+      // Chronic Lung Disease Visit's "Beta-agonist inhaler use: frequency"
+      // row packs 4 independent, unlabelled inputs into one <td> — see this
+      // pilot's own verification note 5 above. Targeted by input order.
+      const index = ['daily', 'weekly', 'monthly', 'yearly'].indexOf(
+        labelOrId.replace(/^betaAgonist/i, '').toLowerCase(),
+      );
+      await this.inputCellFor(BETA_AGONIST_ROW_LABEL).locator('input').nth(index).fill(value);
       return;
     }
 
@@ -772,31 +937,123 @@ export class MastercardFormPage {
     await this.page.locator(`[id="${id}"]`).locator('input[type="checkbox"]').first().check();
   }
 
-  // Checks a checkbox by its own VISIBLE LABEL TEXT rather than an id or a
-  // containing cell's label (Hypertension and Diabetes pilot — visit form's
-  // repeated medication rows, e.g. hypertension-and-diabetes-visit.xml's
-  // "Diabetes Medications"/"Diuretic"/"CCB"/"ACE-I"/"BB"/"Statin"/"Other"
-  // rows). Each drug in these `<repeat>` blocks renders a `medication-name`
-  // checkbox with an opaque, render-order-dependent DOM id, but a real,
-  // short, human-readable `<label>` (the repeat's own abbreviation, e.g.
-  // "AML"/"HCTZ"/"LISIN") — confirmed live these are unique on the page, so
-  // `getByLabel` reaches the checkbox directly with no cell/row anchoring
-  // needed at all. See hypertension-and-diabetes-mastercard-page.ts's own
-  // verification notes for why one representative drug per row (not every
-  // drug in every row) is filled.
+  // Checks a checkbox (or radio) by its own real, non-empty accessible
+  // label — Chronic Lung Disease pilot, see this file's own verification
+  // note 1 above. Used for fields with a real `<label for="...">` but no id
+  // of their own at all (unlike `checkById`, which needs a stable id on a
+  // wrapping element).
+  //
+  // Also used, unchanged, by the Hypertension and Diabetes pilot for the
+  // same reason on a different form: visit form's repeated medication rows
+  // (e.g. hypertension-and-diabetes-visit.xml's "Diabetes Medications"/
+  // "Diuretic"/"CCB"/"ACE-I"/"BB"/"Statin"/"Other" rows). Each drug in these
+  // `<repeat>` blocks renders a `medication-name` checkbox with an opaque,
+  // render-order-dependent DOM id, but a real, short, human-readable
+  // `<label>` (the repeat's own abbreviation, e.g. "AML"/"HCTZ"/"LISIN") —
+  // confirmed live these are unique on the page, so `getByLabel` reaches the
+  // checkbox directly with no cell/row anchoring needed at all. See
+  // hypertension-and-diabetes-mastercard-page.ts's own verification notes
+  // for why one representative drug per row (not every drug in every row)
+  // is filled.
   async checkByLabel(label: string): Promise<void> {
     await this.page.getByLabel(label, { exact: true }).check();
   }
 
+  // Selects an option in the (only) <select> within the same <tr> as a real,
+  // unique `<label>` element found elsewhere in the row — Chronic Lung
+  // Disease pilot's Family History (Asthma/COPD) and Occupation rows, see
+  // this file's own verification note 2 above. `anchorLabel` is typically a
+  // sibling field's own checkbox label (e.g. "Asthma"/"COPD"/"Second hand
+  // smoking"), not the select's own label — this shape has no select-specific
+  // label of its own at all.
+  async selectDropdownInRow(anchorLabel: string, optionLabel: string): Promise<void> {
+    await this.page
+      .getByLabel(anchorLabel, { exact: true })
+      .locator('xpath=ancestor::tr[1]')
+      .locator('select')
+      .first()
+      .selectOption({ label: optionLabel });
+  }
+
+  // Fills the `inputIndex`-th <input> inside the `cellIndex`-th <td>
+  // following the <td> that CONTAINS a labelled control (checkbox/radio)
+  // with exact accessible name `controlLabel` — Chronic Lung Disease
+  // pilot's "Duration"/"Age at onset" cell (paired with the "Chronic dry
+  // cough" checkbox), see this file's own verification note 4 above. Unlike
+  // every `cellAt`-based helper (anchored on a real th/td text label), this
+  // cell has no label of its own at all — only a sibling field's checkbox
+  // label to anchor on.
+  async fillFieldAfterLabelledControl(
+    controlLabel: string,
+    value: string,
+    inputIndex = 0,
+    cellIndex = 1,
+  ): Promise<void> {
+    await this.fillInputOrDatePicker(
+      this.page
+        .getByLabel(controlLabel, { exact: true })
+        .locator(`xpath=ancestor::td[1]/following-sibling::td[${cellIndex}]`)
+        .locator('input')
+        .nth(inputIndex),
+      value,
+    );
+  }
+
+  // Same intent as `selectRadio`, but for rows whose <th>/<td> label text is
+  // wrapped in an inline element (e.g. chronic-lung-disease-visit.xml's
+  // `<th><font>Planned Visit?</font></th>`/`<th><font>Indoor
+  // cooking</font></th>`/`<th><span class="rotate">Passive
+  // smoking</span></th>` — any wrapping tag, not just <font>) — see this
+  // file's own verification note 6 above. Matches the exact <th>/<td>
+  // itself via an xpath `normalize-space(.)` text check (tag-agnostic of
+  // anything nested inside it), unlike `cellAt`'s `getByText(...)`, which
+  // returns the INNERMOST matching element (the wrapper, not the `<th>`)
+  // and so cannot reach the `<th>`'s own `following-sibling::td` — that
+  // failure mode is a silent HANG (the locator never resolves), not an
+  // error, so use this helper defensively for ANY row whose <th>/<td> label
+  // isn't a bare text node, not just ones already confirmed to hang.
+  async selectRadioInWrappedLabelRow(labelText: string, optionLabel: string, cellIndex = 1): Promise<void> {
+    await this.page
+      .locator(`xpath=//*[self::th or self::td][normalize-space(.)="${labelText}"]`)
+      .locator(`xpath=following-sibling::td[${cellIndex}]`)
+      .getByLabel(optionLabel, { exact: true })
+      .check();
+  }
+
+  // Fills the bare <input> immediately following (as an element sibling,
+  // possibly with an intervening plain-text node) the wrapping <span> of a
+  // labelled control (checkbox/radio) with exact accessible name `label` —
+  // Chronic Lung Disease pilot's "Other, " medication row: `chronic-lung-
+  // disease-visit.xml`'s own free-text "please specify:" input for the
+  // non-coded "Other" drug has no id of its own, and its checkbox (unlike
+  // NCD Other's own `nonCoded-dx`, which `fillField`'s `nonCodedDxText`
+  // branch reaches via `[id="nonCoded-dx"]`) has no id either — only a real
+  // `<label>` ("Other, ", the XML's own literal `answerLabel`). Same
+  // "sibling input right after a wrapping span" shape `fillCptIptPills`/
+  // NCD Other's `nonCodedDxText` branch already established, anchored via
+  // label instead of id since there's no id here at all.
+  async fillFieldAfterLabel(label: string, value: string): Promise<void> {
+    await this.fillInputOrDatePicker(
+      this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::span[1]/following-sibling::input[1]'),
+      value,
+    );
+  }
+
   // Checks the (only) checkbox inside a labelled cell whose checkbox has NO
-  // usable label of its own (Hypertension and Diabetes pilot — visit form's
-  // "Hospitalized since last visit?" row: `<obs style="checkbox"
-  // answerConceptId="$yes" answerLabel=""/>Yes` renders an empty
-  // `<label for="...">`, with the literal text "Yes" as a separate, unbound
-  // text node after it — `getByLabel('Yes')` would not match this at all,
-  // and `checkById` doesn't apply since there's no stable id). Anchors on
+  // usable label of its own (Chronic Lung Disease pilot — chronic-lung-disease-visit.xml's
+  // own "COPD" row: `<obs style="checkbox" answerConceptId="$copdDx"
+  // answerLabel=""/>` renders an empty `<label for="...">`, and there's no
+  // stable id — see this file's own verification note 7 above). Anchors on
   // the ROW's own `<th>` text, same as `cellAt`, then checks the cell's only
   // checkbox directly.
+  //
+  // Also used, unchanged, by the Hypertension and Diabetes pilot for the
+  // same reason on a different form: visit form's "Hospitalized since last
+  // visit?" row: `<obs style="checkbox" answerConceptId="$yes"
+  // answerLabel=""/>Yes` renders an empty `<label for="...">`, with the
+  // literal text "Yes" as a separate, unbound text node after it —
+  // `getByLabel('Yes')` would not match this at all, and `checkById` doesn't
+  // apply since there's no stable id.
   async checkCellCheckbox(label: string, cellIndex = 1): Promise<void> {
     await this.cellAt(label, cellIndex).locator('input[type="checkbox"]').first().check();
   }
