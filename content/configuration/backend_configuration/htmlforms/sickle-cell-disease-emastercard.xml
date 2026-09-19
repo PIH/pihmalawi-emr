@@ -39,7 +39,7 @@
         <macro key="sibling" value="76bfbe9a-9f7c-44aa-85af-d2d5f08e4baa"/>
         <macro key="reasonsForReferralSet" value="7a37ec7b-2804-46c8-be48-4707959192be" />
         <macro key="reasonForReferral" value="98b17e13-659f-41e7-8459-b370fdbffe0f"/>
-        <macro key="inPatient" value="7602D441-4A44-41A9-AA49-A59853AEDC65"/>
+        <macro key="inPatient" value="657d2314-977f-11e1-8993-905e29aff6c1"/>
         <macro key="icThree" value="3064BCF8-56F7-43C9-A8CF-D90D42EEF739"/>
         <macro key="opd" value="6578c9f4-977f-11e1-8993-905e29aff6c1"/>
         <macro key="otherNoneCodedText" value="d57e3a20-5802-11e6-8b77-86f30ca893d3" />
@@ -179,7 +179,7 @@
                                          answerConceptId="$sickleCellDiagnosis"
                                          defaultValue="$sickleCellDiagnosis"/>
                                     </span>
-                                    <obs id="appointmentDate" conceptId="$diagnosisDate"/>
+                                    <obs id="diagnosisDate" conceptId="$diagnosisDate"/>
                                 </obsgroup>
                             </td>
                         </tr>
