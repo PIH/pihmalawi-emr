@@ -257,8 +257,8 @@
                             <th style="vertical-align:top;" align="left">Outcome</th>
                             <td colspan="6">
                                 <b>
-                                    <lookup expression="fn.currentProgramWorkflowStatus(16).state.concept.name" />
-                                    (<lookup expression="fn.currentProgramWorkflowStatus(16).startDate" />)
+                                    <lookup expression="fn.currentProgramWorkflowStatus('4eda02b2-48ca-47dc-9166-483a6499bcbd').state.concept.name" />
+                                    (<lookup expression="fn.currentProgramWorkflowStatus('4eda02b2-48ca-47dc-9166-483a6499bcbd').startDate" />)
                                 </b>
                             </td>
                         </tr>

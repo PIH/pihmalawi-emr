@@ -4765,10 +4765,10 @@ Dysentery,Amoebic,9327,q-and-a
 Dysphagia assessment,Yes,898,q-and-a
 Dysphagia assessment,No,899,q-and-a
 Dysphagia assessment,Severe dysphagia presumed invasive,900,q-and-a
-Dyspnea on extertion,Raised,1,q-and-a
-Dyspnea on extertion,Lower,2,q-and-a
-Dyspnea on extertion,About the same,3,q-and-a
-Dyspnea on extertion,None,4,q-and-a
+Dyspnea on exertion,Raised,1,q-and-a
+Dyspnea on exertion,Lower,2,q-and-a
+Dyspnea on exertion,About the same,3,q-and-a
+Dyspnea on exertion,None,4,q-and-a
 Echo normal (for consult form),True,5475,q-and-a
 Echo normal (for consult form),False,5476,q-and-a
 Echocardiogram normal,True,5460,q-and-a

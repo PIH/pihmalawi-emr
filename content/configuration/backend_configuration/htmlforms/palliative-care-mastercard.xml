@@ -647,8 +647,8 @@
                 <td colspan="3">
                     <b>
                         Outcome:
-                        <lookup expression="fn.currentProgramWorkflowStatus(24).state.concept.name"/>
-                        (<lookup expression="fn.currentProgramWorkflowStatus(24).startDate"/>)
+                        <lookup expression="fn.currentProgramWorkflowStatus('F2D47AE5-7083-4901-B630-51860D09A884').state.concept.name"/>
+                        (<lookup expression="fn.currentProgramWorkflowStatus('F2D47AE5-7083-4901-B630-51860D09A884').startDate"/>)
                     </b>
                 </td>
             </tr>

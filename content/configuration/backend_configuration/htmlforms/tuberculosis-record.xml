@@ -161,9 +161,9 @@
 			<th>Treatment outcome</th>
 			<td>
 			<lookup
-					expression="fn.currentProgramWorkflowStatus(3).getState().getConcept().getName().getName()" />
+					expression="fn.currentProgramWorkflowStatus('6D1AD63F-8286-4191-A5DE-D747326B9883').getState().getConcept().getName().getName()" />
 				(since
-				<lookup expression="fn.currentProgramWorkflowStatus(3).getStartDate()" />
+				<lookup expression="fn.currentProgramWorkflowStatus('6D1AD63F-8286-4191-A5DE-D747326B9883').getStartDate()" />
 				)
 			</td>
 		</tr>
@@ -171,9 +171,9 @@
 			<th>HIV outcome</th>
 			<td>
 				<lookup
-					expression="fn.currentProgramWorkflowStatus(1).getState().getConcept().getName().getName()" />
+					expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" />
 				(since
-				<lookup expression="fn.currentProgramWorkflowStatus(1).getStartDate()" />
+				<lookup expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getStartDate()" />
 				)
 			</td>
 		</tr>

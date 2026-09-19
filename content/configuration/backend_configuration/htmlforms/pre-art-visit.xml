@@ -61,10 +61,10 @@
                         // month is 0-based, that's why we need dataParts[1] - 1
                         var visitDate = new Date(+dateParts[0], dateParts[1] - 1, +dateParts[2]);
 
-                        var nextAppointDate = '<lookup expression="fn.latestObs(5096).getValueDatetime()"/>';
+                        var nextAppointDate = '<lookup expression="fn.latestObs('$nextAppt').getValueDatetime()"/>';
                         if (nextAppointDate) {
                             var latestNextAppointDate = new Date(nextAppointDate);
-                            var obsDatetime = '<lookup expression="fn.latestObs(5096).getObsDatetime()"/>';
+                            var obsDatetime = '<lookup expression="fn.latestObs('$nextAppt').getObsDatetime()"/>';
                             if (obsDatetime) {
                                 var jsObsDatetime = new Date(obsDatetime);
                                 if ( visitDate.getFullYear() ===  jsObsDatetime.getFullYear() &amp;&amp;
@@ -157,10 +157,10 @@
                         <obs conceptId="$cd4SampleTaken" style="checkbox" answerConceptId="$yes" answerLabel="Bled" />
                     </td>
                     <td>
-                        <!-- CD4 result -->                
+                        <!-- CD4 result -->
                         <lookup complexExpression="
                             #set ($obs = false)
-                            #set ($obs = $fn.latestObs($cd4Value))
+                            #set ($obs = $fn.latestObs('$cd4Value'))
                             #if (!$obs)
                                 #set ($obsResult = 'N/A')
                                 #set ($obsDate = 'N/A')
@@ -270,10 +270,10 @@
                     <td><obs conceptId="$cd4SampleTaken" style="checkbox" answerConceptId="$yes" answerLabel="Bled" /></td>
                 </tr>
                 <tr>
-                    <th>CD4 Value</th>    
+                    <th>CD4 Value</th>
                     <td><lookup complexExpression="
                         #set ($obs = false)
-                        #set ($obs = $fn.latestObs(3434))
+                        #set ($obs = $fn.latestObs('$cd4Value'))
                         #if (!$obs)
                             #set ($obsResult = 'N/A')
                             #set ($obsDate = 'N/A')
