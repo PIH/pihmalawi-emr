@@ -36,6 +36,7 @@ import {
   EPILEPSY_ON_TREATMENT_STATE_UUID,
   TEEN_CLUB_PROGRAM_UUID,
   TEEN_CLUB_FIRST_TIME_INITIATION_STATE_UUID,
+  CHRONIC_CARE_ON_TREATMENT_STATE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -51,6 +52,7 @@ export interface CustomTestFixtures {
   eligiblePalliativeCarePatient: TestPatient;
   eligibleEpilepsyPatient: TestPatient;
   eligibleTeenClubPatient: TestPatient;
+  eligibleChronicCarePatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -282,6 +284,23 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
 
       await use(patient);
 
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleChronicCarePatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleChronicCarePatient(api, {
+        workflowStateUuid: CHRONIC_CARE_ON_TREATMENT_STATE_UUID,
+        identifierPrefix: 'CCN',
+      });
+
+      await use(patient);
+
+      // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
       await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
