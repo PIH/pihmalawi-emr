@@ -86,11 +86,7 @@ test.describe('Cardiac and Vascular Disease visit mastercard', () => {
     // concept name is "Patients fluid management" and "Euvol" displays as
     // "Euvolemic", NYHA stage's "II" displays as "Nyha class 2" (Arabic
     // numeral, not roman), Alcohol's "Stopped" displays as "In the past",
-    // Tobacco's own concept name is "Smoking history". Dyspnea on
-    // exertion's own concept name WAS misspelled in the source data as
-    // "Dyspnea on extertion" (confirmed live at the time this pilot was
-    // written); fixed in MLW-1857 (concepts.csv + conceptAnswers.csv), so
-    // this now asserts the corrected spelling.
+    // Tobacco's own concept name is "Smoking history".
     expect(obs.some((o) => /level of orthopnea.*raised/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /dyspnea on exertion.*lower/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /level of dry cough.*about the same/i.test(o.display))).toBeTruthy();

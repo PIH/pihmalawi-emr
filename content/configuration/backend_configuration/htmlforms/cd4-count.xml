@@ -48,11 +48,6 @@
 		<tr>
 			<th>Current state in HIV Program</th>
 			<td>
-				<!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated Chronic
-				     Care Program's Asthma treatment workflow (copy-paste leftover), not the HIV Program this
-				     row is explicitly labeled for. Switched to the UUID-based overload of
-				     currentProgramWorkflowStatus, referencing the actual HIV PROGRAM's "Treatment status"
-				     workflow. -->
 				<lookup expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" />
 				(since <lookup expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getStartDate()" />)
 			</td>

@@ -1223,21 +1223,6 @@
                 <th>Spironolactone</th>
                 <td>
                     <table>
-                        <!-- This row's SPIRO option references the exact same $spironolactone concept as the
-                             Diuretic row's own repeat above. htmlformentry's `{0}`-substituted ids
-                             (dose_{0}, doseUnit_{0}, diab_{0}_med, etc.) are templated per-concept-uuid, not
-                             per-row, so without disambiguation these collide verbatim with the Diuretic
-                             repeat's SPIRO iteration (confirmed live: duplicate `id="dose_<uuid>"` and
-                             `id="diab_<uuid>_med"` elements, which breaks the toggle show/hide for one of the
-                             two occurrences). Fixed by hardcoding a "spiroOnly" suffix instead of `{0}` here,
-                             since this repeat only ever has the one iteration. Note this does NOT address
-                             `getByLabel('SPIRO', {exact:true})` matching 2 elements — that's driven by the
-                             two checkboxes' identical rendered answerLabel TEXT ("SPIRO"), which already have
-                             distinct, non-colliding auto-generated widget ids, and both rows are intentionally
-                             present for different clinical contexts (Diuretic choice vs. a dedicated CHF
-                             aldosterone-antagonist row). Changing either row's visible label to disambiguate
-                             would be a clinical-content change, not a DOM-plumbing fix, so it's left as-is;
-                             see PR description for a suggested follow-up. -->
                         <repeat with="['$spironolactone','SPIRO']">
                             <obsgroup groupingConceptId="$dispensingConstruct" showIfEmpty="false">
                                 <tr>

@@ -257,13 +257,6 @@
                             <th style="vertical-align:top;" align="left">Outcome</th>
                             <td colspan="6">
                                 <b>
-                                    <!-- Was hardcoded to workflow id 16, which in this instance resolves to the
-                                         unrelated Early Infant Diagnosis Program's workflow (copy-paste leftover) and
-                                         always rendered empty for CKD patients. Switched to the UUID-based overload
-                                         of currentProgramWorkflowStatus (which HtmlFormEntryUtil.getWorkflow(String)
-                                         resolves by id, uuid, or concept mapping) so this is no longer a raw,
-                                         instance-fragile numeric primary key, referencing the actual "Chronic Kidney
-                                         disease treatment" workflow of the Chronic Care Program. -->
                                     <lookup expression="fn.currentProgramWorkflowStatus('4eda02b2-48ca-47dc-9166-483a6499bcbd').state.concept.name" />
                                     (<lookup expression="fn.currentProgramWorkflowStatus('4eda02b2-48ca-47dc-9166-483a6499bcbd').startDate" />)
                                 </b>

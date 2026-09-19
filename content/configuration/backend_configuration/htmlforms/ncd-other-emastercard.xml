@@ -262,11 +262,6 @@
                             <th style="vertical-align:top;" align="left">Outcome</th>
                             <td colspan="6">
                                 <b>
-                                    <!-- Was hardcoded to workflow id 16, which in this instance resolves to the
-                                         unrelated Early Infant Diagnosis Program's workflow (copy-paste leftover) and
-                                         always rendered empty for NCD Other patients. Switched to the UUID-based
-                                         overload of currentProgramWorkflowStatus, referencing the actual "NCD Other
-                                         treatment" workflow of the Chronic Care Program. -->
                                     <lookup expression="fn.currentProgramWorkflowStatus('62481c50-155c-45be-b4e9-39a38a9cbfda').state.concept.name" />
                                     (<lookup expression="fn.currentProgramWorkflowStatus('62481c50-155c-45be-b4e9-39a38a9cbfda').startDate" />)
                                 </b>

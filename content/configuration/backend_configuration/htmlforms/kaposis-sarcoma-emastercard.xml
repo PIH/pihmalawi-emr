@@ -32,10 +32,6 @@
             <tr><td>Gender:</td><td><lookup expression="patient.gender" /></td></tr>
             <tr><td>Birthdate:</td><td><lookup expression="patient.birthdate" /></td></tr>
             <tr><td>Address:</td><td><lookup complexExpression="#foreach( $addr in $patient.addresses) $!addr.getAddress1() $!addr.getCityVillage() $!addr.getStateProvince() $!addr.getCountyDistrict(), #end" /></td></tr>
-            <!-- Was hardcoded to workflow id 9, which in this instance resolves to the unrelated Mental Health
-                 Care Program's Epilepsy treatment workflow (copy-paste leftover), not this form's own KAPOSIS
-                 SARCOMA PROGRAM. Switched to the UUID-based overload of currentProgramWorkflowStatus,
-                 referencing the actual Kaposis Sarcoma Program's "Treatment status" workflow. -->
             <tr><td>Outcome:</td><td><lookup expression="fn.currentProgramWorkflowStatus('6687034c-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" /> (since <lookup expression="fn.currentProgramWorkflowStatus('6687034c-977f-11e1-8993-905e29aff6c1').getStartDate()" />)</td></tr>
         </table>
     </div>

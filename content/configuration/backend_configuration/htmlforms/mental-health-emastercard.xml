@@ -552,11 +552,6 @@
 
                         <tr>
                             <th style="vertical-align:top;" align="left" colspan="3">Outcome:
-                                    <!-- Was hardcoded to workflow id 16, which in this instance resolves to the
-                                         unrelated Early Infant Diagnosis Program's workflow (copy-paste leftover) and
-                                         always rendered empty for Mental Health patients. Switched to the UUID-based
-                                         overload of currentProgramWorkflowStatus, referencing the actual "Mental
-                                         health treatment" workflow of the Mental Health Care Program. -->
                                     <lookup expression="fn.currentProgramWorkflowStatus('da69bbcb-01fe-4c59-9d46-8a2659abbd73').state.concept.name"/>
                                     (<lookup expression="fn.currentProgramWorkflowStatus('da69bbcb-01fe-4c59-9d46-8a2659abbd73').startDate"/>)
                             </th>

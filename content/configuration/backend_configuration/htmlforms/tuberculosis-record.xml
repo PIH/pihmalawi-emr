@@ -160,10 +160,6 @@
 		<tr>
 			<th>Treatment outcome</th>
 			<td>
-			<!-- Was hardcoded to workflow id 3, which in this instance resolves to the unrelated Chronic Care
-			     Program's own "Chronic care treatment status" workflow (copy-paste leftover), not this TB
-			     record's own program. Switched to the UUID-based overload of currentProgramWorkflowStatus,
-			     referencing the actual TB PROGRAM's "TB program workflow status" workflow. -->
 			<lookup
 					expression="fn.currentProgramWorkflowStatus('6D1AD63F-8286-4191-A5DE-D747326B9883').getState().getConcept().getName().getName()" />
 				(since
@@ -174,10 +170,6 @@
 		<tr>
 			<th>HIV outcome</th>
 			<td>
-				<!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated Chronic
-				     Care Program's Asthma treatment workflow (copy-paste leftover), not this row's own
-				     explicitly-labeled HIV outcome. Switched to the UUID-based overload, referencing the
-				     actual HIV PROGRAM's "Treatment status" workflow. -->
 				<lookup
 					expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" />
 				(since
