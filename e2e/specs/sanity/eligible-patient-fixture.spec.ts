@@ -42,3 +42,14 @@ test('eligibleHypertensionAndDiabetesPatient fixture creates a patient that meet
     ),
   ).toBeTruthy();
 });
+
+test('eligibleCardiacAndVascularDiseasePatient fixture creates a patient that meets the Cardiac and Vascular Disease mastercard gate', async ({
+  eligibleCardiacAndVascularDiseasePatient,
+}) => {
+  expect(eligibleCardiacAndVascularDiseasePatient.uuid).toBeTruthy();
+  expect(
+    eligibleCardiacAndVascularDiseasePatient.identifiers.some(
+      (i) => i.identifierType.uuid === CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+    ),
+  ).toBeTruthy();
+});

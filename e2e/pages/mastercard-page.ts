@@ -686,6 +686,56 @@ export class MastercardGatePage {
 //    CPT/IPT (ART pilot) and Hypertension and Diabetes's own Diuretic row.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Cardiac and Vascular Disease pilot) — extending this
+// shared page object to a further Chronic Care Program condition
+// (content/configuration/backend_configuration/htmlforms/cardiac-and-vascular-disease-emastercard.xml
+// and cardiac-and-vascular-disease-visit.xml), confirmed against a live
+// instance the same way as every prior pilot: reading both XML files in
+// full, then dumping the rendered DOM (`page.content()`/`innerHTML()`) for a
+// freshly-opened create form (real `eligibleCardiacAndVascularDiseasePatient`
+// fixture patient), and actually filling and saving each form and checking
+// the resulting REST `encounter`/`obs`.
+//
+// 1. Three new generic helpers added below, `checkByLabel`,
+//    `selectRadioInWrappedLabelRow`, and `fillFieldAfterLabel` — all already
+//    independently needed by this form's own quirks (repeated-medication
+//    checkboxes reached only by their real `<label>` text; a
+//    `<th><span class="rotate">Took medication today?</span></th>`
+//    wrapped-label row on the visit form, same hang-risk shape documented
+//    for other forms' own wrapped labels — `getByText(label,{exact:true})`
+//    on a wrapped `<th>` matches the INNER `<span>`, which has no
+//    `following-sibling::td` of its own, so a `cellAt`-based lookup never
+//    resolves and hangs to the test timeout rather than erroring; and a
+//    free-text field with no id or label of its own, reached only via a
+//    sibling labelled checkbox).
+//
+// 2. One new `fillField` magic-string branch, `familyPlanningOtherSpecify`
+//    — see that branch's own comment.
+//
+// 3. See cardiac-and-vascular-disease-mastercard-page.ts's own verification
+//    notes for this form's field list, including two confirmed, genuine
+//    DUPLICATE-id content bugs (worth a ticket): `id="aspName"`/`id="dose-
+//    asp"`/`id="asp-doseUnit"`/`id="route-asp"`/`id="asp-frequencyCoded"`/
+//    `id="duration-asp"`/`id="durationUnit-asp"` are reused verbatim on BOTH
+//    the Aspirin row and the Benzathine PCN row of cardiac-and-vascular-
+//    disease-visit.xml (the latter block was evidently copy-pasted from the
+//    former without updating any id), and the Spironolactone concept's own
+//    `dose_<uuid>`/etc. ids collide between the Diuretic repeat's own SPIRO
+//    option and the form's separate standalone "Spironolactone" row (same
+//    underlying concept, reused in two different rows). Confirmed live via
+//    `page.locator('[id="dose-asp"]').count()` === 2 and
+//    `getByLabel('SPIRO', {exact:true})` matching 2 elements (a Playwright
+//    strictness violation). This pilot's own field-filling function skips
+//    Benzathine PCN's and the standalone Spironolactone row's own dosing
+//    sub-fields for this reason (same "not worth a fragile positional
+//    selector for a genuine content defect" call the ART pilot's own Task 11
+//    note 9 already established for its two unlabeled ART Regimen rows) —
+//    Benzathine PCN's own checkbox IS still checked (reachable via its own
+//    unique label text), and the Diuretic row itself is filled with a
+//    different (non-colliding) drug.
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
@@ -696,8 +746,17 @@ const HTN_DM_BLOOD_PRESSURE_ROW_LABEL = 'Blood pressure';
 // Real DOM ids used by this form/its siblings are always simple identifier
 // tokens; plain-text row labels (which can contain spaces/punctuation, and
 // are not valid bare CSS selector text) never match this — see the
-// `ID_LIKE` guard comments on `fillField`/`selectDropdown` below.
-const ID_LIKE = /^[A-Za-z_][\w-]*$/;
+// `ID_LIKE` guard comments on `fillField`/`selectDropdown` below. Allows a
+// leading digit (unlike a strict CSS identifier) — Cardiac and Vascular
+// Disease pilot's Cardiomyopathy diagnosis row renders with a real, macro-
+// substituted UUID id (e.g. `6569659a-977f-11e1-8993-905e29aff6c1-dx`, see
+// mastercard-page.ts's own "Cardiac and Vascular Disease pilot" note above)
+// that starts with a digit — confirmed live this is a genuine DOM id, not a
+// plain-text label (which would contain spaces `\w` already excludes). The
+// byId lookups below use an attribute selector (`[id="..."]`), not `#id`,
+// specifically so a leading-digit id like this doesn't throw a CSS
+// SyntaxError (`#6569...` is not a valid CSS identifier — confirmed live).
+const ID_LIKE = /^[\w][\w-]*$/;
 
 export class MastercardFormPage {
   constructor(private page: Page) {}
@@ -735,11 +794,12 @@ export class MastercardFormPage {
     // Task 11 addition: real DOM ids are always simple identifier tokens
     // (`guardianNameField`, `appointmentDate`, ...) — the new plain-text
     // labels this task added (e.g. "Age at Init. (yrs)") contain spaces and
-    // punctuation that are not valid CSS selector syntax and would throw
-    // when built into `#${labelOrId}` below, so only attempt the byId path
-    // for id-shaped strings.
+    // punctuation that would make a false match here, so only attempt the
+    // byId path for id-shaped strings. An attribute selector (`[id="..."]`),
+    // not `#id`, is used so a leading-digit id (see `ID_LIKE`'s own comment)
+    // doesn't throw a CSS SyntaxError.
     if (ID_LIKE.test(labelOrId)) {
-      const byId = this.page.locator(`#${labelOrId}`);
+      const byId = this.page.locator(`[id="${labelOrId}"]`);
       if (await byId.count()) {
         const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
         if (tagName === 'input' || tagName === 'textarea') {
@@ -827,6 +887,19 @@ export class MastercardFormPage {
       // — targeted the same way, by input order.
       const inputIndex = /^htndmsystolicbp$/i.test(labelOrId) ? 0 : 1;
       await this.inputCellFor(HTN_DM_BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex).fill(value);
+      return;
+    }
+
+    if (/^familyplanningotherspecify$/i.test(labelOrId)) {
+      // Cardiac and Vascular Disease header's Family Planning "Other"
+      // checkbox has a `showCommentField="true" commentFieldLabel="(specify):"`
+      // free-text input sharing the "Family planning:" `<td>` — same
+      // "no id/label of its own, only <td> text label fallback via the row's
+      // one real <th>" shape as `otherComorbidity` above, and the ONLY
+      // `input[type="text"]` in that cell (the other 3 fields in the cell
+      // are checkboxes) — see cardiac-and-vascular-disease-mastercard-page.ts's
+      // own verification notes.
+      await this.cellAt('Family planning:', 1).locator('input[type="text"]').first().fill(value);
       return;
     }
 
@@ -955,6 +1028,14 @@ export class MastercardFormPage {
   // hypertension-and-diabetes-mastercard-page.ts's own verification notes
   // for why one representative drug per row (not every drug in every row)
   // is filled.
+  //
+  // Also used, unchanged, by the Cardiac and Vascular Disease pilot for the
+  // same reason on a different form: visit form's repeated-medication rows
+  // (e.g. cardiac-and-vascular-disease-visit.xml's Diuretic/ACE-I/BB/CCB/
+  // Statins `<repeat>` blocks, whose own checkbox has no id, only a real
+  // `<label>` matching the repeat's own drug abbreviation — confirmed live
+  // unique per drug, except a genuine content collision documented in this
+  // file's own "Cardiac and Vascular Disease pilot" note above).
   async checkByLabel(label: string): Promise<void> {
     await this.page.getByLabel(label, { exact: true }).check();
   }
@@ -1012,6 +1093,10 @@ export class MastercardFormPage {
   // failure mode is a silent HANG (the locator never resolves), not an
   // error, so use this helper defensively for ANY row whose <th>/<td> label
   // isn't a bare text node, not just ones already confirmed to hang.
+  //
+  // Also used, unchanged, by the Cardiac and Vascular Disease pilot for the
+  // same reason on a different form: visit form's
+  // `<th><span class="rotate">Took medication today?</span></th>` row.
   async selectRadioInWrappedLabelRow(labelText: string, optionLabel: string, cellIndex = 1): Promise<void> {
     await this.page
       .locator(`xpath=//*[self::th or self::td][normalize-space(.)="${labelText}"]`)
@@ -1032,6 +1117,12 @@ export class MastercardFormPage {
   // "sibling input right after a wrapping span" shape `fillCptIptPills`/
   // NCD Other's `nonCodedDxText` branch already established, anchored via
   // label instead of id since there's no id here at all.
+  //
+  // Also used, unchanged, by the Cardiac and Vascular Disease pilot for the
+  // same reason on a different form: visit form's "Other medications"
+  // (non-coded) row, whose own free-text "please specify:" input and
+  // checkbox (unlike Aspirin's own `aspName`) have no id either — only a
+  // real `<label>` (the XML's own literal `answerLabel="Other, "`).
   async fillFieldAfterLabel(label: string, value: string): Promise<void> {
     await this.fillInputOrDatePicker(
       this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::span[1]/following-sibling::input[1]'),
@@ -1084,9 +1175,10 @@ export class MastercardFormPage {
   // of 1 keeps every prior call site's behavior unchanged).
   async selectDropdown(labelOrId: string, optionLabel: string, cellIndex = 1): Promise<void> {
     // See the `ID_LIKE` guard comment in `fillField` — same reasoning
-    // applies here (e.g. the Task 11 label "ART Regimens" has a space).
+    // applies here (e.g. the Task 11 label "ART Regimens" has a space), plus
+    // the same attribute-selector-not-`#id` reasoning for leading-digit ids.
     if (ID_LIKE.test(labelOrId)) {
-      const byId = this.page.locator(`#${labelOrId} select`);
+      const byId = this.page.locator(`[id="${labelOrId}"] select`);
       if (await byId.count()) {
         await byId.first().selectOption({ label: optionLabel });
         return;
