@@ -247,8 +247,8 @@
             <tr>
                 <td>Current outcome</td>
                 <td>
-                    <lookup expression="fn.currentProgramWorkflowStatus(1).state.concept.name"/>
-                    (<lookup expression="fn.currentProgramWorkflowStatus(1).startDate"/>)
+                    <lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').state.concept.name"/>
+                    (<lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').startDate"/>)
                 </td>
             </tr>
         </table>
@@ -401,8 +401,8 @@
             <tr>
                 <td>Current outcome</td>
                 <td>
-                    <lookup expression="fn.currentProgramWorkflowStatus(1).state.concept.name"/>
-                    (<lookup expression="fn.currentProgramWorkflowStatus(1).startDate"/>)
+                    <lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').state.concept.name"/>
+                    (<lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').startDate"/>)
                 </td>
             </tr>
         </table>
