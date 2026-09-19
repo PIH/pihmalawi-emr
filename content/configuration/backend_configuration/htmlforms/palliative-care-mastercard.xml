@@ -647,8 +647,13 @@
                 <td colspan="3">
                     <b>
                         Outcome:
-                        <lookup expression="fn.currentProgramWorkflowStatus(24).state.concept.name"/>
-                        (<lookup expression="fn.currentProgramWorkflowStatus(24).startDate"/>)
+                        <!-- Was hardcoded to workflow id 24, which in this instance resolves to the unrelated
+                             MATERNITY PROGRAM's workflow (copy-paste leftover), not this mastercard's own
+                             Palliative care program. Switched to the UUID-based overload of
+                             currentProgramWorkflowStatus, referencing the actual Palliative care program's
+                             "Palliative Care Treatment Status" workflow. -->
+                        <lookup expression="fn.currentProgramWorkflowStatus('F2D47AE5-7083-4901-B630-51860D09A884').state.concept.name"/>
+                        (<lookup expression="fn.currentProgramWorkflowStatus('F2D47AE5-7083-4901-B630-51860D09A884').startDate"/>)
                     </b>
                 </td>
             </tr>

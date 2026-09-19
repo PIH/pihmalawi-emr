@@ -723,8 +723,13 @@
                         <th style="vertical-align:top;" align="left">Outcome</th>
                         <td colspan="4">
                             <b>
-                                <lookup expression="fn.currentProgramWorkflowStatus(26).state.concept.name" />
-                                (<lookup expression="fn.currentProgramWorkflowStatus(26).startDate" />)
+                                <!-- Was hardcoded to workflow id 26, which in this instance resolves to the
+                                     unrelated DIABETES PROGRAM's workflow (copy-paste leftover), not this PDC
+                                     eMastercard's own program. Switched to the UUID-based overload of
+                                     currentProgramWorkflowStatus, referencing the actual PEDIATRIC DEVELOPMENT
+                                     CLINIC PROGRAM's "Chronic care treatment status" workflow. -->
+                                <lookup expression="fn.currentProgramWorkflowStatus('31d71aad-304a-4cba-8e1f-b59ed2c8f8a1').state.concept.name" />
+                                (<lookup expression="fn.currentProgramWorkflowStatus('31d71aad-304a-4cba-8e1f-b59ed2c8f8a1').startDate" />)
                             </b>
                         </td>
                         <td>

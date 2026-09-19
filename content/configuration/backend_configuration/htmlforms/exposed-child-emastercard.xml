@@ -247,8 +247,13 @@
             <tr>
                 <td>Current outcome</td>
                 <td>
-                    <lookup expression="fn.currentProgramWorkflowStatus(1).state.concept.name"/>
-                    (<lookup expression="fn.currentProgramWorkflowStatus(1).startDate"/>)
+                    <!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated
+                         Chronic Care Program's Asthma treatment workflow (copy-paste leftover). This form is
+                         the Exposed Child eMastercard, so switched to the UUID-based overload of
+                         currentProgramWorkflowStatus, referencing the actual Early Infant Diagnosis Program's
+                         "Patient status" workflow. -->
+                    <lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').state.concept.name"/>
+                    (<lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').startDate"/>)
                 </td>
             </tr>
         </table>
@@ -401,8 +406,13 @@
             <tr>
                 <td>Current outcome</td>
                 <td>
-                    <lookup expression="fn.currentProgramWorkflowStatus(1).state.concept.name"/>
-                    (<lookup expression="fn.currentProgramWorkflowStatus(1).startDate"/>)
+                    <!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated
+                         Chronic Care Program's Asthma treatment workflow (copy-paste leftover). This form is
+                         the Exposed Child eMastercard, so switched to the UUID-based overload of
+                         currentProgramWorkflowStatus, referencing the actual Early Infant Diagnosis Program's
+                         "Patient status" workflow. -->
+                    <lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').state.concept.name"/>
+                    (<lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').startDate"/>)
                 </td>
             </tr>
         </table>

@@ -70,12 +70,18 @@
 		<tr>
 			<td>Current outcome</td>
 			<td>
+				<!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated Chronic
+				     Care Program's Asthma treatment workflow (copy-paste leftover). This form is explicitly
+				     "for Exposed Children" (HCC Number + ARV Number identifiers), so switched to the
+				     UUID-based overload of currentProgramWorkflowStatus, referencing the actual Early Infant
+				     Diagnosis Program's "Patient status" workflow (same program exposed-child-emastercard.xml
+				     is for). -->
 				'
 				<lookup
-					expression="fn.currentProgramWorkflowStatus(1).getState().getConcept().getName().getName()" />
+					expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" />
 				'
 				(since
-				<lookup expression="fn.currentProgramWorkflowStatus(1).getStartDate()" />
+				<lookup expression="fn.currentProgramWorkflowStatus('66870234-977f-11e1-8993-905e29aff6c1').getStartDate()" />
 				)
 			</td>
 		</tr>

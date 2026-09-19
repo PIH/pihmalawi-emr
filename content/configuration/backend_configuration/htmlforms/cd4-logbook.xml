@@ -72,8 +72,14 @@
 					<tr>
 						<td>Current outcome</td>
 						<td>
-							<lookup expression="fn.currentProgramWorkflowStatus(1).getState().getConcept().getName().getName()" />
-							(since <lookup expression="fn.currentProgramWorkflowStatus(1).getStartDate()" />)
+							<!-- Was hardcoded to workflow id 1, which in this instance resolves to the unrelated
+							     Chronic Care Program's Asthma treatment workflow (copy-paste leftover). This form
+							     shows PART/ARV Number identifiers, i.e. the HIV continuum, so switched to the
+							     UUID-based overload of currentProgramWorkflowStatus, referencing the actual HIV
+							     PROGRAM's "Treatment status" workflow (same as cd4-count.xml's own, explicitly
+							     labeled "Current state in HIV Program" row). -->
+							<lookup expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getState().getConcept().getName().getName()" />
+							(since <lookup expression="fn.currentProgramWorkflowStatus('6686ffe6-977f-11e1-8993-905e29aff6c1').getStartDate()" />)
 						</td>
 					</tr>
 				</table>
