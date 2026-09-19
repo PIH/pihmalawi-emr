@@ -18,12 +18,14 @@ import {
   NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
   NCD_OTHER_ON_TREATMENT_STATE_UUID,
   ASTHMA_ON_TREATMENT_STATE_UUID,
+  DIABETES_HYPERTENSION_ON_TREATMENT_STATE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
   eligibleHivArtPatient: TestPatient;
   eligibleNcdOtherPatient: TestPatient;
   eligibleChronicLungDiseasePatient: TestPatient;
+  eligibleHypertensionAndDiabetesPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -92,6 +94,23 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       const patient = await createEligibleChronicCarePatient(api, {
         workflowStateUuid: ASTHMA_ON_TREATMENT_STATE_UUID,
         identifierPrefix: 'ASTHMA',
+      });
+
+      await use(patient);
+
+      // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleHypertensionAndDiabetesPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleChronicCarePatient(api, {
+        workflowStateUuid: DIABETES_HYPERTENSION_ON_TREATMENT_STATE_UUID,
+        identifierPrefix: 'HTNDM',
       });
 
       await use(patient);

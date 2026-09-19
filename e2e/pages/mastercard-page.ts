@@ -461,6 +461,79 @@ export class MastercardGatePage {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
+// Verification notes (Hypertension and Diabetes pilot) — extending this
+// shared page object to a THIRD program's mastercard
+// (content/configuration/backend_configuration/htmlforms/hypertension-and-diabetes-emastercard.xml
+// and hypertension-and-diabetes-visit.xml), confirmed against a live instance
+// the same way as the ART/NCD Other pilots: reading both XML files in full,
+// then dumping the rendered DOM (`page.content()`/`innerHTML()`) for a
+// freshly-opened create form (real `eligibleHypertensionAndDiabetesPatient`
+// fixture patient), and actually filling and saving each form and checking
+// the resulting REST `encounter`/`obs`.
+//
+// 1. "Family History" (Diabetes: / Hypertension:) — the ONLY genuinely new
+//    rendering shape this pilot needed a new helper for. Unlike every prior
+//    label-lookup helper (`cellAt`/`fillField`/`selectRadio`, all of which
+//    anchor on a label in a DIFFERENT `<td>`/`<th>` than the field, then walk
+//    to a sibling), this row's radio group shares the SAME `<td>` as its own
+//    label — `<td rowspan="2"><span>Diabetes: </span><br/><obs style="radio"
+//    .../></td>`. Confirmed live the rendered `<span>`'s own text, after
+//    Playwright's whitespace trimming, is exactly "Diabetes:" (the XML's
+//    trailing space before `</span>` is trimmed) — `getByText('Diabetes:',
+//    { exact: true })` matches it uniquely (count() === 1), same for
+//    "Hypertension:". Added `selectRadioInLabelledCell(labelText,
+//    optionLabel)` below: finds that exact `<span>`, walks to its OWN
+//    ancestor `<td>` (not a sibling), and checks the option within it.
+//
+// 2. Diagnoses (`diabetes-type-1-dx`/`diabetes-type-2-dx`/`hypertension-dx`)
+//    and Complications (`stroke-dx`/`cardio-dx`/`pvd-dx`/`retinopathy-dx`/
+//    `neuropathy-dx`/`renal-dx`/`sexdysfx-dx`) reuse `checkById` and
+//    `fillField`'s existing ID_LIKE byId path (e.g. `stroke-dx-date`)
+//    unchanged — identical id'd-checkbox-plus-toggle-target-date shape to
+//    NCD Other's diagnosis rows (see that pilot's own note 3), confirmed live
+//    each paired `*-date` span's datepicker input starts `disabled` until its
+//    checkbox is checked. Only the 3 "Diagnoses" row checkboxes carry class
+//    `dx-checkbox-item` (confirmed via the dumped DOM); the 7 "Complications"
+//    checkboxes carry `dx-selected` only, NOT `dx-checkbox-item` — this
+//    matters because `ensureDiagnosisChecked`'s "Must enter at least one
+//    diagnosis!" gate (same mastercard.js function NCD Other's own note
+//    documented) only counts `.dx-checkbox-item` elements, so at least one of
+//    the 3 Diagnoses checkboxes (not a Complications one) must be checked to
+//    save — `fillHypertensionAndDiabetesHeaderMinimum` below checks
+//    `hypertension-dx` for this reason.
+//
+// 3. "PatientHistory & Complications" — the row's own `<th rowspan="5">`
+//    text is `Patient<br/>History &amp;<br/>\n    Complications\n` in the
+//    XML; confirmed live (dumping `page.locator('th').allTextContents()`)
+//    the rendered, Playwright-normalized text is exactly
+//    "PatientHistory & Complications" (the `<br/>`s contribute no whitespace
+//    — same rule as ART/NCD Other's own `<br/>`-in-label precedent — but the
+//    literal `&#38;`/newline/indentation DOES collapse to single spaces
+//    under Playwright's `exact: true` text matching, unlike a raw DOM
+//    `textContent` read). `cellAt('PatientHistory & Complications', n)`
+//    reaches its 4 data cells with zero new code: HIV dropdown + Date test
+//    (cellIndex 1, sharing one `<td>` — same "two fields, one td" shape NCD
+//    Other's own PatientHistory row already established), ART Start Date
+//    (cellIndex 2), TB dropdown (cellIndex 3), Year (cellIndex 4, a plain
+//    numeric input validated `1950`-`2050`).
+//
+// 4. Transfer-In Date reuses `fillHeaderField` unchanged (same header `<b>`
+//    sibling shape as ART's own Transfer-In Date). "NCD Reg no" and "Outcome"
+//    are pure read-only lookups (no backing obs), same as every prior
+//    pilot's read-only rows — intentionally not filled.
+//
+// 5. The visit form (hypertension-and-diabetes-visit.xml)'s own verification
+//    notes live in hypertension-and-diabetes-mastercard-page.ts, since that
+//    file owns the Hypertension and Diabetes field list, not this generic
+//    one. No new generic helper was needed for it beyond what's documented
+//    here and in the ART/NCD Other pilots' own notes above (`fillField`'s
+//    existing datepicker/byId/label-fallback branches, `selectDropdown`,
+//    `selectRadio`, `cellAt`'s `cellIndex` param, and the new
+//    `selectRadioInLabelledCell` above, reused for two more label-shares-cell
+//    radio groups on the visit form — see that file's own notes).
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // Verification notes (Chronic Lung Disease pilot) — extending this shared
 // page object to a FOURTH program's mastercard
 // (content/configuration/backend_configuration/htmlforms/chronic-lung-disease-emastercard.xml
@@ -619,6 +692,7 @@ const CD4_ROW_LABEL = 'CD4';
 const LAST_ARVS_ROW_LABEL = 'Last ARVs (drug, date)';
 const BLOOD_PRESSURE_ROW_LABEL = 'Blood Pressure';
 const BETA_AGONIST_ROW_LABEL = 'Beta-agonist inhaler use: frequency';
+const HTN_DM_BLOOD_PRESSURE_ROW_LABEL = 'Blood pressure';
 // Real DOM ids used by this form/its siblings are always simple identifier
 // tokens; plain-text row labels (which can contain spaces/punctuation, and
 // are not valid bare CSS selector text) never match this — see the
@@ -743,6 +817,19 @@ export class MastercardFormPage {
       return;
     }
 
+    if (/^htndmsystolicbp$/i.test(labelOrId) || /^htndmdiastolicbp$/i.test(labelOrId)) {
+      // Hypertension and Diabetes Visit's own "Blood pressure" row (note the
+      // lowercase "p" — this form's `<th>` text differs in case from NCD
+      // Other's "Blood Pressure" row above; `getByText(..., {exact:true})`
+      // is case-sensitive, so a distinct row-label constant/branch is used
+      // rather than reusing `BLOOD_PRESSURE_ROW_LABEL`) renders the same
+      // "two bare inputs, one td, separated by a literal '/' text node" shape
+      // — targeted the same way, by input order.
+      const inputIndex = /^htndmsystolicbp$/i.test(labelOrId) ? 0 : 1;
+      await this.inputCellFor(HTN_DM_BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex).fill(value);
+      return;
+    }
+
     if (/^lastarvsdrug$/i.test(labelOrId) || /^lastarvsdate$/i.test(labelOrId)) {
       // "Last ARVs (drug, date)" has two bare, unwrapped <input>s back to
       // back in one <td> — targeted by input order — see Task 11
@@ -800,6 +887,21 @@ export class MastercardFormPage {
     await this.cellAt(groupLabel, cellIndex).getByLabel(optionLabel, { exact: true }).check();
   }
 
+  // Checks a radio option in a group whose own label lives INSIDE the same
+  // `<td>` as the radio inputs (e.g. hypertension-and-diabetes-emastercard.xml's
+  // "Diabetes: "/"Hypertension: " family-history rows — see that pilot's
+  // verification note 1) rather than in a preceding sibling `<td>`/`<th>`
+  // like every `cellAt`-based helper above assumes. Finds the exact `<span>`
+  // whose own text is `labelText`, walks to its ANCESTOR `<td>` (not a
+  // sibling), and checks the option within that same cell.
+  async selectRadioInLabelledCell(labelText: string, optionLabel: string): Promise<void> {
+    await this.page
+      .getByText(labelText, { exact: true })
+      .locator('xpath=ancestor::td[1]')
+      .getByLabel(optionLabel, { exact: true })
+      .check();
+  }
+
   // Checks one CPT/IPT obsgroup's own "given" toggle — a single-option
   // radio wrapped in a `<span id="ctx"|"inh"|"rfp"|"rfp/inh"|"pyridoxine">`
   // — see Task 13 verification note 8. Uses an attribute selector rather
@@ -840,6 +942,19 @@ export class MastercardFormPage {
   // note 1 above. Used for fields with a real `<label for="...">` but no id
   // of their own at all (unlike `checkById`, which needs a stable id on a
   // wrapping element).
+  //
+  // Also used, unchanged, by the Hypertension and Diabetes pilot for the
+  // same reason on a different form: visit form's repeated medication rows
+  // (e.g. hypertension-and-diabetes-visit.xml's "Diabetes Medications"/
+  // "Diuretic"/"CCB"/"ACE-I"/"BB"/"Statin"/"Other" rows). Each drug in these
+  // `<repeat>` blocks renders a `medication-name` checkbox with an opaque,
+  // render-order-dependent DOM id, but a real, short, human-readable
+  // `<label>` (the repeat's own abbreviation, e.g. "AML"/"HCTZ"/"LISIN") —
+  // confirmed live these are unique on the page, so `getByLabel` reaches the
+  // checkbox directly with no cell/row anchoring needed at all. See
+  // hypertension-and-diabetes-mastercard-page.ts's own verification notes
+  // for why one representative drug per row (not every drug in every row)
+  // is filled.
   async checkByLabel(label: string): Promise<void> {
     await this.page.getByLabel(label, { exact: true }).check();
   }
@@ -931,8 +1046,32 @@ export class MastercardFormPage {
   // stable id — see this file's own verification note 7 above). Anchors on
   // the ROW's own `<th>` text, same as `cellAt`, then checks the cell's only
   // checkbox directly.
+  //
+  // Also used, unchanged, by the Hypertension and Diabetes pilot for the
+  // same reason on a different form: visit form's "Hospitalized since last
+  // visit?" row: `<obs style="checkbox" answerConceptId="$yes"
+  // answerLabel=""/>Yes` renders an empty `<label for="...">`, with the
+  // literal text "Yes" as a separate, unbound text node after it —
+  // `getByLabel('Yes')` would not match this at all, and `checkById` doesn't
+  // apply since there's no stable id.
   async checkCellCheckbox(label: string, cellIndex = 1): Promise<void> {
     await this.cellAt(label, cellIndex).locator('input[type="checkbox"]').first().check();
+  }
+
+  // Checks a radio option whose own label lives in a SIBLING `<span>`
+  // immediately BEFORE the span containing the radio inputs — NOT a sibling
+  // `<td>` (unlike `cellAt`-based `selectRadio`) and NOT an ancestor `<td>`
+  // (unlike `selectRadioInLabelledCell` above). Hypertension and Diabetes
+  // pilot — visit form's "Foot check" row, which packs 3 sub-fields
+  // (Neuropathy/PVD, Deformities, Ulcers) into ONE `<td>` via
+  // `<span class="atab">{label}</span><span><obs style="radio" .../></span>`
+  // repeated 3x with no `<td>` boundary between them at all.
+  async selectRadioAfterLabelSpan(labelText: string, optionLabel: string): Promise<void> {
+    await this.page
+      .getByText(labelText, { exact: true })
+      .locator('xpath=following-sibling::span[1]')
+      .getByLabel(optionLabel, { exact: true })
+      .check();
   }
 
   // Handles `<select>` fields either by real DOM id (e.g. `visitLocation`,
