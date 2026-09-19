@@ -61,7 +61,7 @@ two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to
 | Workflow | chfTreatment | `programWorkflow.chfTreatment.uuid` = `cc76c7c2-8760-4ff6-8ed7-617a7378915b` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
 | Qualifying states | On Treatment | state uuid `3a9724e5-fc65-4a48-8d0b-2b1265106552`, `Initial=true`; in Advance Care state uuid `b002c86b-e22c-484a-a9a5-a12543b4a1b1`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
 | Encounter types unlocked | CHF_INITIAL (header), CHF_FOLLOWUP (visit) | header encounter type `cb337ef3-f5cb-4e10-af8d-8d717a3a139f`; visit encounter type `1f6ad830-6e94-4819-b1fd-8c4146e77280` |
-| Forms | `chf-emastercard.xml` (form uuid `40c59f30-794e-11e8-adc0-fa7ae01bbebc`), `chf-visit.xml` (form uuid `4a5c17b8-794e-11e8-adc0-fa7ae01bbebc`) | `content/configuration/backend_configuration/htmlforms/` |
+| Forms | `cardiac-and-vascular-disease-emastercard.xml` (form uuid `40c59f30-794e-11e8-adc0-fa7ae01bbebc`), `cardiac-and-vascular-disease-visit.xml` (form uuid `4a5c17b8-794e-11e8-adc0-fa7ae01bbebc`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:184`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Cardiac and Vascular Disease eMastercard" initialEncounterType="CHF_INITIAL" followupEncounterType="CHF_FOLLOWUP" programWorkflowStates="${CHFActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
 
 ### Chronic Kidney Disease
@@ -128,6 +128,36 @@ A completely different `headerForm` and flowsheet list than ART's — confirmed 
 `malawiPatientDashboard.jsp` row supplies its own form name. `patientId` accepts a UUID
 transparently, same as ART's (Task 9's resolution in `e2e/pages/mastercard-page.ts` applies here
 too — see `e2e/pages/ncd-other-mastercard-page.ts`'s `NcdOtherMastercardGatePage.buildCreateUrl`).
+
+### Cardiac and Vascular Disease
+
+Confirmed the same way as the NCD Other pattern above — live-rendering `patientDashboard.form` for
+an eligible fixture patient (`eligibleCardiacAndVascularDiseasePatient`) and dumping the "Create new
+Cardiac and Vascular Disease eMastercard" link's `onclick` (no `href` attribute, same as every other
+program's link):
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/cardiac-and-vascular-disease-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/echocardiogram-ultrasound-imaging-results.xml
+  &flowsheets=file:configuration/htmlforms/electrocardiographic-ekg-imaging-results.xml
+  &flowsheets=file:configuration/htmlforms/chest-x-ray-cxr-imaging-results.xml
+  &flowsheets=file:configuration/htmlforms/cardiac-and-vascular-disease-quarterly-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/cardiac-and-vascular-disease-frequency-per-protocol-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/cardiac-and-vascular-disease-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/cardiac-and-vascular-disease-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+Note this flowsheet list includes THREE imaging-result forms
+(`echocardiogram-ultrasound-imaging-results.xml`,
+`electrocardiographic-ekg-imaging-results.xml`, `chest-x-ray-cxr-imaging-results.xml`) not named
+after the condition at all, plus the condition's own quarterly/frequency-per-protocol lab and
+hospitalization-history forms — all out of this pilot's scope (see this repo's e2e task scope), but
+still required in the URL's flowsheet list for `flowsheet.page` to render the "Enter New Cardiac and
+Vascular Disease Visit" action link correctly (same requirement NCD Other's own note already
+established).
 
 ## Quick-programs enrollment mechanics
 
