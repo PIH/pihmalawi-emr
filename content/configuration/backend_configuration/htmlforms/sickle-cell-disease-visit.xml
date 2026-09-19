@@ -41,13 +41,13 @@
         <macro key="hospitalized" value="655b3dc6-977f-11e1-8993-905e29aff6c1"/>
         <macro key="pain" value="e26e1f17-0bf5-4600-801c-16e23180d60e"/>
         <macro key="fever" value="65637fa4-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="schoolAbsence" value="f39717e7-b68b-4ec1-8094-a6c0ae930c7f"/>
+        <macro key="schoolAbsence" value="656cb22c-977f-11e1-8993-905e29aff6c1"/>
         <macro key="malaria" value="65461b8a-977f-11e1-8993-905e29aff6c1"/>
         <macro key="antibiotics" value="6575888e-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="spleenEnlargement" value="65639a20-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="spleenEnlargement" value="e384a58c-4a73-11ec-81d3-0242ac130003"/>
         <macro key="medicationSideEffect" value="d046e48d-7eda-4a6f-b583-c13281d9640e"/>
-        <macro key="jaundice" value="6546d462-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="pinkConjunctiva" value="65638ef4-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="jaundice" value="6557aea4-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="pinkConjunctiva" value="6570e5b8-977f-11e1-8993-905e29aff6c1"/>
         <macro key="clearLungs" value="65639304-977f-11e1-8993-905e29aff6c1"/>
         <macro key="ascites" value="6548e7fc-977f-11e1-8993-905e29aff6c1"/>
         <macro key="enlargedLiver" value="5c05bcc5-a25e-4e36-98ef-579060c4c460"/>
@@ -191,7 +191,7 @@
                     <td>%SPO2 </td>
                     <td>Temp</td>
                     <td class="rotate">Hospitalized since <b/> last visit?</td>
-                    <td class="rotate">In <b/> school</td>
+                    <td class="rotate">Absence <b/> from school</td>
                     <td class="rotate">Pain</td>
                     <td class="rotate">Fever</td>
                     <td class="rotate">Medication Rx</td>
@@ -275,7 +275,7 @@
                     </td>
 
                     <td>
-                        <!-- In school-->
+                        <!-- Absence from school-->
                         <obs conceptId="$schoolAbsence"
                              answerConceptIds="$yesAnswer,$noAnswer"
                              answerLabels="Y,N" style="radio" />
@@ -617,7 +617,7 @@
             </tr>
 
             <tr>
-                <th>In School</th>
+                <th>Absence from School</th>
                 <td>
                     <obs conceptId="$schoolAbsence"
                          answerConceptIds="$yesAnswer,$noAnswer"

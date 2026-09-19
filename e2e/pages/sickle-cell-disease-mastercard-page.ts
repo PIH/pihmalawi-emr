@@ -284,7 +284,7 @@ export async function fillSickleCellDiseaseVisitForm(
   await form.fillField('Temperature', '36.8');
 
   await form.selectRadio('Hospitalized since last visit for SCD', 'Y', 1);
-  await form.selectRadio('In School', 'Y', 1);
+  await form.selectRadio('Absence from School', 'Y', 1);
   await form.selectRadio('Pain', 'Y', 1);
   await form.selectRadio('Fever', 'N', 1);
   await form.selectRadio('Medication Rx', 'Y', 1);

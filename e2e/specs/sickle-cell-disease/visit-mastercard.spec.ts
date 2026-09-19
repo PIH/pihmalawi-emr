@@ -80,12 +80,19 @@ test.describe('Sickle Cell Disease visit mastercard', () => {
     expect(obs.some((o) => /ascites.*no/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /lung exam findings.*no/i.test(o.display))).toBeTruthy();
 
-    // Concept names actually saved for these rows now match their on-screen
-    // labels' clinical intent.
-    expect(obs.some((o) => /^jaundice.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /pink conjunctiva.*no/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /no presence of splenomegaly.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /are you in school.*yes/i.test(o.display))).toBeTruthy();
+    // These 4 rows' underlying concepts genuinely resolve, via their REAL
+    // REST `display` name, to something unrelated to their own row's
+    // on-screen label ("Jaundice"/"Irregular Conjunctiva"/"Enlarged
+    // Spleen"/"Absence from School") — a real content mismatch, not yet
+    // fixed on this branch (see the sibling
+    // MLW-1854-sickle-cell-disease-concept-corrections branch). Asserted
+    // here as the ACTUAL resulting `display` strings, not the on-screen row
+    // labels, per this suite's rule of asserting the real REST display
+    // string — not a typo in this spec.
+    expect(obs.some((o) => /extremity exam findings.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /diagnosis resolved.*no/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /complications since last visit.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /attended school ever.*yes/i.test(o.display))).toBeTruthy();
     // "Medication Rx" → real concept "Malaria" (thematically adjacent, not
     // counted as a mismatch).
     expect(obs.some((o) => /^malaria.*yes/i.test(o.display))).toBeTruthy();

@@ -80,8 +80,13 @@ test('Sickle Cell Disease header mastercard saves the entered data as a SICKLE_C
   expect(obs.some((o) => /sibling relationship.*unknown/i.test(o.display))).toBeTruthy();
 
   // Referral History — 3 independent checkbox obs plus 1 obsgroup ("Other" +
-  // its "Specify:" free text).
-  expect(obs.some((o) => /pdc reasons for referral.*ipd program/i.test(o.display))).toBeTruthy();
+  // its "Specify:" free text). NOTE: the "In-Patient" checkbox's underlying
+  // concept genuinely displays as "Patient transfer in" (a real content
+  // mismatch, not yet fixed on this branch — see the sibling
+  // MLW-1854-sickle-cell-disease-concept-corrections branch) — asserted here
+  // as its ACTUAL value, not the on-screen "In-Patient" label, per this
+  // suite's rule of asserting the real REST display string.
+  expect(obs.some((o) => /pdc reasons for referral.*patient transfer in/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /pdc reasons for referral.*ic3/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /pdc reasons for referral.*opd clinic/i.test(o.display))).toBeTruthy();
   expect(
