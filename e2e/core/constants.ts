@@ -80,13 +80,11 @@ export const SCD_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'd4073eb7-60b1-4586-b062-13fce4c
 export const SCD_EMASTERCARD_FORM_UUID = '7afec71b-15d3-4e2d-8c42-d8cb2b75bc54';
 export const SCD_VISIT_FORM_UUID = 'e68275d4-c300-46b0-8754-4c2cf2598b78';
 
-// TB Program — own program/workflow (not Chronic Care Program). The
-// programs.csv/programworkflows.csv `${program.tb.uuid}` token does NOT match
-// this live instance's actual "TB PROGRAM" uuid (confirmed via REST — that
-// token resolves to a different, non-existent uuid here); the real program
-// uuid and its "On treatment" state below were confirmed live via
-// `GET program/<uuid>?v=full`, matching malawiPatientDashboard.jsp's
-// TbActiveStates state list.
+// TB Program — own program/workflow (not Chronic Care Program). Uuid below
+// matches content/content.properties' var.program.tb.uuid (the value
+// programs.csv's `${program.tb.uuid}` token resolves to at deploy time); its
+// "On treatment" state was confirmed live via `GET program/<uuid>?v=full`,
+// matching malawiPatientDashboard.jsp's TbActiveStates state list.
 export const TB_PROGRAM_UUID = '52D0036A-AB35-475E-A4D4-1826CCD985D6';
 export const TB_ON_TREATMENT_STATE_UUID = '5088F779-AD8D-4EEF-A504-9B5C2D96ED62';
 export const TB_PROGRAM_IDENTIFIER_TYPE_UUID = 'F4319B47-4141-48DF-9F41-5CF7E6301EC6';
@@ -94,10 +92,10 @@ export const TB_PROGRAM_IDENTIFIER_TYPE_UUID = 'F4319B47-4141-48DF-9F41-5CF7E630
 export const TB_INITIAL_ENCOUNTER_TYPE_UUID = '853B7AF6-FFC6-452A-9178-6A48BBA752EF';
 export const TB_FOLLOWUP_ENCOUNTER_TYPE_UUID = '61545FD5-4EBC-4E01-B349-304195254A73';
 
-// Mental Health Care Program — own program/workflow. Same caveat as TB
-// above: the programs.csv token's uuid doesn't match this live instance's
-// actual program uuid. Confirmed live via `GET program/<uuid>?v=full`: the
-// real "MENTAL HEALTH CARE PROGRAM" uuid below has a workflow
+// Mental Health Care Program — own program/workflow. Uuid below matches
+// content/content.properties' var.program.mentalHealth.uuid. Confirmed live
+// via `GET program/<uuid>?v=full`: this "MENTAL HEALTH CARE PROGRAM" uuid has
+// a workflow
 // (da69bbcb-01fe-4c59-9d46-8a2659abbd73) whose "On treatment" state matches
 // mental-health-emastercard.xml's own hardcoded Outcome lookup — the
 // strongest available confirmation this is the workflow the mastercard
@@ -121,3 +119,29 @@ export const PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID = 'f2b29f9b-69d0-4339-b
 
 export const PALLIATIVE_INITIAL_ENCOUNTER_TYPE_UUID = 'e0822140-955d-11e7-abc4-cec278b6b50a';
 export const PALLIATIVE_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'e082235c-955d-11e7-abc4-cec278b6b50a';
+
+// Epilepsy — its own workflow (Epilepsy treatment) under the Mental Health
+// Care Program, not a separate program. Confirmed live via
+// `GET program/<mentalHealthUuid>?v=full`: this program has two workflows,
+// "Epilepsy treatment" and "Mental health treatment" — the Mental Health
+// pilot's own MENTAL_HEALTH_ON_TREATMENT_STATE_UUID belongs to the latter.
+// Uses the Chronic Care Number identifier type (epilepsy-emastercard.xml's
+// own "NCD Reg no" lookup reads "Chronic Care Number"), same as Mental
+// Health.
+export const EPILEPSY_TREATMENT_WORKFLOW_UUID = '26FD314D-138F-4A5C-8890-E01791C06336';
+export const EPILEPSY_ON_TREATMENT_STATE_UUID = 'CB86C6FE-4263-4A4C-AF54-49D5308459D4';
+
+export const EPILEPSY_INITIAL_ENCOUNTER_TYPE_UUID = 'D8CBF1B9-EC74-4858-8764-2350E2A9925B';
+export const EPILEPSY_FOLLOWUP_ENCOUNTER_TYPE_UUID = '1EEDD2F6-EF28-4409-8E8C-F4FEC0746E72';
+
+// Teen club program — own program/workflow, confirmed live via
+// `GET program/<uuid>?v=full` (matches content.properties'
+// var.program.teenClub.uuid exactly). Has no "On treatment" state; "First
+// time initiation" is the natural intake state for a new enrollee. Uses the
+// ARV Number identifier type (teen-club-emastercard.xml's own header row
+// looks up "ARV Number", not a Teen-Club-specific identifier).
+export const TEEN_CLUB_PROGRAM_UUID = '54100564-4759-4CBD-9A73-B38D6DBAC7B9';
+export const TEEN_CLUB_FIRST_TIME_INITIATION_STATE_UUID = '3E9BB98B-6BB0-431D-BCD5-B3E277922C04';
+
+export const TEEN_CLUB_INITIAL_ENCOUNTER_TYPE_UUID = '49085C00-9EA8-481D-A5C5-FB685822D5AB';
+export const TEEN_CLUB_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'A8CF446D-0FA4-4D44-AF46-1811F73BE65A';

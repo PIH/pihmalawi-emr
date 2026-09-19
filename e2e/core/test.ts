@@ -32,6 +32,10 @@ import {
   PALLIATIVE_CARE_PROGRAM_UUID,
   PALLIATIVE_CARE_ON_TREATMENT_STATE_UUID,
   PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+  MENTAL_HEALTH_PROGRAM_UUID as EPILEPSY_MENTAL_HEALTH_PROGRAM_UUID,
+  EPILEPSY_ON_TREATMENT_STATE_UUID,
+  TEEN_CLUB_PROGRAM_UUID,
+  TEEN_CLUB_FIRST_TIME_INITIATION_STATE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -45,6 +49,8 @@ export interface CustomTestFixtures {
   eligibleTbPatient: TestPatient;
   eligibleMentalHealthPatient: TestPatient;
   eligiblePalliativeCarePatient: TestPatient;
+  eligibleEpilepsyPatient: TestPatient;
+  eligibleTeenClubPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -236,6 +242,42 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
         workflowStateUuid: PALLIATIVE_CARE_ON_TREATMENT_STATE_UUID,
         identifierTypeUuid: PALLIATIVE_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
         identifierPrefix: 'PC',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleEpilepsyPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: EPILEPSY_MENTAL_HEALTH_PROGRAM_UUID,
+        workflowStateUuid: EPILEPSY_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'EPI',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleTeenClubPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: TEEN_CLUB_PROGRAM_UUID,
+        workflowStateUuid: TEEN_CLUB_FIRST_TIME_INITIATION_STATE_UUID,
+        identifierTypeUuid: ARV_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'ARV',
       });
 
       await use(patient);
