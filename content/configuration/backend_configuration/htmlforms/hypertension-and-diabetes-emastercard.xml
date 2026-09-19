@@ -335,8 +335,13 @@
                             <th style="vertical-align:top;" align="left">Outcome</th>
                             <td colspan="4">
                                 <b>
-                                    <lookup expression="fn.currentProgramWorkflowStatus(16).state.concept.name"/>
-                                    (<lookup expression="fn.currentProgramWorkflowStatus(16).startDate"/>)
+                                    <!-- Was hardcoded to workflow id 16, which in this instance resolves to the
+                                         unrelated Early Infant Diagnosis Program's workflow (copy-paste leftover) and
+                                         always rendered empty for Hypertension/Diabetes patients. Switched to the
+                                         UUID-based overload of currentProgramWorkflowStatus, referencing the actual
+                                         "Diabetes Hypertension treatment" workflow of the Chronic Care Program. -->
+                                    <lookup expression="fn.currentProgramWorkflowStatus('9b571347-8dc3-40fe-9994-e82071fa8290').state.concept.name"/>
+                                    (<lookup expression="fn.currentProgramWorkflowStatus('9b571347-8dc3-40fe-9994-e82071fa8290').startDate"/>)
                                 </b>
                             </td>
                         </tr>
