@@ -731,10 +731,10 @@
                         <obsgroup groupingConceptId="$dispensingConstruct" showIfEmpty="false">
                             <tr>
                                 <td style="width: 20%;">
-                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$sulfalene" answerLabel="SP" style="checkbox" toggle="diab_{0}_med"/>
+                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$sulfalene" answerLabel="SP" style="checkbox" toggle="diab_malaria_med"/>
                                 </td>
                                 <td style="align: left;">
-                                    <div id="diab_{0}_med" class="section-container toggle">
+                                    <div id="diab_malaria_med" class="section-container toggle">
                                         <table>
                                             <thead>
                                                 <tr>
@@ -755,32 +755,32 @@
                                             <tbody>
                                                 <tr id="medication-asp" class="medication">
                                                     <td style="width: 40px;">
-                                                        <obs id="dose_{0}" class="doseInput" conceptId="$qPerDose"/>
+                                                        <obs id="dose_malaria" class="doseInput" conceptId="$qPerDose"/>
                                                     </td>
                                                     <td id="asp-rx-dose-unit" style="width: 80px;">
-                                                        <obs id="doseUnit_{0}" class="doseInput select-arrow"
+                                                        <obs id="doseUnit_malaria" class="doseInput select-arrow"
                                                              conceptId="$dosingUnit"
                                                              answerConceptIds="$milliGram,$milliLiter,$capsule,$tablet"
                                                              answerCodes="mg,mL,capsule,tablet"/>
                                                     </td>
                                                     <td id="asp-rx-route" style="width: 100px;">
-                                                        <obs id="route_{0}" class="route select-arrow"
+                                                        <obs id="route_malaria" class="route select-arrow"
                                                              conceptId="$routeOfAdmin"
                                                              answerConceptIds="$oral,$intravenous"
                                                              answerLabels="Oral,IV"/>
                                                     </td>
                                                     <td id="asp-rx-frequency" style="width: 100px;">
-                                                        <obs id="frequencyCoded_{0}" class="frequency select-arrow"
+                                                        <obs id="frequencyCoded_malaria" class="frequency select-arrow"
                                                              conceptId="$drugFrequency"
                                                              answerConceptIds=
                                                                      "PIH Malawi:3321,PIH Malawi:3322,PIH Malawi:3323,PIH Malawi:6100,PIH Malawi:1619,PIH:PRN,PIH Malawi:6408"
                                                              answerCodes="OD,BID,TID,QID,STAT,PRN,other"/>
                                                     </td>
                                                     <td id="asp-rx-duration" style="width: 60px;">
-                                                        <obs id="duration_{0}" class="duration doseInput" conceptId="$medicationDuration"/>
+                                                        <obs id="duration_malaria" class="duration doseInput" conceptId="$medicationDuration"/>
                                                     </td>
                                                     <td id="asp-rx-duration-unit" style="width: 180px;">
-                                                        <obs id="durationUnit_{0}" class="duration-unit select-arrow"
+                                                        <obs id="durationUnit_malaria" class="duration-unit select-arrow"
                                                              conceptId="$timeUnits"
                                                              answerConceptIds="PIH:Hours,PIH Malawi:1072,PIH Malawi:1073,PIH Malawi:1074"/>
                                                     </td>
@@ -802,10 +802,10 @@
                         <obsgroup groupingConceptId="$dispensingConstruct" showIfEmpty="false">
                             <tr>
                                 <td style="width: 20%;">
-                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$folicAcid" answerLabel="FCD" style="checkbox" toggle="diab_{0}_med"/>
+                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$folicAcid" answerLabel="FCD" style="checkbox" toggle="diab_folic_med"/>
                                 </td>
                                 <td style="align: left;">
-                                    <div id="diab_{0}_med" class="section-container toggle">
+                                    <div id="diab_folic_med" class="section-container toggle">
                                         <table>
                                             <thead>
                                                 <tr>
@@ -826,32 +826,32 @@
                                             <tbody>
                                                 <tr id="medication-asp" class="medication">
                                                     <td style="width: 40px;">
-                                                        <obs id="dose_{0}" class="doseInput" conceptId="$qPerDose"/>
+                                                        <obs id="dose_folic" class="doseInput" conceptId="$qPerDose"/>
                                                     </td>
                                                     <td id="asp-rx-dose-unit" style="width: 80px;">
-                                                        <obs id="doseUnit_{0}" class="doseInput select-arrow"
+                                                        <obs id="doseUnit_folic" class="doseInput select-arrow"
                                                              conceptId="$dosingUnit"
                                                              answerConceptIds="$milliGram,$milliLiter,$capsule,$tablet"
                                                              answerCodes="mg,mL,capsule,tablet"/>
                                                     </td>
                                                     <td id="asp-rx-route" style="width: 100px;">
-                                                        <obs id="route_{0}" class="route select-arrow"
+                                                        <obs id="route_folic" class="route select-arrow"
                                                              conceptId="$routeOfAdmin"
                                                              answerConceptIds="$oral,$intravenous"
                                                              answerLabels="Oral,IV"/>
                                                     </td>
                                                     <td id="asp-rx-frequency" style="width: 100px;">
-                                                        <obs id="frequencyCoded_{0}" class="frequency select-arrow"
+                                                        <obs id="frequencyCoded_folic" class="frequency select-arrow"
                                                              conceptId="$drugFrequency"
                                                              answerConceptIds=
                                                                      "PIH Malawi:3321,PIH Malawi:3322,PIH Malawi:3323,PIH Malawi:6100,PIH Malawi:1619,PIH:PRN,PIH Malawi:6408"
                                                              answerCodes="OD,BID,TID,QID,STAT,PRN,other"/>
                                                     </td>
                                                     <td id="asp-rx-duration" style="width: 60px;">
-                                                        <obs id="duration_{0}" class="duration doseInput" conceptId="$medicationDuration"/>
+                                                        <obs id="duration_folic" class="duration doseInput" conceptId="$medicationDuration"/>
                                                     </td>
                                                     <td id="asp-rx-duration-unit" style="width: 180px;">
-                                                        <obs id="durationUnit_{0}" class="duration-unit select-arrow"
+                                                        <obs id="durationUnit_folic" class="duration-unit select-arrow"
                                                              conceptId="$timeUnits"
                                                              answerConceptIds="PIH:Hours,PIH Malawi:1072,PIH Malawi:1073,PIH Malawi:1074"/>
                                                     </td>
@@ -873,10 +873,10 @@
                         <obsgroup groupingConceptId="$dispensingConstruct" showIfEmpty="false">
                             <tr>
                                 <td style="width: 20%;">
-                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$hydroxyurea" answerLabel="HYD" style="checkbox" toggle="diab_{0}_med"/>
+                                    <obs class="medication-name" conceptId="$medicationName" answerConceptId="$hydroxyurea" answerLabel="HYD" style="checkbox" toggle="diab_hydroxyurea_med"/>
                                 </td>
                                 <td style="align: left;">
-                                    <div id="diab_{0}_med" class="section-container toggle">
+                                    <div id="diab_hydroxyurea_med" class="section-container toggle">
                                         <table>
                                             <thead>
                                                 <tr>
@@ -897,32 +897,32 @@
                                             <tbody>
                                                 <tr id="medication-asp" class="medication">
                                                     <td style="width: 40px;">
-                                                        <obs id="dose_{0}" class="doseInput" conceptId="$qPerDose"/>
+                                                        <obs id="dose_hydroxyurea" class="doseInput" conceptId="$qPerDose"/>
                                                     </td>
                                                     <td id="asp-rx-dose-unit" style="width: 80px;">
-                                                        <obs id="doseUnit_{0}" class="doseInput select-arrow"
+                                                        <obs id="doseUnit_hydroxyurea" class="doseInput select-arrow"
                                                              conceptId="$dosingUnit"
                                                              answerConceptIds="$milliGram,$milliLiter,$capsule,$tablet"
                                                              answerCodes="mg,mL,capsule,tablet"/>
                                                     </td>
                                                     <td id="asp-rx-route" style="width: 100px;">
-                                                        <obs id="route_{0}" class="route select-arrow"
+                                                        <obs id="route_hydroxyurea" class="route select-arrow"
                                                              conceptId="$routeOfAdmin"
                                                              answerConceptIds="$oral,$intravenous"
                                                              answerLabels="Oral,IV"/>
                                                     </td>
                                                     <td id="asp-rx-frequency" style="width: 100px;">
-                                                        <obs id="frequencyCoded_{0}" class="frequency select-arrow"
+                                                        <obs id="frequencyCoded_hydroxyurea" class="frequency select-arrow"
                                                              conceptId="$drugFrequency"
                                                              answerConceptIds=
                                                                      "PIH Malawi:3321,PIH Malawi:3322,PIH Malawi:3323,PIH Malawi:6100,PIH Malawi:1619,PIH:PRN,PIH Malawi:6408"
                                                              answerCodes="OD,BID,TID,QID,STAT,PRN,other"/>
                                                     </td>
                                                     <td id="asp-rx-duration" style="width: 60px;">
-                                                        <obs id="duration_{0}" class="duration doseInput" conceptId="$medicationDuration"/>
+                                                        <obs id="duration_hydroxyurea" class="duration doseInput" conceptId="$medicationDuration"/>
                                                     </td>
                                                     <td id="asp-rx-duration-unit" style="width: 180px;">
-                                                        <obs id="durationUnit_{0}" class="duration-unit select-arrow"
+                                                        <obs id="durationUnit_hydroxyurea" class="duration-unit select-arrow"
                                                              conceptId="$timeUnits"
                                                              answerConceptIds="PIH:Hours,PIH Malawi:1072,PIH Malawi:1073,PIH Malawi:1074"/>
                                                     </td>
@@ -947,10 +947,10 @@
                             <obsgroup groupingConceptId="$dispensingConstruct" showIfEmpty="false">
                                 <tr>
                                     <td style="width: 20%;">
-                                        <obs class="medication-name" conceptId="$medicationName" answerConceptId="$bzn" answerLabel="BZN" style="checkbox" toggle="diab_{0}_med"/>
+                                        <obs class="medication-name" conceptId="$medicationName" answerConceptId="$bzn" answerLabel="BZN" style="checkbox" toggle="diab_bzn_med"/>
                                     </td>
                                     <td style="align: left;">
-                                        <div id="diab_{0}_med" class="section-container toggle">
+                                        <div id="diab_bzn_med" class="section-container toggle">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -971,32 +971,32 @@
                                                 <tbody>
                                                     <tr id="medication-asp" class="medication">
                                                         <td style="width: 40px;">
-                                                            <obs id="dose_{0}" class="doseInput" conceptId="$qPerDose"/>
+                                                            <obs id="dose_bzn" class="doseInput" conceptId="$qPerDose"/>
                                                         </td>
                                                         <td id="asp-rx-dose-unit" style="width: 80px;">
-                                                            <obs id="doseUnit_{0}" class="doseInput select-arrow"
+                                                            <obs id="doseUnit_bzn" class="doseInput select-arrow"
                                                                  conceptId="$dosingUnit"
                                                                  answerConceptIds="$milliGram,$milliLiter,$capsule,$tablet"
                                                                  answerCodes="mg,mL,capsule,tablet"/>
                                                         </td>
                                                         <td id="asp-rx-route" style="width: 100px;">
-                                                            <obs id="route_{0}" class="route select-arrow"
+                                                            <obs id="route_bzn" class="route select-arrow"
                                                                  conceptId="$routeOfAdmin"
                                                                  answerConceptIds="$oral,$intravenous"
                                                                  answerLabels="Oral,IV"/>
                                                         </td>
                                                         <td id="asp-rx-frequency" style="width: 100px;">
-                                                            <obs id="frequencyCoded_{0}" class="frequency select-arrow"
+                                                            <obs id="frequencyCoded_bzn" class="frequency select-arrow"
                                                                  conceptId="$drugFrequency"
                                                                  answerConceptIds=
                                                                          "PIH Malawi:3321,PIH Malawi:3322,PIH Malawi:3323,PIH Malawi:6100,PIH Malawi:1619,PIH:PRN,PIH Malawi:6408"
                                                                  answerCodes="OD,BID,TID,QID,STAT,PRN,other"/>
                                                         </td>
                                                         <td id="asp-rx-duration" style="width: 60px;">
-                                                            <obs id="duration_{0}" class="duration doseInput" conceptId="$medicationDuration"/>
+                                                            <obs id="duration_bzn" class="duration doseInput" conceptId="$medicationDuration"/>
                                                         </td>
                                                         <td id="asp-rx-duration-unit" style="width: 180px;">
-                                                            <obs id="durationUnit_{0}" class="duration-unit select-arrow"
+                                                            <obs id="durationUnit_bzn" class="duration-unit select-arrow"
                                                                  conceptId="$timeUnits"
                                                                  answerConceptIds="PIH:Hours,PIH Malawi:1072,PIH Malawi:1073,PIH Malawi:1074"/>
                                                         </td>

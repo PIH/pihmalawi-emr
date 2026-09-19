@@ -179,7 +179,7 @@
                                          answerConceptId="$sickleCellDiagnosis"
                                          defaultValue="$sickleCellDiagnosis"/>
                                     </span>
-                                    <obs id="appointmentDate" conceptId="$diagnosisDate"/>
+                                    <obs id="diagnosisDate" conceptId="$diagnosisDate"/>
                                 </obsgroup>
                             </td>
                         </tr>

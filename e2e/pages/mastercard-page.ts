@@ -900,7 +900,7 @@ export class MastercardFormPage {
       if (await byId.count()) {
         const tagName = await byId.first().evaluate((el) => el.tagName.toLowerCase());
         if (tagName === 'input' || tagName === 'textarea') {
-          await byId.first().fill(value);
+          await this.fillPlainInput(byId.first(), value);
           return;
         }
 
@@ -972,7 +972,7 @@ export class MastercardFormPage {
       // Task 13's verification note 1 on that form). Targeted by input order
       // within the row, same as Last ARVs.
       const inputIndex = /^systolicbp$/i.test(labelOrId) ? 0 : 1;
-      await this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex).fill(value);
+      await this.fillPlainInput(this.inputCellFor(BLOOD_PRESSURE_ROW_LABEL).locator('input').nth(inputIndex), value);
       return;
     }
 
@@ -1035,7 +1035,7 @@ export class MastercardFormPage {
   private async fillInputOrDatePicker(input: Locator, value: string): Promise<void> {
     const isDatePicker = await input.evaluate((el) => el.classList.contains('hasDatepicker'));
     if (!isDatePicker) {
-      await input.fill(value);
+      await this.fillPlainInput(input, value);
       return;
     }
 
@@ -1053,6 +1053,11 @@ export class MastercardFormPage {
       display.dispatchEvent(new Event('change', { bubbles: true }));
       hidden?.dispatchEvent(new Event('change', { bubbles: true }));
     }, value);
+  }
+
+  // Fills a plain (non-datepicker) `<input>`/`<textarea>`.
+  private async fillPlainInput(input: Locator, value: string): Promise<void> {
+    await input.fill(value);
   }
 
   // Fills a field in the page header (the `<h4>`, outside
@@ -1151,6 +1156,11 @@ export class MastercardFormPage {
   // reason on a different form: visit form's repeated-medication checkboxes
   // (HCTZ/ENAL/ATEN/AML/"Other, " — see this file's own verification note
   // 1a above), none of which have a stable id.
+  //
+  // Also used, unchanged, by the Sickle Cell Disease pilot's own header-form
+  // Referral History checkboxes (In-Patient/IC3/OPD/Other) and visit form's
+  // medication checkboxes (SP/FCD/HYD/BZN/Other), none of which have a
+  // stable id (only opaque render-order ids).
   async checkByLabel(label: string): Promise<void> {
     await this.page.getByLabel(label, { exact: true }).check();
   }
@@ -1248,6 +1258,10 @@ export class MastercardFormPage {
   // (non-coded) row, whose free-text "please specify:" input and checkbox
   // have no id either — only a real `<label>` (the XML's own literal
   // `answerLabel="Other, "`).
+  //
+  // Also used, unchanged, by the Sickle Cell Disease pilot's own visit-form
+  // "Other" medication row (ported from the Chronic Kidney Disease pilot's
+  // identical helper).
   async fillFieldAfterLabel(label: string, value: string): Promise<void> {
     await this.fillInputOrDatePicker(
       this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::span[1]/following-sibling::input[1]'),
@@ -1312,6 +1326,27 @@ export class MastercardFormPage {
     await this.cellAt(labelOrId, cellIndex).locator('select').first().selectOption({ label: optionLabel });
   }
 
+  // Fills the bare <input>/<textarea> immediately following, as a PLAIN
+  // sibling (no wrapping element at all), a label rendered as inline text
+  // with no control of its own — Sickle Cell Disease pilot's own "Specify:"
+  // free-text row (sickle-cell-disease-emastercard.xml's Referral History
+  // "Other" reason: a bare `<b>Specify:</b>` immediately followed by a bare
+  // `<textarea>`, both plain siblings in the same `<td>`, no id on either).
+  // Unlike `fillFieldAfterLabel` (Chronic Kidney Disease pilot), which
+  // anchors on a LABELLED CONTROL's own `<label for="...">` and then climbs
+  // to a wrapping `<span>` first, this anchors directly on the plain text
+  // label itself, since there is no control/label pairing here to anchor on
+  // — confirmed live via `getByText('Specify:', {exact:true})` matching the
+  // `<b>` tag itself and its very next element sibling being the `<textarea>`.
+  async fillFieldAfterText(labelText: string, value: string): Promise<void> {
+    await this.fillInputOrDatePicker(
+      this.page
+        .getByText(labelText, { exact: true })
+        .locator('xpath=following-sibling::*[self::input or self::textarea][1]'),
+      value,
+    );
+  }
+
   // Fills the `cellIndex`-th <td> in the row immediately FOLLOWING the
   // <tr> that contains a given anchor label's <th>/<td> — Chronic Kidney
   // Disease pilot's own "PatientHistory" row, whose TB dropdown/Date cells
@@ -1320,6 +1355,10 @@ export class MastercardFormPage {
   // verification note 4 above). Unlike `cellAt` (`following-sibling::td`,
   // same row), this walks up to the anchor's own <tr> first, then to the
   // NEXT <tr>, then into its `cellIndex`-th <td>.
+  //
+  // Also used, unchanged, by the Sickle Cell Disease pilot's own header-form
+  // "HIV History" row for the same reason (its "Date Test:" field lives in a
+  // separate <tr>, whose own first <td> is genuinely empty, no label at all).
   async fillFieldInNextRow(label: string, value: string, cellIndex: number): Promise<void> {
     await this.fillInputOrDatePicker(
       this.cellInNextRow(label, cellIndex).locator('input, textarea').first(),
@@ -1424,7 +1463,8 @@ export class MastercardFormPage {
   // Generalizes `cellAt` to a cell in the <tr> immediately FOLLOWING the
   // <tr> containing the anchor label — see `fillFieldInNextRow`'s own
   // comment and this file's "Chronic Kidney Disease pilot" verification
-  // note 4 above.
+  // note 4 above. Also used, unchanged, by the Sickle Cell Disease pilot's
+  // own "PatientHistory" row for the same reason.
   private cellInNextRow(label: string, n: number) {
     return this.page
       .getByText(label, { exact: true })
