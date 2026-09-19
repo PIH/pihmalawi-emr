@@ -64,7 +64,25 @@ was discovered — read those before writing new ones).
      caught and had to fix; do the full inventory from the start this time.
    - Every field's REST assertion must check the **actual value** that was entered against the
      real `display` string (query the live REST API to confirm the real string before writing each
-     regex — never a presence-only "some obs with this label exists" check).
+     regex — never a presence-only "some obs with this label exists" check). Watch for the
+     "specify text" case: a checkbox's free-text companion field is often stored on the obs's
+     `comment` property, not `display`/`value` — assert on `comment` directly there, not a
+     `display` regex that could never actually fail if that code path regressed.
+   - **"Every editable field" has three accepted exceptions**, confirmed independently by multiple
+     pilots — treat all three as the norm, not something to re-litigate per condition:
+     1. A field genuinely disabled/mutually-exclusive by real product JS (verify live, don't
+        assume from the XML alone).
+     2. A field made unreliably addressable by a genuine duplicate-DOM-id/label content defect
+        (document it as a data/code issue per "Reporting data/code issues" below; don't force a
+        fragile positional selector to route around it).
+     3. **For a `<repeat>` of several structurally-identical drug options within one medication
+        class** (e.g. several diuretics, several ACE-inhibitors), fill and assert **one
+        representative drug per class**, exercising its full dose/route/frequency/duration
+        sub-fields, rather than every drug in every class. The toggle/dose/route/frequency/
+        duration code path is identical across siblings in the same class, so the marginal test
+        value of repeating it 2-3x is low. (Do still fill *every distinct class*, and — per the
+        Cardiac and Vascular Disease pilot's own addition — check **two** drugs simultaneously in
+        at least one class somewhere in the suite, to prove the repeat's obsgroups don't collide.)
    - Run the full suite (not just the new spec) after each form to confirm no regressions in the
      shared page-object file.
 

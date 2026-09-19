@@ -736,6 +736,100 @@ export class MastercardGatePage {
 //    different (non-colliding) drug.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Verification notes (Chronic Kidney Disease pilot) — extending this shared
+// page object to a further Chronic Care Program condition
+// (content/configuration/backend_configuration/htmlforms/chronic-kidney-disease-emastercard.xml
+// and chronic-kidney-disease-visit.xml), confirmed against a live instance
+// the same way as every prior pilot: reading both XML files in full, then
+// dumping the rendered DOM (`page.content()`/`innerHTML()`) for a freshly-
+// opened create form (real `eligibleChronicKidneyDiseasePatient` fixture
+// patient), and actually filling and saving each form and checking the
+// resulting REST `encounter`/`obs`.
+//
+// 1. The header form's "Presumed etiology" checkboxes
+//    (Hypertension/Diabetes/HIV/Nephrotic/Others/Unknown) have no stable id
+//    at all (opaque render-order ids only, e.g. `w20`) — only a real
+//    `<label for="...">`. Confirmed live via
+//    `getByLabel('Hypertension', {exact:true}).count()` === 2 and
+//    `getByLabel('Diabetes', {exact:true}).count()` === 2: BOTH
+//    "Hypertension" and "Diabetes" are genuine DUPLICATE labels across this
+//    ONE form — the etiology checkbox uses the same literal `answerLabel` as
+//    the separate, real-id'd `htn-dx`/`diabetes-dx` diagnosis checkboxes
+//    lower on the same page (two different concepts/questions that happen to
+//    share display text: "presumed etiology of the patient's CKD" vs. "the
+//    patient also carries this as its own chronic-care diagnosis"). Both are
+//    still reliably reachable — `htn-dx`/`diabetes-dx` via the existing
+//    `checkById` (real ids), and the etiology ones via `selectRadio`'s
+//    existing `cellAt`-scoped `getByLabel` (already confined to the single
+//    "Presumedetiology" cell, so the ambiguity never surfaces, and no new
+//    helper was needed for this row at all) — but this is worth a
+//    content/labeling cleanup ticket, not a behavior bug: a human user has
+//    no way to tell the two "Hypertension" checkboxes apart from label text
+//    alone if they were ever visible on the same screen without the
+//    cell-boundary spatial cue (confirmed live they're never actually
+//    scanned together as options of one control, so no real submission
+//    ambiguity exists today).
+//
+// 1a. `checkByLabel` added below IS needed, but by the VISIT form, not the
+//    header — see this file's own note further down (visit form, note 5/6)
+//    for the repeated-medication checkboxes (HCTZ/ENAL/ATEN/AML/"Other, ")
+//    that have no id, only a real `<label>`. Same helper independently
+//    added by the Chronic Lung Disease/Cardiac and Vascular Disease pilots
+//    (identical signature) for their own equivalent rows.
+//
+// 2. `Presumed<br/>etiology`'s rendered, Playwright-normalized `<th>` text
+//    is exactly "Presumedetiology" (no space — same no-surrounding-
+//    whitespace `<br/>` rule already established for ART's/NCD Other's own
+//    `<br/>`-in-label rows), confirmed live via `page.locator('th').allTextContents()`.
+//    `selectRadio('Presumedetiology', <label>)` (existing helper, already
+//    `cellAt`-scoped) reaches all 6 checkboxes with zero new code, and
+//    correctly avoids note 1's duplicate-label ambiguity. The cell's shared
+//    "Date" field (id `ckd-etiology-date`) starts disabled and is enabled by
+//    checking ANY ONE of the 6 checkboxes — confirmed live (before/after
+//    `.isDisabled()`) — even though the wrapping `<td>`'s own
+//    `data-toggle-source="ckd-dx"` value does NOT match any real id in the
+//    cell (no element has `id="ckd-dx"` — likely a copy-paste leftover from
+//    a template). This does NOT appear to be a functional bug: the toggle
+//    still fires correctly, so htmlformentry's toggle JS apparently treats a
+//    non-empty `data-toggle-source` as "watch every checkbox in this cell",
+//    not as an id to resolve — confirmed live, not just assumed. Worth a
+//    minor content cleanup ticket (the attribute value is misleading/dead),
+//    not a behavior defect.
+//
+// 3. The etiology cell's two free-text fields ("Drugs (specify)"/"Others
+//    (specify)", backed by `$ckdDrugsEti`/`$ckdOtherEti`, both real Text-
+//    datatype concepts confirmed via REST) are bare, unwrapped, unlabelled
+//    `<input type="text">`s sharing the SAME `<td>` as the 6 checkboxes —
+//    same "positional, scoped-by-a-real-anchor" shape as `LastArvsDrug`/
+//    `LastArvsDate` above. Confirmed live exactly 2 `input[type="text"]`
+//    elements exist in that cell, in source order (Drugs first, Others
+//    second) — reached via 2 new `fillField` magic-string branches
+//    (`ckdEtiologyDrugs`/`ckdEtiologyOther`) below, scoped to the
+//    "Presumedetiology" cell and filtered to `input[type="text"]` so the 6
+//    checkboxes in the same cell are never accidentally matched.
+//
+// 4. "Patient<br/>History" renders as "PatientHistory" (same no-space rule
+//    as note 2), and its own row's 4 data cells (HIV dropdown + Date Test at
+//    cellIndex 1, ART Start Date at cellIndex 2, History of Dialysis at
+//    cellIndex 3, Date of Dialysis at cellIndex 4) all reuse
+//    `fillField`/`selectDropdown`'s existing `cellIndex` param with zero new
+//    code — same shape Cardiac and Vascular Disease's/Chronic Lung Disease's
+//    own "PatientHistory..." rows already established. UNLIKE those two
+//    forms' single-`<tr>` layout, though, this form's TB dropdown + Date
+//    cells are NOT siblings of the "PatientHistory" `<th>` at all — the
+//    `<th rowspan="2">` only visually spans two real, separate `<tr>`s; the
+//    TB/Date `<td>`s live in the SECOND `<tr>`, with no `<th>`/anchor label
+//    of their own. `cellAt`'s `following-sibling::td[n]` xpath cannot reach
+//    across a `<tr>` boundary, so a genuinely new helper (`cellInNextRow`)
+//    was needed and added below, plus two thin public wrappers
+//    (`fillFieldInNextRow`/`selectDropdownInNextRow`) mirroring
+//    `fillField`/`selectDropdown`'s own `fillInputOrDatePicker`/
+//    `selectOption` bodies exactly, just scoped one `<tr>` further down —
+//    confirmed live via `ancestor::tr[1]/following-sibling::tr[1]/td[n]`
+//    correctly resolving to the TB select (n=1) and its Date field (n=2).
+// ---------------------------------------------------------------------------
+
 const MASTERCARD_LOCATION_NAME = 'Neno District Hospital';
 const HEIGHT_WEIGHT_ROW_LABEL = 'Height/ Wgt.';
 const CD4_ROW_LABEL = 'CD4';
@@ -743,6 +837,7 @@ const LAST_ARVS_ROW_LABEL = 'Last ARVs (drug, date)';
 const BLOOD_PRESSURE_ROW_LABEL = 'Blood Pressure';
 const BETA_AGONIST_ROW_LABEL = 'Beta-agonist inhaler use: frequency';
 const HTN_DM_BLOOD_PRESSURE_ROW_LABEL = 'Blood pressure';
+const PRESUMED_ETIOLOGY_ROW_LABEL = 'Presumedetiology';
 // Real DOM ids used by this form/its siblings are always simple identifier
 // tokens; plain-text row labels (which can contain spaces/punctuation, and
 // are not valid bare CSS selector text) never match this — see the
@@ -755,7 +850,9 @@ const HTN_DM_BLOOD_PRESSURE_ROW_LABEL = 'Blood pressure';
 // plain-text label (which would contain spaces `\w` already excludes). The
 // byId lookups below use an attribute selector (`[id="..."]`), not `#id`,
 // specifically so a leading-digit id like this doesn't throw a CSS
-// SyntaxError (`#6569...` is not a valid CSS identifier — confirmed live).
+// SyntaxError (`#6569...` is not a valid CSS identifier — confirmed live) —
+// also relied on, for the same reason, by the Chronic Kidney Disease
+// pilot's own sibling ids.
 const ID_LIKE = /^[\w][\w-]*$/;
 
 export class MastercardFormPage {
@@ -839,6 +936,19 @@ export class MastercardFormPage {
       // fallback below (`input, textarea` `.first()`), which would instead
       // grab the first checkbox and fail (`.fill()` refuses a checkbox).
       await this.cellAt('Comorbidities', 1).locator('input[type="text"]').first().fill(value);
+      return;
+    }
+
+    if (/^ckdetiologydrugs$/i.test(labelOrId) || /^ckdetiologyother$/i.test(labelOrId)) {
+      // Chronic Kidney Disease header's "Presumed etiology" cell packs 2
+      // bare, unlabelled `<input type="text">`s ("Drugs (specify)"/"Others
+      // (specify)") alongside 6 checkboxes, all in ONE `<td>` — see
+      // mastercard-page.ts's own "Chronic Kidney Disease pilot" verification
+      // note 3 above. Filtered to `input[type="text"]` (unlike the generic
+      // fallback's `input, textarea` `.first()`) so the cell's checkboxes
+      // are never matched, same guard `otherComorbidity` above uses.
+      const textInputIndex = /^ckdetiologydrugs$/i.test(labelOrId) ? 0 : 1;
+      await this.cellAt(PRESUMED_ETIOLOGY_ROW_LABEL, 1).locator('input[type="text"]').nth(textInputIndex).fill(value);
       return;
     }
 
@@ -1036,6 +1146,11 @@ export class MastercardFormPage {
   // `<label>` matching the repeat's own drug abbreviation — confirmed live
   // unique per drug, except a genuine content collision documented in this
   // file's own "Cardiac and Vascular Disease pilot" note above).
+  //
+  // Also used, unchanged, by the Chronic Kidney Disease pilot for the same
+  // reason on a different form: visit form's repeated-medication checkboxes
+  // (HCTZ/ENAL/ATEN/AML/"Other, " — see this file's own verification note
+  // 1a above), none of which have a stable id.
   async checkByLabel(label: string): Promise<void> {
     await this.page.getByLabel(label, { exact: true }).check();
   }
@@ -1097,6 +1212,10 @@ export class MastercardFormPage {
   // Also used, unchanged, by the Cardiac and Vascular Disease pilot for the
   // same reason on a different form: visit form's
   // `<th><span class="rotate">Took medication today?</span></th>` row.
+  //
+  // Also used, unchanged, by the Chronic Kidney Disease pilot for the same
+  // reason on a different form: visit form's own
+  // `<th><span class="rotate">Took medication today?</span></th>` row.
   async selectRadioInWrappedLabelRow(labelText: string, optionLabel: string, cellIndex = 1): Promise<void> {
     await this.page
       .locator(`xpath=//*[self::th or self::td][normalize-space(.)="${labelText}"]`)
@@ -1123,6 +1242,12 @@ export class MastercardFormPage {
   // (non-coded) row, whose own free-text "please specify:" input and
   // checkbox (unlike Aspirin's own `aspName`) have no id either — only a
   // real `<label>` (the XML's own literal `answerLabel="Other, "`).
+  //
+  // Also used, unchanged, by the Chronic Kidney Disease pilot for the same
+  // reason on a different form: visit form's own "Other medications"
+  // (non-coded) row, whose free-text "please specify:" input and checkbox
+  // have no id either — only a real `<label>` (the XML's own literal
+  // `answerLabel="Other, "`).
   async fillFieldAfterLabel(label: string, value: string): Promise<void> {
     await this.fillInputOrDatePicker(
       this.page.getByLabel(label, { exact: true }).locator('xpath=ancestor::span[1]/following-sibling::input[1]'),
@@ -1185,6 +1310,27 @@ export class MastercardFormPage {
       }
     }
     await this.cellAt(labelOrId, cellIndex).locator('select').first().selectOption({ label: optionLabel });
+  }
+
+  // Fills the `cellIndex`-th <td> in the row immediately FOLLOWING the
+  // <tr> that contains a given anchor label's <th>/<td> — Chronic Kidney
+  // Disease pilot's own "PatientHistory" row, whose TB dropdown/Date cells
+  // live in a SEPARATE <tr> from the anchor's own row (the <th>'s
+  // rowspan="2" only visually spans two real <tr>s — see this file's own
+  // verification note 4 above). Unlike `cellAt` (`following-sibling::td`,
+  // same row), this walks up to the anchor's own <tr> first, then to the
+  // NEXT <tr>, then into its `cellIndex`-th <td>.
+  async fillFieldInNextRow(label: string, value: string, cellIndex: number): Promise<void> {
+    await this.fillInputOrDatePicker(
+      this.cellInNextRow(label, cellIndex).locator('input, textarea').first(),
+      value,
+    );
+  }
+
+  // Same intent as `fillFieldInNextRow`, for a <select> — see that method's
+  // own comment and this file's verification note 4 above.
+  async selectDropdownInNextRow(label: string, optionLabel: string, cellIndex: number): Promise<void> {
+    await this.cellInNextRow(label, cellIndex).locator('select').first().selectOption({ label: optionLabel });
   }
 
   // Reaches a flowsheet form (e.g. "ART Visit") from an already-loaded
@@ -1273,5 +1419,15 @@ export class MastercardFormPage {
 
   private rowFor(label: string) {
     return this.page.getByText(label, { exact: true }).locator('xpath=ancestor::tr[1]');
+  }
+
+  // Generalizes `cellAt` to a cell in the <tr> immediately FOLLOWING the
+  // <tr> containing the anchor label — see `fillFieldInNextRow`'s own
+  // comment and this file's "Chronic Kidney Disease pilot" verification
+  // note 4 above.
+  private cellInNextRow(label: string, n: number) {
+    return this.page
+      .getByText(label, { exact: true })
+      .locator(`xpath=ancestor::tr[1]/following-sibling::tr[1]/td[${n}]`);
   }
 }

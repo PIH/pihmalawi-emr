@@ -71,7 +71,7 @@ two when reading older code/forms (e.g. `z-deprecated-art-*.xml` forms belong to
 | Workflow | ckdTreatment | `programWorkflow.ckdTreatment.uuid` = `4eda02b2-48ca-47dc-9166-483a6499bcbd` (`content/configuration/backend_configuration/programworkflows/programWorkflows.csv`) |
 | Qualifying states | On Treatment | state uuid `908552d7-2bb3-4e4f-9ba1-ec22c2c3f2b6`, `Initial=true`; in Advance Care state uuid `c5ddd2d0-33f3-4d1e-8f7d-f58beec5ece9`, `Initial=true` (`content/configuration/backend_configuration/programworkflowstates/programWorkflowStates.csv`) |
 | Encounter types unlocked | CKD_INITIAL (header), CKD_FOLLOWUP (visit) | header encounter type `0a3621e2-974e-11e8-9eb6-529269fb1459`; visit encounter type `1ebe2272-974e-11e8-9eb6-529269fb1459` |
-| Forms | `ckd-emastercard.xml` (form uuid `ec0a340c-9751-11e8-9eb6-529269fb1459`), `ckd-visit.xml` (form uuid `ec0a1fb2-9751-11e8-9eb6-529269fb1459`) | `content/configuration/backend_configuration/htmlforms/` |
+| Forms | `chronic-kidney-disease-emastercard.xml` (form uuid `ec0a340c-9751-11e8-9eb6-529269fb1459`), `chronic-kidney-disease-visit.xml` (form uuid `ec0a1fb2-9751-11e8-9eb6-529269fb1459`) | `content/configuration/backend_configuration/htmlforms/` |
 | Gate on the tag itself | `malawiPatientDashboard.jsp:188`: `<pihmalawi:eMastercardAccess patientId="${model.patientId}" form="Chronic Kidney Disease eMastercard" initialEncounterType="CKD_INITIAL" followupEncounterType="CKD_FOLLOWUP" programWorkflowStates="${CKDActiveStates}" patientIdentifierType="Chronic Care Number"/>` | verbatim from the JSP |
 
 ### NCD Other
@@ -200,6 +200,29 @@ hospitalization-history forms — all out of this pilot's scope (see this repo's
 still required in the URL's flowsheet list for `flowsheet.page` to render the "Enter New Cardiac and
 Vascular Disease Visit" action link correctly (same requirement NCD Other's own note already
 established).
+
+### Chronic Kidney Disease
+
+Confirmed against `EMastercardAccessTag.getNewMasterCardConfiguration`'s `flowsheetForms` map
+(keyed by `PihMalawiConfigConstants.ENCOUNTERTYPE_CKD_INITIAL_NAME`), not live-rendered:
+
+```
+/openmrs/htmlformentryui/htmlform/flowsheet.page?
+  headerForm=file:configuration/htmlforms/chronic-kidney-disease-emastercard.xml
+  &flowsheets=file:configuration/htmlforms/chronic-kidney-disease-quarterly-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/chronic-kidney-disease-annual-laboratory-tests.xml
+  &flowsheets=file:configuration/htmlforms/chronic-kidney-disease-imaging-results.xml
+  &flowsheets=file:configuration/htmlforms/chronic-kidney-disease-hospitalization-history.xml
+  &flowsheets=file:configuration/htmlforms/chronic-kidney-disease-visit.xml
+  &dashboardUrl=legacyui&customizationProvider=pihmalawi&customizationFragment=mastercard
+  &patientId=<id>&encounterDate=YYYY-MM-DD
+```
+
+Note the `chronic-kidney-disease-visit` flowsheet tab is listed *last* here, after the two
+laboratory-test forms, the imaging-results form, and the hospitalization-history form (unlike
+ART/NCD Other where `-visit` is also last, but with a differently-ordered/shorter sibling list —
+order is whatever `EMastercardAccessTag`'s `flowsheetForms` map lists for
+`ENCOUNTERTYPE_CKD_INITIAL_NAME`, not alphabetical or otherwise inferable).
 
 ## Quick-programs enrollment mechanics
 
