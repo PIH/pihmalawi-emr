@@ -10,5 +10,7 @@ export * from './sickle-cell-disease-mastercard-page';
 export * from './tb-mastercard-page';
 export * from './mental-health-mastercard-page';
 export * from './palliative-care-mastercard-page';
+export * from './epilepsy-mastercard-page';
+export * from './teen-club-mastercard-page';
 export * from './hiv-patient-summary-page';
 export * from './reporting-page';
