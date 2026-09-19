@@ -22,6 +22,13 @@ export const HIV_COHORT_REPORT_UUID = 'c64afef1-2ccc-44d5-9504-eb5c8d6e3892';
 export const CHRONIC_CARE_PROGRAM_UUID = '6685164a-977f-11e1-8993-905e29aff6c1';
 export const CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID = '11a76c3e-1db8-4d16-9252-9a18b5ed1843';
 
+// Chronic Care eMastercard (generic) — the base chronicCareTreatmentStatus
+// workflow of the same Chronic Care Program above (distinct from the 6
+// disease-specific workflows below, e.g. asthmaTreatment).
+export const CHRONIC_CARE_ON_TREATMENT_STATE_UUID = '66882650-977f-11e1-8993-905e29aff6c1';
+export const CHRONIC_CARE_INITIAL_ENCOUNTER_TYPE_UUID = '664bb6de-977f-11e1-8993-905e29aff6c1';
+export const CHRONIC_CARE_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664bb896-977f-11e1-8993-905e29aff6c1';
+
 export const DIABETES_HYPERTENSION_TREATMENT_WORKFLOW_UUID = '9b571347-8dc3-40fe-9994-e82071fa8290';
 export const DIABETES_HYPERTENSION_ON_TREATMENT_STATE_UUID = 'd5d2d3bf-9cca-4a1f-9c69-f7713ed8fff4';
 export const DIABETES_HYPERTENSION_IN_ADVANCE_CARE_STATE_UUID = '00be3c91-ecd2-482e-8c7a-7bdd49c997e7';

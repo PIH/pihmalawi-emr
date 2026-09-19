@@ -12,5 +12,6 @@ export * from './mental-health-mastercard-page';
 export * from './palliative-care-mastercard-page';
 export * from './epilepsy-mastercard-page';
 export * from './teen-club-mastercard-page';
+export * from './chronic-care-mastercard-page';
 export * from './hiv-patient-summary-page';
 export * from './reporting-page';
