@@ -225,3 +225,11 @@ export const PRE_ART_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664b8812-977f-11e1-8993-905
 
 export const EXPOSED_CHILD_INITIAL_ENCOUNTER_TYPE_UUID = '664bcbb0-977f-11e1-8993-905e29aff6c1';
 export const EXPOSED_CHILD_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664bcc8c-977f-11e1-8993-905e29aff6c1';
+
+// Trace Mastercard — gated by a DIFFERENT tag (pihmalawi:eTraceAccess, not
+// eMastercardAccess) with NO programWorkflowStates/patientIdentifierType at
+// all (confirmed against ETraceAccessTag.java): it only checks the patient
+// isn't dead and doesn't already have a TRACE_INITIAL encounter. No program
+// enrollment or identifier needed — any plain patient qualifies.
+export const TRACE_INITIAL_ENCOUNTER_TYPE_UUID = '7EBBEBD8-CF07-489B-B88D-CEBA274C66D5';
+export const TRACE_FOLLOWUP_ENCOUNTER_TYPE_UUID = '563ACC45-E3CE-4930-8F34-4F41CB35017F';
