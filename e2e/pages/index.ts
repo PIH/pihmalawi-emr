@@ -26,5 +26,6 @@ export * from './pdc-other-diagnosis-mastercard-page';
 export * from './pre-art-mastercard-page';
 export * from './exposed-child-mastercard-page';
 export * from './trace-mastercard-page';
+export * from './kaposis-sarcoma-mastercard-page';
 export * from './hiv-patient-summary-page';
 export * from './reporting-page';

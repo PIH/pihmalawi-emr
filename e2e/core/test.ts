@@ -67,6 +67,7 @@ export interface CustomTestFixtures {
   eligiblePreArtPatient: TestPatient;
   eligibleExposedChildPatient: TestPatient;
   tracePatient: TestPatient;
+  kaposisSarcomaPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -414,6 +415,21 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
   tracePatient: [
     async ({ api }, use) => {
       const patient = await createPatient(api, { givenName: 'AutoTrace', familyName: 'Pilot' });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // Kaposi's Sarcoma has no program-enrollment gate at all either (see
+  // kaposis-sarcoma-mastercard-page.ts's top comment) — any plain patient
+  // qualifies, same as tracePatient above.
+  kaposisSarcomaPatient: [
+    async ({ api }, use) => {
+      const patient = await createPatient(api, { givenName: 'AutoKaposisSarcoma', familyName: 'Pilot' });
 
       await use(patient);
 

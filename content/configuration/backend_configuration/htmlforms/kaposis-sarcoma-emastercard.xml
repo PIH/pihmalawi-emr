@@ -18,6 +18,7 @@
     </style>
 
     <div>
+        <span style="display:none"><encounterDate /><!-- This header is never itself submitted (no <submit/>, purely a read-only display panel) — but flowsheet.page validates that every form loaded on the page has an encounterDate tag before any of the real flowsheets (KS Evaluation/Chemotherapy) can save, so this hidden tag exists only to satisfy that page-level check. --></span>
         <h4 style="font-style: italic;">
             <b>Kaposis Sarcoma eMastercard</b>
             <span style="padding-left:50px;">

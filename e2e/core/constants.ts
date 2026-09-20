@@ -233,3 +233,13 @@ export const EXPOSED_CHILD_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664bcc8c-977f-11e1-89
 // enrollment or identifier needed — any plain patient qualifies.
 export const TRACE_INITIAL_ENCOUNTER_TYPE_UUID = '7EBBEBD8-CF07-489B-B88D-CEBA274C66D5';
 export const TRACE_FOLLOWUP_ENCOUNTER_TYPE_UUID = '563ACC45-E3CE-4930-8F34-4F41CB35017F';
+
+// Kaposi's Sarcoma — not gated by eMastercardAccess/eTraceAccess at all; a
+// plain hardcoded dashboard link behind <openmrs:hasPrivilege privilege="Edit
+// Patients"> only (see kaposis-sarcoma-mastercard-page.ts's top comment). No
+// program enrollment or identifier needed. The header form itself
+// (kaposis-sarcoma-emastercard.xml, encounter type ADMINISTRATION) has no
+// obs fields and isn't independently testable — the two real encounter types
+// below are the PATIENT EVALUATION and CHEMOTHERAPY flowsheets.
+export const KS_EVALUATION_ENCOUNTER_TYPE_UUID = '664b8b8c-977f-11e1-8993-905e29aff6c1';
+export const KS_CHEMOTHERAPY_ENCOUNTER_TYPE_UUID = '664b8fe2-977f-11e1-8993-905e29aff6c1';
