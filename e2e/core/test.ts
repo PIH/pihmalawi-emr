@@ -40,6 +40,9 @@ import {
   NUTRITION_PROGRAM_UUID,
   NUTRITION_ON_TREATMENT_STATE_UUID,
   NUTRITION_PROGRAM_NUMBER_IDENTIFIER_TYPE_UUID,
+  PDC_PROGRAM_UUID,
+  PDC_ON_TREATMENT_STATE_UUID,
+  PDC_IDENTIFIER_TYPE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -57,6 +60,7 @@ export interface CustomTestFixtures {
   eligibleTeenClubPatient: TestPatient;
   eligibleChronicCarePatient: TestPatient;
   eligibleNutritionPatient: TestPatient;
+  eligiblePdcPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -322,6 +326,31 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
         workflowStateUuid: NUTRITION_ON_TREATMENT_STATE_UUID,
         identifierTypeUuid: NUTRITION_PROGRAM_NUMBER_IDENTIFIER_TYPE_UUID,
         identifierPrefix: 'NUT',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // Shared across all 5 PDC mastercard variants (generic, Developmental
+  // Delay, Trisomy, Cleft Lip/Palate, Other Diagnosis) — all gate on the
+  // same program/workflow/state. The 4 condition-specific variants ALSO
+  // require a "Diagnosis" obs set via the generic PDC eMastercard header
+  // first — see pdc-mastercard-page.ts's `fillGenericPdcHeaderWithDiagnosis`,
+  // done per-spec (not in this fixture) since which diagnosis to set differs
+  // per variant under test.
+  eligiblePdcPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: PDC_PROGRAM_UUID,
+        workflowStateUuid: PDC_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: PDC_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'PDC',
       });
 
       await use(patient);

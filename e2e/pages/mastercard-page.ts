@@ -1165,6 +1165,17 @@ export class MastercardFormPage {
     await this.page.getByLabel(label, { exact: true }).check();
   }
 
+  // Checks the LAST element matching an exact accessible name, for forms
+  // with two genuinely different fields sharing identical answer labels —
+  // PDC eMastercard pilot's own "Diagnosis" checkbox group (conceptId
+  // $diagnosis) duplicates every one of its 11 labels verbatim in an earlier
+  // "Reason for Referral" group (conceptId $reasonForReferral); confirmed
+  // live (DOM dump) that $diagnosis's own row is always the second/last of
+  // the two in document order, for all 11 labels.
+  async checkLastByLabel(label: string): Promise<void> {
+    await this.page.getByLabel(label, { exact: true }).last().check();
+  }
+
   // Selects an option in the (only) <select> within the same <tr> as a real,
   // unique `<label>` element found elsewhere in the row — Chronic Lung
   // Disease pilot's Family History (Asthma/COPD) and Occupation rows, see

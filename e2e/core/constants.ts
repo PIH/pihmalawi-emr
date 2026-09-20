@@ -176,3 +176,34 @@ export const NUTRITION_PDC_FOLLOWUP_ENCOUNTER_TYPE_UUID = '771cb90d-442c-4b84-bd
 
 export const NUTRITION_PREGNANT_TEENS_INITIAL_ENCOUNTER_TYPE_UUID = 'd67b208d-e819-4888-9bb8-60dcb8ab2b1f';
 export const NUTRITION_PREGNANT_TEENS_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'd235e109-d4f7-4493-ba10-c75d9046f8bf';
+
+// PDC (Pediatric Development Clinic) program — like Nutrition, all 5 variants
+// share ONE program/workflow/state. UNLIKE Nutrition, 4 of the 5 variants
+// (everything except generic PDC) ALSO gate on the patient having a
+// "Diagnosis" obs (concept below) with a specific answer — set via a
+// checkbox on the GENERIC PDC eMastercard header (confirmed against
+// EMastercardAccessTag.java's `hasCondition` check + Helper.hasCondition,
+// which queries for ANY obs of this concept/answer regardless of encounter
+// type). See pdc-mastercard-page.ts's `fillGenericPdcHeaderWithDiagnosis`.
+export const PDC_PROGRAM_UUID = 'cffd61d1-f087-41df-86c7-fbd6b6e9ab1e';
+export const PDC_ON_TREATMENT_STATE_UUID = 'b84735a5-82ae-4e3b-87db-250c43113977';
+export const PDC_IDENTIFIER_TYPE_UUID = 'f7de1b97-013e-49ad-a596-4ada6ede1053';
+
+export const PDC_INITIAL_ENCOUNTER_TYPE_UUID = 'cb6be652-c5ee-447d-9d94-1100ffb26aa8';
+// NOTE: there is deliberately no PDC_FOLLOWUP export here — confirmed against
+// EMastercardAccessTag.java's `flowsheetForms` map that the generic PDC
+// eMastercard has NO entry at all (every other condition/variant does), so
+// `pdc-visit.xml` is unreachable via the live "Enter New Flowsheet" flow.
+// Generic PDC gets a header-only spec, no visit spec.
+
+export const PDC_DEVELOPMENTAL_DELAY_INITIAL_ENCOUNTER_TYPE_UUID = '3aa5f5fa-a0aa-49bc-b715-1c1dd68e72d4';
+export const PDC_DEVELOPMENTAL_DELAY_FOLLOWUP_ENCOUNTER_TYPE_UUID = '64148b3f-f732-4809-9a23-8b8ebe11279a';
+
+export const PDC_TRISOMY21_INITIAL_ENCOUNTER_TYPE_UUID = '6ed701a4-152f-11ec-82a8-0242ac130003';
+export const PDC_TRISOMY21_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'f770abb3-8470-4c63-a5c6-188ab384f8df';
+
+export const PDC_CLEFT_CLIP_PALLET_INITIAL_ENCOUNTER_TYPE_UUID = 'dbfc3984-6466-4ce0-a53f-fa646d74c41f';
+export const PDC_CLEFT_CLIP_PALLET_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'cfca0af9-86c9-4717-83b7-74e61f1a7bbf';
+
+export const PDC_OTHER_DIAGNOSIS_INITIAL_ENCOUNTER_TYPE_UUID = '0a2f1f74-2400-4cfd-8a9e-d2141622c6d8';
+export const PDC_OTHER_DIAGNOSIS_FOLLOWUP_ENCOUNTER_TYPE_UUID = '60bfcb32-486a-11ec-81d3-0242ac130003';
