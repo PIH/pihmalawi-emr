@@ -43,6 +43,9 @@ import {
   PDC_PROGRAM_UUID,
   PDC_ON_TREATMENT_STATE_UUID,
   PDC_IDENTIFIER_TYPE_UUID,
+  PRE_ART_ON_TREATMENT_STATE_UUID,
+  EXPOSED_CHILD_ON_TREATMENT_STATE_UUID,
+  HCC_NUMBER_IDENTIFIER_TYPE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -61,6 +64,8 @@ export interface CustomTestFixtures {
   eligibleChronicCarePatient: TestPatient;
   eligibleNutritionPatient: TestPatient;
   eligiblePdcPatient: TestPatient;
+  eligiblePreArtPatient: TestPatient;
+  eligibleExposedChildPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -351,6 +356,46 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
         workflowStateUuid: PDC_ON_TREATMENT_STATE_UUID,
         identifierTypeUuid: PDC_IDENTIFIER_TYPE_UUID,
         identifierPrefix: 'PDC',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // Pre-ART and Exposed Child eMastercards both actually enroll into the same
+  // HIV_PROGRAM_UUID as eligibleHivArtPatient (see the comment on
+  // PRE_ART_ON_TREATMENT_STATE_UUID in constants.ts) — just a different
+  // initial state and identifier type (HCC Number, not ARV Number).
+  eligiblePreArtPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: HIV_PROGRAM_UUID,
+        workflowStateUuid: PRE_ART_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: HCC_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'HCC',
+      });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  eligibleExposedChildPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: HIV_PROGRAM_UUID,
+        workflowStateUuid: EXPOSED_CHILD_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: HCC_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'HCC',
       });
 
       await use(patient);

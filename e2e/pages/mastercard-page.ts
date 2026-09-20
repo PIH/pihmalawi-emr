@@ -909,11 +909,16 @@ export class MastercardFormPage {
       }
     }
 
-    if (/^height$/i.test(labelOrId) || /^weight$/i.test(labelOrId)) {
+    if (
+      (/^height$/i.test(labelOrId) || /^weight$/i.test(labelOrId)) &&
+      (await this.rowFor(HEIGHT_WEIGHT_ROW_LABEL).count())
+    ) {
       // Height and Weight share a single "Height/ Wgt." label cell with two
       // side-by-side inputs (.left-cell = height cm, .right-cell = weight
       // kg) — there is no separate per-field label to bind to (verification
-      // note 1 above).
+      // note 1 above). Gated on the combined row actually existing — Pre-ART's
+      // own visit form (pre-art-visit.xml) has plain separate "Height"/"Weight"
+      // rows instead, which fall through to the generic cellAt path below.
       const cellClass = /^height$/i.test(labelOrId) ? 'left-cell' : 'right-cell';
       await this.rowFor(HEIGHT_WEIGHT_ROW_LABEL).locator(`.${cellClass} input`).fill(value);
       return;
