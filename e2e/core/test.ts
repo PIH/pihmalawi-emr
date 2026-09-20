@@ -66,6 +66,7 @@ export interface CustomTestFixtures {
   eligiblePdcPatient: TestPatient;
   eligiblePreArtPatient: TestPatient;
   eligibleExposedChildPatient: TestPatient;
+  tracePatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -402,6 +403,21 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
 
       await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // Trace Mastercard has no program-enrollment gate at all (see
+  // TRACE_INITIAL_ENCOUNTER_TYPE_UUID's comment in constants.ts) — any plain
+  // patient qualifies, no enrollInProgram/addPatientIdentifier call needed.
+  tracePatient: [
+    async ({ api }, use) => {
+      const patient = await createPatient(api, { givenName: 'AutoTrace', familyName: 'Pilot' });
+
+      await use(patient);
+
+      await purgeEncountersForPatient(api, patient.uuid);
       await deletePatient(api, patient.uuid);
     },
     { scope: 'test' },
