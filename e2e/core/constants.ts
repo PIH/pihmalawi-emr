@@ -207,3 +207,21 @@ export const PDC_CLEFT_CLIP_PALLET_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'cfca0af9-86c9
 
 export const PDC_OTHER_DIAGNOSIS_INITIAL_ENCOUNTER_TYPE_UUID = '0a2f1f74-2400-4cfd-8a9e-d2141622c6d8';
 export const PDC_OTHER_DIAGNOSIS_FOLLOWUP_ENCOUNTER_TYPE_UUID = '60bfcb32-486a-11ec-81d3-0242ac130003';
+
+// Pre-ART and Exposed Child eMastercards — NOT the separate retired
+// "PRE-ART PROGRAM"/"Early Infant Diagnosis Program" (both Void/Retire=true
+// in programs.csv, and unrelated dead ends here). Traced
+// malawiPatientDashboard.jsp's gate lines: both mastercards' `programWorkflowStates`
+// are state uuids belonging to the HIV_TREATMENT_STATUS_WORKFLOW_UUID above —
+// i.e. alternate initial states of the same active HIV Program already used
+// by the hiv-art pilot, gated with their own "HCC Number" identifier type
+// instead of ARV Number.
+export const PRE_ART_ON_TREATMENT_STATE_UUID = '6687f284-977f-11e1-8993-905e29aff6c1';
+export const EXPOSED_CHILD_ON_TREATMENT_STATE_UUID = '668847a2-977f-11e1-8993-905e29aff6c1';
+export const HCC_NUMBER_IDENTIFIER_TYPE_UUID = '66786256-977f-11e1-8993-905e29aff6c1';
+
+export const PRE_ART_INITIAL_ENCOUNTER_TYPE_UUID = '664b8736-977f-11e1-8993-905e29aff6c1';
+export const PRE_ART_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664b8812-977f-11e1-8993-905e29aff6c1';
+
+export const EXPOSED_CHILD_INITIAL_ENCOUNTER_TYPE_UUID = '664bcbb0-977f-11e1-8993-905e29aff6c1';
+export const EXPOSED_CHILD_FOLLOWUP_ENCOUNTER_TYPE_UUID = '664bcc8c-977f-11e1-8993-905e29aff6c1';
