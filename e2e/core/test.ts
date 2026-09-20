@@ -37,6 +37,9 @@ import {
   TEEN_CLUB_PROGRAM_UUID,
   TEEN_CLUB_FIRST_TIME_INITIATION_STATE_UUID,
   CHRONIC_CARE_ON_TREATMENT_STATE_UUID,
+  NUTRITION_PROGRAM_UUID,
+  NUTRITION_ON_TREATMENT_STATE_UUID,
+  NUTRITION_PROGRAM_NUMBER_IDENTIFIER_TYPE_UUID,
 } from './constants';
 
 export interface CustomTestFixtures {
@@ -53,6 +56,7 @@ export interface CustomTestFixtures {
   eligibleEpilepsyPatient: TestPatient;
   eligibleTeenClubPatient: TestPatient;
   eligibleChronicCarePatient: TestPatient;
+  eligibleNutritionPatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -301,6 +305,27 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       await use(patient);
 
       // Same FK order as eligibleHivArtPatient's teardown — see the comment there.
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // Shared across all 5 Nutrition mastercard variants (generic, Adults,
+  // Infant, PDC, Pregnant Teens) — they all gate on the same program/
+  // workflow/state, only the encounter types/forms differ per variant.
+  eligibleNutritionPatient: [
+    async ({ api }, use) => {
+      const patient = await createEligibleProgramPatient(api, {
+        programUuid: NUTRITION_PROGRAM_UUID,
+        workflowStateUuid: NUTRITION_ON_TREATMENT_STATE_UUID,
+        identifierTypeUuid: NUTRITION_PROGRAM_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifierPrefix: 'NUT',
+      });
+
+      await use(patient);
+
       await purgeEncountersForPatient(api, patient.uuid);
       await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
