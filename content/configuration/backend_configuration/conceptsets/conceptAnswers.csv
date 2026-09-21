@@ -24,6 +24,8 @@ Abdominal ultrasound,Test requested,8537,q-and-a
 Abdominal ultrasound,Result available,8538,q-and-a
 Able to perform daily activities,Yes,1,q-and-a
 Able to perform daily activities,No,2,q-and-a
+Absence from School,Yes,1,q-and-a
+Absence from School,No,2,q-and-a
 Absence seizures,Yes,1,q-and-a
 Absence seizures,No,2,q-and-a
 Access to bicycle,Yes,1,q-and-a
@@ -5712,6 +5714,8 @@ Intermediate to tuberculosis drug,Levofloxacin,3839,q-and-a
 Interpret x-ray?,No,9657,q-and-a
 Interpret x-ray?,Yes,9658,q-and-a
 Interpret x-ray?,Unknown,9659,q-and-a
+Irregular Conjunctiva,Yes,1,q-and-a
+Irregular Conjunctiva,No,2,q-and-a
 Irritability (coded),Yes,1,q-and-a
 Irritability (coded),No,2,q-and-a
 Irritability (coded),Unknown,3,q-and-a
