@@ -4814,6 +4814,8 @@ End stage eye disease,Retinal,8633,q-and-a
 End stage eye disease,Retinal detachment,8634,q-and-a
 Enlarged Liver,Yes,1,q-and-a
 Enlarged Liver,No,2,q-and-a
+Enlarged Spleen,Yes,1,q-and-a
+Enlarged Spleen,No,2,q-and-a
 Enrolled in NCD,Yes,1,q-and-a
 Enrolled in NCD,No,2,q-and-a
 Enrolled in PDC,Yes,1,q-and-a
