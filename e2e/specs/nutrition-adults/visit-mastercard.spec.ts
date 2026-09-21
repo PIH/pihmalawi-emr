@@ -46,9 +46,7 @@ test.describe('Nutrition Adults visit mastercard', () => {
     expect(obs.some((o) => /weight.*55/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /body mass index.*22/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /likuni.*2/i.test(o.display))).toBeTruthy();
-    // "Ration (Warehouse signature)" persists under its underlying concept's
-    // own name, "Given name" — a shared/reused concept, not a test bug.
-    expect(obs.some((o) => /given name.*some ration signature/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /name of data collector.*some ration signature/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /comment.*some comments/i.test(o.display))).toBeTruthy();
   });
 });

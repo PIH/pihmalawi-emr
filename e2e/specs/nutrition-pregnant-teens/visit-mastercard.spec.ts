@@ -51,9 +51,7 @@ test.describe('Nutrition Pregnant Teens visit mastercard', () => {
     const feedSetObs = obs.filter((o) => /type of feed set/i.test(o.display));
     expect(feedSetObs.some((o) => /5\.0/.test(o.display))).toBeTruthy(); // Maize (Kgs)
     expect(feedSetObs.some((o) => /3\.0/.test(o.display))).toBeTruthy(); // Beans (Kgs)
-    // "Ration (Warehouse signature)" persists under its underlying concept's
-    // own name, "Given name" — a shared/reused concept, not a test bug.
-    expect(obs.some((o) => /given name.*some ration signature/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /name of data collector.*some ration signature/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /comment.*some comments/i.test(o.display))).toBeTruthy();
   });
 });
