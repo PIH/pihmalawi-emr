@@ -22,7 +22,7 @@
     <macro key="beansReceived" value="655bcdf4-977f-11e1-8993-905e29aff6c1"/>
     <macro key="oilGiven" value="655bcf02-977f-11e1-8993-905e29aff6c1"/>
     <macro key="typeOfFeedSet" value="38725750-df54-477a-a9b0-42527f94b709"/>
-    <macro key="givenName" value="6570f9ea-977f-11e1-8993-905e29aff6c1"/>
+    <macro key="ration" value="655ff60e-977f-11e1-8993-905e29aff6c1"/>
     <macro key="clinicalImpressions" value="655928e2-977f-11e1-8993-905e29aff6c1"/>
 </macros>
 
@@ -94,7 +94,7 @@
 
                 <td style="padding: 1px;">
                     <!-- Ration (Warehouse signature)-->
-                    <obs conceptId="$givenName" style="textarea" size="50"/>
+                    <obs conceptId="$ration" style="textarea" size="50"/>
                 </td>
 
 
@@ -184,7 +184,7 @@
             <tr>
                 <th>Ration (Warehouse signature)</th>
                 <td style="padding: 1px;">
-                    <obs conceptId="$givenName" style="textarea" size="50"/>
+                    <obs conceptId="$ration" style="textarea" size="50"/>
                 </td>
             </tr>
             <tr>

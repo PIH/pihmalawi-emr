@@ -19,7 +19,7 @@
         <macro key="nextAppt" value="6569cbd4-977f-11e1-8993-905e29aff6c1"/>
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="lactogenTins" value="b063e72d-3ddf-4e6c-8415-396375971940"/>
-        <macro key="givenName" value="6570f9ea-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="ration" value="655ff60e-977f-11e1-8993-905e29aff6c1"/>
         <macro key="clinicalImpressions" value="655928e2-977f-11e1-8993-905e29aff6c1"/>
     </macros>
 
@@ -75,7 +75,7 @@
 
                     <td style="padding: 1px;">
                         <!-- Ration (Warehouse signature)-->
-                        <obs conceptId="$givenName" style="textarea" size="50"/>
+                        <obs conceptId="$ration" style="textarea" size="50"/>
                     </td>
 
                     <td style="padding: 1px;">
@@ -148,7 +148,7 @@
                 <tr>
                     <th>Ration (Warehouse signature)</th>
                     <td style="padding: 1px;">
-                        <obs conceptId="$givenName" style="textarea" size="20"/>
+                        <obs conceptId="$ration" style="textarea" size="20"/>
                     </td>
                 </tr>
 
