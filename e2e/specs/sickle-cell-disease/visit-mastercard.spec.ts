@@ -80,19 +80,18 @@ test.describe('Sickle Cell Disease visit mastercard', () => {
     expect(obs.some((o) => /ascites.*no/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /lung exam findings.*no/i.test(o.display))).toBeTruthy();
 
-    // These 4 rows' underlying concepts genuinely resolve, via their REAL
-    // REST `display` name, to something unrelated to their own row's
-    // on-screen label ("Jaundice"/"Irregular Conjunctiva"/"Enlarged
-    // Spleen"/"Absence from School") — a real content mismatch, not yet
-    // fixed on this branch (see the sibling
-    // MLW-1854-sickle-cell-disease-concept-corrections branch). Asserted
-    // here as the ACTUAL resulting `display` strings, not the on-screen row
-    // labels, per this suite's rule of asserting the real REST display
-    // string — not a typo in this spec.
-    expect(obs.some((o) => /extremity exam findings.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /diagnosis resolved.*no/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /complications since last visit.*yes/i.test(o.display))).toBeTruthy();
-    expect(obs.some((o) => /attended school ever.*yes/i.test(o.display))).toBeTruthy();
+    // These 4 rows' underlying concepts now correctly match their on-screen
+    // labels ("Jaundice"/"Irregular Conjunctiva"/"Enlarged Spleen"/"Absence
+    // from School"), fixed by the MLW-1854-sickle-cell-disease-concept-
+    // corrections work. Enlarged Spleen needed a brand-new "Enlarged Spleen"
+    // concept rather than reusing the pre-existing "No presence of
+    // splenomegaly" concept, since that concept's Yes/No polarity is
+    // inverted relative to this row's own Yes/No meaning. Asserted here via
+    // each concept's own REST display string, per this suite's rule.
+    expect(obs.some((o) => /jaundice.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /irregular conjunctiva.*no/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /enlarged spleen.*yes/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /absence from school.*yes/i.test(o.display))).toBeTruthy();
     // "Medication Rx" → real concept "Malaria" (thematically adjacent, not
     // counted as a mismatch).
     expect(obs.some((o) => /^malaria.*yes/i.test(o.display))).toBeTruthy();
