@@ -204,7 +204,7 @@
 
                         <tr>
                             <td>
-                                <obs conceptId="$enrolmentReason" style="checkbox" answerConceptId="$enrolledInPdc" answerLabel="Needs Social Support (POSER)" />
+                                <obs conceptId="$enrolmentReason" style="checkbox" answerConceptId="$poserSupport" answerLabel="Needs Social Support (POSER)" />
                             </td>
                         </tr>
 
