@@ -49,9 +49,7 @@ test.describe('Nutrition Infant visit mastercard', () => {
     // "Type of Feed Set" — same shared-concept quirk as the generic
     // Nutrition pilot, not a test bug.
     expect(obs.some((o) => /type of feed set.*2/i.test(o.display))).toBeTruthy();
-    // "Ration (Warehouse signature)" persists under its underlying concept's
-    // own name, "Given name" — a shared/reused concept, not a test bug.
-    expect(obs.some((o) => /given name.*some ration signature/i.test(o.display))).toBeTruthy();
+    expect(obs.some((o) => /name of data collector.*some ration signature/i.test(o.display))).toBeTruthy();
     expect(obs.some((o) => /comment.*some comments/i.test(o.display))).toBeTruthy();
   });
 });
