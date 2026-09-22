@@ -51,6 +51,11 @@
 		<class>org.openmrs.module.pihmalawi.web.extension.AdminList</class>
 	</extension>
 
+	<extension>
+		<point>org.openmrs.gutter.tools</point>
+		<class>org.openmrs.module.pihmalawi.web.extension.O3RegistrationGutterLink</class>
+	</extension>
+
     <extension>
         <point>org.openmrs.patientDashboard.overviewBox</point>
         <class>org.openmrs.module.pihmalawi.web.extension.MalawiPatientDashboardBoxExt</class>
