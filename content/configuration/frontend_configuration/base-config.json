@@ -122,11 +122,12 @@
   },
   "@openmrs/esm-patient-registration-app": {
     "links": {
-      "submitButton": "${openmrsSpaBase}/patient-registration"
+      "submitButton": "${openmrsBase}/patientDashboard.form?patientId=${patientUuid}"
     },
     "fieldConfigurations": {
       "name": {
-        "displayCapturePhoto": false
+        "displayCapturePhoto": false,
+        "allowUnidentifiedPatients": false
       },
       "address": {
         "useAddressHierarchy": {

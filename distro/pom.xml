@@ -13,7 +13,7 @@
     <description>Distro project for PIH Malawi EMR</description>
 
     <properties>
-        <frontendVersion>1.42.0-SNAPSHOT</frontendVersion>
+        <frontendVersion>1.46.0-SNAPSHOT</frontendVersion>
     </properties>
 
     <dependencies>
