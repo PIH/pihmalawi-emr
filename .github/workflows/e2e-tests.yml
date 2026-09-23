@@ -30,10 +30,19 @@ jobs:
 
       # Note: this tests the currently-published partnersinhealth/pihmalawi-emr Docker Hub
       # image, not the checked-out branch/revision above — intentional for v1.
+      # The OMRS_EXTRA_pihmalawi_warehouse_connection_* vars below reach the openmrs container via
+      # distro-tools' create/openmrs.yaml (PIH/openmrs-contrib-distro-tools#28).
       - name: Create ephemeral instance
         env:
           OPENMRS_IMAGE_NAME: partnersinhealth/pihmalawi-emr
           SEED_IMAGE_NAME: partnersinhealth/pihmalawi-emr-seed-malawi
+          SERVICES: openmrs-db,openmrs,petl
+          PETL_IMAGE_NAME: partnersinhealth/apzu-etl
+          PETL_FULL_REFRESH_JOBS: refresh-mysql-reporting.yml
+          PETL_MYSQL_ROOT_PASSWORD: openmrs
+          OMRS_EXTRA_pihmalawi_warehouse_connection_url: "jdbc:mysql://openmrs-db:3306/openmrs_warehouse?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
+          OMRS_EXTRA_pihmalawi_warehouse_connection_username: openmrs
+          OMRS_EXTRA_pihmalawi_warehouse_connection_password: openmrs
         run: openmrs-docker create e2e-malawi
 
       - name: Initialize from seed
@@ -64,6 +73,7 @@ jobs:
           E2E_BASE_URL: http://localhost:8080/openmrs
           E2E_USER_ADMIN_USERNAME: admin
           E2E_USER_ADMIN_PASSWORD: Admin123
+          E2E_DOCKER_INSTANCE: e2e-malawi
         run: npx playwright test
 
       - name: Upload Playwright report

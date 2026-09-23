@@ -110,6 +110,22 @@ openmrs-docker neno-ci logs
 openmrs-docker neno-ci destroy
 ```
 
+#### Warehouse-backed reporting (petl)
+
+`neno-ci.env` also attaches the `petl` ETL service and sets the `OMRS_EXTRA_pihmalawi_warehouse_connection_*`
+vars that `WarehouseConnectionPropertiesInitializer` uses as a fallback `warehouse-connection.properties`,
+so warehouse-backed reports (e.g. "HIV - Cohort Report") work against a local instance (requires
+`openmrs-contrib-distro-tools`'s `create`/`openmrs.yaml` to pass `OMRS_EXTRA_*` vars through to
+`openmrs` — see [distro-tools#28](https://github.com/PIH/openmrs-contrib-distro-tools/pull/28)).
+To populate the warehouse database:
+
+```bash
+openmrs-docker neno-ci run-service petl
+```
+
+`petl` is a one-shot job (not a long-running service), so re-run this any time you want to refresh
+the warehouse with the latest data from `openmrs-db`.
+
 ## End-to-End Tests
 
 A standalone Playwright/TypeScript E2E test suite lives under [`e2e/`](e2e), separate from the
