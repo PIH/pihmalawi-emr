@@ -82,33 +82,14 @@ import { type Page } from '@playwright/test';
 //    listening for a `download` event on the browser context (per the
 //    brief's own `page.waitForEvent('download')` contingency note).
 //
-// 6. **This report could not be run to a successful (COMPLETED/SAVED)
-//    result on this local instance, with any test data.** Its dataset
-//    (`hiv-cohort-report.sql`) is a `SqlFileDataSetDefinition` configured
+// 6. This report's dataset (`hiv-cohort-report.sql`) is a `SqlFileDataSetDefinition` configured
 //    with `connectionPropertyFile=warehouse-connection.properties`
-//    (api/src/main/java/.../reporting/reports/HIVCohortReport.java) — a
-//    SEPARATE database connection, loaded from a properties file expected
-//    at `<openmrs application data dir>/warehouse-connection.properties`.
-//    That file does not exist in this container
-//    (`/openmrs/data/warehouse-connection.properties`), so every run
-//    deterministically fails with (confirmed via both the server log and
-//    the JSON status endpoint's own `log` array):
-//      "org.openmrs.module.reporting.evaluation.EvaluationException: Failed
-//       to evaluate Unable to load connection properties from file
-//       <warehouse-connection.properties> because:
-//       /openmrs/data/warehouse-connection.properties (No such file or
-//       directory)"
-//    Even if that file existed and pointed back at the live OpenMRS
-//    database, the SQL itself (`CALL
-//    create_last_art_outcome_at_facility(@endDate, @location);` plus joins
-//    against `mw_patient`, `omrs_patient_identifier`, `last_facility_outcome`,
-//    `lookup_location`) depends on an entirely separate "data warehouse"
-//    schema (tables/procedures not defined anywhere in this repo — confirmed
-//    absent from the live database via `SHOW PROCEDURE STATUS` /
-//    `SHOW TABLES LIKE 'mw_%'`) that is built by an external ETL pipeline in
-//    a different PIH repository, out of scope for this E2E suite to stand
-//    up. This is a real, deterministic environment gap, not test flakiness —
-//    see art-report.spec.ts for how this is handled.
+//    (api/src/main/java/.../reporting/reports/HIVCohortReport.java) — a SEPARATE database
+//    connection, pointed at a "data warehouse" schema (`mw_patient`, `omrs_patient_identifier`,
+//    `last_facility_outcome`, `lookup_location`, the `create_last_art_outcome_at_facility` stored
+//    procedure) built by an external ETL pipeline (apzu-etl/petl) in a different PIH repository.
+//    See art-report.spec.ts for how this suite gets that properties file and a fresh ETL run in
+//    place before requesting this report.
 // ---------------------------------------------------------------------------
 
 export type ReportRequestStatus =
