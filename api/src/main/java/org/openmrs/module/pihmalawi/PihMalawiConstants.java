@@ -5,6 +5,9 @@ public class PihMalawiConstants {
 
     public static final String MODULE_ID = "pihmalawi";
     public static final String OPENMRS_WAREHOUSE_CONNECTION_PROPERTIES_FILE_NAME = "warehouse-connection.properties";
+    public static final String WAREHOUSE_CONNECTION_URL_PROPERTY_NAME = "pihmalawi.warehouse.connection.url";
+    public static final String WAREHOUSE_CONNECTION_USERNAME_PROPERTY_NAME = "pihmalawi.warehouse.connection.username";
+    public static final String WAREHOUSE_CONNECTION_PASSWORD_PROPERTY_NAME = "pihmalawi.warehouse.connection.password";
     public static final String PATIENT_LAB_TESTS_SQL_DATA_SET = "org/openmrs/module/pihmalawi/reporting/datasets/sql/get-patient-tests.sql";
     public static final String PRIV_CHW_MANAGEMENT_APP = "CHW Management App";
     public static final String HEALTH_FACILITY_GP_NAME = "providermanagement.locationTag";
