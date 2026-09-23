@@ -127,6 +127,13 @@ export class ReportingPage {
 
     await page.locator('#userEnteredParamendDate').fill(toReportDateFormat(opts.endDate));
     await page.locator('select[name="userEnteredParams[location]"]').selectOption({ label: opts.locationName });
+    // The form defaults to "Web Preview" (org.openmrs.module.reporting.web.renderers.DefaultWebRenderer)
+    // if left unselected -- confirmed live: submitting without this produces a request whose
+    // renderer_type is DefaultWebRenderer, viewReport.form then 302s to a generic
+    // renderDefaultReport.form HTML page instead of ever producing a file, so
+    // downloadExcelOutput()'s wait for a 'download' event hangs forever. HIVCohortReport's only
+    // ReportDesign is an Excel template (verification note 5), so this must select "Excel".
+    await page.locator('select[name="selectedRenderer"]').selectOption({ label: 'Excel' });
 
     await Promise.all([
       page.waitForURL(/reportHistoryOpen\.form/),
@@ -197,9 +204,16 @@ export class ReportingPage {
 
   // Only meaningful once waitForCompletion() has resolved with status
   // COMPLETED or SAVED — see verification note 5 above.
+  //
+  // "View Report" (verification note 5's link) has target="__new", so clicking it opens a new
+  // page/tab rather than navigating this.page. Playwright fires 'download' on whichever page
+  // actually receives the response, not on the page that triggered the click, so listening on
+  // this.page here hangs forever (confirmed live: a real run's report genuinely completed, but
+  // this wait never resolved even at a 15-minute timeout). Listening on the browser context
+  // instead catches the download regardless of which page (original or popup) it lands on.
   async downloadExcelOutput(): Promise<Buffer> {
     const [download] = await Promise.all([
-      this.page.waitForEvent('download'),
+      this.page.context().waitForEvent('download'),
       this.page.locator('a[href*="viewReport.form"]', { hasText: /view report/i }).click(),
     ]);
     const stream = await download.createReadStream();
