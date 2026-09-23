@@ -112,20 +112,12 @@ openmrs-docker neno-ci destroy
 
 #### Warehouse-backed reporting (petl)
 
-`neno-ci.env` also attaches the `petl` ETL service and configures a fallback
-`warehouse-connection.properties` (see `WarehouseConnectionPropertiesInitializer`), so
-warehouse-backed reports (e.g. "HIV - Cohort Report") work against a local instance. This requires
-one extra one-time step after `create`, since `openmrs-contrib-distro-tools`' `openmrs` compose
-fragment doesn't pass arbitrary `OMRS_EXTRA_*` env vars through on its own — copy this repo's
-`warehouse-connection.yaml` compose override into the instance directory so `openmrs-docker` picks
-it up (it merges every `.yaml` file found there):
-
-```bash
-cp warehouse-connection.yaml "${OPENMRS_DOCKER_HOME:-$HOME/openmrs}/neno-ci/"
-```
-
-Do this once, any time after `openmrs-docker create neno-ci` and before `openmrs-docker neno-ci start`.
-Then, to populate the warehouse database:
+`neno-ci.env` also attaches the `petl` ETL service and sets the `OMRS_EXTRA_pihmalawi_warehouse_connection_*`
+vars that `WarehouseConnectionPropertiesInitializer` uses as a fallback `warehouse-connection.properties`,
+so warehouse-backed reports (e.g. "HIV - Cohort Report") work against a local instance (requires
+`openmrs-contrib-distro-tools`'s `create`/`openmrs.yaml` to pass `OMRS_EXTRA_*` vars through to
+`openmrs` — see [distro-tools#28](https://github.com/PIH/openmrs-contrib-distro-tools/pull/28)).
+To populate the warehouse database:
 
 ```bash
 openmrs-docker neno-ci run-service petl

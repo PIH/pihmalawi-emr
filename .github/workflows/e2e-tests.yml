@@ -30,6 +30,11 @@ jobs:
 
       # Note: this tests the currently-published partnersinhealth/pihmalawi-emr Docker Hub
       # image, not the checked-out branch/revision above — intentional for v1.
+      # The OMRS_EXTRA_pihmalawi_warehouse_connection_* vars below need distro-tools'
+      # PIH/openmrs-contrib-distro-tools#28 merged: create must capture them and openmrs.yaml's
+      # env_file must pass them through. Until then `create` silently drops them (no existing
+      # mechanism captures an arbitrary OMRS_EXTRA_* var), and art-report.spec.ts fails the same
+      # way it did before this whole fix existed.
       - name: Create ephemeral instance
         env:
           OPENMRS_IMAGE_NAME: partnersinhealth/pihmalawi-emr
@@ -42,9 +47,6 @@ jobs:
           OMRS_EXTRA_pihmalawi_warehouse_connection_username: openmrs
           OMRS_EXTRA_pihmalawi_warehouse_connection_password: openmrs
         run: openmrs-docker create e2e-malawi
-
-      - name: Attach warehouse-connection compose override
-        run: cp warehouse-connection.yaml "${OPENMRS_DOCKER_HOME:-$HOME/openmrs}/e2e-malawi/"
 
       - name: Initialize from seed
         run: openmrs-docker e2e-malawi initialize
