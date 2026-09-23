@@ -1,0 +1,6 @@
+services:
+  openmrs:
+    environment:
+      OMRS_EXTRA_pihmalawi_warehouse_connection_url: ${OMRS_EXTRA_pihmalawi_warehouse_connection_url:-}
+      OMRS_EXTRA_pihmalawi_warehouse_connection_username: ${OMRS_EXTRA_pihmalawi_warehouse_connection_username:-}
+      OMRS_EXTRA_pihmalawi_warehouse_connection_password: ${OMRS_EXTRA_pihmalawi_warehouse_connection_password:-}
