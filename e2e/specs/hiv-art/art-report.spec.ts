@@ -6,13 +6,15 @@ import { runWarehouseEtl } from '../../commands';
 test(
   'HIV Cohort Report includes the pilot patient with their entered data',
   async ({ page, eligibleHivArtPatient }) => {
-    // The warehouse ETL run below rebuilds the full apzu-etl schema (~185 tables), which costs
-    // ~9 minutes of fixed per-table/per-column overhead regardless of how little source data
-    // exists (confirmed live: this ran against a source DB with 1 patient/1 encounter/1 obs and
-    // still took 8m50s) -- well over playwright.config.ts's 3-minute default per-test timeout.
-    // A prior attempt at 10 minutes actually timed out waiting for the report's Excel download,
-    // which only runs *after* the ETL finishes -- 15 minutes leaves real margin for that plus
-    // encounter creation and report evaluation on top of the ETL's own ~9 minutes.
+    // The warehouse ETL run below (see runWarehouseEtl()) rebuilds the full apzu-etl schema
+    // (~185 tables), which costs ~9 minutes of fixed per-table/per-column overhead regardless of
+    // how little source data exists (confirmed live: this ran against a source DB with 1
+    // patient/1 encounter/1 obs and still took 8m50s) -- well over playwright.config.ts's
+    // 3-minute default per-test timeout. runWarehouseEtl() itself times out at 12 minutes (see its
+    // own comment for why); this test's own timeout must stay comfortably above that (3 minutes
+    // here) so a real ETL timeout surfaces as that function's own clear error, not a generic
+    // Playwright test-timeout message, while still leaving room for encounter creation, report
+    // evaluation, and the Excel download on top of the ETL's own ~9 minutes.
     test.setTimeout(15 * 60 * 1000);
 
     const encounterDate = new Date().toISOString().slice(0, 10);
