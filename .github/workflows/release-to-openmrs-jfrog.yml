@@ -10,5 +10,5 @@ jobs:
   release:
     uses: PIH/openmrs-contrib-distro-tools/.github/workflows/release-to-openmrs-jfrog.yml@main
     with:
-      maven_profiles: distro-zip
+      maven_profiles: distribution
     secrets: inherit

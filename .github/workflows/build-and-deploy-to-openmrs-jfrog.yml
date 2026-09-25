@@ -13,5 +13,5 @@ jobs:
       cancel-in-progress: true
     uses: PIH/openmrs-contrib-distro-tools/.github/workflows/build-and-deploy-to-openmrs-jfrog.yml@main
     with:
-      maven_profiles: distro-zip
+      maven_profiles: distribution
     secrets: inherit

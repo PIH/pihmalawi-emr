@@ -23,7 +23,7 @@
             <url>https://openmrs.jfrog.io/artifactory/modules-pih</url>
         </repository>
         <snapshotRepository>
-            <id>openmrs-repo-modules-pih-snapshots</id>
+            <id>openmrs-repo-modules-pih</id>
             <name>OpenMRS Snapshots</name>
             <url>https://openmrs.jfrog.io/artifactory/modules-pih-snapshots</url>
         </snapshotRepository>
