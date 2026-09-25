@@ -3,16 +3,16 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>pihmalawi</artifactId>
-	<version>9.1.0</version>
+	<version>9.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>PIH Malawi Customizations</name>
 	<description>Parent project for PIH Malawi Customizations</description>
 	<url>http://openmrs.org</url>
 
 	<scm>
-		<connection>scm:git:git@github.com:PIH/openmrs-module-pihmalawi.git</connection>
-		<developerConnection>scm:git:git@github.com:PIH/openmrs-module-pihmalawi.git</developerConnection>
-		<url>https://github.com/PIH/openmrs-module-pihmalawi/</url>
+		<connection>scm:git:https://github.com/PIH/pihmalawi-emr.git</connection>
+		<developerConnection>scm:git:https://github.com/PIH/pihmalawi-emr.git</developerConnection>
+		<url>https://github.com/PIH/pihmalawi-emr/</url>
 	  <tag>HEAD</tag>
   </scm>
 
