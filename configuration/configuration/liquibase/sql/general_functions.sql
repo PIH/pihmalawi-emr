@@ -62,7 +62,7 @@ BEGIN
     if ret is null then
         select c.concept_id into ret
         from concept c inner join concept_name n on c.concept_id = n.concept_id
-        where c.retired = 0 and name = _reference and locale = 'en' and concept_name_type = 'FULLY_SPECIFIED';
+        where c.retired = 0 and n.name = _reference and n.locale = 'en' and n.concept_name_type = 'FULLY_SPECIFIED' and n.voided = 0;
     end if;
 
     RETURN ret;
