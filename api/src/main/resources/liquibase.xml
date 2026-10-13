@@ -160,4 +160,26 @@
 		</delete>
 	</changeSet>
 
+	<changeSet id="20261013-migrate-sickle-cell-disease-concepts" author="b-ngongonda">
+		<preConditions onFail="CONTINUE">
+			<sqlCheck expectedResult="11">
+				select count(*) from concept where uuid in (
+					'839054d3-4faf-4e66-88e0-cfbafaf48131', '656cb22c-977f-11e1-8993-905e29aff6c1',
+					'96c94222-94fa-4514-b952-adf429643c2e', 'e384a58c-4a73-11ec-81d3-0242ac130003',
+					'65639a20-977f-11e1-8993-905e29aff6c1', '6546d462-977f-11e1-8993-905e29aff6c1',
+					'6557aea4-977f-11e1-8993-905e29aff6c1', '1ecf325d-a9ce-4a68-9f00-393ba47fa2e9',
+					'6570e5b8-977f-11e1-8993-905e29aff6c1', '656fc048-977f-11e1-8993-905e29aff6c1',
+					'7602D441-4A44-41A9-AA49-A59853AEDC65'
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>
+			Move obs recorded by the Sickle Cell Disease Visit and eMastercard forms from the concepts
+			those forms used before MLW-1858 onto the concepts they use now. Liquibase runs before
+			Initializer loads concepts.csv, so the precondition skips this (without marking it ran)
+			until every old and new concept exists, and it is retried on the next startup. MLW-1858
+		</comment>
+		<sqlFile path="pihmalawiMigrations/migrateSickleCellDiseaseConcepts.sql" stripComments="true" />
+	</changeSet>
+
 </databaseChangeLog>
