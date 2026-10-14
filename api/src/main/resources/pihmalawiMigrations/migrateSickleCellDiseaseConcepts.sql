@@ -1,4 +1,4 @@
-ect * from sickle_cell_visit_enc# MLW-1858 changed several concepts used by the Sickle Cell Disease Visit and eMastercard forms,
+# MLW-1858 changed several concepts used by the Sickle Cell Disease Visit and eMastercard forms,
 # because the original concepts did not match what the form fields actually capture. Obs recorded
 # before that change are still stored against the old concepts, so the forms show them as blank and
 # reports looking for the new concepts miss them. Move that historical data onto the new concepts.
