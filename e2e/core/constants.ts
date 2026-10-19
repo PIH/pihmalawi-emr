@@ -177,6 +177,12 @@ export const NUTRITION_PDC_FOLLOWUP_ENCOUNTER_TYPE_UUID = '771cb90d-442c-4b84-bd
 export const NUTRITION_PREGNANT_TEENS_INITIAL_ENCOUNTER_TYPE_UUID = 'd67b208d-e819-4888-9bb8-60dcb8ab2b1f';
 export const NUTRITION_PREGNANT_TEENS_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'd235e109-d4f7-4493-ba10-c75d9046f8bf';
 
+export const NUTRITION_EMASTERCARD_FORM_UUID = '1e010a94-5e60-4218-aa71-7faa53dfdd4e';
+export const NUTRITION_ADULTS_VISIT_FORM_UUID = 'ce5144b6-c636-4e4f-baa0-d87c9b2e6efd';
+export const NUTRITION_INFANT_VISIT_FORM_UUID = 'a506f7ad-15c8-49a0-9ceb-eaa8b75fbcf0';
+export const NUTRITION_PDC_VISIT_FORM_UUID = 'a5d1f0a6-0519-4e9d-b5fd-5b363ab8ac52';
+export const NUTRITION_PREGNANT_TEENS_VISIT_FORM_UUID = '0c5a3897-70b7-4476-9e13-72b5188a41d3';
+
 // PDC (Pediatric Development Clinic) program — like Nutrition, all 5 variants
 // share ONE program/workflow/state. UNLIKE Nutrition, 4 of the 5 variants
 // (everything except generic PDC) ALSO gate on the patient having a

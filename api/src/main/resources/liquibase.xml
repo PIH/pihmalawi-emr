@@ -182,4 +182,24 @@
 		<sqlFile path="pihmalawiMigrations/migrateSickleCellDiseaseConcepts.sql" stripComments="true" />
 	</changeSet>
 
+	<changeSet id="20261019-migrate-nutrition-concepts" author="b-ngongonda">
+		<preConditions onFail="CONTINUE">
+			<sqlCheck expectedResult="5">
+				select count(*) from concept where uuid in (
+					'6570f9ea-977f-11e1-8993-905e29aff6c1', '655ff60e-977f-11e1-8993-905e29aff6c1',
+					'6567efa8-977f-11e1-8993-905e29aff6c1', '92148ae3-642c-47f5-ae7c-2c4efa9796e8',
+					'5b49fbf4-2645-4ab2-974e-4e6c961162b1'
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>
+			Move obs recorded by the Nutrition visit forms and eMastercard from the concepts those forms
+			used before MLW-1859 onto the concepts they use now. Liquibase runs before Initializer loads
+			concepts.csv, so the precondition skips this (without marking it ran) until every old and new
+			concept exists, and it is retried on the next startup. Historical POSER ticks can only be
+			identified where POSER and Malnutrition were both ticked; see the SQL file. MLW-1859
+		</comment>
+		<sqlFile path="pihmalawiMigrations/migrateNutritionConcepts.sql" stripComments="true" />
+	</changeSet>
+
 </databaseChangeLog>
