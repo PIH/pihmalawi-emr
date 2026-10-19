@@ -41,6 +41,7 @@ export async function fillNutritionAdultsHeaderForm(form: MastercardFormPage, en
 }
 
 export async function fillNutritionAdultsHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('NCD');
 }
 

@@ -171,14 +171,14 @@ export async function fillSickleCellDiseaseHeaderForm(
   await form.fillFieldAfterText('Specify:', 'Chronic pain crisis referral');
 }
 
-// Fills only the minimum field needed to save a SICKLE_CELL_DISEASE_INITIAL
-// header encounter: Diagnosis Date, the form's ONLY required field (see
-// verification note 2 above — confirmed live no other field, including the
-// diagnosis checkbox other pilots' own "must select a diagnosis" gate
-// required, blocks a save here, since the diagnosis itself is hidden and
-// auto-checked). Used ONLY by visit-mastercard.spec.ts's `beforeEach`, which
-// needs a saved header encounter as a prerequisite, not the header
-// encounter's own content. header-mastercard.spec.ts still uses the full
+// Fills only the minimum fields needed to save a SICKLE_CELL_DISEASE_INITIAL
+// header encounter: Diagnosis Date and "Agrees to FUP", the form's only
+// required fields (see verification note 2 above — confirmed live no other
+// field, including the diagnosis checkbox other pilots' own "must select a
+// diagnosis" gate required, blocks a save here, since the diagnosis itself is
+// hidden and auto-checked). Used ONLY by visit-mastercard.spec.ts's
+// `beforeEach`, which needs a saved header encounter as a prerequisite, not
+// the header encounter's own content. header-mastercard.spec.ts still uses the full
 // `fillSickleCellDiseaseHeaderForm` since it asserts on that form's field
 // values.
 export async function fillSickleCellDiseaseHeaderMinimum(
@@ -186,6 +186,7 @@ export async function fillSickleCellDiseaseHeaderMinimum(
   encounterDate: string,
 ): Promise<void> {
   await form.fillField('diagnosisDate', encounterDate);
+  await form.selectRadio('Agrees to FUP', 'Y');
 }
 
 // ---------------------------------------------------------------------------

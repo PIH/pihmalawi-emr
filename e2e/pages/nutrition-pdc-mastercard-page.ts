@@ -42,6 +42,7 @@ export async function fillNutritionPdcHeaderForm(form: MastercardFormPage, encou
 }
 
 export async function fillNutritionPdcHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('Malnutrition');
 }
 
