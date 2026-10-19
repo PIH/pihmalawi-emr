@@ -255,7 +255,7 @@
                         <tr>
                             <td>Agrees to FUP</td>
                             <td>
-                                <obs conceptId="$agreesToFollowup" style="radio" answerLabels="N,Y"
+                                <obs conceptId="$agreesToFollowup" required="true" style="radio" answerLabels="N,Y"
                                      answerConceptIds="$noAnswer,$yesAnswer"/>
                             </td>
                         </tr>

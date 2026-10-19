@@ -45,6 +45,7 @@ export async function fillNutritionPregnantTeensHeaderForm(
 }
 
 export async function fillNutritionPregnantTeensHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('NCD');
 }
 

@@ -13,8 +13,8 @@ import { SCD_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 // the same `page` the test itself receives, since reaching the visit form
 // requires continuing on that same already-loaded page (`enterNewFlowsheet`),
 // not a fresh `openCreateAtUrl` navigation. Uses `fillSickleCellDiseaseHeaderMinimum`
-// (just Diagnosis Date, this form's ONLY required field) rather than the
-// full `fillSickleCellDiseaseHeaderForm`, since all this beforeEach needs is
+// (just Diagnosis Date and "Agrees to FUP", this form's only required fields)
+// rather than the full `fillSickleCellDiseaseHeaderForm`, since all this beforeEach needs is
 // *a* saved header encounter to continue from, not any particular content on
 // it. header-mastercard.spec.ts still uses the full fill since it asserts on
 // that form's own field values.

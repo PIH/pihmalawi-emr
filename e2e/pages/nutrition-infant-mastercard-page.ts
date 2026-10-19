@@ -42,6 +42,7 @@ export async function fillNutritionInfantHeaderForm(form: MastercardFormPage, en
 }
 
 export async function fillNutritionInfantHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('Multiple births/Twins');
 }
 

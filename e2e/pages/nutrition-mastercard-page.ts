@@ -51,6 +51,7 @@ export async function fillNutritionHeaderForm(form: MastercardFormPage, encounte
 // Fills only the minimum needed to save a NUTRITION_INITIAL header encounter.
 // Used ONLY by visit-mastercard.spec.ts's beforeEach.
 export async function fillNutritionHeaderMinimum(form: MastercardFormPage): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('NCD');
 }
 

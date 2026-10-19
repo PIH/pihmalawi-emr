@@ -59,12 +59,14 @@ export type PdcDiagnosisLabel =
   | 'Other.';
 
 // Fills the generic PDC eMastercard header with the minimum needed to save a
-// PDC_INITIAL encounter AND record the given Diagnosis — the prerequisite
-// every condition-specific PDC variant's own mastercard link gates on.
+// PDC_INITIAL encounter ("Agrees to FUP" is required) AND record the given
+// Diagnosis — the prerequisite every condition-specific PDC variant's own
+// mastercard link gates on.
 export async function fillGenericPdcHeaderWithDiagnosis(
   form: MastercardFormPage,
   diagnosis: PdcDiagnosisLabel,
 ): Promise<void> {
+  await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkLastByLabel(diagnosis);
 }
 
