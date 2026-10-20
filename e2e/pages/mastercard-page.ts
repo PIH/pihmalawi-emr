@@ -1448,6 +1448,17 @@ export class MastercardFormPage {
     }
   }
 
+  // The flowsheet keeps `.submitButton` disabled while any field shows a
+  // validation error (e.g. validate_dx_fields.js's "Required" on a checked
+  // diagnosis's paired date), so these assert on the button's own state.
+  async expectSaveDisabled(): Promise<void> {
+    await expect(this.page.locator('.submitButton').first()).toBeDisabled();
+  }
+
+  async expectSaveEnabled(): Promise<void> {
+    await expect(this.page.locator('.submitButton').first()).toBeEnabled();
+  }
+
   async expectSaveSuccess(): Promise<void> {
     // See verification note 4 above — this is an in-place re-render, not a
     // navigation, so we assert on DOM content rather than a URL change.

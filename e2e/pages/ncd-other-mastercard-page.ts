@@ -194,15 +194,16 @@ export async function fillNcdOtherHeaderForm(form: MastercardFormPage, encounter
 // until at least one of the 5 `.dx-checkbox-item` diagnosis checkboxes
 // (rheumatoid-dx/cirrhosis-dx/deepV-dx/sickle-dx/nonCoded-dx) is checked —
 // confirmed live (this exact error appeared with only "Agrees to FUP"
-// filled). Checking `rheumatoid-dx` alone (its paired `rheumatoid-dx-date`
-// has no `required` XML attribute and isn't needed) clears it. So the true
-// minimum is: "Agrees to FUP" + one diagnosis checkbox — confirmed live this
-// saves successfully with no other fields filled. Used ONLY by
+// filled). Checking `rheumatoid-dx` clears it, but the diagnosis checkboxes
+// also carry `dx-selected`, so validate_dx_fields.js then requires its
+// paired `rheumatoid-dx-date` before `.submitButton` re-enables. So the true
+// minimum is: "Agrees to FUP" + one diagnosis checkbox + its paired date. Used ONLY by
 // visit-mastercard.spec.ts's `beforeEach`, which needs a saved header
 // encounter as a prerequisite, not the header encounter's own content.
 // header-mastercard.spec.ts still uses `fillNcdOtherHeaderForm` (the full
 // fill) above, since it asserts on that form's own field values.
-export async function fillNcdOtherHeaderMinimum(form: MastercardFormPage): Promise<void> {
+export async function fillNcdOtherHeaderMinimum(form: MastercardFormPage, encounterDate: string): Promise<void> {
   await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkById('rheumatoid-dx');
+  await form.fillField('rheumatoid-dx-date', encounterDate);
 }

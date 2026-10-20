@@ -82,7 +82,8 @@ import { NCD_OTHER_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 // creates that header first, on the same `page` the test itself receives,
 // since reaching the visit form requires continuing on that same
 // already-loaded page (`enterNewFlowsheet`), not a fresh `openCreateAtUrl`
-// navigation. Uses `fillNcdOtherHeaderMinimum` (just "Agrees to FUP") rather
+// navigation. Uses `fillNcdOtherHeaderMinimum` ("Agrees to FUP" + one
+// diagnosis checkbox + its date) rather
 // than the full `fillNcdOtherHeaderForm` field list, since all this beforeEach
 // needs is *a* saved header encounter to continue from, not any particular
 // content on it — same minimal-fill pattern as ART's own
@@ -96,7 +97,7 @@ test.describe('NCD Other visit mastercard', () => {
       page,
       NcdOtherMastercardGatePage.buildCreateUrl(eligibleNcdOtherPatient.uuid, encounterDate),
     );
-    await fillNcdOtherHeaderMinimum(headerForm);
+    await fillNcdOtherHeaderMinimum(headerForm, encounterDate);
     await headerForm.save();
     await headerForm.expectSaveSuccess();
   });

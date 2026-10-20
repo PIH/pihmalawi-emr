@@ -97,3 +97,21 @@ test('Sickle Cell Disease header mastercard saves the entered data as a SICKLE_C
     ),
   ).toBeTruthy();
 });
+
+test('Sickle Cell Disease header mastercard keeps Save disabled until the Diagnosis Date is filled', async ({
+  page,
+  eligibleSickleCellDiseasePatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    SickleCellDiseaseMastercardGatePage.buildCreateUrl(eligibleSickleCellDiseasePatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.expectSaveDisabled();
+
+  await form.fillField('diagnosisDate', encounterDate);
+  await form.expectSaveEnabled();
+});

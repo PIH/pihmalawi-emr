@@ -59,6 +59,18 @@
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
     </macros>
+    <script src="/openmrs/moduleResources/pihmalawi/scripts/validate_dx_fields.js" type="text/javascript"></script>
+    <ifmode mode="EDIT" include="true">
+        <script type="text/javascript">
+            jq(function () {
+                requireDxDate();
+                updateDxDate();
+                htmlForm.getBeforeValidation().push(function () {
+                    return validateDxDate();
+                });
+            });
+        </script>
+    </ifmode>
 
     <span style="display:none">
         <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54" /><!-- Set provider to a default as not used -->
@@ -174,10 +186,10 @@
                             <!-- Asthma -->
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="asthma-dx" data-toggle-target="asthma-dx-date">
-                                    <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox" answerConceptId="$asthmaDx" answerLabel="Asthma"  />
+                                    <obs class="dx-checkbox-item dx-selected" conceptId="$chronicCareDiagnosis" style="checkbox" answerConceptId="$asthmaDx" answerLabel="Asthma"  />
                                 </td>
                                 <td>
-                                    <obs id="asthma-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="asthma-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                             <th style="vertical-align:top;" align="left" rowspan="2">Family History</th>
@@ -190,11 +202,11 @@
                             <!-- COPD -->
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="copd-dx" data-toggle-target="copd-dx-date">
-                                    <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$copdDx" answerLabel="COPD" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="copd-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="copd-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                             <td class="nowrap">

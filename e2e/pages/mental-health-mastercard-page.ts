@@ -54,9 +54,12 @@ export async function fillMentalHealthHeaderForm(form: MastercardFormPage, encou
 // "dx-checkbox-item" (same gate as the Hypertension and Diabetes/Chronic Lung
 // Disease pilots' own forms — mastercard.js requires at least one checked),
 // confirmed live: "Agrees to FUP" alone left the submit button disabled.
-export async function fillMentalHealthHeaderMinimum(form: MastercardFormPage): Promise<void> {
+// Diagnoses also carry "dx-selected", so validate_dx_fields.js requires the
+// checked diagnosis's paired date before the submit button re-enables.
+export async function fillMentalHealthHeaderMinimum(form: MastercardFormPage, encounterDate: string): Promise<void> {
   await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('Schizophrenia');
+  await form.fillField('schizo-date', encounterDate);
 }
 
 // The one repeated medication row filled below (Chloropromazine/CPZ) —

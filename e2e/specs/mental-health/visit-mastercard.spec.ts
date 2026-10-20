@@ -14,7 +14,7 @@ test.describe('Mental Health visit mastercard', () => {
       page,
       MentalHealthMastercardGatePage.buildCreateUrl(eligibleMentalHealthPatient.uuid, encounterDate),
     );
-    await fillMentalHealthHeaderMinimum(headerForm);
+    await fillMentalHealthHeaderMinimum(headerForm, encounterDate);
     await headerForm.save();
     await headerForm.expectSaveSuccess();
   });

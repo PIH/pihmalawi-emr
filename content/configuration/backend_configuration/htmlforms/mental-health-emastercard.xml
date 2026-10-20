@@ -103,6 +103,18 @@
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
+    <script src="/openmrs/moduleResources/pihmalawi/scripts/validate_dx_fields.js" type="text/javascript"></script>
+    <ifmode mode="EDIT" include="true">
+        <script type="text/javascript">
+            jq(function () {
+                requireDxDate();
+                updateDxDate();
+                htmlForm.getBeforeValidation().push(function () {
+                    return validateDxDate();
+                });
+            });
+        </script>
+    </ifmode>
 
     <span style="display:none">
         <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54"/><!-- Set provider to a default as not used -->
@@ -256,11 +268,11 @@
 
                                 <obsgroup groupingConceptId="$diagnosisSet">
                                     <td data-toggle-source="schizo" data-toggle-target="schizo-date" style="border-right: 1px solid #ffffff;">
-                                        <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                        <obs class="dx-checkbox-item dx-selected" conceptId="$chronicCareDiagnosis" style="checkbox"
                                              answerConceptId="$schizoDiagnosis" answerLabel="Schizophrenia"/>
                                     </td>
-                                    <td id="schizo-date" style="border-left: 1px solid #ffffff;">
-                                        <obs conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <td style="border-left: 1px solid #ffffff;">
+                                        <obs id="schizo-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                     </td>
                                 </obsgroup>
 
@@ -313,11 +325,11 @@
                                         <tr>
                                             <obsgroup groupingConceptId="$diagnosisSet">
                                                 <td data-toggle-source="{2}" data-toggle-target="{2}-date" style="border-right: 1px solid #ffffff;">
-                                                    <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                                    <obs class="dx-checkbox-item dx-selected" conceptId="$chronicCareDiagnosis" style="checkbox"
                                                          answerConceptId="{0}" answerLabel="{1}"/>
                                                 </td>
-                                                <td id="{2}-date" style="border-left: 1px solid #ffffff;">
-                                                    <obs conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                                <td style="border-left: 1px solid #ffffff;">
+                                                    <obs id="{2}-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                                 </td>
                                             </obsgroup>
                                         </tr>
@@ -331,12 +343,12 @@
                                 <obsgroup groupingConceptId="$diagnosisSet">
                                     <td data-toggle-source="{2}" data-toggle-target="{2}-date"
                                         style="border-right: 1px solid #ffffff;">
-                                        <obs class="dx-checkbox-item" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                        <obs class="dx-checkbox-item dx-selected" conceptId="$chronicCareDiagnosis" style="checkbox"
                                              answerConceptId="{0}" answerLabel="{1}"/>
                                         <obs conceptId="$noncodedOtherName" />
                                     </td>
-                                    <td id="{2}-date" style="border-left: 1px solid #ffffff;">
-                                        <obs conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <td style="border-left: 1px solid #ffffff;">
+                                        <obs id="{2}-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                     </td>
                                 </obsgroup>
                             </tr>
@@ -346,7 +358,7 @@
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="other-ccDiagnosis" data-toggle-target="other-ccDiagnosis-date"
                                     style="border-right: 1px solid #ffffff;">
-                                    <obs class="dx-checkbox-item" conceptId="$mhCodedDx" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" conceptId="$mhCodedDx" style="checkbox"
                                          answerConceptId="$yesAnswer" answerLabel="Other"/>
                                     <obs conceptId="$chronicCareDiagnosis"
                                          answerConceptIds="$stressReaction,$dissoc,$puerperium,$hyper"

@@ -89,11 +89,9 @@ export async function fillChronicLungDiseaseHeaderForm(
   await form.selectRadio('Agrees to FUP', 'Y');
 
   // Diagnoses — each toggle checkbox is checked BEFORE its paired date is
-  // filled, same order every prior pilot's diagnosis rows used. Unlike
-  // Hypertension and Diabetes's own diagnosis checkboxes, this form's don't
-  // require the paired date to save (no `dx-selected` class — see
-  // mastercard-page.ts's own verification note 1), but it's still filled
-  // here since header-mastercard.spec.ts asserts on it.
+  // filled, same order every prior pilot's diagnosis rows used. Like
+  // Hypertension and Diabetes's own diagnosis checkboxes, these carry
+  // `dx-selected`, so each checked diagnosis's paired date is required.
   await form.checkByLabel('Asthma');
   await form.fillField('asthma-dx-date', encounterDate);
 
@@ -157,20 +155,22 @@ export async function fillChronicLungDiseaseHeaderForm(
 }
 
 // Fills only the minimum fields needed to save an ASTHMA_INITIAL header
-// encounter: "Agrees to FUP" + one diagnosis checkbox (`asthma-dx`). Unlike
-// Hypertension and Diabetes's own diagnosis checkboxes (which require their
-// paired date once checked — see mastercard-page.ts's own verification note
-// 1), this form's diagnosis checkboxes carry only `dx-checkbox-item` (not
-// `dx-selected`), so no date is required — confirmed live this saves
-// successfully with no other fields filled, same as NCD Other's own minimum.
+// encounter: "Agrees to FUP" + one diagnosis checkbox (Asthma) + its paired
+// `asthma-dx-date`. Like Hypertension and Diabetes's own diagnosis
+// checkboxes, this form's carry `dx-selected`, so validate_dx_fields.js keeps
+// `.submitButton` disabled until the checked diagnosis's date is filled.
 // Used ONLY by visit-mastercard.spec.ts's `beforeEach`, which needs a saved
 // header encounter as a prerequisite, not the header encounter's own
 // content. header-mastercard.spec.ts still uses
 // `fillChronicLungDiseaseHeaderForm` (the full fill) above, since it asserts
 // on that form's own field values.
-export async function fillChronicLungDiseaseHeaderMinimum(form: MastercardFormPage): Promise<void> {
+export async function fillChronicLungDiseaseHeaderMinimum(
+  form: MastercardFormPage,
+  encounterDate: string,
+): Promise<void> {
   await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkByLabel('Asthma');
+  await form.fillField('asthma-dx-date', encounterDate);
 }
 
 // ---------------------------------------------------------------------------
