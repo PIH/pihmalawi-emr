@@ -15,7 +15,7 @@ import { CHF_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 // continuing on that same already-loaded page (`enterNewFlowsheet`), not a
 // fresh `openCreateAtUrl` navigation. Uses
 // `fillCardiacAndVascularDiseaseHeaderMinimum` (just "Agrees to FUP" + one
-// diagnosis checkbox) rather than the full
+// diagnosis checkbox + its date) rather than the full
 // `fillCardiacAndVascularDiseaseHeaderForm`, since all this beforeEach needs
 // is *a* saved header encounter to continue from, not any particular
 // content on it. header-mastercard.spec.ts still uses the full fill since
@@ -30,7 +30,7 @@ test.describe('Cardiac and Vascular Disease visit mastercard', () => {
         encounterDate,
       ),
     );
-    await fillCardiacAndVascularDiseaseHeaderMinimum(headerForm);
+    await fillCardiacAndVascularDiseaseHeaderMinimum(headerForm, encounterDate);
     await headerForm.save();
     await headerForm.expectSaveSuccess();
   });

@@ -36,3 +36,22 @@ test('Mental Health header mastercard saves the entered data as a MENTAL_HEALTH_
   expect(obs.some((o) => /schizophrenia/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => /hallucination/i.test(o.display))).toBeTruthy();
 });
+
+test('Mental Health header mastercard keeps Save disabled until a checked diagnosis has its date', async ({
+  page,
+  eligibleMentalHealthPatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    MentalHealthMastercardGatePage.buildCreateUrl(eligibleMentalHealthPatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkByLabel('Schizophrenia');
+  await form.expectSaveDisabled();
+
+  await form.fillField('schizo-date', encounterDate);
+  await form.expectSaveEnabled();
+});

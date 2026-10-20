@@ -14,7 +14,7 @@ import { CKD_FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../../core/constants';
 // the test itself receives, since reaching the visit form requires
 // continuing on that same already-loaded page (`enterNewFlowsheet`), not a
 // fresh `openCreateAtUrl` navigation. Uses `fillChronicKidneyDiseaseHeaderMinimum`
-// (just "Agrees to FUP" + one diagnosis checkbox) rather than the full
+// (just "Agrees to FUP" + one diagnosis checkbox + its date) rather than the full
 // `fillChronicKidneyDiseaseHeaderForm`, since all this beforeEach needs is
 // *a* saved header encounter to continue from, not any particular content
 // on it. header-mastercard.spec.ts still uses the full fill since it
@@ -26,7 +26,7 @@ test.describe('Chronic Kidney Disease visit mastercard', () => {
       page,
       ChronicKidneyDiseaseMastercardGatePage.buildCreateUrl(eligibleChronicKidneyDiseasePatient.uuid, encounterDate),
     );
-    await fillChronicKidneyDiseaseHeaderMinimum(headerForm);
+    await fillChronicKidneyDiseaseHeaderMinimum(headerForm, encounterDate);
     await headerForm.save();
     await headerForm.expectSaveSuccess();
   });

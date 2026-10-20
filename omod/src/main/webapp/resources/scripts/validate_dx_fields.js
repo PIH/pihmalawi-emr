@@ -50,7 +50,7 @@ function requireDxDate() {
     var dxDateSpan = jq("#" + dateFieldId);
 
     if ( dxDateSpan ) {
-      if ( isDxChecked ) {
+      if ( isDxChecked && !getField(dateFieldId + ".value").val() ) {
         // make dxDate field required
         flowsheet.toggleError(getField( dateFieldId + '.value'), "Required");
       } else {
@@ -59,4 +59,25 @@ function requireDxDate() {
       }
     }
   });
+}
+
+// For forms whose diagnosis is fixed (hidden, always checked), so its date is
+// required from the start: flags the date on load, clears it once filled, and
+// returns a beforeValidation check.
+function requireFixedDxDate(dateFieldId) {
+  var checkDxDate = function () {
+    // once the header is saved the flowsheet's other forms reuse this page,
+    // so don't block them when the date field is no longer being edited
+    if (!jq("#" + dateFieldId + " input").length) {
+      return true;
+    }
+    var dateValue = getField(dateFieldId + ".value").val();
+    flowsheet.toggleError(getField(dateFieldId + ".value"), dateValue ? null : "Required");
+    return !!dateValue;
+  };
+  // deferred: the form's fields (getField) and datepickers aren't set up yet
+  // when this runs during page load
+  setTimeout(checkDxDate, 0);
+  jq("#" + dateFieldId + " input").change(checkDxDate);
+  return checkDxDate;
 }

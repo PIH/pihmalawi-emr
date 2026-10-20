@@ -138,3 +138,22 @@ test('Chronic Lung Disease header mastercard saves the entered data as an ASTHMA
     obs.some((o) => hasAll(o.display, [/exposure construct/i, /exposed to second hand smoke/i, hasDate])),
   ).toBeTruthy();
 });
+
+test('Chronic Lung Disease header mastercard keeps Save disabled until a checked diagnosis has its date', async ({
+  page,
+  eligibleChronicLungDiseasePatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    ChronicLungDiseaseMastercardGatePage.buildCreateUrl(eligibleChronicLungDiseasePatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkByLabel('Asthma');
+  await form.expectSaveDisabled();
+
+  await form.fillField('asthma-dx-date', encounterDate);
+  await form.expectSaveEnabled();
+});

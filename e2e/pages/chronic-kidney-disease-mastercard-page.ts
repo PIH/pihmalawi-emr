@@ -152,14 +152,20 @@ export async function fillChronicKidneyDiseaseHeaderForm(
 // Chronic Care Program pilot's own "Must enter at least one diagnosis!"
 // minimum — confirmed live this form's own bundled JS enforces the same
 // gate for the `dx-checkbox-item`-classed diagnosis checkboxes, see
-// verification note 3 above). Used ONLY by visit-mastercard.spec.ts's
+// verification note 3 above), plus that diagnosis's paired date — the
+// diagnosis checkboxes carry `dx-selected`, so validate_dx_fields.js keeps
+// `.submitButton` disabled until it's filled. Used ONLY by visit-mastercard.spec.ts's
 // `beforeEach`, which needs a saved header encounter as a prerequisite, not
 // the header encounter's own content. header-mastercard.spec.ts still uses
 // the full `fillChronicKidneyDiseaseHeaderForm` since it asserts on that
 // form's field values.
-export async function fillChronicKidneyDiseaseHeaderMinimum(form: MastercardFormPage): Promise<void> {
+export async function fillChronicKidneyDiseaseHeaderMinimum(
+  form: MastercardFormPage,
+  encounterDate: string,
+): Promise<void> {
   await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkById('chf-dx');
+  await form.fillField('chf-dx-date', encounterDate);
 }
 
 // ---------------------------------------------------------------------------

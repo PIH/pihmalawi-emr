@@ -217,15 +217,21 @@ export async function fillCardiacAndVascularDiseaseHeaderForm(
 // Fills only the minimum fields needed to save a CHF_INITIAL header
 // encounter: "Agrees to FUP" + one diagnosis checkbox (matching NCD Other's/
 // Chronic Lung Disease's own "Must enter at least one diagnosis!" minimum —
-// confirmed live this form's own bundled JS enforces the exact same gate).
-// Used ONLY by visit-mastercard.spec.ts's `beforeEach`, which needs a saved
+// confirmed live this form's own bundled JS enforces the exact same gate),
+// plus that diagnosis's paired date — the diagnosis checkboxes carry
+// `dx-selected`, so validate_dx_fields.js keeps `.submitButton` disabled
+// until it's filled. Used ONLY by visit-mastercard.spec.ts's `beforeEach`, which needs a saved
 // header encounter as a prerequisite, not the header encounter's own
 // content. header-mastercard.spec.ts still uses the full
 // `fillCardiacAndVascularDiseaseHeaderForm` since it asserts on that form's
 // field values.
-export async function fillCardiacAndVascularDiseaseHeaderMinimum(form: MastercardFormPage): Promise<void> {
+export async function fillCardiacAndVascularDiseaseHeaderMinimum(
+  form: MastercardFormPage,
+  encounterDate: string,
+): Promise<void> {
   await form.selectRadio('Agrees to FUP', 'Y');
   await form.checkById(CARDIOMYOPATHY_DX_ID);
+  await form.fillField(`${CARDIOMYOPATHY_DX_ID}-date`, encounterDate);
 }
 
 // ---------------------------------------------------------------------------

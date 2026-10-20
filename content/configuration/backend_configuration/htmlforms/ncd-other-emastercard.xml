@@ -56,6 +56,18 @@
         <macro key="transferInDate" value="6559bc30-977f-11e1-8993-905e29aff6c1"/>
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
     </macros>
+    <script src="/openmrs/moduleResources/pihmalawi/scripts/validate_dx_fields.js" type="text/javascript"></script>
+    <ifmode mode="EDIT" include="true">
+        <script type="text/javascript">
+            jq(function () {
+                requireDxDate();
+                updateDxDate();
+                htmlForm.getBeforeValidation().push(function () {
+                    return validateDxDate();
+                });
+            });
+        </script>
+    </ifmode>
 
     <span style="display:none">
         <encounterProvider default="c4f0fc3c-2695-102d-b4c2-001d929acb54" /><!-- Set provider to a default as not used -->
@@ -171,11 +183,11 @@
                             <!-- Rheumatoid Diagnosis -->
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="rheumatoid-dx" data-toggle-target="rheumatoid-dx-date">
-                                    <obs class="dx-checkbox-item" id="rheumatoid-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" id="rheumatoid-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$rheumatoidArthritis" answerLabel="Rheumatoid arthritis" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="rheumatoid-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="rheumatoid-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
 
@@ -194,11 +206,11 @@
                         <tr>
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="cirrhosis-dx" data-toggle-target="cirrhosis-dx-date">
-                                    <obs class="dx-checkbox-item" id="cirrhosis-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" id="cirrhosis-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$cirrhosis" answerLabel="Cirrhosis" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="cirrhosis-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="cirrhosis-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                         </tr>
@@ -207,11 +219,11 @@
                         <tr>
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="deepV-dx" data-toggle-target="deepV-dx-date">
-                                    <obs class="dx-checkbox-item" id="deepV-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" id="deepV-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$deepDiagVein" answerLabel="DVT / PE" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="deepV-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="deepV-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                         </tr>
@@ -220,11 +232,11 @@
                         <tr>
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="sickle-dx" data-toggle-target="sickle-dx-date">
-                                    <obs class="dx-checkbox-item" id="sickle-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" id="sickle-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$sickleCellDiag" answerLabel="Sickle Cell Disease" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="sickle-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="sickle-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                         </tr>
@@ -233,12 +245,12 @@
                         <tr>
                             <obsgroup groupingConceptId="$diagnosisSet">
                                 <td data-toggle-source="nonCoded-dx" data-toggle-target="nonCoded-dx-date">
-                                    <obs class="dx-checkbox-item" id="nonCoded-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
+                                    <obs class="dx-checkbox-item dx-selected" id="nonCoded-dx" conceptId="$chronicCareDiagnosis" style="checkbox"
                                          answerConceptId="$nonCodedOtherDiag" answerLabel="Other:" />
                                     <obs conceptId="$otherDxText" />
                                 </td>
                                 <td class="toggle-target">
-                                    <obs id="nonCoded-dx-date" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
+                                    <obs id="nonCoded-dx-date" class="dx-date-required" conceptId="$diagnosisDate" labelText="Date" allowFutureDates="true"/>
                                 </td>
                             </obsgroup>
                         </tr>

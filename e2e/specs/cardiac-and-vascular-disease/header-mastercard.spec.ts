@@ -150,3 +150,22 @@ test('Cardiac and Vascular Disease header mastercard saves the entered data as a
   expect(obs.some((o) => hasAll(o.display, [/echocardiogram construct/i, /normal echo result/i, hasDate]))).toBeTruthy();
   expect(obs.some((o) => hasAll(o.display, [/electrocardiogram construct/i, /normal/i, hasDate]))).toBeTruthy();
 });
+
+test('Cardiac and Vascular Disease header mastercard keeps Save disabled until a checked diagnosis has its date', async ({
+  page,
+  eligibleCardiacAndVascularDiseasePatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    CardiacAndVascularDiseaseMastercardGatePage.buildCreateUrl(eligibleCardiacAndVascularDiseasePatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkById('dilated-dx');
+  await form.expectSaveDisabled();
+
+  await form.fillField('dilated-dx-date', encounterDate);
+  await form.expectSaveEnabled();
+});

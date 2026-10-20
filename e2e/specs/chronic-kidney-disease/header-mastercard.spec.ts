@@ -107,3 +107,22 @@ test('Chronic Kidney Disease header mastercard saves the entered data as a CKD_I
   expect(obs.some((o) => /tb status.*smear positive/i.test(o.display))).toBeTruthy();
   expect(obs.some((o) => hasAll(o.display, [/tuberculosis diagnosis date/i, hasDate]))).toBeTruthy();
 });
+
+test('Chronic Kidney Disease header mastercard keeps Save disabled until a checked diagnosis has its date', async ({
+  page,
+  eligibleChronicKidneyDiseasePatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    ChronicKidneyDiseaseMastercardGatePage.buildCreateUrl(eligibleChronicKidneyDiseasePatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkById('chf-dx');
+  await form.expectSaveDisabled();
+
+  await form.fillField('chf-dx-date', encounterDate);
+  await form.expectSaveEnabled();
+});

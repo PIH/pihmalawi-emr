@@ -147,3 +147,22 @@ test('NCD Other header mastercard saves the entered data as an NCD_OTHER_INITIAL
     obs.some((o) => hasAll(o.display, [/electrocardiogram construct/i, /normal/i, hasDate])),
   ).toBeTruthy();
 });
+
+test('NCD Other header mastercard keeps Save disabled until a checked diagnosis has its date', async ({
+  page,
+  eligibleNcdOtherPatient,
+}) => {
+  const encounterDate = new Date().toISOString().slice(0, 10);
+
+  const form = await MastercardFormPage.openCreateAtUrl(
+    page,
+    NcdOtherMastercardGatePage.buildCreateUrl(eligibleNcdOtherPatient.uuid, encounterDate),
+  );
+
+  await form.selectRadio('Agrees to FUP', 'Y');
+  await form.checkById('rheumatoid-dx');
+  await form.expectSaveDisabled();
+
+  await form.fillField('rheumatoid-dx-date', encounterDate);
+  await form.expectSaveEnabled();
+});
