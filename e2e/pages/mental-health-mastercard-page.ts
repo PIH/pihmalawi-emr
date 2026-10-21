@@ -1,10 +1,9 @@
 import { MastercardFormPage } from './mastercard-page';
 
 // Mental Health's create URL/flowsheet list, per EMastercardAccessTag's
-// headerForms/flowsheetForms maps for MENTAL_HEALTH_INITIAL —
-// mental-health-screening.xml is out of scope for this pilot (only
-// mental-health-visit.xml is covered), but is still included in the URL since
-// that's what the real dashboard link renders.
+// headerForms/flowsheetForms maps for MENTAL_HEALTH_INITIAL — both
+// flowsheets (mental-health-screening.xml and mental-health-visit.xml) are
+// covered.
 const MENTAL_HEALTH_HEADER_FORM = 'file:configuration/htmlforms/mental-health-emastercard.xml';
 const MENTAL_HEALTH_FLOWSHEETS = [
   'file:configuration/htmlforms/mental-health-screening.xml',
@@ -95,6 +94,50 @@ export async function fillMentalHealthVisitForm(
   await form.fillField(`duration_${CPZ_UUID}`, '30');
   await form.selectDropdown(`durationUnit_${CPZ_UUID}`, 'Days');
 
+  await form.fillField('Comments', 'Some comments');
+  await form.fillField('appointmentDate', opts.appointmentDate);
+}
+
+// Diagnosis/Intervention checkbox labels on mental-health-screening.xml's
+// data-entry form, in form order. Each label is unique within the form's own
+// `table.visit-edit-table` (the two "Other" boxes aside, which aren't
+// filled), so `checkByLabel` reaches them directly.
+export const MENTAL_HEALTH_SCREENING_DIAGNOSES = [
+  'Depression',
+  'Stress and anxiety',
+  'Grief and loss',
+  'Substance and Drug',
+  'Suicide',
+  'Trauma/PTSD',
+  'GBV',
+  'High Viral Load',
+];
+export const MENTAL_HEALTH_SCREENING_INTERVENTIONS = [
+  'PM +',
+  'PFA',
+  'psych education',
+  'Supportive counselling',
+  'Cognitive behavioral therapy',
+  'Interpersonal therapy',
+  'Case management',
+  'Couple/Family counselling',
+];
+
+// Fills mental-health-screening.xml's data-entry fields — every coded
+// Diagnosis and Intervention checkbox, plus the free-text/date fields.
+// Values are asserted against in mental-health/screening-mastercard.spec.ts.
+export async function fillMentalHealthScreeningForm(
+  form: MastercardFormPage,
+  opts: { appointmentDate: string },
+): Promise<void> {
+  await form.selectDropdown('visitLocation', 'Neno District Hospital');
+
+  for (const label of [...MENTAL_HEALTH_SCREENING_DIAGNOSES, ...MENTAL_HEALTH_SCREENING_INTERVENTIONS]) {
+    await form.checkByLabel(label);
+  }
+
+  await form.selectRadio('Sessions', 'Session 1');
+  await form.fillField('Session Notes', 'First session notes');
   await form.fillField('Comments', 'Some comments');
   await form.fillField('appointmentDate', opts.appointmentDate);
 }
