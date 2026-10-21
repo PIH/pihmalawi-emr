@@ -19,6 +19,41 @@ CREATE TABLE active_mental_health_staging AS
 SELECT pat FROM last_mental_facility_outcome WHERE state = 'in advanced care';
 ALTER TABLE active_mental_health_staging ADD PRIMARY KEY (pat);
 
+-- Program states ranked per patient and program (1 = most recent as of @endDate)
+DROP TABLE IF EXISTS ncd_program_state_ranked;
+CREATE TABLE ncd_program_state_ranked AS
+SELECT
+    @r_state := IF(@k_state = CONCAT(ops.patient_id, '|', ops.program), @r_state + 1, 1) AS index_desc,
+    ops.patient_id,
+    ops.program,
+    ops.state,
+    ops.location,
+    ops.start_date,
+    @k_state := CONCAT(ops.patient_id, '|', ops.program) AS rank_key
+FROM omrs_program_state ops
+         JOIN (SELECT @r_state := 1) AS r_init
+         JOIN (SELECT @k_state := '') AS k_init
+WHERE ops.program IN ('Chronic Care Program', 'Mental Health Care Program')
+  AND ops.start_date <= @endDate
+ORDER BY ops.patient_id DESC, ops.program, ops.start_date DESC, ops.program_state_id DESC;
+ALTER TABLE ncd_program_state_ranked ADD INDEX (patient_id, program, index_desc);
+
+-- Patients whose current state (defaulted/died) started in the period and whose previous state was 'in advanced care'
+DROP TABLE IF EXISTS ncd_outcome_transition_staging;
+CREATE TABLE ncd_outcome_transition_staging AS
+SELECT DISTINCT current_state.patient_id, current_state.program, current_state.state
+FROM ncd_program_state_ranked current_state
+         INNER JOIN ncd_program_state_ranked previous_state
+                    ON previous_state.patient_id = current_state.patient_id
+                        AND previous_state.program = current_state.program
+                        AND previous_state.index_desc = 2
+WHERE current_state.index_desc = 1
+  AND current_state.state IN ('patient defaulted', 'patient died')
+  AND current_state.start_date BETWEEN @startDate AND @endDate
+  AND current_state.location = @location
+  AND previous_state.state = 'in advanced care';
+ALTER TABLE ncd_outcome_transition_staging ADD INDEX (patient_id, program, state);
+
 /* =========================================================
    STAGE 1: HTN, ASTHMA, COPD FLAGS
    ========================================================= */
@@ -70,18 +105,14 @@ FROM mw_patient p
     WHERE dhi.visit_date BETWEEN @startDate AND @endDate AND dhi.diagnosis_hypertension IS NOT NULL AND dhi.location = @location
 ) htn_new ON p.patient_id = htn_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
 ) htn_def ON p.patient_id = htn_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
 ) htn_died ON p.patient_id = htn_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT mdhf.patient_id FROM mw_diabetes_hypertension_followup mdhf
@@ -90,10 +121,13 @@ FROM mw_patient p
       AND mdhf.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
 ) htn_visit ON p.patient_id = htn_visit.patient_id
          LEFT JOIN (
+    -- Currently in advanced care with an HTN diagnosis and any complication ever recorded
     SELECT DISTINCT dhi.patient_id FROM mw_diabetes_hypertension_initial dhi
                                             INNER JOIN active_patients_staging aps ON aps.pat = dhi.patient_id
-    WHERE dhi.diagnosis_hypertension IS NOT NULL AND dhi.location = @location
-      AND (cardiovascular_disease IS NOT NULL OR retinopathy IS NOT NULL OR renal_disease IS NOT NULL OR stroke_and_tia IS NOT NULL)
+    WHERE (dhi.cardiovascular_disease IS NOT NULL OR dhi.retinopathy IS NOT NULL OR dhi.renal_disease IS NOT NULL
+        OR dhi.stroke_and_tia IS NOT NULL OR dhi.peripheral_vascular_disease IS NOT NULL
+        OR dhi.neuropathy IS NOT NULL OR dhi.sexual_disorder IS NOT NULL)
+      AND dhi.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_hypertension IS NOT NULL)
 ) htn_comp ON p.patient_id = htn_comp.patient_id
          LEFT JOIN (
     SELECT DISTINCT dhf.patient_id FROM mw_diabetes_hypertension_followup dhf
@@ -114,18 +148,14 @@ FROM mw_patient p
     WHERE ai.visit_date BETWEEN @startDate AND @endDate AND ai.diagnosis_asthma IS NOT NULL AND ai.location = @location
 ) ast_new ON p.patient_id = ast_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_asthma IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_asthma IS NOT NULL)
 ) ast_def ON p.patient_id = ast_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_asthma IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_asthma IS NOT NULL)
 ) ast_died ON p.patient_id = ast_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT af.patient_id FROM mw_asthma_followup af
@@ -218,18 +248,14 @@ FROM mw_patient p
     WHERE ai.visit_date BETWEEN @startDate AND @endDate AND ai.diagnosis_copd IS NOT NULL AND ai.location = @location
 ) copd_new ON p.patient_id = copd_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_copd IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_copd IS NOT NULL)
 ) copd_def ON p.patient_id = copd_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_copd IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_asthma_initial WHERE diagnosis_copd IS NOT NULL)
 ) copd_died ON p.patient_id = copd_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT af.patient_id FROM mw_asthma_followup af
@@ -278,18 +304,14 @@ FROM mw_patient p
     WHERE dhi.visit_date BETWEEN @startDate AND @endDate AND dhi.diagnosis_type_1_diabetes IS NOT NULL AND dhi.location = @location
 ) dm1_new ON p.patient_id = dm1_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_1_diabetes IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_1_diabetes IS NOT NULL)
 ) dm1_def ON p.patient_id = dm1_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_1_diabetes IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_1_diabetes IS NOT NULL)
 ) dm1_died ON p.patient_id = dm1_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT dhf.patient_id FROM mw_diabetes_hypertension_followup dhf
@@ -327,18 +349,14 @@ FROM mw_patient p
     WHERE dhi.visit_date BETWEEN @startDate AND @endDate AND dhi.diagnosis_type_2_diabetes IS NOT NULL AND dhi.location = @location
 ) dm2_new ON p.patient_id = dm2_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_2_diabetes IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_2_diabetes IS NOT NULL)
 ) dm2_def ON p.patient_id = dm2_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_2_diabetes IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_diabetes_hypertension_initial WHERE diagnosis_type_2_diabetes IS NOT NULL)
 ) dm2_died ON p.patient_id = dm2_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT dhf.patient_id FROM mw_diabetes_hypertension_followup dhf
@@ -416,18 +434,14 @@ FROM mw_patient p
     WHERE mhi.visit_date BETWEEN @startDate AND @endDate AND mhi.location = @location
 ) mh_new ON p.patient_id = mh_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_mental_health_staging amhs ON amhs.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Mental Health Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_mental_health_followup)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Mental Health Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_mental_health_initial)
 ) mh_def ON p.patient_id = mh_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_mental_health_staging amhs ON amhs.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Mental Health Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_mental_health_followup)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Mental Health Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_mental_health_initial)
 ) mh_died ON p.patient_id = mh_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT mhf.patient_id FROM mw_mental_health_followup mhf
@@ -469,18 +483,14 @@ FROM mw_patient p
     WHERE epi.visit_date BETWEEN @startDate AND @endDate AND epi.location = @location
 ) ep_new ON p.patient_id = ep_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_mental_health_staging amhs ON amhs.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Mental Health Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_epilepsy_followup)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Mental Health Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_epilepsy_initial)
 ) ep_def ON p.patient_id = ep_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_mental_health_staging amhs ON amhs.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Mental Health Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_epilepsy_followup)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Mental Health Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_epilepsy_initial)
 ) ep_died ON p.patient_id = ep_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT epf.patient_id FROM mw_epilepsy_followup epf
@@ -572,18 +582,14 @@ FROM mw_patient p
     WHERE ai.visit_date BETWEEN @startDate AND @endDate AND ai.location = @location
 ) scd_new ON p.patient_id = scd_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_sickle_cell_disease_initial WHERE sickle_cell_disease__initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_sickle_cell_disease_initial WHERE sickle_cell_disease__initial_visit_id IS NOT NULL)
 ) scd_def ON p.patient_id = scd_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_sickle_cell_disease_initial WHERE sickle_cell_disease__initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_sickle_cell_disease_initial WHERE sickle_cell_disease__initial_visit_id IS NOT NULL)
 ) scd_died ON p.patient_id = scd_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT af.patient_id FROM mw_sickle_cell_disease_followup af
@@ -605,18 +611,14 @@ FROM mw_patient p
     WHERE ci.visit_date BETWEEN @startDate AND @endDate AND ci.location = @location
 ) chf_new ON p.patient_id = chf_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_chf_initial WHERE chf_initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_chf_initial WHERE chf_initial_visit_id IS NOT NULL)
 ) chf_def ON p.patient_id = chf_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_chf_initial WHERE chf_initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_chf_initial WHERE chf_initial_visit_id IS NOT NULL)
 ) chf_died ON p.patient_id = chf_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT cf.patient_id FROM mw_chf_followup cf
@@ -697,18 +699,14 @@ FROM mw_patient p
     WHERE ci.visit_date BETWEEN @startDate AND @endDate AND ci.location = @location
 ) ckd_new ON p.patient_id = ckd_new.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient defaulted' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_ckd_initial WHERE ckd_initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient defaulted' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_ckd_initial WHERE ckd_initial_visit_id IS NOT NULL)
 ) ckd_def ON p.patient_id = ckd_def.patient_id
          LEFT JOIN (
-    SELECT DISTINCT ops.patient_id FROM omrs_program_state ops
-                                            INNER JOIN active_patients_staging aps ON aps.pat = ops.patient_id
-    WHERE ops.location = @location AND ops.start_date BETWEEN @startDate AND @endDate
-      AND ops.state = 'patient died' AND ops.program = 'Chronic Care Program'
-      AND ops.patient_id IN (SELECT patient_id FROM mw_ckd_initial WHERE ckd_initial_visit_id IS NOT NULL)
+    SELECT DISTINCT ots.patient_id FROM ncd_outcome_transition_staging ots
+    WHERE ots.state = 'patient died' AND ots.program = 'Chronic Care Program'
+      AND ots.patient_id IN (SELECT patient_id FROM mw_ckd_initial WHERE ckd_initial_visit_id IS NOT NULL)
 ) ckd_died ON p.patient_id = ckd_died.patient_id
          LEFT JOIN (
     SELECT DISTINCT kf.patient_id FROM mw_ckd_followup kf
