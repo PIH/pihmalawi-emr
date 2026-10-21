@@ -114,6 +114,7 @@ export const MENTAL_HEALTH_ON_TREATMENT_STATE_UUID = '2F76D426-56A9-4651-B253-A2
 
 export const MENTAL_HEALTH_INITIAL_ENCOUNTER_TYPE_UUID = '3F94849C-F245-4593-BCC8-879EAEA29168';
 export const MENTAL_HEALTH_FOLLOWUP_ENCOUNTER_TYPE_UUID = 'D51F45F8-0EEA-4231-A7E9-C45D57F1CBA1';
+export const MENTAL_HEALTH_SCREENING_ENCOUNTER_TYPE_UUID = '1ec34eeb-0776-4f58-871e-fe0026fda111';
 
 // Palliative Care Program — own program/workflow. Confirmed live via
 // `GET program/<uuid>?v=full` (matches PihMalawiConfigConstants.java's own

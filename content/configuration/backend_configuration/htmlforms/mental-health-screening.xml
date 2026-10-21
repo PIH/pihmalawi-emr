@@ -15,11 +15,13 @@
         <macro key="diagnosis" value="656292d8-977f-11e1-8993-905e29aff6c1"/>
         <macro key="referralSet" value="a4dfe545-8a85-41ca-ac47-b372b681391f" />
         <macro key="depression" value="6546cbd4-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="stress" value="160196AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
-        <macro key="anxiety" value="6560bf08-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="anger" value="7e8abbdc-cf5c-11e5-ab30-625662870761"/>
+        <macro key="stressAndAnxiety" value="c6c218ce-614d-4072-b013-69cd0dd83c79"/>
         <macro key="griefLoss" value="657117fe-977f-11e1-8993-905e29aff6c1"/>
         <macro key="substanceDrug" value="655fbcca-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="suicide" value="112411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+        <macro key="traumaPtsd" value="2a50bd91-5275-49ed-8969-911035bcc918"/>
+        <macro key="gbv" value="d4fa0c9e-6bea-4b96-943f-63df2360f8a8"/>
+        <macro key="highViralLoad" value="f2fbb381-99aa-4dce-8ff8-097dfdec2a5f"/>
         <macro key="other" value="8797110a-d38e-427f-a08f-260300c8c896"/>
 
         <macro key="intervention" value="6559e0fc-977f-11e1-8993-905e29aff6c1"/>
@@ -31,6 +33,7 @@
         <macro key="CognitiveBehavioral" value="118905AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
         <macro key="itrpersonalTherapy" value="47729d48-1ab6-4c27-86fe-4700d734909d"/>
         <macro key="CaseManagement" value="6577051a-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="coupleFamilyCounselling" value="ec294ee2-9a69-4598-923c-67840bde5960"/>
         <macro key="noneCodedText" value="d57e3a20-5802-11e6-8b77-86f30ca893d3" />
 
         <macro key="sssNumber" value="06b1f7d8-b6cc-11e8-96f8-529269fb1459"/>
@@ -88,11 +91,13 @@
                     <!-- Diagnosis -->
                     <td>
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$depression" answerLabel="Depression" />
-                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$stress" answerLabel="Stress" />
-                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$anxiety" answerLabel="Anxiety" />
-                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$anger" answerLabel="Anger" />
+                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$stressAndAnxiety" answerLabel="Stress and anxiety" />
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$griefLoss" answerLabel="Grief and loss" />
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$substanceDrug" answerLabel="Substance and Drug" />
+                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$suicide" answerLabel="Suicide" />
+                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$traumaPtsd" answerLabel="Trauma/PTSD" />
+                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$gbv" answerLabel="GBV" />
+                            <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$highViralLoad" answerLabel="High Viral Load" />
 
                         <obsgroup groupingConceptId="$referralSet">
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$other" answerLabel="Oth" />
@@ -112,6 +117,7 @@
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$CognitiveBehavioral" answerLabel="Cognitive behavioral therapy" />
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$itrpersonalTherapy" answerLabel="Interpersonal therapy" />
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$CaseManagement" answerLabel="Case management" />
+                        <obs conceptId="$intervention" style="checkbox" answerConceptId="$coupleFamilyCounselling" answerLabel="Couple/Family counselling" />
 
                         <obsgroup groupingConceptId="$sourceOfRefSet">
                             <obs conceptId="$intervention" style="checkbox" answerConceptId="$other" answerLabel="Other" />
@@ -198,11 +204,13 @@
                 <th>Diagnosis</th>
                 <td>
                     <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$depression" answerLabel="Depression" />
-                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$stress" answerLabel="Stress" />
-                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$anxiety" answerLabel="Anxiety" />
-                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$anger" answerLabel="Anger" />
+                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$stressAndAnxiety" answerLabel="Stress and anxiety" />
                     <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$griefLoss" answerLabel="Grief and loss" />
                     <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$substanceDrug" answerLabel="Substance and Drug" />
+                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$suicide" answerLabel="Suicide" />
+                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$traumaPtsd" answerLabel="Trauma/PTSD" />
+                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$gbv" answerLabel="GBV" />
+                    <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$highViralLoad" answerLabel="High Viral Load" />
 
                     <obsgroup groupingConceptId="$referralSet">
                         <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$other" answerLabel="Other" />
@@ -224,6 +232,7 @@
                     <obs conceptId="$intervention" style="checkbox" answerConceptId="$CognitiveBehavioral" answerLabel="Cognitive behavioral therapy" />
                     <obs conceptId="$intervention" style="checkbox" answerConceptId="$itrpersonalTherapy" answerLabel="Interpersonal therapy" />
                     <obs conceptId="$intervention" style="checkbox" answerConceptId="$CaseManagement" answerLabel="Case management" />
+                    <obs conceptId="$intervention" style="checkbox" answerConceptId="$coupleFamilyCounselling" answerLabel="Couple/Family counselling" />
 
                     <obsgroup groupingConceptId="$sourceOfRefSet">
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$other" answerLabel="Other" />
