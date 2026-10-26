@@ -11,124 +11,156 @@ CALL create_hiv_cohort(@startDate, @endDate, @location, @birthDateDivider);
 CALL create_last_eid_outcome_at_facility(@endDate, @location);
 
 SELECT
-    hv.location as location,
+    @location AS location,
     CONCAT('Q', QUARTER(@startDate)) as quarter_label,
     YEAR(@startDate) AS year_label,
-
+    eid.*,
+    art.*
+FROM (
     #HCC
-    eid_newly_total_registered_in_quarter,
-    eid_cummulative_ever_total_registered,
-    eid_newly_ft,
-    eid_cummulative_ft,
-    eid_initial_transfer_In,
-    eid_cummulative_transfer_In,
-    eid_initial_males_all_ages,
-    eid_initial_females_all_ages,
-    eid_cumulative_males_all_ages,
-    eid_cumulative_females_all_ages,
-    eid_age_at_initiation_less_2months,
-    eid_age_at_initiation_2_24months,
-    cumulative_eid_age_at_initiation_less_2months,
-    cumulative_eid_age_at_initiation_2_24months,
-    quarterly_eid_tx_curr,
-    cumulative_eid_tx_curr,
-
-
+    SELECT
+    SUM(mei.visit_date BETWEEN @startDate AND @endDate) AS eid_newly_total_registered_in_quarter,
+    SUM(mei.visit_date <= @endDate) AS eid_cummulative_ever_total_registered,
+    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.previous_registrations = 0 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_newly_ft,
+    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.previous_registrations = 0 AND mei.visit_date <= @endDate, 1, 0)) AS eid_cummulative_ft,
+    -- Re-initiated (RE): not transferred in, with an earlier EID registration
+    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.previous_registrations > 0 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_newly_reinitiated,
+    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.previous_registrations > 0 AND mei.visit_date <= @endDate, 1, 0)) AS eid_cummulative_reinitiated,
+    SUM(IF(sub.eid_transfer_in_date IS NOT NULL AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_initial_transfer_In,
+    SUM(IF(sub.eid_transfer_in_date IS NOT NULL AND mei.visit_date <= @endDate, 1, 0)) AS eid_cummulative_transfer_In,
+    SUM(IF(mei.visit_date BETWEEN @startDate AND @endDate AND lef.gender = 'M', 1, 0)) AS eid_initial_males_all_ages,
+    SUM(IF(mei.visit_date BETWEEN @startDate AND @endDate AND lef.gender = 'F', 1, 0)) AS eid_initial_females_all_ages,
+    SUM(IF(mei.visit_date <= @endDate AND lef.gender = 'M', 1, 0)) AS eid_cumulative_males_all_ages,
+    SUM(IF(mei.visit_date <= @endDate AND lef.gender = 'F', 1, 0)) AS eid_cumulative_females_all_ages,
+    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) < 60 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_age_at_initiation_less_2months,
+    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) BETWEEN 60 AND 729 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_age_at_initiation_2_24months,
+    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) < 60 AND mei.visit_date <= @endDate, 1, 0)) AS cumulative_eid_age_at_initiation_less_2months,
+    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) BETWEEN 60 AND 729 AND mei.visit_date <= @endDate, 1, 0)) AS cumulative_eid_age_at_initiation_2_24months,
+    SUM(IF(lef.state = 'Exposed Child (Continue)' AND FLOOR(DATEDIFF(@endDate, ev.eid_last_appt_date)) <= @defaultCutOff AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS quarterly_eid_tx_curr,
+    SUM(IF(lef.state = 'Exposed Child (Continue)' AND FLOOR(DATEDIFF(@endDate, ev.eid_last_appt_date)) <= @defaultCutOff, 1, 0)) AS cumulative_eid_tx_curr,
+    -- Confirmed infected (Pre-ART): clients ever in the Pre-ART (Continue) state at the facility
+    (SELECT COUNT(DISTINCT ops.patient_id) FROM omrs_program_state ops
+    WHERE ops.state = 'Pre-ART (Continue)' AND ops.location = @location AND ops.start_date <= @endDate) AS cumulative_eid_confirmed_infected_pre_art
+    FROM last_eid_facility_outcome lef
+    -- latest EID registration per child at the facility, with the number of earlier EID registrations (any facility)
+    JOIN (
+    SELECT e.patient_id, e.location, e.visit_date,
+    (SELECT COUNT(*) FROM mw_eid_initial p WHERE p.patient_id = e.patient_id AND p.visit_date < e.visit_date) AS previous_registrations
+    FROM (
+    SELECT patient_id, location, MAX(visit_date) AS visit_date
+    FROM mw_eid_initial WHERE visit_date <= @endDate GROUP BY patient_id, location
+    ) e
+    ) mei ON mei.patient_id = lef.pat AND mei.location = lef.location
+    LEFT JOIN (
+    SELECT patient_id, MAX(next_appointment_date) AS eid_last_appt_date
+    FROM mw_eid_followup WHERE visit_date <= @endDate GROUP BY patient_id
+    ) ev ON ev.patient_id = lef.pat
+    -- one transfer-in date per child
+    LEFT JOIN (
+    SELECT patient_id, MIN(value_date) AS eid_transfer_in_date
+    FROM omrs_obs WHERE concept = 'Transfer in date' AND value_date <= @endDate GROUP BY patient_id
+    ) sub ON sub.patient_id = lef.pat
+    ) eid
+    CROSS JOIN (
+    SELECT
     #ART Clinic
     -- ART Clinic Registrations
     SUM(hv.initial_visit_date BETWEEN @startDate AND @endDate) AS newly_total_registered_in_quarter,
     SUM(hv.initial_visit_date <= @endDate) AS cummulative_ever_total_registered,
 
     -- First Time (FT) Starts
-    SUM(IF(hv.gender='M' AND hv.transfer_in_date IS NULL AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_male,
-    SUM(IF(hv.gender='M' AND hv.transfer_in_date IS NULL AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_male,
-    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL) AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_female_nonpreg,
-    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL) AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_female_nonpreg,
-    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND hv.initial_pregnant_or_lactating = 'Patient pregnant' AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_female_preg,
-    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND hv.initial_pregnant_or_lactating = 'Patient pregnant' AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_female_preg,
-    '0' as quarterly_non_disaggregated,
-    '0' as cumulative_non_disaggregated,
-    SUM(CASE WHEN hv.transfer_in_date IS NULL AND hv.initial_visit_date BETWEEN @startDate AND @endDate THEN 1 ELSE 0 END) AS total_ft,
-    SUM(CASE WHEN hv.transfer_in_date IS NULL AND hv.initial_visit_date <= @endDate THEN 1 ELSE 0 END) AS cummulative_ft,
+    SUM(IF(hv.gender='M' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_male,
+    SUM(IF(hv.gender='M' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_male,
+    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL) AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_female_nonpreg,
+    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL) AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_female_nonpreg,
+    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_pregnant_or_lactating = 'Patient pregnant' AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_ft_female_preg,
+    SUM(IF(hv.gender='F' AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_pregnant_or_lactating = 'Patient pregnant' AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_ft_female_preg,
+    SUM(IF((hv.gender NOT IN ('M', 'F') OR hv.gender IS NULL) AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS quarterly_non_disaggregated,
+    SUM(IF((hv.gender NOT IN ('M', 'F') OR hv.gender IS NULL) AND hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date <= @endDate, 1, 0)) AS cumulative_non_disaggregated,
+    SUM(CASE WHEN hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date BETWEEN @startDate AND @endDate THEN 1 ELSE 0 END) AS total_ft,
+    SUM(CASE WHEN hv.transfer_in_date IS NULL AND COALESCE(piv.reinitiated, 0) = 0 AND hv.initial_visit_date <= @endDate THEN 1 ELSE 0 END) AS cummulative_ft,
 
-    -- Transfer-In (TI)
-    SUM(IF(hv.transfer_in_date BETWEEN @startDate AND @endDate, 1, 0)) AS initial_transfer_In,
-    SUM(IF(hv.transfer_in_date <= @endDate, 1, 0)) AS cummulative_transfer_In,
+    -- Re-initiated (RE): not transferred in, previously taken ARVs (FT + RE + TI = total registered)
+    SUM(IF(hv.transfer_in_date IS NULL AND piv.reinitiated = 1 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS newly_reinitiated,
+    SUM(IF(hv.transfer_in_date IS NULL AND piv.reinitiated = 1 AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_reinitiated,
 
-    -- Age at Initiation
+    -- Transfer-In (TI): registered in the period with a transfer-in date
+    SUM(IF(hv.transfer_in_date IS NOT NULL AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS initial_transfer_In,
+    SUM(IF(hv.transfer_in_date IS NOT NULL AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_transfer_In,
+
+    -- Age at Initiation (age in months at ART registration)
     SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND hv.gender = 'M', 1, 0)) AS initial_males_all_ages,
     SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND hv.gender = 'F' AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL), 1, 0)) AS initial_fnp_all_ages,
     SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND hv.gender = 'F' AND hv.initial_pregnant_or_lactating = 'Patient pregnant', 1, 0)) AS initial_fp_all_ages,
-    SUM(IF(hv.age < 24 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation_less_24m,
-    SUM(IF(hv.age BETWEEN 24 AND 179 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation__24m_14yrs,
-    SUM(IF(hv.age >= 180 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation_15plus,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) < 24 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation_less_24m,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) BETWEEN 24 AND 179 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation__24m_14yrs,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) >= 180 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation_15plus,
 
-    SUM(IF(hv.age BETWEEN 24 AND 179 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation__24m_14yrs,
-    SUM(IF(hv.age >= 180 AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS age_at_initiation_15plus,
+    SUM(IF(hv.initial_visit_date <= @endDate AND hv.gender = 'M', 1, 0)) AS cummulative_males_all_ages,
+    SUM(IF(hv.initial_visit_date <= @endDate AND hv.gender = 'F' AND (hv.initial_pregnant_or_lactating != 'Patient pregnant' OR hv.initial_pregnant_or_lactating IS NULL), 1, 0)) AS cummulative_fnp_all_ages,
+    SUM(IF(hv.initial_visit_date <= @endDate AND hv.gender = 'F' AND hv.initial_pregnant_or_lactating = 'Patient pregnant', 1, 0)) AS cummulative_fp_all_ages,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) < 24 AND hv.initial_visit_date <= @endDate, 1, 0)) AS age_at_initiation_less_24m_cummulative,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) BETWEEN 24 AND 179 AND hv.initial_visit_date <= @endDate, 1, 0)) AS age_at_initiation__24m_14yrs_cummulative,
+    SUM(IF(FLOOR(DATEDIFF(hv.initial_visit_date, mp.birthdate) / @birthDateDivider) >= 180 AND hv.initial_visit_date <= @endDate, 1, 0)) AS age_at_initiation_15plus_cummulative,
 
-    SUM(IF(initial_visit_date <= @endDate AND gender = 'M', 1, 0)) AS cummulative_males_all_ages,
-    SUM(IF(initial_visit_date <= @endDate AND gender = 'F' AND (initial_pregnant_or_lactating != 'Patient pregnant' OR initial_pregnant_or_lactating IS NULL), 1, 0)) AS cummulative_fnp_all_ages,
-    SUM(IF(initial_visit_date <= @endDate AND gender = 'F' AND initial_pregnant_or_lactating = 'Patient pregnant', 1, 0)) AS cummulative_fp_all_ages,
-    SUM(age < 24 AND initial_visit_date <= @endDate) AS age_at_initiation_less_24m_cummulative,
-    SUM(age BETWEEN 24 AND 179 AND initial_visit_date <= @endDate) AS age_at_initiation__24m_14yrs_cummulative,
-    SUM(age >= 180 AND initial_visit_date <= @endDate) AS age_at_initiation_15plus_cummulative,
+    -- Reasons for Starting (mutually exclusive, see initiation_reason in piv)
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'SEVERE', 1, 0)) AS initial_pres_sev_hiv,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'INFANT', 1, 0)) AS initial_infants_less_12_mths,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'CHILD', 1, 0)) AS initial_children_12_59_mths,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'PREG', 1, 0)) AS intial_preg,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'BF', 1, 0)) AS initial_bf,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'CD4', 1, 0)) AS initial_cd4_below_threshold,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'STAGE3', 1, 0)) AS initial_who_stage_3,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'STAGE4', 1, 0)) AS initial_who_stage_4,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND piv.initiation_reason = 'ASYMPTOMATIC', 1, 0)) AS initial_asymptomatic_mild,
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND COALESCE(piv.initiation_reason, 'UNKNOWN') = 'UNKNOWN', 1, 0)) AS initial_unknown_reason,
 
-    -- Reasons for Starting (mutually-exclusive, via `reason` join)
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'SEVERE', 1, 0)) AS initial_pres_sev_hiv,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'INFANT', 1, 0)) AS initial_infants_less_12_mths,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'CHILD', 1, 0)) AS initial_children_12_59_mths,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'PREG', 1, 0)) AS intial_preg,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'BF', 1, 0)) AS initial_bf,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'CD4', 1, 0)) AS initial_cd4_below_threshold,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'STAGE3', 1, 0)) AS initial_who_stage_3,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'STAGE4', 1, 0)) AS initial_who_stage_4,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'ASYMPTOMATIC', 1, 0)) AS initial_asymptomatic_mild,
-    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND reason.initiation_reason = 'UNKNOWN', 1, 0)) AS initial_unknown_reason,
-
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'SEVERE', 1, 0)) AS cummulative_pres_sev_hiv,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'INFANT', 1, 0)) AS cummulative_infants_less_12_mths,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'CHILD', 1, 0)) AS cummulative_children_12_59_mths,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'PREG', 1, 0)) AS cummulative_preg,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'BF', 1, 0)) AS cummulative_bf,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'CD4', 1, 0)) AS cummulative_cd4_below_threshold,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'STAGE3', 1, 0)) AS cummulative_who_stage_3,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'STAGE4', 1, 0)) AS cummulativel_who_stage_4,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'ASYMPTOMATIC', 1, 0)) AS cummulative_asymptomatic_mild,
-    SUM(IF(hv.initial_visit_date <= @endDate AND reason.initiation_reason = 'UNKNOWN', 1, 0)) AS cummulative_unknown_reason,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'SEVERE', 1, 0)) AS cummulative_pres_sev_hiv,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'INFANT', 1, 0)) AS cummulative_infants_less_12_mths,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'CHILD', 1, 0)) AS cummulative_children_12_59_mths,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'PREG', 1, 0)) AS cummulative_preg,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'BF', 1, 0)) AS cummulative_bf,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'CD4', 1, 0)) AS cummulative_cd4_below_threshold,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'STAGE3', 1, 0)) AS cummulative_who_stage_3,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'STAGE4', 1, 0)) AS cummulativel_who_stage_4,
+    SUM(IF(hv.initial_visit_date <= @endDate AND piv.initiation_reason = 'ASYMPTOMATIC', 1, 0)) AS cummulative_asymptomatic_mild,
+    SUM(IF(hv.initial_visit_date <= @endDate AND COALESCE(piv.initiation_reason, 'UNKNOWN') = 'UNKNOWN', 1, 0)) AS cummulative_unknown_reason,
 
 
     #Tb conditions at initiation
-    SUM(IF(initial_visit_date BETWEEN @startDate AND @endDate AND
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND
     (piv.tb_treatment_start_date IS NULL OR DATEDIFF(hv.initial_visit_date, piv.tb_treatment_start_date) > 730), 1, 0)
     ) AS initial_never_tb_or_over_2yrs_ago,
-    SUM(IF(initial_visit_date <= @endDate AND
+    SUM(IF(hv.initial_visit_date <= @endDate AND
     (piv.tb_treatment_start_date IS NULL OR DATEDIFF(hv.initial_visit_date, piv.tb_treatment_start_date) > 730), 1, 0)
     ) AS cummulative_never_tb_or_over_2yrs_ago,
-    SUM(IF(initial_visit_date BETWEEN @startDate AND @endDate AND
+    SUM(IF(hv.initial_visit_date BETWEEN @startDate AND @endDate AND
     (piv.tb_treatment_start_date IS NOT NULL AND DATEDIFF(hv.initial_visit_date, piv.tb_treatment_start_date) <= 730), 1, 0)
     ) AS initial_tb_within_last_2yrs,
-    SUM(IF(initial_visit_date <= @endDate AND
+    SUM(IF(hv.initial_visit_date <= @endDate AND
     (piv.tb_treatment_start_date IS NOT NULL AND DATEDIFF(hv.initial_visit_date, piv.tb_treatment_start_date) <= 730), 1, 0)
     ) AS cummulative_tb_within_last_2yrs,
-    SUM(tb_status_initial='Currently in treatment' AND initial_visit_date BETWEEN @startDate AND @endDate) AS initial_current_episode_tb,
-    SUM(tb_status_initial='Currently in treatment' AND initial_visit_date <= @endDate) AS cummulative_current_episode_tb,
+    SUM(IF(piv.tb_status_initial = 'Currently in treatment' AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS initial_current_episode_tb,
+    SUM(IF(piv.tb_status_initial = 'Currently in treatment' AND hv.initial_visit_date <= @endDate, 1, 0)) AS cummulative_current_episode_tb,
 
 
     #ks
-    SUM(ks_side_effects_worsening_on_arvs='True' AND initial_visit_date BETWEEN @startDate AND @endDate) AS ks_initiation,
-    SUM(ks_side_effects_worsening_on_arvs='True' AND initial_visit_date <= @endDate) AS ks_cummulative,
+    SUM(IF(piv.ks_side_effects_worsening_on_arvs = 'True' AND hv.initial_visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS ks_initiation,
+    SUM(IF(piv.ks_side_effects_worsening_on_arvs = 'True' AND hv.initial_visit_date <= @endDate, 1, 0)) AS ks_cummulative,
 
-    -- Outcomes
+    -- Outcomes (tx_curr + stopped + defaulted + transfer_out + died_total = cummulative_ever_total_registered)
     SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff, 1, 0)) AS tx_curr,
     SUM(state = 'treatment Stopped') AS stopped,
-    SUM(state = 'Patient defaulted') AS defaulted,
+    SUM(state = 'Patient defaulted'
+    OR (state = 'On antiretrovirals' AND (last_appt_date IS NULL OR FLOOR(DATEDIFF(@endDate, last_appt_date)) > @defaultCutOff))) AS defaulted,
     SUM(state = 'patient transferred out') AS transfer_out,
     SUM(state = 'patient died') AS died_total,
-    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, initial_visit_date) <= 30, 1, 0)) AS died_month_1,
-    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, initial_visit_date) BETWEEN 31 AND 60, 1, 0)) AS died_month_2,
-    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, initial_visit_date) BETWEEN 61 AND 90, 1, 0)) AS died_month_3,
-    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, initial_visit_date) >= 90, 1, 0)) AS died_after_month_3,
-    SUM(IF(state IN ('treatment Stopped', 'patient died', 'patient transferred out', 'Patient defaulted'), 1, 0)) AS  total_adv_outcomes,
+    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, hv.initial_visit_date) <= 30, 1, 0)) AS died_month_1,
+    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, hv.initial_visit_date) BETWEEN 31 AND 60, 1, 0)) AS died_month_2,
+    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, hv.initial_visit_date) BETWEEN 61 AND 90, 1, 0)) AS died_month_3,
+    SUM(IF(state = 'patient died' AND DATEDIFF(start_date, hv.initial_visit_date) > 90, 1, 0)) AS died_after_month_3,
+    SUM(IF(state IN ('treatment Stopped', 'patient died', 'patient transferred out', 'Patient defaulted')
+    OR (state = 'On antiretrovirals' AND (last_appt_date IS NULL OR FLOOR(DATEDIFF(@endDate, last_appt_date)) > @defaultCutOff)), 1, 0)) AS total_adv_outcomes,
 
     #ART regimens
 /* ADULT (A) REGIMENS */
@@ -269,9 +301,44 @@ SELECT
     AND FLOOR(DATEDIFF(@endDate,last_appt_date)) <= @defaultCutOff
     AND current_regimen="17PA: ABC 600 / 3TC 300 + EFV 200", 1, 0)) AS '17PA',
 
-    SUM(IF(state='On antiretrovirals'
-    AND FLOOR(DATEDIFF(@endDate,last_appt_date)) <= @defaultCutOff
-    AND (current_regimen='Non standard' or current_regimen IS NULL), 1, 0)) AS non_Standard,
+
+    -- Any regimen not listed above (including 'Non standard' and blank), so the regimen columns add up to tx_curr
+    SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff
+    AND (current_regimen IS NULL OR current_regimen NOT IN (
+    "0A: ABC/3TC + NVP",
+    "2A: AZT / 3TC / NVP (previous AZT)",
+    "4A: AZT / 3TC + EFV (previous AZTEFV)",
+    "5A: TDF / 3TC / EFV",
+    "6A: TDF / 3TC + NVP",
+    "7A: TDF / 3TC + ATV/r",
+    "8A: AZT / 3TC + ATV/r",
+    "9A: ABC / 3TC + LPV/r",
+    "10A: TDF / 3TC + LPV/r",
+    "11A: AZT / 3TC + LPV",
+    "12A: DRV + r + DTG",
+    "13A: TDF / 3TC / DTG",
+    "14A: AZT / 3TC + DTG",
+    "15A: ABC / 3TC + DTG",
+    "16A: ABC / 3TC + RAL",
+    "17A: ABC / 3TC + EFV",
+    "0P: ABC/3TC + NVP",
+    "2P: AZT / 3TC / NVP",
+    "4PP: AZT 60 / 3TC 30 + EFV 200",
+    "4PA: AZT 300 / 3TC 150 + EFV 200",
+    "9PP: ABC 120 / 3TC 60 + LPV/r 100/25",
+    "9PA: ABC 600 / 3TC 300 + LPV/r 100/25",
+    "11PP: AZT 60 / 3TC 30 + LPV/r 100/25",
+    "11PA: AZT 300 / 3TC 150 + LPV/r 100/25",
+    "12PP: DRV 150 + r 50 + DTG 10 (± NRTIs)",
+    "12PA: DRV 150 + r 50 + DTG 50",
+    "14PP: AZT 60 / 3TC 30 + DTG 10",
+    "14PA: AZT 60 / 3TC 30 + DTG 50",
+    "15P: ABC / 3TC + DTG",
+    "15PP: ABC / 3TC + DTG",
+    "15PA: ABC 120 / 3TC 60 + DTG 50",
+    "16P: ABC / 3TC + RAL",
+    "17PP: ABC 120 / 3TC 60 + EFV 200",
+    "17PA: ABC 600 / 3TC 300 + EFV 200")), 1, 0)) AS non_Standard,
 
     #pregnant/ breastfeeding
     SUM(IF((state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff) AND hv.pregnant_or_lactating = 'Patient pregnant', 1, 0)) AS pregnant_Current,
@@ -284,89 +351,54 @@ SELECT
     SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND hv.tb_status = 'TB suspected', 1, 0)) AS tb_suspected,
     SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND hv.tb_status = 'Confirmed TB NOT on treatment', 1, 0)) AS tb_confirmed_not_rx,
     SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND hv.tb_status = 'Confirmed TB on treatment', 1, 0)) AS tb_confirmed_rx,
-    SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND (hv.tb_status = '' OR hv.tb_status IS NULL), 1, 0)) AS tb_unknown,
+    SUM(IF(state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND (hv.tb_status NOT IN ('TB NOT suspected', 'TB suspected', 'Confirmed TB NOT on treatment', 'Confirmed TB on treatment') OR hv.tb_status IS NULL), 1, 0)) AS tb_unknown,
 
     #side effects
     SUM(CASE WHEN (state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff) AND pv.no_side_effect = 'No' THEN 1 ELSE 0 END) AS none_side_effect,
-    SUM(CASE WHEN (state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff) AND (pv.peripheral_neuropathy_side_effect IS NOT NULL OR
-    pv.hepatitis_side_effect IS NOT NULL OR pv.skin_rash_side_effect IS NOT NULL OR pv.lipodystrophy_side_effect IS NOT NULL OR pv.other_side_effect IS NOT NULL)THEN 1 ELSE 0 END) AS any_side_effect,
+    SUM(CASE WHEN (state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff) AND (pv.no_side_effect IS NULL OR pv.no_side_effect != 'No') AND (pv.peripheral_neuropathy_side_effect IS NOT NULL OR
+    pv.hepatitis_side_effect IS NOT NULL OR pv.skin_rash_side_effect IS NOT NULL OR pv.lipodystrophy_side_effect IS NOT NULL OR pv.other_side_effect IS NOT NULL) THEN 1 ELSE 0 END) AS any_side_effect,
     SUM(CASE WHEN (state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff) AND (pv.no_side_effect IS NULL OR pv.no_side_effect != 'No')
     AND pv.peripheral_neuropathy_side_effect IS NULL AND pv.hepatitis_side_effect IS NULL AND pv.skin_rash_side_effect IS NULL AND pv.lipodystrophy_side_effect IS NULL AND pv.other_side_effect IS NULL THEN 1 ELSE 0 END) AS unknown_side_effect,
 
     #adherence
-    sum(case when state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff and doses_missed between 0 and 3 then 1 end) as 0_3_missed_dose,
-    sum(case when state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff and doses_missed >= 4 then 1 end) as 4_plus_missed_dose,
-    sum(case when state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff and doses_missed is null then 1 end) as unknown_missed_dose,
+    SUM(CASE WHEN state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND pv.doses_missed >= 0 AND pv.doses_missed < 4 THEN 1 ELSE 0 END) AS 0_3_missed_dose,
+    SUM(CASE WHEN state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND pv.doses_missed >= 4 THEN 1 ELSE 0 END) AS 4_plus_missed_dose,
+    SUM(CASE WHEN state = 'On antiretrovirals' AND FLOOR(DATEDIFF(@endDate, last_appt_date)) <= @defaultCutOff AND (pv.doses_missed IS NULL OR pv.doses_missed < 0) THEN 1 ELSE 0 END) AS unknown_missed_dose,
 
-/* New Starts on 3HP */
-    SUM(IF(((initial_visit_date BETWEEN @startDate AND @endDate AND transfer_in_date IS NULL) OR start_date >= @startDate)
-    AND ((first_inh_300 IS NOT NULL AND first_rfp_150 IS NOT NULL) OR first_rfp_inh IS NOT NULL), 1, 0)) AS new_start_three_hp,
+/* New Starts on 3HP: first TPT in the quarter with no TPT before the quarter */
+    SUM(IF(hv.previous_ipt_date IS NULL
+    AND ((hv.first_inh_300 IS NOT NULL AND hv.first_rfp_150 IS NOT NULL) OR hv.first_rfp_inh IS NOT NULL), 1, 0)) AS new_start_three_hp,
 
-/* New Starts on 6H */
-    SUM(IF(((initial_visit_date BETWEEN @startDate AND @endDate AND transfer_in_date IS NULL) OR start_date >= @startDate)
-    AND (first_inh_300 IS NOT NULL AND first_rfp_150 IS NULL), 1, 0)) AS new_start_six_h,
+/* New Starts on 6H: first TPT in the quarter with no TPT before the quarter */
+    SUM(IF(hv.previous_ipt_date IS NULL
+    AND hv.first_inh_300 IS NOT NULL AND hv.first_rfp_150 IS NULL AND hv.first_rfp_inh IS NULL, 1, 0)) AS new_start_six_h,
 
     #cpt/ipt
     #pifp currently not available
 
 /*bp screen */
-    SUM(IF(followup_visit_date BETWEEN @startDate AND @endDate AND (systolic_bp IS NOT NULL and diastolic_bp IS NOT NULL), 1, 0)) AS screened_for_htn
+    SUM(IF(hv.followup_visit_date BETWEEN @startDate AND @endDate AND hv.systolic_bp > 0 AND hv.diastolic_bp > 0, 1, 0)) AS screened_for_htn
 
-
-FROM hiv_cohort hv
--- JOIN for EID Subquery
-    CROSS JOIN (
-    SELECT
-    SUM(mei.visit_date BETWEEN @startDate AND @endDate) AS eid_newly_total_registered_in_quarter,
-    SUM(mei.visit_date <= @endDate) AS eid_cummulative_ever_total_registered,
-    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_newly_ft,
-    SUM(IF(sub.eid_transfer_in_date IS NULL AND mei.visit_date <= @endDate, 1, 0)) AS eid_cummulative_ft,
-    SUM(IF(sub.eid_transfer_in_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_initial_transfer_In,
-    SUM(IF(sub.eid_transfer_in_date <= @endDate, 1, 0)) AS eid_cummulative_transfer_In,
-    SUM(IF(mei.visit_date BETWEEN @startDate AND @endDate AND lef.gender = 'M', 1, 0)) AS eid_initial_males_all_ages,
-    SUM(IF(mei.visit_date BETWEEN @startDate AND @endDate AND lef.gender = 'F', 1, 0)) AS eid_initial_females_all_ages,
-    SUM(IF(mei.visit_date <= @endDate AND lef.gender = 'M', 1, 0)) AS eid_cumulative_males_all_ages,
-    SUM(IF(mei.visit_date <= @endDate AND lef.gender = 'F', 1, 0)) AS eid_cumulative_females_all_ages,
-    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) < 60 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_age_at_initiation_less_2months,
-    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) BETWEEN 60 AND 729 AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS eid_age_at_initiation_2_24months,
-    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) < 60 AND mei.visit_date <= @endDate, 1, 0)) AS cumulative_eid_age_at_initiation_less_2months,
-    SUM(IF(DATEDIFF(mei.visit_date, lef.birthdate) BETWEEN 60 AND 729 AND mei.visit_date <= @endDate, 1, 0)) AS cumulative_eid_age_at_initiation_2_24months,
-    SUM(IF(lef.state = 'Exposed Child (Continue)' AND DATEDIFF(@endDate, ev.eid_l_date) <= @defaultCutOff AND mei.visit_date BETWEEN @startDate AND @endDate, 1, 0)) AS quarterly_eid_tx_curr,
-    SUM(IF(lef.state = 'Exposed Child (Continue)' AND DATEDIFF(@endDate, ev.eid_l_date) <= @defaultCutOff, 1, 0)) AS cumulative_eid_tx_curr
-    FROM last_eid_facility_outcome lef
-    JOIN mw_eid_initial mei ON mei.patient_id = lef.pat AND mei.location = lef.location
+    FROM hiv_cohort hv
+    LEFT JOIN mw_patient mp ON mp.patient_id = hv.patient_id
+    -- last ART followup visit (one row per patient)
     LEFT JOIN (
-    SELECT patient_id, MAX(visit_date) AS eid_l_date
-    FROM mw_eid_followup WHERE visit_date <= @endDate GROUP BY patient_id
-    ) ev ON ev.patient_id = lef.pat
+    SELECT map.patient_id, map.doses_missed, map.peripheral_neuropathy_side_effect, map.hepatitis_side_effect,
+    map.skin_rash_side_effect, map.lipodystrophy_side_effect, map.other_side_effect, map.no_side_effect
+    FROM mw_art_followup map
+    JOIN (
+    SELECT f.patient_id, MAX(f.art_followup_visit_id) AS art_followup_visit_id
+    FROM mw_art_followup f
+    JOIN (
+    SELECT patient_id, MAX(visit_date) AS visit_date FROM mw_art_followup WHERE visit_date <= @endDate GROUP BY patient_id
+    ) l ON l.patient_id = f.patient_id AND l.visit_date = f.visit_date
+    GROUP BY f.patient_id
+    ) map1 ON map1.art_followup_visit_id = map.art_followup_visit_id
+    ) pv ON pv.patient_id = hv.patient_id
+    -- last ART initial visit (one row per patient) with mutually exclusive reason for starting
     LEFT JOIN (
-    SELECT patient_id, value_date AS eid_transfer_in_date
-    FROM omrs_obs WHERE concept = 'Transfer in date'
-    ) sub ON sub.patient_id = lef.pat
-    ) eid
--- ART Join Logic
-    LEFT join (
-    select map.patient_id, map.visit_date as fv_date, map.next_appointment_date as l_appt_date,doses_missed,peripheral_neuropathy_side_effect,
-    hepatitis_side_effect, skin_rash_side_effect, lipodystrophy_side_effect, other_side_effect, no_side_effect
-    from mw_art_followup map
-    join
-    (
-    select patient_id,MAX(visit_date) as visit_date ,MAX(next_appointment_date) as last_appt_date from mw_art_followup where visit_date <= @endDate
-    group by patient_id
-    ) map1
-    ON map.patient_id = map1.patient_id and map.visit_date = map1.visit_date) pv on pv.patient_id=hv.patient_id
-    LEFT join (
-    select mar.patient_id, tb_status, ks_side_effects_worsening_on_arvs, tb_status as tb_status_initial, tb_treatment_start_date,
-    age_at_initiation, pregnant_or_lactating, who_clinical_conditions, clinical_stage, presumed_hiv_severe_present, cd4_count
-    from mw_art_initial mar
-    join
-    (
-    select patient_id,MAX(visit_date) as visit_date  from mw_art_initial where visit_date <= @endDate
-    group by patient_id
-    ) mar1
-    ON mar.patient_id = mar1.patient_id and mar.visit_date = mar1.visit_date) piv on piv.patient_id=hv.patient_id
-    LEFT JOIN (
-    SELECT mar.patient_id,
+    SELECT mar.patient_id, mar.ks_side_effects_worsening_on_arvs, mar.tb_status AS tb_status_initial, mar.tb_treatment_start_date,
+    IF(mar.ever_taken_arvs = 'Yes' OR (mar.ever_taken_arvs IS NULL AND mar.last_arvs_taken IS NOT NULL), 1, 0) AS reinitiated,
     CASE
     WHEN mar.age_at_initiation < 1 AND mar.presumed_hiv_severe_present = 'yes' THEN 'SEVERE'
     WHEN mar.age_at_initiation < 1 THEN 'INFANT'
@@ -376,15 +408,18 @@ FROM hiv_cohort hv
     WHEN mar.cd4_count < 200 THEN 'CD4'
     WHEN mar.clinical_stage LIKE '%stage III%' THEN 'STAGE3'
     WHEN mar.clinical_stage LIKE '%stage IV%' THEN 'STAGE4'
-    WHEN mar.who_clinical_conditions REGEXP '^(As|Asy|Assy|Asm|Assm|Asn)'
+    WHEN mar.who_clinical_conditions LIKE 'As%'
     OR mar.clinical_stage IN ('Stage I','Stage II') THEN 'ASYMPTOMATIC'
     ELSE 'UNKNOWN'
     END AS initiation_reason
     FROM mw_art_initial mar
-    JOIN
-    (
-    select patient_id,MAX(visit_date) as visit_date  from mw_art_initial where visit_date <= @endDate
-    group by patient_id
-    ) mar1
-    ON mar.patient_id = mar1.patient_id and mar.visit_date = mar1.visit_date
-    ) reason ON reason.patient_id = hv.patient_id
+    JOIN (
+    SELECT i.patient_id, MAX(i.art_initial_visit_id) AS art_initial_visit_id
+    FROM mw_art_initial i
+    JOIN (
+    SELECT patient_id, MAX(visit_date) AS visit_date FROM mw_art_initial WHERE visit_date <= @endDate GROUP BY patient_id
+    ) l ON l.patient_id = i.patient_id AND l.visit_date = i.visit_date
+    GROUP BY i.patient_id
+    ) mar1 ON mar1.art_initial_visit_id = mar.art_initial_visit_id
+    ) piv ON piv.patient_id = hv.patient_id
+    ) art;
