@@ -100,8 +100,8 @@ export async function fillMentalHealthVisitForm(
 
 // Diagnosis/Intervention checkbox labels on mental-health-screening.xml's
 // data-entry form, in form order. Each label is unique within the form's own
-// `table.visit-edit-table` (the two "Other" boxes aside, which aren't
-// filled), so `checkByLabel` reaches them directly.
+// `table.visit-edit-table` (the two "Other" boxes aside, which are filled per
+// row by `checkAndSpecifyInCell`), so `checkByLabel` reaches them directly.
 export const MENTAL_HEALTH_SCREENING_DIAGNOSES = [
   'Depression',
   'Stress and anxiety',
@@ -123,21 +123,31 @@ export const MENTAL_HEALTH_SCREENING_INTERVENTIONS = [
   'Couple/Family counselling',
 ];
 
+// Free text entered in the Diagnosis and Intervention rows' "Other" Specify
+// boxes, each saved inside its own obs group.
+export const MENTAL_HEALTH_SCREENING_OTHER_DIAGNOSIS = 'Other diagnosis specified';
+export const MENTAL_HEALTH_SCREENING_OTHER_INTERVENTION = 'Other intervention specified';
+
 // Fills mental-health-screening.xml's data-entry fields — every coded
-// Diagnosis and Intervention checkbox, plus the free-text/date fields.
+// Diagnosis and Intervention checkbox (including both "Other" boxes and
+// their Specify text), plus the session, outcome and free-text/date fields.
 // Values are asserted against in mental-health/screening-mastercard.spec.ts.
 export async function fillMentalHealthScreeningForm(
   form: MastercardFormPage,
-  opts: { appointmentDate: string },
+  opts: { appointmentDate: string; outcomeDate: string },
 ): Promise<void> {
   await form.selectDropdown('visitLocation', 'Neno District Hospital');
 
   for (const label of [...MENTAL_HEALTH_SCREENING_DIAGNOSES, ...MENTAL_HEALTH_SCREENING_INTERVENTIONS]) {
     await form.checkByLabel(label);
   }
+  await form.checkAndSpecifyInCell('Diagnosis', 'Other', MENTAL_HEALTH_SCREENING_OTHER_DIAGNOSIS);
+  await form.checkAndSpecifyInCell('Intervention', 'Other', MENTAL_HEALTH_SCREENING_OTHER_INTERVENTION);
 
   await form.selectRadio('Sessions', 'Session 1');
   await form.fillField('Session Notes', 'First session notes');
+  await form.selectRadio('Outcomes', 'Relocation');
+  await form.fillField('Outcome date', opts.outcomeDate);
   await form.fillField('Comments', 'Some comments');
   await form.fillField('appointmentDate', opts.appointmentDate);
 }

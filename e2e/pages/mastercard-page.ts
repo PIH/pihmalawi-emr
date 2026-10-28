@@ -1181,6 +1181,16 @@ export class MastercardFormPage {
     await this.page.getByLabel(label, { exact: true }).last().check();
   }
 
+  // Checks a checkbox and fills the free-text "Specify" textarea that share
+  // the data cell of `rowLabel`'s row — for answer labels repeated across
+  // rows, like mental-health-screening.xml's "Other" box at the end of both
+  // its Diagnosis and Intervention rows, each with its own textarea.
+  async checkAndSpecifyInCell(rowLabel: string, checkboxLabel: string, text: string): Promise<void> {
+    const cell = this.inputCellFor(rowLabel);
+    await cell.getByLabel(checkboxLabel, { exact: true }).check();
+    await cell.locator('textarea').fill(text);
+  }
+
   // Selects an option in the (only) <select> within the same <tr> as a real,
   // unique `<label>` element found elsewhere in the row — Chronic Lung
   // Disease pilot's Family History (Asthma/COPD) and Occupation rows, see

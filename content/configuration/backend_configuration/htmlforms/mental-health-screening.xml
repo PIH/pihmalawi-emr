@@ -13,45 +13,45 @@
     <macros>
         nextAppt=6569cbd4-977f-11e1-8993-905e29aff6c1
         <macro key="diagnosis" value="656292d8-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="referralSet" value="a4dfe545-8a85-41ca-ac47-b372b681391f" />
+        <macro key="groupOtherDiagnosis" value="d8467734-8ef7-4cb3-ab3f-e24ca9665472" />
         <macro key="depression" value="6546cbd4-977f-11e1-8993-905e29aff6c1"/>
         <macro key="stressAndAnxiety" value="c6c218ce-614d-4072-b013-69cd0dd83c79"/>
-        <macro key="griefLoss" value="657117fe-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="substanceDrug" value="655fbcca-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="griefLoss" value="432fe366-c230-4168-a755-ee521241601a"/>
+        <macro key="substanceDrug" value="5ea979aa-1369-11e4-a125-54ee7513a7ff"/>
         <macro key="suicide" value="112411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
         <macro key="traumaPtsd" value="2a50bd91-5275-49ed-8969-911035bcc918"/>
         <macro key="gbv" value="d4fa0c9e-6bea-4b96-943f-63df2360f8a8"/>
         <macro key="highViralLoad" value="f2fbb381-99aa-4dce-8ff8-097dfdec2a5f"/>
         <macro key="other" value="8797110a-d38e-427f-a08f-260300c8c896"/>
 
-        <macro key="intervention" value="6559e0fc-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="sourceOfRefSet" value="b5346c8a-246c-46aa-bce5-17a77534bc30"/>
-        <macro key="pmPlus" value="656f937a-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="pfa" value="159238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
-        <macro key="psychEducation" value="383900ef-2863-4d95-a08a-3bf699586a56"/>
-        <macro key="SupportiveCounselling" value="65768586-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="CognitiveBehavioral" value="118905AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
-        <macro key="itrpersonalTherapy" value="47729d48-1ab6-4c27-86fe-4700d734909d"/>
-        <macro key="CaseManagement" value="6577051a-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="intervention" value="05d28bcb-ac69-4688-bb9e-480b8ca4f3bd"/>
+        <macro key="groupOtherIntervention" value="8fe2cbb9-78b8-47a6-956a-bbbc5751749f"/>
+        <macro key="pmPlus" value="96cc4b8f-27b5-49a0-8804-18501ffac704"/>
+        <macro key="pfa" value="4d09847f-0754-4119-aacc-32567fa0cd26"/>
+        <macro key="psychEducation" value="79d4d4ee-cbcf-4ccb-989d-b3307324cfd8"/>
+        <macro key="SupportiveCounselling" value="229c4e57-5b7e-4b9e-842f-0da4e472d0fe"/>
+        <macro key="CognitiveBehavioral" value="5e756bfd-3182-4b0e-a090-0061d3a7c07c"/>
+        <macro key="itrpersonalTherapy" value="13c3af4c-cfd2-46b3-b607-060ac8e0bd8c"/>
+        <macro key="CaseManagement" value="8a7c2eb4-fb88-4be7-b6e7-e926ca266225"/>
         <macro key="coupleFamilyCounselling" value="ec294ee2-9a69-4598-923c-67840bde5960"/>
         <macro key="noneCodedText" value="d57e3a20-5802-11e6-8b77-86f30ca893d3" />
 
-        <macro key="sssNumber" value="06b1f7d8-b6cc-11e8-96f8-529269fb1459"/>
+        <macro key="sssNumber" value="95de19f6-46e7-4377-860e-69ceec4011cf"/>
         <macro key="one" value="697e9461-f2d6-4ab1-a140-48f768ce002a"/>
         <macro key="two" value="11c0f708-6950-4e94-b080-5c76174a4947"/>
         <macro key="three" value="224e3d57-f6d1-4244-bbe2-b81a574ba7aa"/>
 
-        <macro key="sessionNotes" value="65600176-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="outcome" value="655ab086-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="sessionNotes" value="49317520-079f-4ccc-a5e3-e0018aa644c7"/>
+        <macro key="outcome" value="6571d95a-977f-11e1-8993-905e29aff6c1"/>
         <macro key="discharged" value="6566dba4-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="missedAppointment" value="655d345a-977f-11e1-8993-905e29aff6c1"/>
+        <macro key="missedAppointment" value="a6ce9b02-f58b-45c5-b325-317e5535605a"/>
         <macro key="defaulter" value="65736928-977f-11e1-8993-905e29aff6c1"/>
-        <macro key="relocation" value="9f262c0e-e850-11e8-9f32-f2801f1b9fd1"/>
+        <macro key="relocation" value="43151b7f-6083-4f68-891d-56ad7af5de49"/>
         <macro key="died" value="655b5e46-977f-11e1-8993-905e29aff6c1"/>
         <macro key="stopped" value="655a6acc-977f-11e1-8993-905e29aff6c1"/>
 
 
-        <macro key="otDate" value="655ff92e-977f-11e1-8993-905e29aff6c1"/> <!-- outcome date -->
+        <macro key="otDate" value="3597ed63-5627-4522-8cff-2d5d2393bada"/> <!-- outcome date -->
         <macro key="comments" value="655928e2-977f-11e1-8993-905e29aff6c1"/>
 
         <macro key="nenoLocations" expression="fn.globalProperty('pihmalawi.systemLocationsTag')"/>
@@ -99,7 +99,7 @@
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$gbv" answerLabel="GBV" />
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$highViralLoad" answerLabel="High Viral Load" />
 
-                        <obsgroup groupingConceptId="$referralSet">
+                        <obsgroup groupingConceptId="$groupOtherDiagnosis">
                             <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$other" answerLabel="Oth" />
                             <br />
                             <br />
@@ -119,7 +119,7 @@
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$CaseManagement" answerLabel="Case management" />
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$coupleFamilyCounselling" answerLabel="Couple/Family counselling" />
 
-                        <obsgroup groupingConceptId="$sourceOfRefSet">
+                        <obsgroup groupingConceptId="$groupOtherIntervention">
                             <obs conceptId="$intervention" style="checkbox" answerConceptId="$other" answerLabel="Other" />
                             <br />
                             <br />
@@ -212,7 +212,7 @@
                     <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$gbv" answerLabel="GBV" />
                     <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$highViralLoad" answerLabel="High Viral Load" />
 
-                    <obsgroup groupingConceptId="$referralSet">
+                    <obsgroup groupingConceptId="$groupOtherDiagnosis">
                         <obs conceptId="$diagnosis" style="checkbox" answerConceptId="$other" answerLabel="Other" />
                         <br />
                         <br />
@@ -234,7 +234,7 @@
                     <obs conceptId="$intervention" style="checkbox" answerConceptId="$CaseManagement" answerLabel="Case management" />
                     <obs conceptId="$intervention" style="checkbox" answerConceptId="$coupleFamilyCounselling" answerLabel="Couple/Family counselling" />
 
-                    <obsgroup groupingConceptId="$sourceOfRefSet">
+                    <obsgroup groupingConceptId="$groupOtherIntervention">
                         <obs conceptId="$intervention" style="checkbox" answerConceptId="$other" answerLabel="Other" />
                         <br />
                         <br />
