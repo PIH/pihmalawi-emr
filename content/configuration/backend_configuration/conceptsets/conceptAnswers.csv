@@ -10043,3 +10043,23 @@ Diagnosis,2a50bd91-5275-49ed-8969-911035bcc918,8812,q-and-a
 Diagnosis,d4fa0c9e-6bea-4b96-943f-63df2360f8a8,8813,q-and-a
 Diagnosis,f2fbb381-99aa-4dce-8ff8-097dfdec2a5f,8814,q-and-a
 Diagnosis,c6c218ce-614d-4072-b013-69cd0dd83c79,8815,q-and-a
+Diagnosis,Grief and loss,9935,q-and-a
+Diagnosis,Substance abuse,9936,q-and-a
+Mental health intervention,Problem Management Plus,9937,q-and-a
+Mental health intervention,Psychological first aid,9938,q-and-a
+Mental health intervention,Psychoeducation,9939,q-and-a
+Mental health intervention,Supportive counselling,9940,q-and-a
+Mental health intervention,Cognitive behavioural therapy,9941,q-and-a
+Mental health intervention,Interpersonal therapy,9942,q-and-a
+Mental health intervention,Case management,9943,q-and-a
+Mental health intervention,Couple or family counselling,9944,q-and-a
+Mental health intervention,Other (coded),9945,q-and-a
+Session number,First,9946,q-and-a
+Session number,Second,9947,q-and-a
+Session number,Third,9948,q-and-a
+Outcome,Discharged,9949,q-and-a
+Outcome,Missed appointment,9950,q-and-a
+Outcome,Confirmed defaulter,9951,q-and-a
+Outcome,Relocated,9952,q-and-a
+Outcome,Patient died,9953,q-and-a
+Outcome,Treatment stopped,9954,q-and-a

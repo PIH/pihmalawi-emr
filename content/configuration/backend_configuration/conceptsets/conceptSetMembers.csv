@@ -2371,3 +2371,7 @@ Width of intihma to media part of the cartoid construct,Procedure NOT indicated,
 Width of intihma to media part of the cartoid construct,Plates present,1,concept-set
 Width of intihma to media part of the cartoid construct,Left width,2,concept-set
 Width of intihma to media part of the cartoid construct,Right width,3,concept-set
+Other mental health diagnosis construct,Diagnosis,1000,concept-set
+Other mental health diagnosis construct,Other non-coded (text),1010,concept-set
+Other mental health intervention construct,Mental health intervention,1000,concept-set
+Other mental health intervention construct,Other non-coded (text),1010,concept-set
