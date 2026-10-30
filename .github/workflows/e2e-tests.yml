@@ -18,6 +18,8 @@ jobs:
         with:
           repository: PIH/openmrs-contrib-distro-tools
           path: .openmrs-contrib-distro-tools
+          # TODO before merging: remove, once PIH/openmrs-contrib-distro-tools#83 is on main.
+          ref: TASKS-652
 
       - name: Add distro-tools bin to PATH
         run: echo "${{ github.workspace }}/.openmrs-contrib-distro-tools/bin" >> "$GITHUB_PATH"
@@ -30,13 +32,11 @@ jobs:
 
       # Note: this tests the currently-published partnersinhealth/pihmalawi-emr Docker Hub
       # image, not the checked-out branch/revision above — intentional for v1.
-      # The OMRS_EXTRA_pihmalawi_warehouse_connection_* vars below reach the openmrs container via
-      # distro-tools' create/openmrs.yaml (PIH/openmrs-contrib-distro-tools#28).
+      # create writes the PETL_* and OMRS_EXTRA_* values below into the instance's petl.env and
+      # openmrs.env.
       - name: Create ephemeral instance
         env:
           OPENMRS_IMAGE_NAME: partnersinhealth/pihmalawi-emr
-          SEED_IMAGE_NAME: partnersinhealth/pihmalawi-emr-seed-malawi
-          SERVICES: openmrs-db,openmrs,petl
           PETL_IMAGE_NAME: partnersinhealth/apzu-etl
           PETL_FULL_REFRESH_JOBS: refresh-mysql-reporting.yml
           PETL_MYSQL_PASSWORD: openmrs
@@ -44,10 +44,10 @@ jobs:
           OMRS_EXTRA_pihmalawi_warehouse_connection_url: "jdbc:mysql://openmrs-db:3306/openmrs_warehouse?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
           OMRS_EXTRA_pihmalawi_warehouse_connection_username: petl
           OMRS_EXTRA_pihmalawi_warehouse_connection_password: openmrs
-        run: openmrs-docker create e2e-malawi
+        run: openmrs-docker e2e-malawi create --services=openmrs-db,openmrs,petl
 
       - name: Initialize from seed
-        run: openmrs-docker e2e-malawi initialize
+        run: openmrs-docker e2e-malawi initialize --from-image partnersinhealth/pihmalawi-emr-seed-malawi:latest
 
       - name: Start stack
         run: openmrs-docker e2e-malawi start

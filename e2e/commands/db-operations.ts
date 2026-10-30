@@ -11,9 +11,8 @@ const MIGRATIONS_DIR = path.resolve(__dirname, '../../api/src/main/resources/pih
 
 const MYSQL_TIMEOUT_MS = 2 * 60 * 1000;
 
-// openmrs-docker names the Compose project after the instance (SERVICE_NAME defaults to the
-// instance name), so the db container is found by Compose's own labels rather than by guessing
-// Compose's container naming scheme.
+// openmrs-docker (pihx) names the Compose project after the instance, so the db container is
+// found by Compose's own labels rather than by guessing Compose's container naming scheme.
 function findOpenmrsDbContainer(instance: string): string {
   const ids = execFileSync(
     'docker',
