@@ -18,8 +18,6 @@ jobs:
         with:
           repository: PIH/openmrs-contrib-distro-tools
           path: .openmrs-contrib-distro-tools
-          # TODO before merging: remove, once PIH/openmrs-contrib-distro-tools#83 is on main.
-          ref: TASKS-652
 
       - name: Add distro-tools bin to PATH
         run: echo "${{ github.workspace }}/.openmrs-contrib-distro-tools/bin" >> "$GITHUB_PATH"
