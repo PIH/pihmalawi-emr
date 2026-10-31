@@ -89,15 +89,16 @@ openmrs-sdk update-config <server-id>
 
 For the CI configuration profile, an example environment file is provided in the repo root to get started quickly.
 Because this file is found in the distribution repository, it is assumed that this is checked out on your machine, and
-that `openmrs-docker` commands are running from the root of the distribution repository — it sets `DISTRO_SOURCE_DIR`
+that `openmrs-docker` commands are running from the root of the distribution repository — it sets `OPENMRS_DISTRO_DIR`
 to this location. If you're using it as an example for running elsewhere, you may need to change or remove that.
 
 To use the example environment file for `neno-ci` to get up and running with a new instance:
 
 ```bash
 source neno-ci.env
-openmrs-docker create neno-ci
-openmrs-docker neno-ci initialize # Optional, but speeds up initial startup
+openmrs-docker neno-ci create --services=openmrs-db,openmrs,petl
+# Optional, but speeds up initial startup
+openmrs-docker neno-ci initialize --from-image partnersinhealth/pihmalawi-emr-seed-malawi:latest
 openmrs-docker neno-ci start
 openmrs-docker neno-ci wait  # Tails logs until OpenMRS is ready, then exits
 ```
@@ -112,11 +113,10 @@ openmrs-docker neno-ci destroy
 
 #### Warehouse-backed reporting (petl)
 
-`neno-ci.env` also attaches the `petl` ETL service and sets the `OMRS_EXTRA_pihmalawi_warehouse_connection_*`
-vars that `WarehouseConnectionPropertiesInitializer` uses as a fallback `warehouse-connection.properties`,
-so warehouse-backed reports (e.g. "HIV - Cohort Report") work against a local instance (requires
-`openmrs-contrib-distro-tools`'s `create`/`openmrs.yaml` to pass `OMRS_EXTRA_*` vars through to
-`openmrs` — see [distro-tools#28](https://github.com/PIH/openmrs-contrib-distro-tools/pull/28)).
+The `create` above adds the `petl` ETL service, and `neno-ci.env` sets its values and the
+`OMRS_EXTRA_pihmalawi_warehouse_connection_*` vars that `WarehouseConnectionPropertiesInitializer` uses as a
+fallback `warehouse-connection.properties`, so warehouse-backed reports (e.g. "HIV - Cohort Report") work against a
+local instance. `create` writes them into the instance's own files.
 To populate the warehouse database:
 
 ```bash
