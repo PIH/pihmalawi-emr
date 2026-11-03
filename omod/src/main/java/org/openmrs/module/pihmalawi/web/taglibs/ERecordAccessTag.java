@@ -1,5 +1,6 @@
 package org.openmrs.module.pihmalawi.web.taglibs;
 
+import org.openmrs.module.pihmalawi.common.Helper;
 import java.io.IOException;
 import java.util.List;
 

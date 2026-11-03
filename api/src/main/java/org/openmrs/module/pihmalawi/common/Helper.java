@@ -1,4 +1,4 @@
-package org.openmrs.module.pihmalawi.web.taglibs;
+package org.openmrs.module.pihmalawi.common;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

@@ -1,4 +1,4 @@
-package org.openmrs.module.pihmalawi.web.taglibs;
+package org.openmrs.module.pihmalawi.common;
 
 import org.junit.Assert;
 import org.junit.Test;

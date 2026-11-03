@@ -1,0 +1,47 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.dashboard {
+  background-color: $ui-02;
+  border: 1px solid $ui-03;
+  padding: layout.$spacing-05;
+}
+
+.title {
+  @include type.type-style('heading-compact-02');
+  margin-bottom: layout.$spacing-05;
+}
+
+.group {
+  margin-bottom: layout.$spacing-05;
+}
+
+.groupTitle {
+  @include type.type-style('heading-compact-01');
+  color: $text-02;
+  margin-bottom: layout.$spacing-02;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: layout.$spacing-03;
+  min-height: layout.$spacing-07;
+}
+
+.date {
+  max-width: 10rem;
+}
+
+.details,
+.note,
+.unavailable {
+  @include type.type-style('body-compact-01');
+  color: $text-02;
+}
+
+.unavailable {
+  padding-left: layout.$spacing-05;
+}
