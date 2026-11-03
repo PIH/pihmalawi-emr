@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.pih.openmrs</groupId>
+        <artifactId>pihmalawi-emr</artifactId>
+        <version>9.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>pihmalawi-frontend</artifactId>
+    <packaging>pom</packaging>
+    <name>PIH Malawi EMR Frontend</name>
+    <description>The O3 frontend for PIH Malawi: the O3 apps Malawi uses, at pinned versions (see spa-build-config.json)</description>
+
+    <properties>
+        <skipTests>false</skipTests>
+        <!-- Stamps each build of the eMastercards app with its own version. The SPA serves app files with a year-long
+             cache under a folder named after the version, so without this, browsers keep running an earlier build. -->
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <emastercardsBuildStamp>${maven.build.timestamp}</emastercardsBuildStamp>
+        <!-- The openmrs CLI that assembles and builds the frontend; keep it at the version of the bundled framework apps -->
+        <openmrsCliVersion>11.0.1-pre.5806</openmrsCliVersion>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.0</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v22.16.0</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Install eMastercards app dependencies</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>esm-emastercards-app</workingDirectory>
+                            <arguments>ci --legacy-peer-deps --no-audit --no-fund</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Test eMastercards app</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>esm-emastercards-app</workingDirectory>
+                            <arguments>test</arguments>
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Build eMastercards app</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>esm-emastercards-app</workingDirectory>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Pack eMastercards app</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>target/emastercards-pack</workingDirectory>
+                            <arguments>pack --pack-destination ..</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Assemble frontend modules</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>--yes --legacy-peer-deps openmrs@${openmrsCliVersion} assemble --mode config --config spa-build-config.json --target target/dist</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Build frontend application</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>--yes --legacy-peer-deps openmrs@${openmrsCliVersion} build --build-config spa-build-config.json --target target/dist</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <!-- The built app, with a version unique to this build, to pack -->
+                        <id>Stage eMastercards app</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${project.build.directory}/emastercards-pack"/>
+                                <copy todir="${project.build.directory}/emastercards-pack">
+                                    <fileset dir="${basedir}/esm-emastercards-app" includes="package.json,dist/**"/>
+                                </copy>
+                                <replaceregexp file="${project.build.directory}/emastercards-pack/package.json"
+                                               match="&quot;version&quot;: &quot;([^&quot;]+)&quot;"
+                                               replace="&quot;version&quot;: &quot;\1-build.${emastercardsBuildStamp}&quot;"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- spa-build-config.json refers to the packed app by a name that doesn't change -->
+                        <id>Name the packed eMastercards app</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="${project.build.directory}/pihmalawi-esm-emastercards-app.tgz"/>
+                                <move todir="${project.build.directory}">
+                                    <fileset dir="${project.build.directory}" includes="pihmalawi-esm-emastercards-app-*.tgz"/>
+                                    <mapper type="merge" to="pihmalawi-esm-emastercards-app.tgz"/>
+                                </move>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>${basedir}/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

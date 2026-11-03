@@ -34,11 +34,6 @@
   "@openmrs/esm-home-app": {
     "extensionSlots": {
       "homepage-dashboard-slot": {
-        "remove": [
-          "laboratory-dashboard-link",
-          "patient-lists-dashboard-link",
-          "service-queues-dashboard-link"
-        ],
         "order": [
           "home-widget-db-link",
           "audit-dashboard-link"
@@ -61,6 +56,11 @@
       "midUpperArmCircumferenceUuid": "6558d09a-977f-11e1-8993-905e29aff6c1",
       "bodyMassIndexUuid": "655d615a-977f-11e1-8993-905e29aff6c1",
       "vitalSignsConceptSetUuid": "6557a044-977f-11e1-8993-905e29aff6c1"
+    },
+    "vitals": {
+      "encounterTypeUuid": "664b82cc-977f-11e1-8993-905e29aff6c1"
+    }
+  },
   "@pihmalawi/esm-emastercards-app": {
     "extensionSlots": {
       "pihmalawi-vitals-header-slot": {
@@ -92,11 +92,6 @@
   },
   "@openmrs/esm-patient-programs-app": {
     "showProgramStatusField": true
-  },
-    },
-    "vitals": {
-      "encounterTypeUuid": "664b82cc-977f-11e1-8993-905e29aff6c1"
-    }
   },
   "@openmrs/esm-primary-navigation-app": {
     "logo": {

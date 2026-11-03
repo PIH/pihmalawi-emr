@@ -1,0 +1,26 @@
+{
+  "frontendModules": {
+    "@pih/esm-audit-app": "2.1.1-pre.160",
+    "@pih/esm-commons-app": "2.1.1-pre.160",
+    "@openmrs/esm-devtools-app": "11.0.1-pre.5806",
+    "@openmrs/esm-help-menu-app": "11.0.1-pre.5806",
+    "@openmrs/esm-implementer-tools-app": "11.0.1-pre.5806",
+    "@openmrs/esm-login-app": "11.0.1-pre.5806",
+    "@openmrs/esm-primary-navigation-app": "11.0.1-pre.5806",
+    "@openmrs/esm-home-app": "12.1.2-pre.10015",
+    "@openmrs/esm-patient-registration-app": "12.1.2-pre.10015",
+    "@openmrs/esm-patient-search-app": "12.1.2-pre.10015",
+    "@openmrs/esm-patient-banner-app": "13.0.2-pre.12803",
+    "@openmrs/esm-patient-chart-app": "13.0.2-pre.12803",
+    "@openmrs/esm-patient-programs-app": "13.0.2-pre.12803",
+    "@openmrs/esm-patient-vitals-app": "13.0.2-pre.12803",
+    "@openmrs/esm-form-builder-app": "3.6.1-pre.3936",
+    "@openmrs/esm-system-admin-app": "4.6.2-pre.976",
+    "@pihmalawi/esm-emastercards-app": "file:target/pihmalawi-esm-emastercards-app.tgz"
+  },
+  "configUrls": [
+    "base-config.json",
+    "config.json"
+  ],
+  "supportOffline": false
+}

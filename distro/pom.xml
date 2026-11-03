@@ -13,7 +13,6 @@
     <description>Distro project for PIH Malawi EMR</description>
 
     <properties>
-        <frontendVersion>1.46.0-SNAPSHOT</frontendVersion>
         <pwaApzuIc3Version>2.0.0-SNAPSHOT</pwaApzuIc3Version>
     </properties>
 
@@ -33,8 +32,8 @@
         </dependency>
         <dependency>
             <groupId>org.pih.openmrs</groupId>
-            <artifactId>openmrs-frontend-pihemr</artifactId>
-            <version>${frontendVersion}</version>
+            <artifactId>pihmalawi-frontend</artifactId>
+            <version>${project.parent.version}</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
