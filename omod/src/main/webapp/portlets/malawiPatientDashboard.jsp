@@ -293,40 +293,41 @@
     <openmrs:hasPrivilege privilege="View clinical data">
     <tr>
         <td style="vertical-align: top;">HIV Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="668847a2-977f-11e1-8993-905e29aff6c1,6687fa7c-977f-11e1-8993-905e29aff6c1" stateIds="6687fa7c-977f-11e1-8993-905e29aff6c1" terminalStateIds="6687f50e-977f-11e1-8993-905e29aff6c1,6687fff4-977f-11e1-8993-905e29aff6c1,668846d0-977f-11e1-8993-905e29aff6c1"/><br /></td>
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="hiv"/><br /></td>
     </tr>
-    <c:if test="${(model.patient.age > 5 && model.patient.age < 30 && activeHIVProgram == 'true') || (activeTeenClubProgram == 'true')}">
+    <pihmalawi:quickPrograms patientId="${model.patientId}" program="teen-club" var="teenClubProgram"/>
+    <c:if test="${teenClubProgram.displayed}">
     <tr>
         <td style="vertical-align: top;">Teen Club:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="${TeenClubActiveStates}" stateIds="${TeenClubActiveStates}" terminalStateIds="${TeenClubTerminalStates}"/><br /></td>
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="teen-club"/><br /></td>
     </tr>
     </c:if>
     <tr>
         <td style="vertical-align: top;">Chronic Care Program:</td>
 
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" workflowIds="${CCProgramWokflows}" initialStateIds="${ChronicCareActiveStates}" stateIds="${ChronicCareActiveStates}" terminalStateIds="${ChronicCareTerminalStates}"/><br /></td
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="chronic-care"/><br /></td
     </tr>
     <tr>
         <td style="vertical-align: top;">Mental Health Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" workflowIds="${MHProgramWokflows}" initialStateIds="${MentalHealthActiveStates}" stateIds="${MentalHealthActiveStates}" terminalStateIds="${MHTreatmentDischargedWorkflowState},${MHTreatmentStoppedWorkflowState},${MHPatientDiedWorkflowState},${MHTransferredOutWorkflowState},${MHPatientDefaultedWorkflowState}"/><br /></td
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="mental-health"/><br /></td
     </tr>
     <tr>
         <td style="vertical-align: top;">Pediatric Development Clinic Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="${PdcActiveStates}" stateIds="${PdcActiveStates}" terminalStateIds="${PdcTreatmentDischargedWorkflowState},${PdcTreatmentStoppedWorkflowState},${PdcPatientDiedWorkflowState},${PdcTransferredOutWorkflowState},${PdcPatientDefaultedWorkflowState}"/><br /></td
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="pdc"/><br /></td
     </tr>
     <tr>
         <td style="vertical-align: top;">Palliative Care Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="${PccOnTreatmentWorkflowState}" terminalStateIds="${PccTreatmentStoppedWorkflowState},${PccTransferedOutWorkflowState},${PccDefaultedWorkflowState},${PccDiedWorkflowState}"/><br /></td>
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="palliative-care"/><br /></td>
     </tr>
     <tr>
         <td style="vertical-align: top;">TB Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="${TbActiveStates}" terminalStateIds="${TbPatientDiedWorkflowState}"/><br /></td>
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="tb"/><br /></td>
     </tr>
     </openmrs:hasPrivilege>
 
     <tr>
         <td style="vertical-align: top;">Nutrition Program:</td>
-        <td><pihmalawi:quickPrograms patientId="${model.patientId}" initialStateIds="${NutritionActiveStates}" stateIds="${NutritionActiveStates}" terminalStateIds="${NutritionTreatmentStoppedWorkflowState},${NutritionTransferedOutWorkflowState},${NutritionDischargedWorkflowState},${NutritionDefaultedWorkflowState},${NutritionDiedWorkflowState}"/><br /></td>
+        <td><pihmalawi:quickPrograms patientId="${model.patientId}" program="nutrition"/><br /></td>
     </tr>
 </table>
 <!-- <div class="portlet"> is automatically close by openmrs:portlet  from patientOverview.jsp-->

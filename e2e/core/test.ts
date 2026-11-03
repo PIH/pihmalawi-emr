@@ -68,6 +68,7 @@ export interface CustomTestFixtures {
   eligibleExposedChildPatient: TestPatient;
   tracePatient: TestPatient;
   kaposisSarcomaPatient: TestPatient;
+  unenrolledChronicCarePatient: TestPatient;
 }
 
 export interface CustomWorkerFixtures {
@@ -434,6 +435,28 @@ export const test = base.extend<CustomTestFixtures, CustomWorkerFixtures>({
       await use(patient);
 
       await purgeEncountersForPatient(api, patient.uuid);
+      await deletePatient(api, patient.uuid);
+    },
+    { scope: 'test' },
+  ],
+
+  // A patient with a Chronic Care Number at Neno District Hospital but no
+  // program enrolment yet, for enrolling from the O3 Enrolments tab: the
+  // Chronic Care and Mental Health eMastercards need that identifier at the
+  // enrolment location, which Enrol doesn't create (as with Quick Programs).
+  unenrolledChronicCarePatient: [
+    async ({ api }, use) => {
+      const patient = await createPatient(api, { givenName: 'AutoEnrol', familyName: 'Pilot' });
+      await addPatientIdentifier(api, patient.uuid, {
+        identifierTypeUuid: CHRONIC_CARE_NUMBER_IDENTIFIER_TYPE_UUID,
+        identifier: `ENROL-E2E-${Date.now()}`,
+        locationUuid: NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
+      });
+
+      await use(await getPatient(api, patient.uuid));
+
+      await purgeEncountersForPatient(api, patient.uuid);
+      await purgeProgramEnrollments(api, patient.uuid);
       await deletePatient(api, patient.uuid);
     },
     { scope: 'test' },
