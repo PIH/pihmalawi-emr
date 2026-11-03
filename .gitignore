@@ -31,3 +31,6 @@ playwright-report/
 test-results/
 e2e/storageState.json
 .env
+
+# Local working files of the Superpowers Claude Code plugin
+.superpowers/
