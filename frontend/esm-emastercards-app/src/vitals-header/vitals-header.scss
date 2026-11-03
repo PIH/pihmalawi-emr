@@ -1,0 +1,63 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.strip,
+.hivLine {
+  background-color: $ui-01;
+  border-bottom: 1px solid $ui-03;
+  padding: layout.$spacing-04 layout.$spacing-05;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: layout.$spacing-05;
+  margin-bottom: layout.$spacing-03;
+}
+
+.title {
+  @include type.type-style('heading-compact-02');
+}
+
+.link {
+  @include type.type-style('body-compact-01');
+}
+
+.recordVitals {
+  margin-left: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: layout.$spacing-03 layout.$spacing-05;
+}
+
+.hivLine .title {
+  display: block;
+  margin-bottom: layout.$spacing-03;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  @include type.type-style('label-01');
+  color: $text-02;
+}
+
+.value {
+  @include type.type-style('body-compact-02');
+}
+
+.date {
+  @include type.type-style('helper-text-01');
+  color: $text-02;
+}
+
+.loading {
+  padding: layout.$spacing-04 layout.$spacing-05;
+}

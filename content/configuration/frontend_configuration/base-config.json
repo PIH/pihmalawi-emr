@@ -34,11 +34,6 @@
   "@openmrs/esm-home-app": {
     "extensionSlots": {
       "homepage-dashboard-slot": {
-        "remove": [
-          "laboratory-dashboard-link",
-          "patient-lists-dashboard-link",
-          "service-queues-dashboard-link"
-        ],
         "order": [
           "home-widget-db-link",
           "audit-dashboard-link"
@@ -49,20 +44,54 @@
   },
   "@openmrs/esm-patient-vitals-app": {
     "concepts": {
-      "systolicBloodPressureUuid": "3ce934fa-26fe-102b-80cb-0017a47871b2",
-      "diastolicBloodPressureUuid": "3ce93694-26fe-102b-80cb-0017a47871b2",
-      "pulseUuid": "3ce93824-26fe-102b-80cb-0017a47871b2",
-      "temperatureUuid": "3ce939d2-26fe-102b-80cb-0017a47871b2",
-      "oxygenSaturationUuid": "3ce9401c-26fe-102b-80cb-0017a47871b2",
-      "heightUuid": "3ce93cf2-26fe-102b-80cb-0017a47871b2",
-      "weightUuid": "3ce93b62-26fe-102b-80cb-0017a47871b2",
-      "respiratoryRateUuid": "3ceb11f8-26fe-102b-80cb-0017a47871b2",
-      "generalPatientNoteUuid": "3cd9d956-26fe-102b-80cb-0017a47871b2",
-      "midUpperArmCircumferenceUuid": "4326b04b-3158-417a-bb8d-ad022295b0f4"
+      "systolicBloodPressureUuid": "6569bffe-977f-11e1-8993-905e29aff6c1",
+      "diastolicBloodPressureUuid": "6569c116-977f-11e1-8993-905e29aff6c1",
+      "pulseUuid": "6569c224-977f-11e1-8993-905e29aff6c1",
+      "temperatureUuid": "6569c33c-977f-11e1-8993-905e29aff6c1",
+      "oxygenSaturationUuid": "6569c792-977f-11e1-8993-905e29aff6c1",
+      "heightUuid": "6569c562-977f-11e1-8993-905e29aff6c1",
+      "weightUuid": "6569c44a-977f-11e1-8993-905e29aff6c1",
+      "respiratoryRateUuid": "656ab86e-977f-11e1-8993-905e29aff6c1",
+      "generalPatientNoteUuid": "65710548-977f-11e1-8993-905e29aff6c1",
+      "midUpperArmCircumferenceUuid": "6558d09a-977f-11e1-8993-905e29aff6c1",
+      "bodyMassIndexUuid": "655d615a-977f-11e1-8993-905e29aff6c1",
+      "vitalSignsConceptSetUuid": "6557a044-977f-11e1-8993-905e29aff6c1"
     },
     "vitals": {
       "encounterTypeUuid": "664b82cc-977f-11e1-8993-905e29aff6c1"
     }
+  },
+  "@pihmalawi/esm-emastercards-app": {
+    "extensionSlots": {
+      "pihmalawi-vitals-header-slot": {
+        "add": [
+          "pihmalawi-latest-vitals",
+          "pihmalawi-hiv-summary"
+        ]
+      }
+    }
+  },
+  "@openmrs/esm-patient-chart-app": {
+    "visitAttributeTypes": [],
+    "extensionSlots": {
+      "patient-info-slot": {
+        "remove": [
+          "patient-vitals-info"
+        ]
+      },
+      "patient-chart-summary-dashboard-slot": {
+        "add": [
+          "programs-overview-widget"
+        ],
+        "remove": [
+          "vitals-overview-widget",
+          "biometrics-overview-widget"
+        ]
+      }
+    }
+  },
+  "@openmrs/esm-patient-programs-app": {
+    "showProgramStatusField": true
   },
   "@openmrs/esm-primary-navigation-app": {
     "logo": {

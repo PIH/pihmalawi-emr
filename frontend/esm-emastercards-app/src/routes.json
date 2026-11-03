@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json.openmrs.org/routes.schema.json",
+  "backendDependencies": {
+    "webservices.rest": ">=2.2.0"
+  },
+  "extensions": [
+    {
+      "name": "emastercards-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "emastercardsDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-emastercards-dashboard-slot",
+        "path": "eMastercards"
+      },
+      "order": 1
+    },
+    {
+      "name": "emastercards-dashboard",
+      "slot": "pihmalawi-emastercards-dashboard-slot",
+      "component": "emastercardsDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
+      "name": "enrolments-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "enrolmentsDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-enrolments-dashboard-slot",
+        "path": "enrolments"
+      },
+      "order": 7
+    },
+    {
+      "name": "enrolments-dashboard",
+      "slot": "pihmalawi-enrolments-dashboard-slot",
+      "component": "enrolmentsDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
+      "name": "pihmalawi-vitals-header",
+      "slot": "patient-info-slot",
+      "component": "vitalsHeaderOnSomePages"
+    },
+    {
+      "name": "pihmalawi-latest-vitals",
+      "component": "latestVitals",
+      "order": 0
+    },
+    {
+      "name": "pihmalawi-hiv-summary",
+      "component": "hivSummary",
+      "order": 1
+    }
+  ],
+  "workspaces2": [
+    {
+      "name": "pihmalawi-emastercard-flowsheet-workspace",
+      "component": "flowsheetWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "patient-form-entry-workspace",
+      "component": "encounterEditWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-enrolment-workspace",
+      "component": "enrolmentWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    }
+  ],
+  "workspaceWindows2": [
+    {
+      "name": "pihmalawi-emastercard-window",
+      "group": "patient-chart",
+      "width": "extra-wide",
+      "canMaximize": true
+    }
+  ]
+}

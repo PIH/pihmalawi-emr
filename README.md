@@ -12,6 +12,7 @@ For more background on OpenMRS distributions, see the [OpenMRS wiki](https://wik
 | [`api/`](api) | Java API for the PIH Malawi OpenMRS module — services, data, and business logic |
 | [`omod/`](omod) | OpenMRS module (OMOD) — web layer, UI, and packaging for the PIH Malawi module; depends on `api/` |
 | [`content/`](content/README.md) | PIH Malawi-specific OpenMRS content package (Initializer and O3 configuration files) |
+| [`frontend/`](frontend) | The O3 frontend Malawi runs: the O3 apps it uses, at pinned versions, plus the eMastercards app |
 | [`distro/`](distro/README.md) | Distribution definition — resolves all component versions into `openmrs-distro.properties` |
 
 ## The PIH Malawi Module
@@ -29,9 +30,29 @@ OpenMRS module — see `omod.pihmalawi` in `distro/openmrs-distro.properties`.
 |---|---|
 | PIH Malawi module | `org.openmrs.module:pihmalawi-omod` (bundles `org.openmrs.module:pihmalawi-api`) |
 | PIH Malawi content | `org.pih.openmrs:pihmalawi-content` |
-| PIH EMR frontend | `org.pih.openmrs:openmrs-frontend-pihemr` |
+| PIH Malawi frontend | `org.pih.openmrs:pihmalawi-frontend` |
 
 Component versions are defined in `distro/pom.xml` and resolved into `distro/openmrs-distro.properties` at build time.
+
+## Frontend
+
+`frontend/` builds the O3 frontend into `org.pih.openmrs:pihmalawi-frontend`, which the distro installs as its SPA
+(see `spa.*` in `distro/openmrs-distro.properties`). It replaces PIH's shared `openmrs-frontend-pihemr`, so that
+Malawi only ships the O3 apps it uses.
+
+- **Which apps, at which versions:** `frontend/spa-build-config.json`. Versions are pinned exactly; to upgrade, change
+  them there and keep `openmrsCliVersion` in `frontend/pom.xml` at the version of the framework apps. Apps that
+  need backend modules the distro doesn't have show a "Some modules have unresolved backend dependencies" warning.
+- **The eMastercards app:** `frontend/esm-emastercards-app` (`@pihmalawi/esm-emastercards-app`). It adds the
+  eMastercards page to the patient chart, opens eMastercard flowsheets in a chart panel, and handles "Edit this
+  encounter" by opening the eMastercard the encounter belongs to. It reads `GET /ws/rest/v1/pihmalawi/emastercards`,
+  whose rules are shared with the legacy dashboard (`org.openmrs.module.pihmalawi.emastercard`).
+  - It also adds the Enrolments page: one card per Quick Programs program, with a panel to enrol, add a condition,
+    change state or exit. It uses `GET/POST /ws/rest/v1/pihmalawi/quickprograms`, whose rules are shared with the legacy
+    Quick Programs section (`org.openmrs.module.pihmalawi.quickprograms`).
+  - `npm install --legacy-peer-deps`, then `npm test` and `npm run build`, in that folder.
+  - The Maven build runs those, packs the app, and assembles it into the bundle from the packed file.
+- **Configuration** of the apps stays in `content/configuration/frontend_configuration/base-config.json`.
 
 ## Using the OpenMRS SDK
 

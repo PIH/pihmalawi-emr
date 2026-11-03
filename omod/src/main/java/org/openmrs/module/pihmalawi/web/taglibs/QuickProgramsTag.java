@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.pihmalawi.web.taglibs;
 
+import org.openmrs.module.pihmalawi.common.Helper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,8 +38,11 @@ import org.openmrs.ProgramWorkflowState;
 import org.openmrs.api.context.Context;
 import org.openmrs.PatientProgram;
 import org.openmrs.module.pihmalawi.PihMalawiConstants;
-import org.openmrs.module.pihmalawi.common.JsonObject;
-import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.module.pihmalawi.quickprograms.ExitKind;
+import org.openmrs.module.pihmalawi.quickprograms.QuickProgramRegistry;
+import org.openmrs.module.pihmalawi.quickprograms.QuickProgramService;
+import org.openmrs.module.pihmalawi.quickprograms.QuickProgramStatus;
+import org.openmrs.module.pihmalawi.quickprograms.QuickProgramWorkflowStatus;
 
 /**
  * Encapsulates the functionality for providing a widget for changing program enrollment states
@@ -47,146 +51,112 @@ public class QuickProgramsTag extends BodyTagSupport {
 
 	public static final long serialVersionUID = 128233353L;
 
-	public static final String TRANSFERRED_OUT_CONCEPT = "655b604e-977f-11e1-8993-905e29aff6c1";
-	public static final String PATIENT_DIED_CONCEPT = "655b5e46-977f-11e1-8993-905e29aff6c1";
-
 	private final Log log = LogFactory.getLog(getClass());
 
 	private Integer patientId;
-	private String stateIds;
-	private String initialStateIds;
-	private String terminalStateIds;
-	private String workflowIds;
+	private String program;
+	private String var;
 
 	/**
+	 * Renders the program's enroll, change state and exit controls from {@link QuickProgramService}, as the legacy
+	 * dashboard always has. With a var attribute, renders nothing and instead puts the program's
+	 * {@link QuickProgramStatus} in that page attribute.
+	 *
 	 * @see javax.servlet.jsp.tagext.BodyTagSupport#doStartTag()
 	 */
 	public int doStartTag() throws JspException {
 		JspWriter o = pageContext.getOut();
 
 		try {
-
-			List<ProgramWorkflowState> states = Helper.getProgramWorkflowStatesFromCsvIds(stateIds);
-			List<ProgramWorkflowState> initialStates = Helper.getProgramWorkflowStatesFromCsvIds(initialStateIds);
-			List<ProgramWorkflowState> terminalStates = Helper.getProgramWorkflowStatesFromCsvIds(terminalStateIds);
-			List<ProgramWorkflow> programWorkflows = Helper.getProgramWorkflowsFromUuidsList(workflowIds);
-
-			ProgramWorkflow programWorkflow = initialStates.get(0).getProgramWorkflow();
-			Program program = programWorkflow.getProgram();
 			Patient patient = Context.getPatientService().getPatient(patientId);
-
-			PatientProgram patientProgram = currentPatientProgram(program, patient);
-			PatientState currentState = null;
-			if (patientProgram != null) {
-				currentState = patientProgram.getCurrentState(initialStates.get(0).getProgramWorkflow());
+			QuickProgramService service = Context.getRegisteredComponent("quickProgramService", QuickProgramService.class);
+			QuickProgramStatus status = service.status(patient, QuickProgramRegistry.get(program));
+			if (var != null) {
+				pageContext.setAttribute(var, status);
+				return SKIP_BODY;
 			}
+			if (status.getWorkflows().isEmpty()) {
+				throw new IllegalStateException("No states configured for quick program " + program);
+			}
+			Program program = status.getWorkflows().get(0).getWorkflow().getProgram();
+			PatientProgram patientProgram = status.getPatientProgram();
+			boolean multipleWorkflows = !status.getProgram().getWorkflowUuids().isEmpty();
 
 			boolean quickProgramsAvailable = false;
 			if (!patient.isDead()) {
-				if (!programWorkflows.isEmpty()) {
-					List<ProgramWorkflow> pwToEnroll = new ArrayList<>();
-					Map<ProgramWorkflow, List<ProgramWorkflowState>> changeableWfStates = new HashMap<>();
-					List<ProgramWorkflowState> commonTerminalStates = new ArrayList<>();
-					for (ProgramWorkflow workflow : programWorkflows) {
-						if ( !hasOpenProgramWorkflow(workflow, patient) ) {
-							quickProgramsAvailable = true;
-							pwToEnroll.add(workflow);
+				if (multipleWorkflows) {
+					// the order the legacy tag listed workflows in
+					Map<ProgramWorkflow, QuickProgramWorkflowStatus> changeable = new HashMap<>();
+					for (QuickProgramWorkflowStatus ws : status.getWorkflows()) {
+						quickProgramsAvailable = true;
+						if (!ws.isOpen()) {
+							o.write(enrollProgramWorkflowForm(program, patient, ws.getWorkflow(), ws.getEnrolStates()));
 						} else {
-							// patient is already enrolled in this program workflow
-							List<ProgramWorkflowState> programWorkflowStates = Helper.getProgramWorkflowStates(workflow, null, Boolean.FALSE);
-							changeableWfStates.put(workflow, programWorkflowStates);
-							commonTerminalStates.addAll(Helper.getProgramWorkflowStates(workflow, null, Boolean.TRUE));
+							changeable.put(ws.getWorkflow(), ws);
 						}
 					}
-					if (!pwToEnroll.isEmpty()) {
-						for (ProgramWorkflow workflow : pwToEnroll) {
-							quickProgramsAvailable = true;
-							o.write(enrollProgramWorkflowForm(program, patient, workflow));
-						}
+					for (ProgramWorkflow workflow : changeable.keySet()) {
+						QuickProgramWorkflowStatus ws = changeable.get(workflow);
+						o.write(changeToSelectedStateSubmitTag("Change",
+								patientProgram,
+								workflow, "stateIdForWorkflow" + workflow.getId(),
+								"'dateForPWS" + workflow.getId() + "'")
+								+ " " + workflow.getConcept().getName() +" to "
+								+ ""
+								+ pwStateTag("stateIdForWorkflow" + workflow.getId() , "pwStateName" + workflow.getId(), ws.getChangeStates(), ws.getCurrentState())
+								+ " on "
+								+ dateTag("dateForPWS" + workflow.getId(), "dateForPWS")
+								+ " at " + patientProgram.getLocation().getName() + "<br/><br/>");
 					}
-					if ( !changeableWfStates.isEmpty()) {
-						for (ProgramWorkflow workflow : changeableWfStates.keySet()) {
-							quickProgramsAvailable = true;
-							if (patientProgram != null) {
-								currentState = patientProgram.getCurrentState(workflow);
-							}
-							o.write(changeToSelectedStateSubmitTag("Change",
+					for (ProgramWorkflowState terminalState : status.getExitStates()) {
+						ExitKind kind = service.exitKind(terminalState);
+						if (kind == ExitKind.TRANSFER_OUT) {
+							o.write(transferOutForm(program, patient, terminalState, terminalState.getProgramWorkflow()));
+						} else if (kind == ExitKind.DIED) {
+							o.write(patientDiedForm(program, patient, terminalState));
+						} else {
+							o.write(changeToStateSubmitTag("Complete",
 									patientProgram,
-									workflow, "stateIdForWorkflow" + workflow.getId(),
-									"'dateForPWS" + workflow.getId() + "'")
-									+ " " + workflow.getConcept().getName() +" to "
-									+ ""
-									+ pwStateTag("stateIdForWorkflow" + workflow.getId() , "pwStateName" + workflow.getId(), changeableWfStates.get(workflow), currentState)
+									terminalState.getProgramWorkflow(), terminalState,
+									"'dateForPWS" + terminalState.getId() + "'")
+									+ " " + terminalState.getProgramWorkflow().getConcept().getName() + " with "
+									+ terminalState.getConcept().getName()
 									+ " on "
-									+ dateTag("dateForPWS" + workflow.getId(), "dateForPWS")
-									+ " at " + patientProgram.getLocation().getName() + "<br/><br/>");
-						}
-					}
-					if (!commonTerminalStates.isEmpty()) {
-						for (ProgramWorkflowState terminalState : commonTerminalStates) {
-							if (patientProgram != null) {
-								currentState = patientProgram.getCurrentState(terminalState.getProgramWorkflow());
-							}
-							if (!(currentState != null && currentState.getState().equals(terminalState))) {
-								quickProgramsAvailable = true;
-								if (StringUtils.equalsIgnoreCase(terminalState.getConcept().getUuid(), TRANSFERRED_OUT_CONCEPT)) {
-									o.write(transferOutForm(program, patient, terminalState, terminalState.getProgramWorkflow()));
-								} else if (StringUtils.equalsIgnoreCase(terminalState.getConcept().getUuid(), PATIENT_DIED_CONCEPT)) {
-									o.write(patientDiedForm(program, patient, terminalState));
-								} else {
-									o.write(changeToStateSubmitTag("Complete",
-											patientProgram,
-											terminalState.getProgramWorkflow(), terminalState,
-											"'dateForPWS" + terminalState.getId() + "'")
-											+ " " + terminalState.getProgramWorkflow().getConcept().getName() + " with "
-											+ terminalState.getConcept().getName()
-											+ " on "
-											+ dateTag("dateForPWS" + terminalState.getId(), "dateForPWS")
-											+ " at " + patientProgram.getLocation().getName() + "<br/>");
-								}
-							}
+									+ dateTag("dateForPWS" + terminalState.getId(), "dateForPWS")
+									+ " at " + patientProgram.getLocation().getName() + "<br/>");
 						}
 					}
 				} else {
-					if (!hasOpenProgramWorkflow(programWorkflow, patient)) {
-						// no or closed program enrollment available
-						for (ProgramWorkflowState pws : initialStates) {
-							quickProgramsAvailable = true;
-							o.write(enrollForm(program, patient, pws));
-						}
-					} else {
-						// open program enrollment available
-						for (ProgramWorkflowState pws : states) {
-							if (!(currentState != null && currentState.getState().equals(pws))) {
-								quickProgramsAvailable = true;
-								o.write(changeToStateSubmitTag("Change",
-										patientProgram,
-										pws.getProgramWorkflow(), pws,
-										"'dateForPWS" + pws.getId() + "'")
-										+ " to "
-										+ pws.getConcept().getName()
-										+ " on "
-										+ dateTag("dateForPWS" + pws.getId(), "dateForPWS")
-										+ " at " + patientProgram.getLocation().getName() + "<br/>");
-							}
-						}
-						for (ProgramWorkflowState pws : terminalStates) {
-							if (!(currentState != null && currentState.getState().equals(pws))) {
-								quickProgramsAvailable = true;
-								if (StringUtils.equalsIgnoreCase(pws.getConcept().getUuid(), TRANSFERRED_OUT_CONCEPT)) {
-									o.write(transferOutForm(program, patient, pws, null));
-								} else {
-									o.write(changeToStateSubmitTag("Complete",
-											patientProgram,
-											pws.getProgramWorkflow(), pws,
-											"'dateForPWS" + pws.getId() + "'")
-											+ " with "
-											+ pws.getConcept().getName()
-											+ " on "
-											+ dateTag("dateForPWS" + pws.getId(), "dateForPWS")
-											+ " at " + patientProgram.getLocation().getName() + "<br/>");
-								}
-							}
+					for (ProgramWorkflowState pws : status.getEnrolStates()) {
+						quickProgramsAvailable = true;
+						o.write(enrollForm(program, patient, pws));
+					}
+					for (ProgramWorkflowState pws : status.getChangeStates()) {
+						quickProgramsAvailable = true;
+						o.write(changeToStateSubmitTag("Change",
+								patientProgram,
+								pws.getProgramWorkflow(), pws,
+								"'dateForPWS" + pws.getId() + "'")
+								+ " to "
+								+ pws.getConcept().getName()
+								+ " on "
+								+ dateTag("dateForPWS" + pws.getId(), "dateForPWS")
+								+ " at " + patientProgram.getLocation().getName() + "<br/>");
+					}
+					for (ProgramWorkflowState pws : status.getExitStates()) {
+						quickProgramsAvailable = true;
+						if (service.exitKind(pws) == ExitKind.TRANSFER_OUT) {
+							o.write(transferOutForm(program, patient, pws, null));
+						} else {
+							o.write(changeToStateSubmitTag("Complete",
+									patientProgram,
+									pws.getProgramWorkflow(), pws,
+									"'dateForPWS" + pws.getId() + "'")
+									+ " with "
+									+ pws.getConcept().getName()
+									+ " on "
+									+ dateTag("dateForPWS" + pws.getId(), "dateForPWS")
+									+ " at " + patientProgram.getLocation().getName() + "<br/>");
 						}
 					}
 				}
@@ -207,10 +177,10 @@ public class QuickProgramsTag extends BodyTagSupport {
 		return SKIP_BODY;
 	}
 
-	private String enrollProgramWorkflowForm(Program program, Patient patient, ProgramWorkflow workflow) {
+	private String enrollProgramWorkflowForm(Program program, Patient patient, ProgramWorkflow workflow,
+	        List<ProgramWorkflowState> programWorkflowInitialStates) {
 		String s = "";
 		if (workflow != null ) {
-			List<ProgramWorkflowState> programWorkflowInitialStates = Helper.getProgramWorkflowStates(workflow, Boolean.TRUE, Boolean.FALSE);
 			if (programWorkflowInitialStates !=null && !programWorkflowInitialStates.isEmpty()) {
 					s += "<form method=\"post\" action=\"/openmrs/module/quickprograms/enrollInProgramWithStateOnDateAtLocation.form\">\n";
 					s += "<input id=\"quickEnrollSubmitButton-" + workflow.getId() + "\" type=\"submit\" value=\"Enroll\"/>\n";
@@ -404,94 +374,36 @@ public class QuickProgramsTag extends BodyTagSupport {
 	}
 
 	/**
-	 * Private utility method for returning whether a patient has a currently active state in the passed program workflow
-	 */
-	private boolean hasOpenProgramWorkflow(ProgramWorkflow programWorkflow, Patient patient) {
-		// hm, it feels like there should be a *much* better way...
-		for (org.openmrs.PatientProgram pp : Context.getProgramWorkflowService()
-				.getPatientPrograms(patient, programWorkflow.getProgram(), null, null, new Date(), null, false)) {
-			for (PatientState ps : pp.getStates()) {
-				if (ps.getState().getProgramWorkflow().equals(programWorkflow)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * @see javax.servlet.jsp.tagext.BodyTagSupport#doEndTag()
 	 */
 	public int doEndTag() {
 		patientId = null;
-		terminalStateIds = null;
-		stateIds = null;
-		initialStateIds = null;
-		workflowIds = null;
+		program = null;
+		var = null;
 		return EVAL_PAGE;
 	}
-	
-    /**
-     * @return the patientId
-     */
-    public Integer getPatientId() {
-    	return patientId;
-    }
-	
-    /**
-     * @param patientId the patientId to set
-     */
-    public void setPatientId(Integer patientId) {
-    	this.patientId = patientId;
-    }
-	
-    /**
-     * @return the stateIds
-     */
-    public String getStateIds() {
-    	return stateIds;
-    }
-	
-    /**
-     * @param stateIds the stateIds to set
-     */
-    public void setStateIds(String stateIds) {
-    	this.stateIds = stateIds;
-    }
-	
-    /**
-     * @return the initialStateIds
-     */
-    public String getInitialStateIds() {
-    	return initialStateIds;
-    }
-	
-    /**
-     * @param initialStateIds the initialStateIds to set
-     */
-    public void setInitialStateIds(String initialStateIds) {
-    	this.initialStateIds = initialStateIds;
-    }
-	
-    /**
-     * @return the terminalStateIds
-     */
-    public String getTerminalStateIds() {
-    	return terminalStateIds;
-    }
 
-    /**
-     * @param terminalStateIds the terminalStateIds to set
-     */
-    public void setTerminalStateIds(String terminalStateIds) {
-    	this.terminalStateIds = terminalStateIds;
-    }
-
-	public String getWorkflowIds() {
-		return workflowIds;
+	public Integer getPatientId() {
+		return patientId;
 	}
 
-	public void setWorkflowIds(String workflowIds) {
-		this.workflowIds = workflowIds;
+	public void setPatientId(Integer patientId) {
+		this.patientId = patientId;
+	}
+
+	public String getProgram() {
+		return program;
+	}
+
+	public void setProgram(String program) {
+		this.program = program;
+	}
+
+	public String getVar() {
+		return var;
+	}
+
+	public void setVar(String var) {
+		this.var = var;
 	}
 }

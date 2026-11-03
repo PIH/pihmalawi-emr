@@ -634,4 +634,39 @@
 
     flowsheet.setFlowsheetExtension(fsExt);
 
+    // In the O3 patient chart, eMastercards open in a panel with embedded=true. There the legacy header and
+    // breadcrumbs are hidden, and leaving the flowsheet asks the chart to close the panel instead of loading the
+    // legacy dashboard inside it.
+    if (new URLSearchParams(window.location.search).get("embedded") === "true") {
+        var postToChart = function(type) {
+            window.parent.postMessage({ type: type }, window.location.origin);
+        };
+        jq("<style>body.pihmalawi-embedded header, body.pihmalawi-embedded #breadcrumbs { display: none !important; }</style>").appendTo("head");
+        jq(function() {
+            jq("body").addClass("pihmalawi-embedded");
+            // The legacy page warns on unload about unsaved changes, which never happens to an iframe the chart
+            // removes, so ask here instead, and tell the chart so it can warn when its own panel is closed
+            flowsheet.backToPatientDashboard = function() {
+                if (flowsheet.isDirty() && !window.confirm("If you leave this page you will lose unsaved changes")) {
+                    return;
+                }
+                postToChart("pihmalawi:emastercard:close");
+            };
+            jq.each({ setDirty: true, clearDirty: false }, function(name, dirty) {
+                var original = flowsheet[name];
+                flowsheet[name] = function() {
+                    var ret = original.apply(this, arguments);
+                    window.parent.postMessage({ type: "pihmalawi:emastercard:dirty", dirty: dirty }, window.location.origin);
+                    return ret;
+                };
+            });
+            var successFunction = flowsheet.successFunction;
+            flowsheet.successFunction = function(result) {
+                var ret = successFunction.apply(this, arguments);
+                postToChart("pihmalawi:emastercard:saved");
+                return ret;
+            };
+        });
+    }
+
 }( window.flowsheet = window.flowsheet || {}, jQuery ));

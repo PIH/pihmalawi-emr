@@ -1,5 +1,6 @@
 package org.openmrs.module.pihmalawi.web.taglibs;
 
+import org.openmrs.module.pihmalawi.common.Helper;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.lang.StringUtils;

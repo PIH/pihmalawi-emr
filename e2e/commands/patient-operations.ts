@@ -81,7 +81,17 @@ export const getPatient = async (api: APIRequestContext, uuid: string): Promise<
   return res.json();
 };
 
+// Visits (e.g. one started from the O3 patient chart) must be purged before
+// the patient, or the patient purge fails on the visit's FK to patient. Their
+// encounters must already be gone — see purgeEncountersForPatient.
 export const deletePatient = async (api: APIRequestContext, uuid: string): Promise<void> => {
+  const visitsRes = await api.get(`visit?patient=${uuid}&includeInactive=true&limit=100`);
+  expect(visitsRes.ok()).toBeTruthy();
+  for (const visit of (await visitsRes.json()).results) {
+    const delVisitRes = await api.delete(`visit/${visit.uuid}?purge=true`);
+    expect(delVisitRes.ok()).toBeTruthy();
+  }
+
   const res = await api.delete(`patient/${uuid}?purge=true`);
   expect(res.ok()).toBeTruthy();
 };
