@@ -127,6 +127,11 @@
       "name": "pihmalawi-art-follow-up-testing-workspace",
       "component": "followUpTestingWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-mh-header-workspace",
+      "component": "mhHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

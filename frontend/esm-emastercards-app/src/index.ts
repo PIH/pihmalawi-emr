@@ -61,6 +61,8 @@ export const viralLoadWorkspace = getAsyncLifecycle(() => import('./art/viral-lo
 /** Records or edits ART follow-up tests natively */
 export const followUpTestingWorkspace = getAsyncLifecycle(() => import('./art/follow-up-testing.workspace'), options);
 
+export const mhHeaderWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-header.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

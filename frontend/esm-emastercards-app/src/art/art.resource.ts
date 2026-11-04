@@ -121,6 +121,22 @@ export function useEMastercard(
   return { card: cards.find((c) => c.key === key) ?? null, systemLocationsTag, isLoading, error };
 }
 
+interface Relationship {
+  personA: { uuid?: string; display: string };
+  relationshipType: { uuid: string };
+}
+
+/** The patient's community health workers, as the card headers show them: person A of a CHW relationship */
+export function useChws(patientUuid: string | null, relationshipType: string) {
+  const { data } = useSWR(
+    patientUuid ? `${restBaseUrl}/relationship?person=${patientUuid}&v=custom:(personA:(uuid,display),relationshipType:(uuid))` : null,
+    (url: string) => openmrsFetch<{ results: Array<Relationship> }>(url).then((res) => res.data?.results ?? []),
+  );
+  return (data ?? [])
+    .filter((r) => r.relationshipType?.uuid === relationshipType && r.personA?.uuid !== patientUuid)
+    .map((r) => r.personA.display);
+}
+
 /** The locations with a tag (every location when there is no tag), for location choices */
 export function useLocationsTagged(tag: string | null) {
   const { data } = useSWR(
