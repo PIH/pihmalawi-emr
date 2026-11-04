@@ -3,6 +3,7 @@ import { fhirBaseUrl, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 import { type EMastercardCard, useEMastercards } from '../emastercards.resource';
 import { ART_FORMS, type ArtFormKind, ART_INITIAL, ART_VISIT, VIRAL_LOAD } from './art-concepts';
 import { type CardForm, type ExistingObs, type FieldValue } from './obs-diff';
+import { MH_VISIT } from '../mental-health/mh-concepts';
 
 /** An obs of an ART encounter; coded values are the answer's uuid, booleans true or false */
 export interface ArtObs extends ExistingObs {
@@ -29,7 +30,7 @@ interface RestObs {
 }
 
 /** Boolean concepts, which REST may return as the true or false concept; other cards add theirs */
-export const BOOLEAN_CONCEPTS = [ART_VISIT.arvsGivenTo, ART_INITIAL.ks, VIRAL_LOAD.sampleTaken, VIRAL_LOAD.ldl];
+export const BOOLEAN_CONCEPTS = [ART_VISIT.arvsGivenTo, ART_INITIAL.ks, VIRAL_LOAD.sampleTaken, VIRAL_LOAD.ldl, MH_VISIT.sideEffects];
 
 function toValue(concept: string, value: unknown): ArtObs['value'] {
   if (value && typeof value === 'object') {
