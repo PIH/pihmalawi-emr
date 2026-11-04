@@ -58,6 +58,7 @@
   "editDemographics": "Edit name, address and other details in registration",
   "editEncounter": "Edit encounter",
   "editFollowUpTests": "Edit follow-up tests",
+  "editMentalHealthVisit": "Edit mental health visit",
   "editSection": "Edit",
   "editViralLoad": "Edit viral load",
   "emastercards": "eMastercards",
@@ -177,6 +178,7 @@
   "temperature": "Temp",
   "test": "Test",
   "transferredTo": "Transferred to",
+  "treatmentDetails": "Treatment details",
   "view": "View {{label}}",
   "viewOnly": "You can view this card but not change it.",
   "viralLoad": "Viral load",
@@ -186,6 +188,7 @@
   "vitalsAndBiometrics": "Vitals and biometrics",
   "vitalsHistory": "Vitals history",
   "weight": "Weight",
+  "wellbeing": "Wellbeing",
   "workflowState": "{{workflow}}: {{state}} since {{date}}",
   "workflowStateLabel": "{{workflow}} state",
   "yes": "Yes"

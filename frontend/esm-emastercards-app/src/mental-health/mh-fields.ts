@@ -174,13 +174,13 @@ export function medicationFields(m: (typeof MEDICATIONS)[number]): Array<ArtFiel
   const name = `med_${m.key}`;
   return [
     { name, concept: MH_VISIT.medication, kind: 'coded', label: m.label, checkbox: true, options: [{ value: m.drug, label: m.label }], group },
-    ...(m.key === 'other' ? [{ name: `${name}Name`, concept: NON_CODED_TEXT, kind: 'text' as const, label: 'Please specify', group }] : []),
-    { name: `${name}Dose`, concept: MH_VISIT.dose, kind: 'number', label: 'Dose', group },
-    { name: `${name}DoseUnit`, concept: MH_VISIT.doseUnit, kind: 'coded', label: 'Unit', options: MH_VISIT.doseUnits, select: true, group },
-    { name: `${name}Route`, concept: MH_VISIT.route, kind: 'coded', label: 'Route', options: MH_VISIT.routes, select: true, group },
-    { name: `${name}Frequency`, concept: MH_VISIT.frequency, kind: 'coded', label: 'Frequency', options: MH_VISIT.frequencies, select: true, group },
-    { name: `${name}Duration`, concept: MH_VISIT.duration, kind: 'number', label: 'Duration', group },
-    { name: `${name}DurationUnit`, concept: MH_VISIT.durationUnit, kind: 'coded', label: 'Duration unit', options: MH_VISIT.durationUnits, select: true, group },
+    ...(m.key === 'other' ? [{ name: `${name}Name`, concept: NON_CODED_TEXT, kind: 'text' as const, label: 'Other medication: specify', group }] : []),
+    { name: `${name}Dose`, concept: MH_VISIT.dose, kind: 'number', label: `${m.label} dose`, group },
+    { name: `${name}DoseUnit`, concept: MH_VISIT.doseUnit, kind: 'coded', label: `${m.label} unit`, options: MH_VISIT.doseUnits, select: true, group },
+    { name: `${name}Route`, concept: MH_VISIT.route, kind: 'coded', label: `${m.label} route`, options: MH_VISIT.routes, select: true, group },
+    { name: `${name}Frequency`, concept: MH_VISIT.frequency, kind: 'coded', label: `${m.label} frequency`, options: MH_VISIT.frequencies, select: true, group },
+    { name: `${name}Duration`, concept: MH_VISIT.duration, kind: 'number', label: `${m.label} duration`, group },
+    { name: `${name}DurationUnit`, concept: MH_VISIT.durationUnit, kind: 'coded', label: `${m.label} duration unit`, options: MH_VISIT.durationUnits, select: true, group },
   ];
 }
 
