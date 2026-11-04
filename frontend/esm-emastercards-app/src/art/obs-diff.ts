@@ -136,7 +136,8 @@ function diffField(
     mine.forEach((o) => out.void.push(o.uuid));
     return;
   }
-  if (current && mine.length === 1 && same(field, current.value, desired) && sameComment(current.comment, comment)) {
+  // an obs's comment only counts when the panel asks for it; otherwise it stays as it is
+  if (current && mine.length === 1 && same(field, current.value, desired) && (!field.comment || sameComment(current.comment, comment))) {
     return;
   }
   mine.forEach((o) => out.void.push(o.uuid));
@@ -171,9 +172,22 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
     existing &&
     fields.every((f) => {
       const member = members.find((m) => m.concept.toLowerCase() === f.concept.toLowerCase());
-      return same(f, member?.value, values[f.name]) && (!member || sameComment(member.comment, commentOf(f, values)));
+      return same(f, member?.value, values[f.name]) && (!member || !f.comment || sameComment(member.comment, commentOf(f, values)));
     });
   if (unchanged) {
+    return;
+  }
+  // the answer that makes the group what it is (its checkbox, or the answer groups of its concept are told apart
+  // by) was cleared: the whole group goes, with nothing kept that would leave a group without it
+  const identifying = fields.filter(
+    (f) =>
+      (f.kind === 'coded' && (f as { checkbox?: boolean }).checkbox) ||
+      (f.group.match && f.concept.toLowerCase() === f.group.match.concept.toLowerCase()),
+  );
+  if (identifying.length && identifying.every((f) => isEmpty(values[f.name]))) {
+    if (existing) {
+      out.void.push(existing.uuid);
+    }
     return;
   }
   if (existing) {
@@ -188,7 +202,12 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
     out.add.push({
       concept: fields[0].group.concept,
       groupMembers: [
-        ...filled.map((f) => newObs(f, values[f.name] as string | number | boolean, commentOf(f, values))),
+        ...filled.map((f) => {
+          const member = members.find((m) => m.concept.toLowerCase() === f.concept.toLowerCase());
+          // a comment the panel doesn't ask about stays with an unchanged member
+          const kept = member && same(f, member.value, values[f.name]) ? (member.comment ?? undefined) : undefined;
+          return newObs(f, values[f.name] as string | number | boolean, f.comment ? commentOf(f, values) : kept);
+        }),
         ...kept,
       ],
     });

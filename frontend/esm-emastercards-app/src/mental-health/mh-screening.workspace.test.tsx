@@ -7,6 +7,7 @@ import { card } from '../test-cards';
 import { useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from '../art/art.resource';
 import { saveEncounter } from '../art/obs-diff';
 import { MH_FORMS, MH_SCREENING, NON_CODED_TEXT } from './mh-concepts';
+import { encounter, obs } from './test-mh-data';
 import MhScreeningWorkspace from './mh-screening.workspace';
 
 vi.mock('../art/art.resource', async (importOriginal) => ({
@@ -24,9 +25,9 @@ vi.mock('@openmrs/esm-patient-common-lib', () => ({ usePatientChartStore: vi.fn(
 
 const mockSave = vi.mocked(saveEncounter);
 
-function setUp() {
+function setUp(encounters = []) {
   vi.mocked(useEMastercard).mockReturnValue({ card: card({ key: 'mental-health', state: 'EDIT' }), systemLocationsTag: 'Upper Neno', isLoading: false, error: undefined });
-  vi.mocked(useCardEncounters).mockReturnValue({ encounters: [], isLoading: false, error: undefined, mutate: vi.fn() });
+  vi.mocked(useCardEncounters).mockReturnValue({ encounters, isLoading: false, error: undefined, mutate: vi.fn() });
   vi.mocked(useLocationsTagged).mockReturnValue([{ uuid: 'neno-dh', display: 'Neno District Hospital' }]);
   vi.mocked(useSameDayObs).mockReturnValue({ obs: {} as any, isLoading: false });
   vi.mocked(useSession).mockReturnValue({ sessionLocation: { uuid: 'neno-dh' } } as any);
@@ -34,10 +35,10 @@ function setUp() {
   mockSave.mockResolvedValue({ uuid: 'saved' });
 }
 
-function renderPanel() {
+function renderPanel(encounterUuid?: string) {
   render(
     <MhScreeningWorkspace
-      workspaceProps={{ patientUuid: 'p1' }}
+      workspaceProps={{ patientUuid: 'p1', encounterUuid }}
       groupProps={null}
       windowProps={null}
       closeWorkspace={vi.fn()}
@@ -97,5 +98,15 @@ describe('MhScreeningWorkspace', () => {
     await save();
     expect(screen.getByText('Required')).toBeInTheDocument();
     expect(mockSave).not.toHaveBeenCalled();
+  });
+
+  it('unticking Other on an existing screening voids its group and leaves no text behind', async () => {
+    const group = obs(MH_SCREENING.otherDiagnosisGroup, null, [obs(MH_SCREENING.diagnosis, MH_SCREENING.other), obs(NON_CODED_TEXT, 'insomnia')]);
+    const existing = encounter('s1', '2026-11-04', [group, obs(MH_SCREENING.nextAppointment, '2026-12-02T00:00:00.000+0000')]);
+    setUp([existing]);
+    renderPanel('s1');
+    await userEvent.click(screen.getByLabelText('Other diagnosis'));
+    await save();
+    expect(mockSave.mock.calls[0][1].payload).toEqual({ add: [], void: [group.uuid] });
   });
 });
