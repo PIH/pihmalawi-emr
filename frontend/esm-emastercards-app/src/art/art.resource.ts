@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import { openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
+import { fhirBaseUrl, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 import { type EMastercardCard, useEMastercards } from '../emastercards.resource';
 import { ART_FORMS, type ArtFormKind, ART_INITIAL, ART_VISIT, VIRAL_LOAD } from './art-concepts';
 import { type ExistingObs, type FieldValue } from './obs-diff';
@@ -119,4 +119,58 @@ export function obsGroups(encounter: ArtEncounter | null | undefined, concept: s
 /** A group's member value */
 export function memberValue(group: ArtObs | undefined, concept: string): FieldValue {
   return (group?.groupMembers?.find((m) => m.concept === concept.toLowerCase())?.value as FieldValue) ?? null;
+}
+
+export interface SameDayObs {
+  value: FieldValue;
+  obsDatetime: string;
+  encounterUuid: string | null;
+}
+
+interface FhirObservation {
+  code?: { coding?: Array<{ code?: string }> };
+  effectiveDateTime?: string;
+  encounter?: { reference?: string };
+  valueQuantity?: { value?: number };
+  valueDateTime?: string;
+  valueBoolean?: boolean;
+  valueString?: string;
+  valueCodeableConcept?: { coding?: Array<{ code?: string }> };
+}
+
+/**
+ * The patient's obs of some concepts recorded on one day, in any encounter, newest first, by concept: what the
+ * HTML forms' obsreference fields show, and where the next appointment is prefilled from
+ */
+export function useSameDayObs(patientUuid: string, conceptUuids: Array<string>, day: string | null) {
+  const codes = conceptUuids.filter(Boolean);
+  const { data, isLoading } = useSWR(
+    patientUuid && day && codes.length ? [artSwrKey(patientUuid), 'same-day', day, ...codes] : null,
+    async () => {
+      const res = await openmrsFetch<{ entry?: Array<{ resource: FhirObservation }> }>(
+        `${fhirBaseUrl}/Observation?subject:Patient=${patientUuid}&code=${codes.join(',')}&date=${day}&_sort=-date&_count=100`,
+      );
+      const byConcept: Record<string, Array<SameDayObs>> = {};
+      (res.data?.entry ?? []).forEach(({ resource: r }) => {
+        const concept = r.code?.coding?.[0]?.code?.toLowerCase();
+        if (!concept) {
+          return;
+        }
+        const value =
+          r.valueQuantity?.value ??
+          r.valueDateTime ??
+          r.valueBoolean ??
+          r.valueString ??
+          r.valueCodeableConcept?.coding?.[0]?.code ??
+          null;
+        (byConcept[concept] ??= []).push({
+          value,
+          obsDatetime: r.effectiveDateTime,
+          encounterUuid: r.encounter?.reference?.replace('Encounter/', '') ?? null,
+        });
+      });
+      return byConcept;
+    },
+  );
+  return { obs: data ?? ({} as Record<string, Array<SameDayObs>>), isLoading };
 }

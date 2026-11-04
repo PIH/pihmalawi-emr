@@ -41,6 +41,9 @@ export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkCompone
 /** The ART patient card, natively: its header sections, regimens, results and ART visits */
 export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
 
+/** Records or edits an ART visit natively */
+export const artVisitWorkspace = getAsyncLifecycle(() => import('./art/art-visit.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

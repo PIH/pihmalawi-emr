@@ -21,13 +21,21 @@ export const purgeEncountersForPatient = async (api: APIRequestContext, patientU
   const { results: encounters } = await encountersRes.json();
 
   for (const encounter of encounters) {
-    const obsRes = await api.get(`obs?encounter=${encounter.uuid}&limit=100`);
+    // Voided obs count too (editing an encounter voids the obs it replaces), and an obs can't be purged while a
+    // group member or newer version still points at it, so purge in passes until none are left.
+    const obsRes = await api.get(`obs?encounter=${encounter.uuid}&includeAll=true&v=custom:(uuid)&limit=100`);
     expect(obsRes.ok()).toBeTruthy();
-    const { results: obs } = await obsRes.json();
-    for (const o of obs) {
-      const delObsRes = await api.delete(`obs/${o.uuid}?purge=true`);
-      expect(delObsRes.ok()).toBeTruthy();
+    let remaining: Array<{ uuid: string }> = (await obsRes.json()).results;
+    for (let pass = 0; remaining.length && pass < 5; pass++) {
+      const failed = [];
+      for (const o of remaining) {
+        if (!(await api.delete(`obs/${o.uuid}?purge=true`)).ok()) {
+          failed.push(o);
+        }
+      }
+      remaining = failed;
     }
+    expect(remaining).toEqual([]);
 
     const delEncRes = await api.delete(`encounter/${encounter.uuid}?purge=true`);
     expect(delEncRes.ok()).toBeTruthy();

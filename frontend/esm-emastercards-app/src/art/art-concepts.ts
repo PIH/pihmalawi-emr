@@ -17,8 +17,11 @@ export const ART_FORMS = {
 
 export type ArtFormKind = keyof typeof ART_FORMS;
 
-/** The provider the HTML forms record (their hidden encounterProvider default) */
-export const DEFAULT_PROVIDER = 'c4f0fc3c-2695-102d-b4c2-001d929acb54';
+/**
+ * The provider the HTML forms record: their hidden encounterProvider default is the person
+ * c4f0fc3c-2695-102d-b4c2-001d929acb54, whose provider UnknownProviderInitializer creates with this fixed uuid
+ */
+export const DEFAULT_PROVIDER = 'provfc3c-2695-102d-b4c2-001d929acb54';
 
 /** The encounter role of that provider; "Unknown" */
 export const ENCOUNTER_ROLE = 'a0b03050-c99b-11e0-9572-0800200c9a66';

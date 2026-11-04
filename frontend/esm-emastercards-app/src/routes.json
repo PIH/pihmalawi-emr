@@ -89,6 +89,11 @@
       "name": "pihmalawi-enrolment-workspace",
       "component": "enrolmentWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-visit-workspace",
+      "component": "artVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [
