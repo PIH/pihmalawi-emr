@@ -5,16 +5,28 @@ import { useTranslation } from 'react-i18next';
 import { Button, ButtonSet, InlineLoading, InlineNotification, Select, SelectItem, TextInput } from '@carbon/react';
 import { useSession, Workspace2 } from '@openmrs/esm-framework';
 import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
-import { type ArtFormKind } from './art-concepts';
 import { type ArtField, formatDay } from './art-fields';
-import { checkDuplicate, sameDayValue } from './art-rules';
-import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounter, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
-import { buildObsPayload, encounterDatetimeFor, type FieldValue, saveArtEncounter } from './obs-diff';
+import { checkDuplicate, type RuleResult, sameDayValue } from './art-rules';
+import {
+  type ArtEncounter,
+  memberValue,
+  obsGroups,
+  obsValue,
+  useArtEncounter,
+  useCardEncounters,
+  useEMastercard,
+  useLocationsTagged,
+  useSameDayObs,
+} from './art.resource';
+import { buildObsPayload, type CardForm, encounterDatetimeFor, type FieldValue, saveEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
 import styles from './art-panel.scss';
 
 interface ArtEncounterPanelProps {
-  kind: ArtFormKind;
+  /** The form whose encounters the panel records and edits */
+  form: CardForm;
+  /** The eMastercard the form belongs to, whose state decides whether the panel can save */
+  cardKey: string;
   patientUuid: string;
   encounterUuid?: string;
   title: { record: string; edit: string };
@@ -25,6 +37,8 @@ interface ArtEncounterPanelProps {
   onFieldChange?: (name: string, values: Record<string, FieldValue>) => Record<string, FieldValue>;
   /** Whether a field is asked, given the other answers */
   isShown?: (field: ArtField, values: Record<string, FieldValue>) => boolean;
+  /** Each field's rule given the answers and the encounter's date; an error blocks saving */
+  rules?: (values: Record<string, FieldValue>, date: string) => Record<string, RuleResult>;
   closeWorkspace: (options?: { discardUnsavedChanges?: boolean }) => void;
 }
 
@@ -43,7 +57,8 @@ function valuesOf(fields: Array<ArtField>, encounter: ArtEncounter | undefined) 
  * new encounter in the chart's O3 visit, or edits one, saving it as the HTML form does
  */
 export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
-  kind,
+  form,
+  cardKey,
   patientUuid,
   encounterUuid,
   title,
@@ -51,14 +66,15 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   taggedLocations,
   onFieldChange = (_, values) => values,
   isShown = () => true,
+  rules = () => ({}),
   closeWorkspace,
 }) => {
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
   const session = useSession();
   const { visitContext } = usePatientChartStore(patientUuid);
-  const { card, systemLocationsTag } = useArtCard(patientUuid);
-  const { encounters, isLoading } = useArtEncounters(patientUuid, kind);
+  const { card, systemLocationsTag } = useEMastercard(patientUuid, cardKey);
+  const { encounters, isLoading } = useCardEncounters(patientUuid, form);
   const locations = useLocationsTagged(taggedLocations ? systemLocationsTag : null);
 
   const { encounter: fetched, isLoading: loadingEncounter } = useArtEncounter(
@@ -109,17 +125,19 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
 
   const readOnly = card?.state !== 'EDIT';
   const shownFields = fields.filter((f) => isShown(f, values));
+  const fieldRules = rules(values, date);
+  const blocked = shownFields.some((f) => fieldRules[f.name]?.level === 'error');
   const duplicate = checkDuplicate(date, encounters.filter((e) => e.uuid !== encounterUuid).map((e) => ({ date: e.encounterDatetime, encounterUuid: e.uuid })), encounterUuid);
 
   const save = async () => {
     setSubmitted(true);
     setError(null);
-    if (duplicate) {
+    if (duplicate || blocked) {
       return;
     }
     setSaving(true);
     try {
-      await saveArtEncounter(kind, {
+      await saveEncounter(form, {
         patientUuid,
         encounterUuid,
         visitUuid: editing ? undefined : visitContext?.uuid,
@@ -140,9 +158,9 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
     <Workspace2 title={heading} hasUnsavedChanges={dirty}>
       <div className={styles.panel}>
         <div className={styles.row}>
-          <TextInput id={`art-${kind}-date`} labelText={t('date', 'Date')} value={formatDay(date)} readOnly />
+          <TextInput id={`card-${form.encounterType}-date`} labelText={t('date', 'Date')} value={formatDay(date)} readOnly />
           <Select
-            id={`art-${kind}-location`}
+            id={`card-${form.encounterType}-location`}
             labelText={t('location', 'Location')}
             value={location}
             disabled={readOnly}
@@ -167,6 +185,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
               value={values[f.name] ?? null}
               reference={references[f.name]}
               readOnly={readOnly}
+              rule={submitted || fieldRules[f.name]?.level === 'warning' ? (fieldRules[f.name] ?? null) : null}
               onChange={(value) => {
                 setValues((v) => onFieldChange(f.name, { ...v, [f.name]: value }));
                 setDirty(true);

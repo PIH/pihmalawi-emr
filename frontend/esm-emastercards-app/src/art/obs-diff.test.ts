@@ -1,5 +1,5 @@
 import { openmrsFetch } from '@openmrs/esm-framework';
-import { buildObsPayload, encounterDatetimeFor, type FieldSpec, saveArtEncounter } from './obs-diff';
+import { buildObsPayload, encounterDatetimeFor, type FieldSpec, saveArtEncounter, saveEncounter } from './obs-diff';
 import { ART_FORMS, DEFAULT_PROVIDER, ENCOUNTER_ROLE } from './art-concepts';
 
 const mockOpenmrsFetch = vi.mocked(openmrsFetch);
@@ -288,5 +288,45 @@ describe('saveArtEncounter', () => {
     ).rejects.toThrow('Invalid obs');
     const deletes = mockOpenmrsFetch.mock.calls.filter(([, init]) => init?.method === 'DELETE').map(([url]) => url);
     expect(deletes).toEqual([expect.stringMatching(/\/obs\/added-1$/)]);
+  });
+});
+
+describe('obs comments', () => {
+  const otherDrugs: FieldSpec = { name: 'otherDrugs', concept: 'c-expose', kind: 'coded', comment: 'otherDrugsComment' };
+
+  it('saves a comment with the value', () => {
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'kachasu' }, [], {})).toEqual({
+      add: [{ concept: 'c-expose', value: 'current', comment: 'kachasu' }],
+      void: [],
+    });
+  });
+
+  it('comment changes replace the obs', () => {
+    const existing = [{ uuid: 'o1', concept: 'c-expose', value: 'current', comment: 'old' }];
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'new' }, existing, {})).toEqual({
+      add: [{ concept: 'c-expose', value: 'current', comment: 'new' }],
+      void: ['o1'],
+    });
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'old' }, existing, {})).toEqual({ add: [], void: [] });
+  });
+
+  it('keeps a comment on a group member', () => {
+    const member: FieldSpec = { ...otherDrugs, group: { concept: 'c-group' } };
+    expect(buildObsPayload([member], { otherDrugs: 'current', otherDrugsComment: 'kachasu' }, [], {})).toEqual({
+      add: [{ concept: 'c-group', groupMembers: [{ concept: 'c-expose', value: 'current', comment: 'kachasu' }] }],
+      void: [],
+    });
+  });
+});
+
+describe('saveEncounter', () => {
+  it('saveEncounter posts the given form', async () => {
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'enc-2' } } as any);
+    await saveEncounter(
+      { encounterType: 'type-x', form: 'form-x' },
+      { patientUuid: 'p1', datetime: '2026-11-04', locationUuid: 'l1', payload: { add: [], void: [] } },
+    );
+    const [, init] = mockOpenmrsFetch.mock.calls[0];
+    expect(init.body).toEqual(expect.objectContaining({ encounterType: 'type-x', form: 'form-x' }));
   });
 });

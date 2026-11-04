@@ -28,7 +28,10 @@ export interface ArtField extends FieldSpec {
   unit?: string;
   /** Future dates allowed (the forms' allowFutureDates) */
   future?: boolean;
-  /** A boolean shown as one checkbox, saved only when ticked (the forms' checkbox style) */
+  /**
+   * A boolean, or a coded question with one answer, shown as one checkbox and saved only when ticked (the forms'
+   * checkbox style)
+   */
   checkbox?: boolean;
   /** A coded question always shown as a dropdown, e.g. one whose answers come from the concept */
   select?: boolean;

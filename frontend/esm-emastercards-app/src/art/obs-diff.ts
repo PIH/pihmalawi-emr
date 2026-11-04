@@ -16,6 +16,14 @@ export interface FieldSpec {
   reference?: 'override' | 'readonly';
   /** The obs group the field belongs to; groups of the same concept are told apart by one member's value */
   group?: { concept: string; match?: { concept: string; value: string } };
+  /** The values key holding this obs's comment, for an answer the forms "specify" in a comment field */
+  comment?: string;
+}
+
+/** A form's encounter type and form, which every encounter it saves carries */
+export interface CardForm {
+  encounterType: string;
+  form: string;
 }
 
 /** An obs already on the encounter; coded values are the answer's uuid */
@@ -23,12 +31,14 @@ export interface ExistingObs {
   uuid: string;
   concept: string;
   value: string | number | boolean | null;
+  comment?: string | null;
   groupMembers?: Array<ExistingObs>;
 }
 
 export interface NewObs {
   concept: string;
   value?: string | number | boolean;
+  comment?: string;
   groupMembers?: Array<NewObs>;
 }
 
@@ -61,6 +71,19 @@ function same(field: FieldSpec, a: unknown, b: unknown) {
   return normalize(field.kind, a) === normalize(field.kind, b);
 }
 
+/** The comment the panel gives a field's obs, if any */
+function commentOf(field: FieldSpec, values: Record<string, FieldValue>): string | undefined {
+  const comment = field.comment ? values[field.comment] : null;
+  return comment === null || comment === undefined || comment === '' ? undefined : String(comment);
+}
+
+const sameComment = (a: string | null | undefined, b: string | undefined) => (a ?? '') === (b ?? '');
+
+/** A new obs of a field, with its comment when it has one */
+function newObs(field: FieldSpec, value: string | number | boolean, comment: string | undefined): NewObs {
+  return { concept: field.concept, value: toObsValue(field, value), ...(comment ? { comment } : {}) };
+}
+
 function toObsValue(field: FieldSpec, value: string | number | boolean): string | number | boolean {
   if (field.kind === 'number') {
     return Number(value);
@@ -87,7 +110,14 @@ function wanted(field: FieldSpec, value: FieldValue, reference: FieldValue, exis
   return { skip: false, value };
 }
 
-function diffField(field: FieldSpec, value: FieldValue, reference: FieldValue, obs: Array<ExistingObs>, out: ObsPayload) {
+function diffField(
+  field: FieldSpec,
+  value: FieldValue,
+  reference: FieldValue,
+  obs: Array<ExistingObs>,
+  out: ObsPayload,
+  comment?: string,
+) {
   const mine = obs.filter((o) => o.concept.toLowerCase() === field.concept.toLowerCase());
   if (field.kind === 'multi') {
     const answers = (Array.isArray(value) ? value : isEmpty(value) ? [] : [String(value)]).map((a) => a.toLowerCase());
@@ -106,11 +136,11 @@ function diffField(field: FieldSpec, value: FieldValue, reference: FieldValue, o
     mine.forEach((o) => out.void.push(o.uuid));
     return;
   }
-  if (current && mine.length === 1 && same(field, current.value, desired)) {
+  if (current && mine.length === 1 && same(field, current.value, desired) && sameComment(current.comment, comment)) {
     return;
   }
   mine.forEach((o) => out.void.push(o.uuid));
-  out.add.push({ concept: field.concept, value: toObsValue(field, desired as string | number | boolean) });
+  out.add.push(newObs(field, desired as string | number | boolean, comment));
 }
 
 function groupKey(field: FieldSpec) {
@@ -141,7 +171,7 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
     existing &&
     fields.every((f) => {
       const member = members.find((m) => m.concept.toLowerCase() === f.concept.toLowerCase());
-      return same(f, member?.value, values[f.name]);
+      return same(f, member?.value, values[f.name]) && (!member || sameComment(member.comment, commentOf(f, values)));
     });
   if (unchanged) {
     return;
@@ -151,12 +181,14 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
   }
   // members the panel doesn't ask about (from older forms, or hidden questions) stay in the group
   const asked = fields.map((f) => f.concept.toLowerCase());
-  const kept = members.filter((m) => !asked.includes(m.concept.toLowerCase())).map((m) => ({ concept: m.concept, value: m.value }));
+  const kept = members
+    .filter((m) => !asked.includes(m.concept.toLowerCase()))
+    .map((m) => ({ concept: m.concept, value: m.value, ...(m.comment ? { comment: m.comment } : {}) }));
   if (filled.length || (existing && kept.length)) {
     out.add.push({
       concept: fields[0].group.concept,
       groupMembers: [
-        ...filled.map((f) => ({ concept: f.concept, value: toObsValue(f, values[f.name] as string | number | boolean) })),
+        ...filled.map((f) => newObs(f, values[f.name] as string | number | boolean, commentOf(f, values))),
         ...kept,
       ],
     });
@@ -180,7 +212,7 @@ export function buildObsPayload(
   const done = new Set<string>();
   fields.forEach((field) => {
     if (!field.group) {
-      diffField(field, values[field.name] ?? null, references[field.name] ?? null, topLevel, out);
+      diffField(field, values[field.name] ?? null, references[field.name] ?? null, topLevel, out, commentOf(field, values));
       return;
     }
     const key = groupKey(field);
@@ -201,22 +233,25 @@ function serverMessage(e: any): string {
   return e?.responseBody?.error?.message ?? e?.message ?? String(e);
 }
 
+export interface SaveArgs {
+  patientUuid: string;
+  encounterUuid?: string;
+  visitUuid?: string;
+  datetime: string;
+  locationUuid: string;
+  payload: ObsPayload;
+}
+
+/** Saves an ART card form's encounter, as saveEncounter does */
+export function saveArtEncounter(kind: ArtFormKind, args: SaveArgs): Promise<{ uuid: string }> {
+  return saveEncounter(ART_FORMS[kind], args);
+}
+
 /**
- * Saves an ART card form's encounter: creates it with the form's encounter type, form and provider, or updates an
+ * Saves a card form's encounter: creates it with the form's encounter type, form and provider, or updates an
  * existing one (setting its form to the current one) by adding and voiding obs
  */
-export async function saveArtEncounter(
-  kind: ArtFormKind,
-  args: {
-    patientUuid: string;
-    encounterUuid?: string;
-    visitUuid?: string;
-    datetime: string;
-    locationUuid: string;
-    payload: ObsPayload;
-  },
-): Promise<{ uuid: string }> {
-  const { encounterType, form } = ART_FORMS[kind];
+export async function saveEncounter({ encounterType, form }: CardForm, args: SaveArgs): Promise<{ uuid: string }> {
   try {
     if (!args.encounterUuid) {
       const res = await openmrsFetch<{ uuid: string }>(`${restBaseUrl}/encounter`, {

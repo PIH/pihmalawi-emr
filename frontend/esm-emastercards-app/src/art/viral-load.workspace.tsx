@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslation } from 'react-i18next';
 import { openmrsFetch, restBaseUrl, type Workspace2DefinitionProps } from '@openmrs/esm-framework';
-import { VIRAL_LOAD } from './art-concepts';
+import { ART_FORMS, VIRAL_LOAD } from './art-concepts';
 import { VIRAL_LOAD_FIELDS } from './art-fields';
 import { clearViralLoadResults } from './art-rules';
 import { ArtEncounterPanel } from './art-encounter-panel';
@@ -43,7 +43,8 @@ const ViralLoadWorkspace: React.FC<Workspace2DefinitionProps<ViralLoadWorkspaceP
 
   return (
     <ArtEncounterPanel
-      kind="viralLoad"
+      form={ART_FORMS.viralLoad}
+      cardKey="art"
       patientUuid={patientUuid}
       encounterUuid={encounterUuid}
       title={{ record: t('recordViralLoad', 'Record viral load'), edit: t('editViralLoad', 'Edit viral load') }}
