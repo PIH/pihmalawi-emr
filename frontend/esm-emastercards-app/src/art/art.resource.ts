@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { fhirBaseUrl, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 import { type EMastercardCard, useEMastercards } from '../emastercards.resource';
 import { ART_FORMS, type ArtFormKind, ART_INITIAL, ART_VISIT, VIRAL_LOAD } from './art-concepts';
-import { type CardForm, type ExistingObs, type FieldValue } from './obs-diff';
+import { type CardForm, type ExistingObs, type FieldSpec, type FieldValue } from './obs-diff';
 import { MH_VISIT } from '../mental-health/mh-concepts';
 
 /** An obs of an ART encounter; coded values are the answer's uuid, booleans true or false */
@@ -150,6 +150,35 @@ export function obsGroups(encounter: ArtEncounter | null | undefined, concept: s
 /** A group's member value */
 export function memberValue(group: ArtObs | undefined, concept: string): FieldValue {
   return (group?.groupMembers?.find((m) => m.concept === concept.toLowerCase())?.value as FieldValue) ?? null;
+}
+
+/**
+ * A panel's fields as an encounter holds them: group members from the group the field belongs to (told apart by
+ * its matching answer, when the form has several groups of one concept), and each comment under its own key
+ */
+export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounter | null | undefined): Record<string, FieldValue> {
+  const values: Record<string, FieldValue> = {};
+  fields.forEach((f) => {
+    let found: Array<ArtObs>;
+    if (f.group) {
+      const { match } = f.group;
+      const group = obsGroups(encounter, f.group.concept).find(
+        (g) =>
+          !match ||
+          g.groupMembers.some(
+            (m) => m.concept === match.concept.toLowerCase() && String(m.value).toLowerCase() === match.value.toLowerCase(),
+          ),
+      );
+      found = (group?.groupMembers ?? []).filter((m) => m.concept === f.concept.toLowerCase());
+    } else {
+      found = (encounter?.obs ?? []).filter((o) => o.concept === f.concept.toLowerCase() && !o.groupMembers);
+    }
+    values[f.name] = f.kind === 'multi' ? found.map((o) => String(o.value)) : ((found[0]?.value as FieldValue) ?? null);
+    if (f.comment) {
+      values[f.comment] = found[0]?.comment ?? null;
+    }
+  });
+  return values;
 }
 
 export interface SameDayObs {

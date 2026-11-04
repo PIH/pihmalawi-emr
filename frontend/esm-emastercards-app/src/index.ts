@@ -2,6 +2,7 @@ import { defineConfigSchema, getAsyncLifecycle, getSyncLifecycle } from '@openmr
 import emastercardsDashboardLinkComponent from './dashboard/emastercards-dashboard-link.component';
 import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-link.component';
 import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
+import mentalHealthDashboardLinkComponent from './mental-health/mental-health-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -37,6 +38,13 @@ export const enrolmentsDashboard = getAsyncLifecycle(() => import('./enrolments/
 export const enrolmentWorkspace = getAsyncLifecycle(() => import('./enrolments/enrolment.workspace'), options);
 
 export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkComponent, options);
+
+export const mentalHealthDashboardLink = getSyncLifecycle(mentalHealthDashboardLinkComponent, options);
+
+export const mentalHealthDashboard = getAsyncLifecycle(
+  () => import('./mental-health/mental-health-dashboard.component'),
+  options,
+);
 
 /** The ART patient card, natively: its header sections, regimens, results and ART visits */
 export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);

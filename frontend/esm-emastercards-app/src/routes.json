@@ -59,6 +59,24 @@
       }
     },
     {
+      "name": "mental-health-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "mentalHealthDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-mental-health-dashboard-slot",
+        "path": "mentalHealth"
+      },
+      "order": 9
+    },
+    {
+      "name": "mental-health-dashboard",
+      "slot": "pihmalawi-mental-health-dashboard-slot",
+      "component": "mentalHealthDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
       "name": "pihmalawi-vitals-header",
       "slot": "patient-info-slot",
       "component": "vitalsHeaderOnSomePages"
