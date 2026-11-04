@@ -8,10 +8,7 @@ import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
 import { type ArtField, formatDay } from './art-fields';
 import { checkDuplicate, type RuleResult, sameDayValue } from './art-rules';
 import {
-  type ArtEncounter,
-  memberValue,
-  obsGroups,
-  obsValue,
+  encounterValues,
   useArtEncounter,
   useCardEncounters,
   useEMastercard,
@@ -40,16 +37,6 @@ interface ArtEncounterPanelProps {
   /** Each field's rule given the answers and the encounter's date; an error blocks saving */
   rules?: (values: Record<string, FieldValue>, date: string) => Record<string, RuleResult>;
   closeWorkspace: (options?: { discardUnsavedChanges?: boolean }) => void;
-}
-
-function valuesOf(fields: Array<ArtField>, encounter: ArtEncounter | undefined) {
-  const values: Record<string, FieldValue> = {};
-  fields.forEach((f) => {
-    values[f.name] = f.group
-      ? memberValue(obsGroups(encounter, f.group.concept)[0], f.concept)
-      : obsValue(encounter, f.concept, f.kind === 'multi');
-  });
-  return values;
 }
 
 /**
@@ -102,7 +89,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const ready = !isLoading && !loadingEncounter && !loadingSameDay && (!encounterUuid || editing);
   useEffect(() => {
     if (ready && !values) {
-      setValues(valuesOf(fields, editing));
+      setValues(encounterValues(fields, editing));
       setLocation(editing?.location?.uuid ?? session?.sessionLocation?.uuid ?? '');
     }
   }, [ready, values, fields, editing, session]);

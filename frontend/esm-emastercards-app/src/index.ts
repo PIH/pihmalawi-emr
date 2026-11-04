@@ -65,6 +65,8 @@ export const mhHeaderWorkspace = getAsyncLifecycle(() => import('./mental-health
 
 export const mhVisitWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-visit.workspace'), options);
 
+export const mhScreeningWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-screening.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

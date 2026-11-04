@@ -137,6 +137,11 @@
       "name": "pihmalawi-mh-visit-workspace",
       "component": "mhVisitWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-mh-screening-workspace",
+      "component": "mhScreeningWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [
