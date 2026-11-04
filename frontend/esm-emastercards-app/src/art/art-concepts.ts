@@ -23,7 +23,7 @@ export type ArtFormKind = keyof typeof ART_FORMS;
  */
 export const DEFAULT_PROVIDER = 'provfc3c-2695-102d-b4c2-001d929acb54';
 
-/** The encounter role of that provider; "Unknown" */
+/** The encounter role the HTML forms record that provider with, "Unknown" (checked by art-data-shape.spec.ts) */
 export const ENCOUNTER_ROLE = 'a0b03050-c99b-11e0-9572-0800200c9a66';
 
 export const YES = '65576354-977f-11e1-8993-905e29aff6c1';
