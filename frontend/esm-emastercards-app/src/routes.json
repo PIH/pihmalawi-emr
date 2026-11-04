@@ -94,6 +94,11 @@
       "name": "pihmalawi-art-visit-workspace",
       "component": "artVisitWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-initial-workspace",
+      "component": "artInitialWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

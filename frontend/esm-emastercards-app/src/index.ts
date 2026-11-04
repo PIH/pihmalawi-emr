@@ -44,6 +44,9 @@ export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-d
 /** Records or edits an ART visit natively */
 export const artVisitWorkspace = getAsyncLifecycle(() => import('./art/art-visit.workspace'), options);
 
+/** Edits a section of the ART card header (its ART initial encounter) natively */
+export const artInitialWorkspace = getAsyncLifecycle(() => import('./art/art-initial.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),
