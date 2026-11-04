@@ -126,4 +126,13 @@ test.describe('eMastercards REST endpoint', () => {
     expect(mentalHealth?.state).toBe('EDIT');
     await expectSameAsLegacy(page, api, eligibleMentalHealthPatient.uuid);
   });
+  test('returns the system locations tag', async ({ api, eligibleHivArtPatient }) => {
+    const setting = await api.get('systemsetting?q=pihmalawi.systemLocationsTag&v=custom:(value)');
+    expect(setting.ok()).toBeTruthy();
+    const expected = (await setting.json()).results[0]?.value ?? null;
+
+    const res = await api.get(`pihmalawi/emastercards?patient=${eligibleHivArtPatient.uuid}`);
+    expect(res.ok()).toBeTruthy();
+    expect((await res.json()).systemLocationsTag).toBe(expected);
+  });
 });

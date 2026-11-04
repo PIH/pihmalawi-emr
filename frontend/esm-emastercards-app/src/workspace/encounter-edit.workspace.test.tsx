@@ -40,7 +40,7 @@ describe('EncounterEditWorkspace', () => {
   });
 
   function withCards(...cards) {
-    mockUseEMastercards.mockReturnValue({ cards, isLoading: false, error: undefined, mutate: vi.fn() });
+    mockUseEMastercards.mockReturnValue({ systemLocationsTag: null, cards, isLoading: false, error: undefined, mutate: vi.fn() });
   }
 
   it("opens the encounter's eMastercard", async () => {

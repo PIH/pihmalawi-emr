@@ -28,11 +28,21 @@ export function emastercardsUrl(patientUuid: string) {
 }
 
 export function useEMastercards(patientUuid: string) {
-  const { data, error, isLoading, mutate } = useSWR<{ data: { results: Array<EMastercardCard> } }, Error>(
+  const { data, error, isLoading, mutate } = useSWR<
+    { data: { results: Array<EMastercardCard>; systemLocationsTag?: string | null } },
+    Error
+  >(
     patientUuid ? emastercardsUrl(patientUuid) : null,
     openmrsFetch,
   );
-  return { cards: data?.data?.results ?? [], error, isLoading, mutate };
+  return {
+    cards: data?.data?.results ?? [],
+    /** The tag on the locations Neno forms may be recorded at (the pihmalawi.systemLocationsTag global property) */
+    systemLocationsTag: data?.data?.systemLocationsTag ?? null,
+    error,
+    isLoading,
+    mutate,
+  };
 }
 
 /**
