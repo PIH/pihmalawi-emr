@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Button, TextInput } from '@carbon/react';
+import { navigate } from '@openmrs/esm-framework';
 import { type EMastercardCard, launchFlowsheet } from '../emastercards.resource';
 import { visitDetails } from './visit-details';
 import styles from './emastercards.scss';
@@ -24,6 +25,33 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
           {card.message}
           {readonlyNote}
         </span>
+      </div>
+    );
+  }
+
+  // The ART card is kept natively in O3, on the HIV care page; its legacy flowsheet stays reachable for the pilot
+  if (card.key === 'art') {
+    return (
+      <div className={styles.row}>
+        <Button
+          kind="ghost"
+          size="sm"
+          onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/hivCare` })}
+        >
+          {t('openHivCare', 'Open HIV care')}
+        </Button>
+        <span className={styles.details}>
+          {card.created ? visitDetails(card) : null}
+          {readonlyNote}
+        </span>
+        <Button
+          kind="ghost"
+          size="sm"
+          onClick={() => launchFlowsheet(card, patientUuid, card.state === 'CREATE' ? { encounterDate } : {})}
+        >
+          {t('openLegacyCard', 'Open legacy card')}
+        </Button>
+        {card.state === 'VIEW' && card.message ? <span className={styles.note}>{card.message}</span> : null}
       </div>
     );
   }

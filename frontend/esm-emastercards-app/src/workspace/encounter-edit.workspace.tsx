@@ -5,6 +5,12 @@ import { Button, InlineLoading, InlineNotification, Link } from '@carbon/react';
 import { openmrsFetch, restBaseUrl, type Workspace2DefinitionProps, Workspace2 } from '@openmrs/esm-framework';
 import { type EMastercardCard, flowsheetUrl, useEMastercards } from '../emastercards.resource';
 import { findCardsForEncounter } from './find-cards-for-encounter';
+import { artPanelForEncounter } from '../art/art-panel-for-encounter';
+import { INITIAL_SECTIONS, type InitialSection } from '../art/art-fields';
+import ArtVisitWorkspace from '../art/art-visit.workspace';
+import ArtInitialWorkspace from '../art/art-initial.workspace';
+import ViralLoadWorkspace from '../art/viral-load.workspace';
+import FollowUpTestingWorkspace from '../art/follow-up-testing.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -24,12 +30,14 @@ interface Encounter {
 }
 
 /**
- * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: Malawi encounters are
- * edited in the eMastercard they belong to, so this opens that eMastercard's flowsheet
+ * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART card encounters are
+ * edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<
   Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>
-> = ({ closeWorkspace, workspaceProps: { encounterUuid }, groupProps }) => {
+> = (props) => {
+  const { closeWorkspace, workspaceProps: { encounterUuid }, groupProps } = props;
   const { t } = useTranslation();
   const patientUuid = groupProps?.patientUuid;
   const { data: encounter, error: encounterError } = useSWR(
@@ -40,6 +48,37 @@ const EncounterEditWorkspace: React.FC<
   const [chosen, setChosen] = useState<EMastercardCard | null>(null);
   const [dirty, setDirty] = useState(false);
   const close = () => closeWorkspace({ discardUnsavedChanges: true });
+
+  const [section, setSection] = useState<InitialSection | null>(null);
+  const artPanel = encounter ? artPanelForEncounter(encounter) : null;
+
+  if (artPanel && patientUuid) {
+    const panelProps = { ...props, workspaceProps: { patientUuid, encounterUuid } };
+    if (artPanel === 'visit') {
+      return <ArtVisitWorkspace {...panelProps} />;
+    }
+    if (artPanel === 'viralLoad') {
+      return <ViralLoadWorkspace {...panelProps} />;
+    }
+    if (artPanel === 'followUpTesting') {
+      return <FollowUpTestingWorkspace {...panelProps} />;
+    }
+    if (section) {
+      return <ArtInitialWorkspace {...props} workspaceProps={{ patientUuid, section }} />;
+    }
+    return (
+      <Workspace2 title={t('artCardHeader', 'ART card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseHeaderSection', 'Which part of the ART card header should open?')}</p>
+          {(Object.keys(INITIAL_SECTIONS) as Array<InitialSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setSection(key)}>
+              {t(`section_${key}`, INITIAL_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   const matches = encounter ? findCardsForEncounter(encounter, cards) : [];
   const selected = chosen ?? (matches.length === 1 ? matches[0] : null);
