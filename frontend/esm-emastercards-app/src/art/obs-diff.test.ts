@@ -135,6 +135,23 @@ describe('buildObsPayload', () => {
     expect(payload.add).toHaveLength(1);
   });
 
+  it('keeps members of a replaced group that the panel does not ask about', () => {
+    const existing = [
+      {
+        uuid: 'g-ctx',
+        concept: 'c-group',
+        value: null,
+        groupMembers: [
+          { uuid: 'm3', concept: 'c-status', value: 'ctx' },
+          { uuid: 'm4', concept: 'c-amount', value: 60 },
+          { uuid: 'm5', concept: 'c-old-form-note', value: 'kept' },
+        ],
+      },
+    ];
+    const payload = buildObsPayload([ctxStatus, ctxPills], { ctxStatus: 'ctx', ctxPills: 90 }, existing, {});
+    expect(payload.add[0].groupMembers).toContainEqual({ concept: 'c-old-form-note', value: 'kept' });
+  });
+
   it('voids a group whose members were all cleared', () => {
     const existing = [
       {
@@ -212,7 +229,7 @@ describe('saveArtEncounter', () => {
       { form: ART_FORMS.visit.form, location: 'l1' },
     ]);
     expect(calls[1]).toEqual([
-      expect.stringMatching(/\/obs$/),
+      expect.stringMatching(/\/obs\?v=custom:\(uuid\)$/),
       'POST',
       {
         person: 'p1',
@@ -237,5 +254,39 @@ describe('saveArtEncounter', () => {
         payload: { add: [], void: [] },
       }),
     ).rejects.toThrow('Invalid location');
+  });
+
+  it('gives the members of a group added while editing their person, date, location and encounter', async () => {
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'new-obs' } } as any);
+    await saveArtEncounter('viralLoad', {
+      patientUuid: 'p1',
+      encounterUuid: 'enc-1',
+      datetime: '2026-11-04T09:15:00.000+0200',
+      locationUuid: 'l1',
+      payload: { add: [{ concept: 'c-group', groupMembers: [{ concept: 'c-result', value: 1234 }] }], void: ['g-old'] },
+    });
+    const [, init] = mockOpenmrsFetch.mock.calls.find(([url]) => /\/obs\?/.test(url));
+    expect((init.body as any).groupMembers).toEqual([
+      { concept: 'c-result', value: 1234, person: 'p1', obsDatetime: '2026-11-04T09:15:00.000+0200', location: 'l1', encounter: 'enc-1' },
+    ]);
+  });
+
+  it('undoes the obs it added when a later step of an edit fails, and voids nothing', async () => {
+    mockOpenmrsFetch
+      .mockResolvedValueOnce({ data: { uuid: 'enc-1' } } as any)
+      .mockResolvedValueOnce({ data: { uuid: 'added-1' } } as any)
+      .mockRejectedValueOnce({ responseBody: { error: { message: 'Invalid obs' } } })
+      .mockResolvedValue({ data: {} } as any);
+    await expect(
+      saveArtEncounter('visit', {
+        patientUuid: 'p1',
+        encounterUuid: 'enc-1',
+        datetime: '2026-11-04',
+        locationUuid: 'l1',
+        payload: { add: [{ concept: 'c-a', value: 1 }, { concept: 'c-b', value: 2 }], void: ['old-a'] },
+      }),
+    ).rejects.toThrow('Invalid obs');
+    const deletes = mockOpenmrsFetch.mock.calls.filter(([, init]) => init?.method === 'DELETE').map(([url]) => url);
+    expect(deletes).toEqual([expect.stringMatching(/\/obs\/added-1$/)]);
   });
 });

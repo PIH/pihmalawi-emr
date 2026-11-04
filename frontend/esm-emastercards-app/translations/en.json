@@ -70,6 +70,7 @@
   "loading": "Loading...",
   "location": "Location",
   "muac": "MUAC",
+  "multipleHeaders": "Multiple ART eMastercard forms found",
   "nextAppointment": "Next appointment",
   "no": "No",
   "noArtCard": "This patient has no ART patient card.",

@@ -69,7 +69,7 @@ export function useArtEncounters(patientUuid: string, kind: ArtFormKind) {
     patientUuid ? [artSwrKey(patientUuid), kind] : null,
     async () => {
       const res = await openmrsFetch<{ results: Array<Omit<ArtEncounter, 'obs'> & { obs: Array<RestObs> }> }>(
-        `${restBaseUrl}/encounter?patient=${patientUuid}&encounterType=${encounterType}&v=${encounterRep}&limit=100`,
+        `${restBaseUrl}/encounter?patient=${patientUuid}&encounterType=${encounterType}&v=${encounterRep}&order=desc&limit=100`,
       );
       return (res.data?.results ?? [])
         .map((e) => ({ ...e, obs: (e.obs ?? []).map(toArtObs) }))
@@ -77,6 +77,20 @@ export function useArtEncounters(patientUuid: string, kind: ArtFormKind) {
     },
   );
   return { encounters: data ?? [], error, isLoading, mutate };
+}
+
+/** One ART encounter by uuid, for editing one older than those useArtEncounters lists */
+export function useArtEncounter(patientUuid: string, encounterUuid: string | undefined) {
+  const { data, isLoading } = useSWR(
+    patientUuid && encounterUuid ? [artSwrKey(patientUuid), 'encounter', encounterUuid] : null,
+    async () => {
+      const res = await openmrsFetch<Omit<ArtEncounter, 'obs'> & { obs: Array<RestObs> }>(
+        `${restBaseUrl}/encounter/${encounterUuid}?v=${encounterRep}`,
+      );
+      return { ...res.data, obs: (res.data?.obs ?? []).map(toArtObs) } as ArtEncounter;
+    },
+  );
+  return { encounter: data, isLoading };
 }
 
 /** The patient's ART eMastercard, as the eMastercards endpoint gives it, or null when they have none */

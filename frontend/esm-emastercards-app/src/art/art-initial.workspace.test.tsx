@@ -156,4 +156,22 @@ describe('ArtInitialWorkspace', () => {
       expect.stringContaining('patient/p1/edit'),
     );
   });
+
+  it('refuses dates in the future where the form does', async () => {
+    setUp();
+    renderPanel('status');
+    fireEvent.change(screen.getByLabelText('CD4 date'), { target: { value: '2099-01-01' } });
+    await save();
+    expect(screen.getByText('Cannot be in the future')).toBeInTheDocument();
+    expect(mockSave).not.toHaveBeenCalled();
+  });
+
+  it('edits the one header there is even when the card does not name it yet', async () => {
+    setUp({ state: 'CREATE' });
+    vi.mocked(useArtCard).mockReturnValue({ card: card({ state: 'CREATE', initialEncounterUuid: null }), systemLocationsTag: 'Upper Neno', isLoading: false, error: undefined });
+    renderPanel('confirmatoryTest');
+    fireEvent.change(screen.getByLabelText('Link ID / HTC serial no.'), { target: { value: 'HTC-2' } });
+    await save();
+    expect(mockSave.mock.calls[0][1].encounterUuid).toBe(initial.uuid);
+  });
 });

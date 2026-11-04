@@ -149,10 +149,16 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
   if (existing) {
     out.void.push(existing.uuid);
   }
-  if (filled.length) {
+  // members the panel doesn't ask about (from older forms, or hidden questions) stay in the group
+  const asked = fields.map((f) => f.concept.toLowerCase());
+  const kept = members.filter((m) => !asked.includes(m.concept.toLowerCase())).map((m) => ({ concept: m.concept, value: m.value }));
+  if (filled.length || (existing && kept.length)) {
     out.add.push({
       concept: fields[0].group.concept,
-      groupMembers: filled.map((f) => ({ concept: f.concept, value: toObsValue(f, values[f.name] as string | number | boolean) })),
+      groupMembers: [
+        ...filled.map((f) => ({ concept: f.concept, value: toObsValue(f, values[f.name] as string | number | boolean) })),
+        ...kept,
+      ],
     });
   }
 }
@@ -234,18 +240,34 @@ export async function saveArtEncounter(
       headers: { 'Content-Type': 'application/json' },
       body: { form, location: args.locationUuid },
     });
-    for (const obs of args.payload.add) {
-      await openmrsFetch(`${restBaseUrl}/obs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          person: args.patientUuid,
-          encounter: args.encounterUuid,
-          obsDatetime: args.datetime,
-          location: args.locationUuid,
-          ...obs,
-        },
-      });
+    // Adds first, undone if any fails, so a failed edit leaves the encounter as it was; voids only once all are in
+    const context = {
+      person: args.patientUuid,
+      encounter: args.encounterUuid,
+      obsDatetime: args.datetime,
+      location: args.locationUuid,
+    };
+    const added: Array<string> = [];
+    try {
+      for (const obs of args.payload.add) {
+        // only the uuid back: REST fails converting a new obs group's full representation
+        const res = await openmrsFetch<{ uuid: string }>(`${restBaseUrl}/obs?v=custom:(uuid)`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: {
+            ...context,
+            ...obs,
+            // REST gives group members none of these itself
+            ...(obs.groupMembers ? { groupMembers: obs.groupMembers.map((m) => ({ ...m, ...context })) } : {}),
+          },
+        });
+        added.push(res.data?.uuid);
+      }
+    } catch (e) {
+      for (const uuid of added.filter(Boolean)) {
+        await openmrsFetch(`${restBaseUrl}/obs/${uuid}`, { method: 'DELETE' }).catch(() => undefined);
+      }
+      throw e;
     }
     for (const uuid of args.payload.void) {
       await openmrsFetch(`${restBaseUrl}/obs/${uuid}`, { method: 'DELETE' });

@@ -92,4 +92,25 @@ test.describe('ART tests recorded in O3', () => {
     await page.waitForLoadState('networkidle');
     await expect(page.locator('.visit-table-row').filter({ hasText: '543' })).toBeVisible();
   });
+
+  test('adds a result to a viral load test in O3 by editing it', async ({ page, api, eligibleHivArtPatient }) => {
+    await openHivCare(page, eligibleHivArtPatient.uuid);
+    await page.getByRole('button', { name: 'Record viral load' }).click();
+    await page.getByText('Bled', { exact: true }).click();
+    await page.getByLabel('Sample ID').fill('S-E2E-2');
+    await page.getByRole('button', { name: 'Save and close' }).click();
+
+    const results = page.getByRole('region', { name: 'Viral load and CD4' });
+    await expect(results.getByText('No result')).toBeVisible();
+    await results.getByRole('button', { name: 'Edit' }).first().click();
+    await page.getByLabel('Viral load', { exact: true }).fill('4321');
+    await page.getByRole('button', { name: 'Save and close' }).click();
+
+    await expect(page.getByRole('region', { name: 'HIV at a glance' }).getByText('4321')).toBeVisible();
+    const [saved] = await encounters(api, eligibleHivArtPatient.uuid, VIRAL_LOAD_ENCOUNTER_TYPE_UUID);
+    const res = await api.get(`encounter/${saved.uuid}?v=custom:(obs:(groupMembers:(display,encounter:(uuid))))`);
+    const members = (await res.json()).obs.flatMap((o) => o.groupMembers ?? []);
+    expect(members.map((m) => m.encounter?.uuid)).toEqual(members.map(() => saved.uuid));
+    expect(members.map((m) => m.display).join(' ')).toContain('S-E2E-2');
+  });
 });

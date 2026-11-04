@@ -61,7 +61,10 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
   const { title, fields: allFields } = INITIAL_SECTIONS[section];
   const female = patient?.gender === 'female';
   const fields = allFields.filter((f) => female || !f.femaleOnly);
-  const encounter = encounters.find((e) => e.uuid === card?.initialEncounterUuid);
+  // the card's header, or the only one there is (the card may not have been refreshed since it was created)
+  const encounter =
+    encounters.find((e) => e.uuid === card?.initialEncounterUuid) ?? (encounters.length === 1 ? encounters[0] : undefined);
+  const unknownHeaders = encounters.length > 1 && !encounter;
 
   const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
   const headerDay = encounter ? dayjs(encounter.encounterDatetime).format('YYYY-MM-DD') : date;
@@ -95,11 +98,11 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
     setLocation(encounter?.location?.uuid ?? session?.sessionLocation?.uuid ?? '');
   }, [ready, values, fields, encounter, session]);
 
-  if (card?.state === 'UNAVAILABLE') {
+  if (card?.state === 'UNAVAILABLE' || unknownHeaders) {
     return (
       <Workspace2 title={t(`section_${section}`, title)}>
         <div className={styles.panel}>
-          <InlineNotification kind="warning" lowContrast hideCloseButton title={card.message ?? t('noArtCard', 'This patient has no ART patient card.')} />
+          <InlineNotification kind="warning" lowContrast hideCloseButton title={card?.message ?? t('multipleHeaders', 'Multiple ART eMastercard forms found')} />
         </div>
       </Workspace2>
     );
@@ -113,10 +116,18 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
   }
 
   const readOnly = card.state !== 'EDIT' && card.state !== 'CREATE';
-  const requiredRule = (f: ArtField): RuleResult =>
-    f.required && (values[f.name] === null || values[f.name] === undefined || values[f.name] === '')
-      ? { level: 'error', message: 'Required' }
-      : null;
+  const today = dayjs().format('YYYY-MM-DD');
+  const requiredRule = (f: ArtField): RuleResult => {
+    const value = values[f.name];
+    if (f.required && (value === null || value === undefined || value === '')) {
+      return { level: 'error', message: 'Required' };
+    }
+    // the forms refuse future dates unless allowFutureDates
+    if (f.kind === 'date' && !f.future && value && String(value).slice(0, 10) > today) {
+      return { level: 'error', message: 'Cannot be in the future' };
+    }
+    return null;
+  };
 
   const save = async () => {
     setSubmitted(true);

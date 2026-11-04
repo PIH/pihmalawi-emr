@@ -8,7 +8,7 @@ import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
 import { type ArtFormKind } from './art-concepts';
 import { type ArtField, formatDay } from './art-fields';
 import { checkDuplicate, sameDayValue } from './art-rules';
-import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
+import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounter, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
 import { buildObsPayload, encounterDatetimeFor, type FieldValue, saveArtEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
 import styles from './art-panel.scss';
@@ -61,7 +61,11 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const { encounters, isLoading } = useArtEncounters(patientUuid, kind);
   const locations = useLocationsTagged(taggedLocations ? systemLocationsTag : null);
 
-  const editing = encounterUuid ? encounters.find((e) => e.uuid === encounterUuid) : undefined;
+  const { encounter: fetched, isLoading: loadingEncounter } = useArtEncounter(
+    patientUuid,
+    encounterUuid && !encounters.some((e) => e.uuid === encounterUuid) ? encounterUuid : undefined,
+  );
+  const editing = encounterUuid ? (encounters.find((e) => e.uuid === encounterUuid) ?? fetched) : undefined;
   const date = editing?.encounterDatetime ?? (visitContext ? encounterDatetimeFor(visitContext) : null);
   const day = date ? dayjs(date).format('YYYY-MM-DD') : null;
   const referenceFields = fields.filter((f) => f.reference);
@@ -79,7 +83,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = !isLoading && !loadingSameDay && (!encounterUuid || editing);
+  const ready = !isLoading && !loadingEncounter && !loadingSameDay && (!encounterUuid || editing);
   useEffect(() => {
     if (ready && !values) {
       setValues(valuesOf(fields, editing));

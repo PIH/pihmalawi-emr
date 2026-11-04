@@ -32,6 +32,7 @@ import {
   obsGroups,
   obsValue,
   useArtCard,
+  useArtEncounter,
   useArtEncounters,
   useLocationsTagged,
   useSameDayObs,
@@ -84,7 +85,11 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
   const { encounters: visits, isLoading } = useArtEncounters(patientUuid, 'visit');
   const locations = useLocationsTagged(systemLocationsTag);
 
-  const editing = encounterUuid ? visits.find((v) => v.uuid === encounterUuid) : undefined;
+  const { encounter: fetched, isLoading: loadingEncounter } = useArtEncounter(
+    patientUuid,
+    encounterUuid && !visits.some((e) => e.uuid === encounterUuid) ? encounterUuid : undefined,
+  );
+  const editing = encounterUuid ? (visits.find((e) => e.uuid === encounterUuid) ?? fetched) : undefined;
   const visitDate = editing?.encounterDatetime ?? (visitContext ? encounterDatetimeFor(visitContext) : null);
   const visitDay = visitDate ? day(visitDate) : null;
   const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(
@@ -107,7 +112,7 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = !isLoading && !loadingSameDay && (!encounterUuid || editing);
+  const ready = !isLoading && !loadingEncounter && !loadingSameDay && (!encounterUuid || editing);
   useEffect(() => {
     if (!ready || values) {
       return;
