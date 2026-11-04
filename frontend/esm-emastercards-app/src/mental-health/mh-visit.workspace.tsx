@@ -3,11 +3,11 @@ import dayjs from 'dayjs';
 import { useSWRConfig } from 'swr';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonSet, InlineLoading, InlineNotification, RadioButton, RadioButtonGroup, Select, SelectItem, TextInput } from '@carbon/react';
-import { useSession, type Workspace2DefinitionProps, Workspace2 } from '@openmrs/esm-framework';
+import { usePatient, useSession, type Workspace2DefinitionProps, Workspace2 } from '@openmrs/esm-framework';
 import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
 import { type ArtField, formatDay } from '../art/art-fields';
-import { checkDuplicate, checkHeightWeight, checkNextAppointment, type RuleResult, sameDayValue } from '../art/art-rules';
-import { encounterValues, useArtEncounter, useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from '../art/art.resource';
+import { checkDuplicate, checkHeightHistory, checkHeightWeight, checkNextAppointment, type RuleResult, sameDayValue } from '../art/art-rules';
+import { encounterValues, obsValue, useArtEncounter, useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from '../art/art.resource';
 import { buildObsPayload, encounterDatetimeFor, type FieldValue, saveEncounter } from '../art/obs-diff';
 import { ArtFieldInput } from '../art/fields';
 import { MH_CARD_KEY, MH_FORMS, MH_VISIT } from './mh-concepts';
@@ -54,6 +54,7 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
   const session = useSession();
+  const { patient } = usePatient(patientUuid);
   const { visitContext } = usePatientChartStore(patientUuid);
   const { card, systemLocationsTag } = useEMastercard(patientUuid, MH_CARD_KEY);
   const { encounters: visits, isLoading } = useCardEncounters(patientUuid, MH_FORMS.visit);
@@ -127,7 +128,20 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
   };
   const nextRule = checkNextAppointment(values.nextAppointment as string, visitDate);
   const duplicateRule = checkDuplicate(visitDate, others.map((v) => ({ date: v.encounterDatetime, encounterUuid: v.uuid })), encounterUuid);
-  const heightRule: RuleResult = values.height !== null || values.weight !== null ? checkHeightWeight(num('height'), num('weight')) : null;
+  const birthDate = patient?.birthDate;
+  // the flowsheet's height checks, only for a height or weight the clinician entered here
+  const heightRule: RuleResult =
+    values.height !== null || values.weight !== null
+      ? (checkHeightWeight(num('height'), num('weight')) ??
+        checkHeightHistory(
+          values.height === null ? null : Number(values.height),
+          birthDate ? dayjs(visitDate).diff(dayjs(birthDate), 'year') : 99,
+          others
+            .filter((v) => obsValue(v, MH_VISIT.height) !== null)
+            .map((v) => ({ height: Number(obsValue(v, MH_VISIT.height)), date: v.encounterDatetime })),
+          visitDate,
+        ))
+      : null;
 
   const save = async () => {
     setSubmitted(true);
@@ -192,8 +206,8 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
         <section className={styles.section}>
           <h4 className={styles.sectionTitle}>{t('visit', 'Visit')}</h4>
           <div className={styles.row}>
-            {field(F.height)}
-            {field(F.weight, heightRule)}
+            {field(F.height, heightRule)}
+            {field(F.weight)}
             {field(F.phq9Score)}
           </div>
         </section>

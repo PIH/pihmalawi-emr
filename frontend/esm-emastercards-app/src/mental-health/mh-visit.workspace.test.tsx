@@ -167,6 +167,14 @@ describe('MhVisitWorkspace', () => {
     expect(screen.getByLabelText('Next appointment *')).toHaveValue('');
   });
 
+  it('warns when an adult height is far from earlier ones', async () => {
+    const heights = [160, 161, 160].map((h, i) => ({ ...mhVisit(`h${i}`, `2026-0${i + 1}-10`, {}), obs: [{ uuid: `ho${i}`, concept: MH_VISIT.height, value: h, obsDatetime: '2026-01-10' }] }));
+    setUp({ encounters: heights as Array<ArtEncounter> });
+    renderPanel();
+    fireEvent.change(screen.getByLabelText('Height'), { target: { value: '150' } });
+    expect(await screen.findByText('Adult height is an outlier please check!')).toBeInTheDocument();
+  });
+
   it('is read-only unless the card can be edited', () => {
     setUp({ state: 'VIEW' });
     renderPanel('v1');
