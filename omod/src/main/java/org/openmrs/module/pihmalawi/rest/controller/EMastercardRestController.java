@@ -2,12 +2,14 @@ package org.openmrs.module.pihmalawi.rest.controller;
 
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.pihmalawi.emastercard.EMastercard;
 import org.openmrs.module.pihmalawi.emastercard.EMastercardAccess;
 import org.openmrs.module.pihmalawi.emastercard.EMastercardFormIndex;
 import org.openmrs.module.pihmalawi.emastercard.EMastercardService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.util.PrivilegeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,9 @@ public class EMastercardRestController {
 	public static final String PIHMALAWI = "/pihmalawi";
 	public static final String EMASTERCARDS = "/emastercards";
 
+	/** Tags the locations the ART forms (and other Neno forms) may be recorded at */
+	public static final String SYSTEM_LOCATIONS_TAG = "pihmalawi.systemLocationsTag";
+
 	@Autowired
 	private PatientService patientService;
 
@@ -56,7 +61,8 @@ public class EMastercardRestController {
 				results.add(toSimpleObject(access));
 			}
 		}
-		return new ResponseEntity<SimpleObject>(new SimpleObject().add("results", results), HttpStatus.OK);
+		SimpleObject body = new SimpleObject().add("results", results).add("systemLocationsTag", systemLocationsTag());
+		return new ResponseEntity<SimpleObject>(body, HttpStatus.OK);
 	}
 
 	private SimpleObject toSimpleObject(EMastercardAccess access) {
@@ -77,6 +83,16 @@ public class EMastercardRestController {
 		ret.add("formUuids", emastercardFormIndex.formUuidsFor(m));
 		ret.add("encounterTypeUuids", new ArrayList<String>(emastercardFormIndex.encounterTypeUuidsFor(m)));
 		return ret;
+	}
+
+	private String systemLocationsTag() {
+		try {
+			Context.addProxyPrivilege(PrivilegeConstants.GET_GLOBAL_PROPERTIES);
+			return Context.getAdministrationService().getGlobalProperty(SYSTEM_LOCATIONS_TAG);
+		}
+		finally {
+			Context.removeProxyPrivilege(PrivilegeConstants.GET_GLOBAL_PROPERTIES);
+		}
 	}
 
 	private String format(Date date) {

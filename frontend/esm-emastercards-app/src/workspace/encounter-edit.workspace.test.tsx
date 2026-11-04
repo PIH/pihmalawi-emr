@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { openmrsFetch } from '@openmrs/esm-framework';
 import { card } from '../test-cards';
 import { useEMastercards } from '../emastercards.resource';
+import { ART_FORMS } from '../art/art-concepts';
 import EncounterEditWorkspace from './encounter-edit.workspace';
 
 vi.mock('../emastercards.resource', async (importOriginal) => ({
@@ -11,15 +12,22 @@ vi.mock('../emastercards.resource', async (importOriginal) => ({
   useEMastercards: vi.fn(),
 }));
 
+vi.mock('../art/art-visit.workspace', () => ({
+  default: ({ workspaceProps }) => <p>Native ART visit panel for {workspaceProps.encounterUuid}</p>,
+}));
+vi.mock('../art/art-initial.workspace', () => ({
+  default: ({ workspaceProps }) => <p>Native card header panel: {workspaceProps.section}</p>,
+}));
+
 const mockUseEMastercards = vi.mocked(useEMastercards);
 const mockOpenmrsFetch = vi.mocked(openmrsFetch);
 
 const SHARED_FORM = 'aaaaaaaa-0000-0000-0000-000000000001';
 
-function renderWorkspace() {
+function renderWorkspace(encounterUuid = 'encounter-uuid') {
   return render(
     <EncounterEditWorkspace
-      workspaceProps={{ form: { uuid: SHARED_FORM }, encounterUuid: 'encounter-uuid' }}
+      workspaceProps={{ form: { uuid: SHARED_FORM }, encounterUuid }}
       groupProps={{ patientUuid: 'patient-uuid' }}
       windowProps={null}
       closeWorkspace={vi.fn()}
@@ -40,7 +48,7 @@ describe('EncounterEditWorkspace', () => {
   });
 
   function withCards(...cards) {
-    mockUseEMastercards.mockReturnValue({ cards, isLoading: false, error: undefined, mutate: vi.fn() });
+    mockUseEMastercards.mockReturnValue({ systemLocationsTag: null, cards, isLoading: false, error: undefined, mutate: vi.fn() });
   }
 
   it("opens the encounter's eMastercard", async () => {
@@ -72,5 +80,25 @@ describe('EncounterEditWorkspace', () => {
       'href',
       expect.stringContaining('patientDashboard.form?patientId=patient-uuid'),
     );
+  });
+
+  it('encounter-edit opens the native ART panel for ART encounter types and the flowsheet for others', async () => {
+    withCards(card({ key: 'art', state: 'EDIT' }));
+    mockOpenmrsFetch.mockResolvedValue({
+      data: { uuid: 'art-visit-uuid', form: { uuid: 'z-deprecated-form' }, encounterType: { uuid: ART_FORMS.visit.encounterType } },
+    } as any);
+    renderWorkspace('art-visit-uuid');
+    expect(await screen.findByText('Native ART visit panel for art-visit-uuid')).toBeInTheDocument();
+    expect(screen.queryByTitle('ART eMastercard')).not.toBeInTheDocument();
+  });
+
+  it('asks which part of the card header to edit for an ART initial encounter', async () => {
+    withCards(card({ key: 'art', state: 'EDIT' }));
+    mockOpenmrsFetch.mockResolvedValue({
+      data: { uuid: 'art-initial-uuid', form: null, encounterType: { uuid: ART_FORMS.initial.encounterType } },
+    } as any);
+    renderWorkspace('art-initial-uuid');
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirmatory HIV test' }));
+    expect(screen.getByText('Native card header panel: confirmatoryTest')).toBeInTheDocument();
   });
 });

@@ -26,7 +26,9 @@ test.describe('eMastercards in the O3 patient chart', () => {
   }) => {
     await page.goto(`spa/patient/${eligibleHivArtPatient.uuid}/chart/eMastercards`);
     const art = page.getByRole('region', { name: 'ART Patient Card' });
-    await art.getByRole('button', { name: 'Create new ART eMastercard' }).click();
+    // The ART card is kept on the HIV care page; its legacy flowsheet is still reachable from here
+    await expect(art.getByRole('button', { name: 'Open HIV care' })).toBeVisible();
+    await art.getByRole('button', { name: 'Open legacy card' }).click();
 
     const flowsheet = page.frameLocator('iframe[title="ART eMastercard"]');
     await expect(flowsheet.locator('#back-link')).toBeAttached();
@@ -50,7 +52,7 @@ test.describe('eMastercards in the O3 patient chart', () => {
     await flowsheet.locator('#back-link').click();
 
     await expect(page.locator('iframe[title="ART eMastercard"]')).toHaveCount(0);
-    await expect(art.getByRole('button', { name: 'Edit ART eMastercard' })).toBeVisible();
+    await expect(art.getByRole('button', { name: 'Open HIV care' })).toBeVisible();
     await expect(art.getByText('Created: 05-Jan-2026, Visited: no, Appointment: none')).toBeVisible();
   });
 

@@ -1,0 +1,76 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-06;
+  padding: layout.$spacing-05;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-05;
+}
+
+.sectionTitle {
+  @include type.type-style('heading-compact-02');
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: layout.$spacing-05;
+}
+
+.fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.legend {
+  @include type.type-style('label-01');
+  color: $text-02;
+  margin-bottom: layout.$spacing-03;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: layout.$spacing-02 layout.$spacing-05;
+}
+
+.therapy {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) minmax(8rem, 1fr);
+  align-items: end;
+  gap: layout.$spacing-05;
+}
+
+.hint {
+  @include type.type-style('helper-text-01');
+  color: $text-02;
+}
+
+.error {
+  @include type.type-style('helper-text-01');
+  color: $danger;
+}
+
+.warning {
+  @include type.type-style('helper-text-01');
+  color: $text-02;
+}
+
+.clear {
+  @include type.type-style('label-01');
+  background: none;
+  border: 0;
+  color: $interactive-01;
+  cursor: pointer;
+  padding: 0;
+  margin-top: layout.$spacing-02;
+}

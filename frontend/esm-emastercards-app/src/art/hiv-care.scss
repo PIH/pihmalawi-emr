@@ -1,0 +1,198 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-05;
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-02;
+}
+
+.eyebrow {
+  @include type.type-style('label-01');
+  color: $text-02;
+}
+
+.title {
+  @include type.type-style('heading-04');
+}
+
+.description {
+  @include type.type-style('body-compact-01');
+  color: $text-02;
+}
+
+.headlines {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1px;
+  background-color: $ui-03;
+  border: 1px solid $ui-03;
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-02;
+  padding: layout.$spacing-05;
+  background-color: $ui-02;
+}
+
+.label,
+.detail,
+.due {
+  @include type.type-style('label-01');
+  color: $text-02;
+}
+
+.due {
+  color: $danger;
+  font-weight: 600;
+}
+
+.value {
+  @include type.type-style('heading-03');
+  font-weight: 600;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: layout.$spacing-05;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-03;
+  min-width: 0;
+  padding: layout.$spacing-05;
+  background-color: $ui-02;
+  border: 1px solid $ui-03;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+  min-height: layout.$spacing-07;
+  padding-bottom: layout.$spacing-03;
+  border-bottom: 1px solid $ui-03;
+}
+
+.cardTitle {
+  @include type.type-style('heading-compact-02');
+}
+
+.subtitle {
+  @include type.type-style('label-01');
+  margin-top: layout.$spacing-03;
+  color: $text-02;
+  text-transform: uppercase;
+  letter-spacing: 0.32px;
+}
+
+// each label and value on its own row, a thin rule under each
+.fields {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  @include type.type-style('body-compact-01');
+
+  dt,
+  dd {
+    padding: layout.$spacing-03 0;
+    border-bottom: 1px solid $ui-03;
+  }
+
+  dt {
+    padding-right: layout.$spacing-04;
+    color: $text-02;
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: layout.$spacing-03;
+  }
+
+  > :nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+.history {
+  @include type.type-style('body-compact-01');
+  display: flex;
+  flex-direction: column;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: layout.$spacing-04;
+    padding: layout.$spacing-03 0;
+    border-bottom: 1px solid $ui-03;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  b {
+    font-weight: 600;
+  }
+}
+
+.historyDate {
+  flex: 0 0 7rem;
+  color: $text-02;
+}
+
+.historyRegimen {
+  flex-grow: 1;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: layout.$spacing-03;
+  padding-top: layout.$spacing-03;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  td {
+    background-color: $ui-02;
+    border-bottom: 1px solid $ui-03;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.empty {
+  @include type.type-style('body-compact-01');
+  padding: layout.$spacing-03 0;
+  color: $text-02;
+}

@@ -42,7 +42,8 @@ test.describe('Enrolments tab in the O3 patient chart', () => {
   test('sits between Visits and Programs in the left navigation', async ({ page, eligibleHivArtPatient }) => {
     await page.goto(`spa/patient/${eligibleHivArtPatient.uuid}/chart`);
     const links = page.getByRole('navigation', { name: 'Left navigation' }).getByRole('link');
-    await expect(links).toHaveText(['Patient summary', 'eMastercards', 'Vitals & Biometrics', 'Visits', 'Enrolments', 'Programs']);
+    // HIV care shows for patients with an ART patient card, which this one has
+    await expect(links).toHaveText(['Patient summary', 'eMastercards', 'Vitals & Biometrics', 'Visits', 'Enrolments', 'HIV care', 'Programs']);
   });
 
   test('enrolling in two Chronic Care conditions makes both their eMastercards available', async ({

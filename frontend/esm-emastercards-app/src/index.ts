@@ -1,6 +1,7 @@
 import { defineConfigSchema, getAsyncLifecycle, getSyncLifecycle } from '@openmrs/esm-framework';
 import emastercardsDashboardLinkComponent from './dashboard/emastercards-dashboard-link.component';
 import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-link.component';
+import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -34,6 +35,23 @@ export const enrolmentsDashboard = getAsyncLifecycle(() => import('./enrolments/
 
 /** Enrolls, changes state or exits, for the Enrolments page's program cards */
 export const enrolmentWorkspace = getAsyncLifecycle(() => import('./enrolments/enrolment.workspace'), options);
+
+export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkComponent, options);
+
+/** The ART patient card, natively: its header sections, regimens, results and ART visits */
+export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
+
+/** Records or edits an ART visit natively */
+export const artVisitWorkspace = getAsyncLifecycle(() => import('./art/art-visit.workspace'), options);
+
+/** Edits a section of the ART card header (its ART initial encounter) natively */
+export const artInitialWorkspace = getAsyncLifecycle(() => import('./art/art-initial.workspace'), options);
+
+/** Records or edits a viral load test natively */
+export const viralLoadWorkspace = getAsyncLifecycle(() => import('./art/viral-load.workspace'), options);
+
+/** Records or edits ART follow-up tests natively */
+export const followUpTestingWorkspace = getAsyncLifecycle(() => import('./art/follow-up-testing.workspace'), options);
 
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(

@@ -41,6 +41,24 @@
       }
     },
     {
+      "name": "hiv-care-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "hivCareDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-hiv-care-dashboard-slot",
+        "path": "hivCare"
+      },
+      "order": 8
+    },
+    {
+      "name": "hiv-care-dashboard",
+      "slot": "pihmalawi-hiv-care-dashboard-slot",
+      "component": "hivCareDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
       "name": "pihmalawi-vitals-header",
       "slot": "patient-info-slot",
       "component": "vitalsHeaderOnSomePages"
@@ -70,6 +88,26 @@
     {
       "name": "pihmalawi-enrolment-workspace",
       "component": "enrolmentWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-visit-workspace",
+      "component": "artVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-initial-workspace",
+      "component": "artInitialWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-viral-load-workspace",
+      "component": "viralLoadWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-follow-up-testing-workspace",
+      "component": "followUpTestingWorkspace",
       "window": "pihmalawi-emastercard-window"
     }
   ],

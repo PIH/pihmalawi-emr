@@ -14,6 +14,7 @@ const mockUseEMastercards = vi.mocked(useEMastercards);
 describe('EMastercardsDashboard', () => {
   it('lists the cards under their groups, in the order the server gives them', () => {
     mockUseEMastercards.mockReturnValue({
+      systemLocationsTag: null,
       cards: [
         card({ key: 'art' }),
         card({ key: 'htn-dm', group: 'Chronic Care Record', label: 'Hypertension and Diabetes eMastercard' }),
@@ -36,7 +37,7 @@ describe('EMastercardsDashboard', () => {
   });
 
   it('says when the cards could not be loaded', () => {
-    mockUseEMastercards.mockReturnValue({ cards: [], isLoading: false, error: new Error('nope'), mutate: vi.fn() });
+    mockUseEMastercards.mockReturnValue({ systemLocationsTag: null, cards: [], isLoading: false, error: new Error('nope'), mutate: vi.fn() });
 
     render(<EMastercardsDashboard patientUuid="patient-uuid" />);
 
