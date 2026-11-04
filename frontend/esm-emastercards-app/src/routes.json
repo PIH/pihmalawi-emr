@@ -41,6 +41,24 @@
       }
     },
     {
+      "name": "hiv-care-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "hivCareDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-hiv-care-dashboard-slot",
+        "path": "hivCare"
+      },
+      "order": 8
+    },
+    {
+      "name": "hiv-care-dashboard",
+      "slot": "pihmalawi-hiv-care-dashboard-slot",
+      "component": "hivCareDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
       "name": "pihmalawi-vitals-header",
       "slot": "patient-info-slot",
       "component": "vitalsHeaderOnSomePages"

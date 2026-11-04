@@ -1,6 +1,7 @@
 import { defineConfigSchema, getAsyncLifecycle, getSyncLifecycle } from '@openmrs/esm-framework';
 import emastercardsDashboardLinkComponent from './dashboard/emastercards-dashboard-link.component';
 import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-link.component';
+import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -34,6 +35,11 @@ export const enrolmentsDashboard = getAsyncLifecycle(() => import('./enrolments/
 
 /** Enrolls, changes state or exits, for the Enrolments page's program cards */
 export const enrolmentWorkspace = getAsyncLifecycle(() => import('./enrolments/enrolment.workspace'), options);
+
+export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkComponent, options);
+
+/** The ART patient card, natively: its header sections, regimens, results and ART visits */
+export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
 
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
