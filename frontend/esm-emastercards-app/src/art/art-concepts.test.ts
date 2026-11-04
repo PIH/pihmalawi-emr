@@ -23,6 +23,15 @@ describe('ART concepts', () => {
     expect(REGIMENS[43].label).toBe('Non Standard');
   });
 
+  it("each regimen names its drugs as the concept's name does", () => {
+    const drugs = (label: string) => REGIMENS.find((r) => r.label === label).drugs;
+    expect(drugs('13A')).toBe('TDF/3TC/DTG');
+    expect(drugs('0A')).toBe('ABC/3TC + NVP');
+    expect(drugs('1A')).toBe('d4T/3TC/NVP');
+    expect(drugs('9PP')).toBe('ABC 120/3TC 60 + LPV/r 100/25');
+    expect(drugs('Non Standard')).toBeNull();
+  });
+
   it('every concept constant is a UUID', () => {
     const values = [ART_FORMS, ART_VISIT, ART_INITIAL, VIRAL_LOAD, FOLLOW_UP_TESTING].flatMap(allValues);
     expect(values.length).toBeGreaterThan(60);

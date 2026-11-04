@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -10,18 +11,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tag,
 } from '@carbon/react';
-import { ART_VISIT, FOLLOW_UP_TESTING, VIRAL_LOAD } from './art-concepts';
+import { ART_CARD_VERSION, ART_INITIAL, ART_VISIT, FOLLOW_UP_TESTING, REGIMENS, VIRAL_LOAD } from './art-concepts';
 import {
   ART_VISIT_FIELDS,
   type ArtField,
   displayValue,
+  FOLLOW_UP_FIELDS,
   formatDay,
   INITIAL_SECTIONS,
   type InitialSection,
   PREVENTIVE_THERAPIES,
-  REGIMEN_OPTIONS,
+  VIRAL_LOAD_FIELDS,
 } from './art-fields';
+import { viralLoadDue } from './art-rules';
 import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters } from './art.resource';
 import { launchArtPanel, useLaunchArtPanel } from './launch-art-panel';
 import styles from './hiv-care.scss';
@@ -30,8 +34,15 @@ interface HivCareDashboardProps {
   patientUuid: string;
 }
 
-const regimenLabel = (uuid: unknown) =>
-  REGIMEN_OPTIONS.find((o) => o.value.toLowerCase() === String(uuid ?? '').toLowerCase())?.label ?? null;
+const regimenOf = (uuid: unknown) => REGIMENS.find((r) => r.uuid.toLowerCase() === String(uuid ?? '').toLowerCase()) ?? null;
+
+/** A regimen with its drugs, e.g. 13A · TDF/3TC/DTG */
+const regimenText = (uuid: unknown) => {
+  const regimen = regimenOf(uuid);
+  return regimen ? [regimen.label, regimen.drugs].filter(Boolean).join(' · ') : null;
+};
+
+const number = (value: unknown) => Number(value).toLocaleString('en');
 
 /** The current regimen and the day of the first visit of its latest unbroken run */
 function currentRegimen(visits: Array<ArtEncounter>) {
@@ -47,22 +58,32 @@ function currentRegimen(visits: Array<ArtEncounter>) {
     }
     since = visit;
   }
-  return { label: regimenLabel(current), since: since.encounterDatetime };
+  return { regimen: regimenOf(current), since: since.encounterDatetime };
 }
 
 /** The visits at which the regimen changed (the first visit counting as one), newest first */
 function regimenChanges(visits: Array<ArtEncounter>) {
   const oldestFirst = [...visits].reverse().filter((v) => obsValue(v, ART_VISIT.artRegimen));
-  const changes: Array<{ date: string; label: string }> = [];
+  const changes: Array<{ date: string; regimen: (typeof REGIMENS)[number] | null }> = [];
   let previous: unknown = null;
   oldestFirst.forEach((v) => {
     const regimen = obsValue(v, ART_VISIT.artRegimen);
     if (regimen !== previous) {
-      changes.push({ date: v.encounterDatetime, label: regimenLabel(regimen) });
+      changes.push({ date: v.encounterDatetime, regimen: regimenOf(regimen) });
       previous = regimen;
     }
   });
   return changes.reverse();
+}
+
+/**
+ * When the patient started their current ART line, as far as the card says: the latest start date of the header's
+ * regimens, else the first ART visit with a regimen, else the card's date
+ */
+function lineStart(initial: ArtEncounter | null, visits: Array<ArtEncounter>): string | null {
+  const starts = ART_INITIAL.regimens.map((slot) => obsValue(initial, slot.startDate) as string | null).filter(Boolean).sort();
+  const firstVisit = [...visits].reverse().find((v) => obsValue(v, ART_VISIT.artRegimen));
+  return starts.pop() ?? firstVisit?.encounterDatetime ?? initial?.encounterDatetime ?? null;
 }
 
 /** A viral load test's result as the card writes it: the number, "<" a limit, or LDL */
@@ -78,6 +99,65 @@ function viralLoadResult(encounter: ArtEncounter): string | null {
     return `<${lessThan}`;
   }
   return numeric !== null ? String(numeric) : null;
+}
+
+interface TestRow {
+  key: string;
+  encounter: ArtEncounter;
+  kind: 'viralLoad' | 'followUpTesting';
+  test: string;
+  result: string;
+  reason: string;
+}
+
+const field = (fields: Array<ArtField>, name: string) => fields.find((f) => f.name === name);
+
+/** The viral load and follow-up test results, one row a test, newest first */
+function testRows(viralLoads: Array<ArtEncounter>, followUps: Array<ArtEncounter>, t: (key: string, fallback: string) => string): Array<TestRow> {
+  const vlRows: Array<TestRow> = viralLoads.map((e) => {
+    const group = obsGroups(e, VIRAL_LOAD.group)[0];
+    const result = viralLoadResult(e);
+    const noResult = displayValue(field(VIRAL_LOAD_FIELDS, 'noResultReason'), memberValue(group, VIRAL_LOAD.noResultReason));
+    return {
+      key: e.uuid,
+      encounter: e,
+      kind: 'viralLoad',
+      test: t('viralLoad', 'Viral load'),
+      result:
+        result === null
+          ? [t('noResult', 'No result'), noResult && `(${noResult})`].filter(Boolean).join(' ')
+          : result === 'LDL'
+            ? result
+            : `${result.startsWith('<') ? `<${number(result.slice(1))}` : number(result)} copies/mL`,
+      reason: displayValue(field(VIRAL_LOAD_FIELDS, 'testingReason'), memberValue(group, VIRAL_LOAD.testingReason)) ?? '–',
+    };
+  });
+  const fuRows: Array<TestRow> = followUps.flatMap((e) => {
+    const glucose = obsGroups(e, FOLLOW_UP_TESTING.glucoseGroup)[0];
+    const glucoseType = displayValue(field(FOLLOW_UP_FIELDS, 'glucoseTestType'), memberValue(glucose, FOLLOW_UP_TESTING.glucoseTestType));
+    const results = [
+      { name: 'cd4Count', test: t('cd4Count', 'CD4 count'), value: obsValue(e, FOLLOW_UP_TESTING.cd4Count), unit: 'cells/µL' },
+      { name: 'cd4Percent', test: t('cd4Percent', 'CD4 %'), value: obsValue(e, FOLLOW_UP_TESTING.cd4Percent), unit: '%' },
+      { name: 'phq9Score', test: t('phq9Score', 'PHQ-9 score'), value: obsValue(e, FOLLOW_UP_TESTING.phq9Score), unit: null },
+      {
+        name: 'serumGlucose',
+        test: [t('serumGlucose', 'Serum glucose'), glucoseType && `(${glucoseType.toLowerCase()})`].filter(Boolean).join(' '),
+        value: memberValue(glucose, FOLLOW_UP_TESTING.serumGlucose),
+        unit: 'mg/dL',
+      },
+    ].filter((r) => r.value !== null);
+    const rows = results.length ? results : [{ name: 'none', test: t('followUpTests', 'Follow-up tests'), value: null, unit: null }];
+    return rows.map((r) => ({
+      key: `${e.uuid}-${r.name}`,
+      encounter: e,
+      kind: 'followUpTesting' as const,
+      test: r.test,
+      result: r.value === null ? '–' : [number(r.value), r.unit].filter(Boolean).join(' '),
+      reason: '–',
+    }));
+  });
+  // sort is stable: on the same day, viral loads come first
+  return [...vlRows, ...fuRows].sort((a, b) => dayjs(b.encounter.encounterDatetime).diff(a.encounter.encounterDatetime));
 }
 
 function visitColumns(t: (key: string, fallback: string) => string) {
@@ -132,17 +212,22 @@ function visitCells(v: ArtEncounter): Record<string, string | null> {
   };
 }
 
-const Headline: React.FC<{ label: string; value: string | null; detail?: string | null }> = ({ label, value, detail }) => (
+const Headline: React.FC<{ label: string; value: string | null; detail?: string | null; alert?: boolean }> = ({
+  label,
+  value,
+  detail,
+  alert,
+}) => (
   <div className={styles.headline}>
     <span className={styles.label}>{label}</span>
     <span className={styles.value}>{value ?? '–'}</span>
-    {detail && <span className={styles.detail}>{detail}</span>}
+    {detail && <span className={alert ? styles.due : styles.detail}>{detail}</span>}
   </div>
 );
 
 /**
  * The ART patient card, natively in O3: the headline numbers, the card header's sections, the regimen history,
- * the viral load and CD4 results and the ART visits, each edited in its own side panel
+ * the viral load and follow-up test results and the ART visits, each edited in its own side panel
  */
 const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
@@ -164,7 +249,10 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
   if (!card || card.state === 'UNAVAILABLE') {
     return (
       <div className={styles.page}>
-        <h3 className={styles.title}>{t('hivCare', 'HIV care')}</h3>
+        <div className={styles.heading}>
+          <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
+          <h3 className={styles.title}>{t('hivCare', 'HIV care')}</h3>
+        </div>
         <InlineNotification
           kind="warning"
           lowContrast
@@ -182,6 +270,28 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
   const latestVisit = visits[0];
   const latestViralLoad = viralLoads.map((e) => ({ e, result: viralLoadResult(e) })).find((x) => x.result);
   const latestCd4 = followUps.find((e) => obsValue(e, FOLLOW_UP_TESTING.cd4Count) !== null);
+  const vlDue =
+    card.state !== 'VIEW' &&
+    viralLoadDue({
+      lineStart: lineStart(initial, visits),
+      lastViralLoad: viralLoads[0]?.encounterDatetime ?? null,
+      today: dayjs().format('YYYY-MM-DD'),
+    });
+  const latestVlDate = latestViralLoad ? formatDay(latestViralLoad.e.encounterDatetime) : null;
+  const tbStatus = displayValue(ART_VISIT_FIELDS.tbStatus, obsValue(latestVisit, ART_VISIT.tbStatus));
+  const nextAppointment = formatDay(obsValue(latestVisit, ART_VISIT.nextAppointment) as string);
+  const cardDescription = [
+    t('artPatientCard', 'ART patient card'),
+    t('cardVersion', 'version {{version}}', { version: ART_CARD_VERSION }),
+    initial &&
+      (initial.location?.display
+        ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date: formatDay(initial.encounterDatetime), location: initial.location.display })
+        : t('enrolled', 'enrolled {{date}}', { date: formatDay(initial.encounterDatetime) })),
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const tests = testRows(viralLoads, followUps, t);
+  const changes = regimenChanges(visits);
   const columns = visitColumns(t);
 
   const editButton = (onClick: () => void) =>
@@ -199,6 +309,10 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
 
   const section = (key: InitialSection, extra?: React.ReactNode) => {
     const { title, fields } = INITIAL_SECTIONS[key];
+    const shown = fields
+      .filter((f) => !f.name.endsWith('Start'))
+      .map((f) => ({ f, value: displayValue(f, obsValue(initial, f.concept, f.kind === 'multi')) }))
+      .filter((x) => x.value !== null);
     return (
       <section aria-label={title} className={styles.card}>
         <div className={styles.cardHeader}>
@@ -206,19 +320,14 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
           {editButton(() => launchArtPanel('initial', { patientUuid, section: key }))}
         </div>
         <dl className={styles.fields}>
-          {fields
-            .filter((f) => !f.name.endsWith('Start'))
-            .map((f) => {
-              const value = displayValue(f, obsValue(initial, f.concept, f.kind === 'multi'));
-              return value === null ? null : (
-                <React.Fragment key={f.name}>
-                  <dt>{f.label}</dt>
-                  <dd>{value}</dd>
-                </React.Fragment>
-              );
-            })}
+          {shown.map(({ f, value }) => (
+            <React.Fragment key={f.name}>
+              <dt>{f.label}</dt>
+              <dd>{value}</dd>
+            </React.Fragment>
+          ))}
         </dl>
-        {!initial && <p className={styles.empty}>{t('notRecorded', 'Not recorded yet')}</p>}
+        {!shown.length && <p className={styles.empty}>{t('notRecorded', 'Not recorded yet')}</p>}
         {extra}
       </section>
     );
@@ -227,9 +336,10 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
-        <div>
+        <div className={styles.heading}>
+          <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
           <h3 className={styles.title}>{t('hivCare', 'HIV care')}</h3>
-          <span className={styles.detail}>{card.label}</span>
+          <span className={styles.description}>{cardDescription}</span>
         </div>
         {recordButton(t('recordArtVisit', 'Record ART visit'), () => launchNew('visit'), 'primary')}
       </div>
@@ -254,27 +364,33 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
       <section aria-label={t('hivAtAGlance', 'HIV at a glance')} className={styles.headlines}>
         <Headline
           label={t('currentRegimen', 'Current regimen')}
-          value={regimen?.label ?? null}
-          detail={regimen ? t('since', 'since {{date}}', { date: formatDay(regimen.since) }) : null}
+          value={regimen?.regimen?.label ?? null}
+          detail={
+            regimen
+              ? [regimen.regimen?.drugs, t('since', 'since {{date}}', { date: formatDay(regimen.since) })].filter(Boolean).join(' · ')
+              : null
+          }
         />
         <Headline
           label={t('viralLoad', 'Viral load')}
           value={latestViralLoad?.result ?? null}
-          detail={latestViralLoad ? formatDay(latestViralLoad.e.encounterDatetime) : null}
+          detail={vlDue ? [latestVlDate, t('dueNow', 'due now')].filter(Boolean).join(' · ') : latestVlDate}
+          alert={vlDue}
         />
         <Headline
           label={t('cd4Count', 'CD4 count')}
           value={latestCd4 ? String(obsValue(latestCd4, FOLLOW_UP_TESTING.cd4Count)) : null}
-          detail={latestCd4 ? formatDay(latestCd4.encounterDatetime) : null}
+          detail={latestCd4 ? `cells/µL · ${formatDay(latestCd4.encounterDatetime)}` : null}
         />
         <Headline
           label={t('tbStatus', 'TB status')}
-          value={displayValue(ART_VISIT_FIELDS.tbStatus, obsValue(latestVisit, ART_VISIT.tbStatus))}
-          detail={latestVisit ? formatDay(latestVisit.encounterDatetime) : null}
+          value={tbStatus}
+          detail={tbStatus ? t('screened', 'Screened {{date}}', { date: formatDay(latestVisit.encounterDatetime) }) : null}
         />
         <Headline
           label={t('nextAppointment', 'Next appointment')}
-          value={formatDay(obsValue(latestVisit, ART_VISIT.nextAppointment) as string)}
+          value={nextAppointment}
+          detail={nextAppointment ? t('booked', 'Booked {{date}}', { date: formatDay(latestVisit.encounterDatetime) }) : null}
         />
       </section>
 
@@ -290,10 +406,11 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
             <h4 className={styles.cardTitle}>{t('regimenHistory', 'ART regimen history')}</h4>
             {editButton(() => launchArtPanel('initial', { patientUuid, section: 'regimens' }))}
           </div>
+          <h5 className={styles.subtitle}>{t('atInitiation', 'At initiation')}</h5>
           <dl className={styles.fields}>
             {[0, 1, 2].map((i) => {
               const [slot, start] = INITIAL_SECTIONS.regimens.fields.slice(i * 2, i * 2 + 2);
-              const label = regimenLabel(obsValue(initial, slot.concept));
+              const label = regimenText(obsValue(initial, slot.concept));
               const since = formatDay(obsValue(initial, start.concept) as string);
               return (
                 <React.Fragment key={slot.name}>
@@ -304,42 +421,56 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
             })}
           </dl>
           <h5 className={styles.subtitle}>{t('regimenChanges', 'Changes at ART visits')}</h5>
-          <ol className={styles.list}>
-            {regimenChanges(visits).map((c) => (
-              <li key={c.date}>{`${formatDay(c.date)}: ${c.label}`}</li>
+          <ol className={styles.history}>
+            {changes.map((c, i) => (
+              <li key={c.date}>
+                <span className={styles.historyDate}>{formatDay(c.date)}</span>
+                <span className={styles.historyRegimen}>
+                  <b>{c.regimen?.label ?? '–'}</b>
+                  {c.regimen?.drugs && <span>{` · ${c.regimen.drugs}`}</span>}
+                </span>
+                {i === 0 && (
+                  <Tag type="green" size="sm">
+                    {t('current', 'Current')}
+                  </Tag>
+                )}
+              </li>
             ))}
           </ol>
+          {!changes.length && <p className={styles.empty}>{t('noArtVisits', 'No ART visits recorded yet')}</p>}
         </section>
 
-        <section aria-label={t('viralLoadAndCd4', 'Viral load and CD4')} className={styles.card}>
+        <section aria-label={t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')} className={styles.card}>
           <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('viralLoadAndCd4', 'Viral load and CD4')}</h4>
+            <h4 className={styles.cardTitle}>{t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')}</h4>
           </div>
-          <dl className={styles.fields}>
-            {viralLoads.map((e) => (
-              <React.Fragment key={e.uuid}>
-                <dt>{`${formatDay(e.encounterDatetime)} · ${t('viralLoad', 'Viral load')}`}</dt>
-                <dd>
-                  {viralLoadResult(e) ?? t('noResult', 'No result')}
-                  {editButton(() => launchArtPanel('viralLoad', { patientUuid, encounterUuid: e.uuid }))}
-                </dd>
-              </React.Fragment>
-            ))}
-            {followUps.map((e) => (
-              <React.Fragment key={e.uuid}>
-                <dt>{`${formatDay(e.encounterDatetime)} · ${t('followUpTests', 'Follow-up tests')}`}</dt>
-                <dd>
-                  {[
-                    obsValue(e, FOLLOW_UP_TESTING.cd4Count) !== null && `CD4 ${obsValue(e, FOLLOW_UP_TESTING.cd4Count)}`,
-                    obsValue(e, FOLLOW_UP_TESTING.phq9Score) !== null && `PHQ-9 ${obsValue(e, FOLLOW_UP_TESTING.phq9Score)}`,
-                  ]
-                    .filter(Boolean)
-                    .join(' · ') || '–'}
-                  {editButton(() => launchArtPanel('followUpTesting', { patientUuid, encounterUuid: e.uuid }))}
-                </dd>
-              </React.Fragment>
-            ))}
-          </dl>
+          <div className={styles.tableWrapper}>
+            <Table aria-label={t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')} size="sm">
+              <TableHead>
+                <TableRow>
+                  <TableHeader>{t('date', 'Date')}</TableHeader>
+                  <TableHeader>{t('test', 'Test')}</TableHeader>
+                  <TableHeader>{t('result', 'Result')}</TableHeader>
+                  <TableHeader>{t('reason', 'Reason')}</TableHeader>
+                  {canEdit && <TableHeader aria-label={t('actions', 'Actions')} />}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tests.map((r) => (
+                  <TableRow key={r.key}>
+                    <TableCell>{formatDay(r.encounter.encounterDatetime)}</TableCell>
+                    <TableCell>{r.test}</TableCell>
+                    <TableCell>{r.result}</TableCell>
+                    <TableCell>{r.reason}</TableCell>
+                    {canEdit && (
+                      <TableCell>{editButton(() => launchArtPanel(r.kind, { patientUuid, encounterUuid: r.encounter.uuid }))}</TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          {!tests.length && <p className={styles.empty}>{t('noTests', 'No viral loads or follow-up tests recorded yet')}</p>}
           <div className={styles.actions}>
             {recordButton(t('recordViralLoad', 'Record viral load'), () => launchNew('viralLoad'))}
             {recordButton(t('recordFollowUpTests', 'Record follow-up tests'), () => launchNew('followUpTesting'))}
@@ -348,9 +479,11 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
       </div>
 
       <section aria-label={t('artVisits', 'ART visits')} className={styles.card}>
-        <h4 className={styles.cardTitle}>{t('artVisits', 'ART visits')}</h4>
+        <div className={styles.cardHeader}>
+          <h4 className={styles.cardTitle}>{t('artVisits', 'ART visits')}</h4>
+        </div>
         <div className={styles.tableWrapper}>
-          <Table aria-label={t('artVisits', 'ART visits')} size="sm" useZebraStyles>
+          <Table aria-label={t('artVisits', 'ART visits')} size="sm">
             <TableHead>
               <TableRow>
                 {columns.map((c) => (

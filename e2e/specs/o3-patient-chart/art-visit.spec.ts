@@ -141,4 +141,20 @@ test.describe('ART visit recorded in O3', () => {
     await openLegacyCard(page, eligibleHivArtPatient.uuid);
     await expect(legacyVisitRow(page)).toContainText('60');
   });
+
+  test('Record ART visit opens a blank ART visit, even while an earlier one is open for editing', async ({
+    page,
+    eligibleHivArtPatient,
+  }) => {
+    await recordArtVisitInO3(page, eligibleHivArtPatient.uuid);
+
+    await visitsTable(page).getByRole('row').filter({ hasText: '13A' }).getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByLabel('Pill count')).toHaveValue('4');
+    await page.getByRole('button', { name: 'Record ART visit' }).click();
+
+    await expect(page.getByText('Record ART visit', { exact: true }).last()).toBeVisible();
+    await expect(page.getByLabel('Pill count')).toHaveValue('');
+    await expect(page.getByLabel('ART regimen *')).toHaveValue('');
+    await expect(page.getByLabel('ARVs given (tablets) *')).toHaveValue('');
+  });
 });

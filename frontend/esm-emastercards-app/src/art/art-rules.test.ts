@@ -7,6 +7,7 @@ import {
   checkRegimen,
   clearViralLoadResults,
   sameDayValue,
+  viralLoadDue,
 } from './art-rules';
 
 const r5A = 'regimen-5a';
@@ -189,5 +190,29 @@ describe('adherencePercent', () => {
     expect(adherencePercent(null, 90, 90)).toBeNull();
     expect(adherencePercent(4, null, 90)).toBeNull();
     expect(adherencePercent(4, 90, 0)).toBeNull();
+  });
+});
+
+describe('viralLoadDue, as the routine viral load alerts', () => {
+  const due = (lineStart: string | null, lastViralLoad: string | null, today = '2026-11-04') => viralLoadDue({ lineStart, lastViralLoad, today });
+
+  it('is not due in the first 6 months on a line', () => {
+    expect(due('2026-06-01', null)).toBe(false);
+  });
+
+  it('is due from 6 months on a line with no viral load since it started', () => {
+    expect(due('2026-04-01', null)).toBe(true);
+    expect(due('2026-04-01', '2026-03-01')).toBe(true);
+    expect(due('2026-04-01', '2026-10-01')).toBe(false);
+  });
+
+  it('after a year on a line, is due when the last viral load is over 12 months old', () => {
+    expect(due('2019-02-18', '2025-09-02')).toBe(true);
+    expect(due('2019-02-18', '2026-02-01')).toBe(false);
+    expect(due('2019-02-18', null)).toBe(true);
+  });
+
+  it('is not due without a line start', () => {
+    expect(due(null, null)).toBe(false);
   });
 });

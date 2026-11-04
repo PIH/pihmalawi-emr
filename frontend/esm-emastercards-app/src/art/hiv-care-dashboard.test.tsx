@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { card } from '../test-cards';
+import { VIRAL_LOAD } from './art-concepts';
 import { type ArtEncounter, useArtCard, useArtEncounters } from './art.resource';
 import { launchArtPanel } from './launch-art-panel';
 import { followUpTests, initial, viralLoad, visits } from './test-art-data';
@@ -45,20 +46,71 @@ function withData(
 const everything = {
   initial: [initial],
   visits,
-  viralLoad: [viralLoad('vl-1', '2025-09-02', { ldl: true }), viralLoad('vl-0', '2023-08-10', { numeric: 1240 })],
+  viralLoad: [
+    viralLoad('vl-1', '2025-09-02', { ldl: true, reason: VIRAL_LOAD.testingReasonAnswers.routine }),
+    viralLoad('vl-0', '2023-08-10', { numeric: 1240, reason: VIRAL_LOAD.testingReasonAnswers.targeted }),
+  ],
 };
 
 describe('HivCareDashboard', () => {
-  it('shows the headline row', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-04T10:00:00Z'));
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('names the card under the title, in the Care and treatment group', () => {
+    withData('EDIT', everything);
+    render(<HivCareDashboard patientUuid="p1" />);
+    expect(screen.getByText('Care and treatment')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'HIV care' })).toBeInTheDocument();
+    expect(screen.getByText('ART patient card · version 9 · enrolled 18-Feb-2019 at Neno District Hospital')).toBeInTheDocument();
+  });
+
+  it('shows the headline row with what each number means', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
     const headline = within(screen.getByRole('region', { name: 'HIV at a glance' }));
     expect(headline.getByText('13A')).toBeInTheDocument();
-    expect(headline.getByText(/since 06-May-2026/)).toBeInTheDocument();
+    expect(headline.getByText('TDF/3TC/DTG · since 06-May-2026')).toBeInTheDocument();
     expect(headline.getByText('LDL')).toBeInTheDocument();
     expect(headline.getByText('540')).toBeInTheDocument();
+    expect(headline.getByText('cells/µL · 02-Sep-2025')).toBeInTheDocument();
     expect(headline.getByText('TB not suspected')).toBeInTheDocument();
+    expect(headline.getByText('Screened 05-Aug-2026')).toBeInTheDocument();
     expect(headline.getByText('04-Nov-2026')).toBeInTheDocument();
+    expect(headline.getByText('Booked 05-Aug-2026')).toBeInTheDocument();
+  });
+
+  it('highlights a viral load that is due', () => {
+    withData('EDIT', everything);
+    render(<HivCareDashboard patientUuid="p1" />);
+    expect(within(screen.getByRole('region', { name: 'HIV at a glance' })).getByText('02-Sep-2025 · due now')).toBeInTheDocument();
+  });
+
+  it('does not highlight a viral load done in the last 12 months', () => {
+    withData('EDIT', { ...everything, viralLoad: [viralLoad('vl-3', '2026-06-01', { ldl: true })] });
+    render(<HivCareDashboard patientUuid="p1" />);
+    const headline = within(screen.getByRole('region', { name: 'HIV at a glance' }));
+    expect(headline.getByText('01-Jun-2026')).toBeInTheDocument();
+    expect(headline.queryByText(/due now/)).not.toBeInTheDocument();
+  });
+
+  it('lists viral loads and follow-up tests newest first, with units and reasons', () => {
+    withData('EDIT', everything);
+    render(<HivCareDashboard patientUuid="p1" />);
+    const region = within(screen.getByRole('region', { name: 'Viral load and follow-up tests' }));
+    const table = within(region.getByRole('table', { name: 'Viral load and follow-up tests' }));
+    ['Date', 'Test', 'Result', 'Reason'].forEach((h) => expect(table.getByRole('columnheader', { name: h })).toBeInTheDocument());
+    const rows = table
+      .getAllByRole('row')
+      .slice(1)
+      .map((r) => within(r).getAllByRole('cell').slice(0, 4).map((c) => c.textContent));
+    expect(rows).toEqual([
+      ['02-Sep-2025', 'Viral load', 'LDL', 'Routine'],
+      ['02-Sep-2025', 'CD4 count', '540 cells/µL', '–'],
+      ['10-Aug-2023', 'Viral load', '1,240 copies/mL', 'Targeted'],
+    ]);
   });
 
   it('shows a numeric or "<" viral load as the latest', () => {
@@ -83,6 +135,15 @@ describe('HivCareDashboard', () => {
     expect(guardian.getByText('Yes')).toBeInTheDocument();
   });
 
+  it('says a header card is not recorded yet when the header has none of its answers', () => {
+    withData('EDIT', everything);
+    render(<HivCareDashboard patientUuid="p1" />);
+    expect(within(screen.getByRole('region', { name: 'Confirmatory HIV test' })).queryByText('Not recorded yet')).not.toBeInTheDocument();
+    withData('EDIT', { ...everything, initial: [{ ...everything.initial[0], obs: [] }] });
+    render(<HivCareDashboard patientUuid="p2" />);
+    expect(within(screen.getAllByRole('region', { name: 'Confirmatory HIV test' })[1]).getByText('Not recorded yet')).toBeInTheDocument();
+  });
+
   it('lists ART visits newest first with the form\'s columns', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
@@ -96,14 +157,18 @@ describe('HivCareDashboard', () => {
     expect(within(rows[0]).getByText('90 (P)')).toBeInTheDocument();
   });
 
-  it('shows visit-by-visit regimen changes under the initiation regimens', () => {
+  it('shows visit-by-visit regimen changes, the current one tagged, under the initiation regimens', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
     const history = within(screen.getByRole('region', { name: 'ART regimen history' }));
     expect(history.getByText('First line')).toBeInTheDocument();
-    expect(history.getByText(/5A · since 18-Feb-2019/)).toBeInTheDocument();
-    const changes = history.getAllByRole('listitem').map((li) => li.textContent);
-    expect(changes).toEqual(['06-May-2026: 13A', '10-Jan-2022: 5A']);
+    expect(history.getByText('5A · TDF/3TC/EFV · since 18-Feb-2019')).toBeInTheDocument();
+    const changes = history.getAllByRole('listitem');
+    expect(changes.map((li) => within(li).getAllByText(/./)[0].textContent)).toEqual(['06-May-2026', '10-Jan-2022']);
+    expect(within(changes[0]).getByText('13A')).toBeInTheDocument();
+    expect(within(changes[0]).getByText('Current')).toBeInTheDocument();
+    expect(within(changes[1]).getByText('5A')).toBeInTheDocument();
+    expect(within(changes[1]).queryByText('Current')).not.toBeInTheDocument();
   });
 
   it('CREATE: header Edit buttons enabled; Record ART visit, Record viral load, Record follow-up tests disabled with an explanation', async () => {

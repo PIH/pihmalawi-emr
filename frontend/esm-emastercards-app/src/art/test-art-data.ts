@@ -72,10 +72,11 @@ export const initial = encounter('initial-1', '2019-02-18', [
 ]);
 
 const vlAt = (date: string) => `${date}T09:00:00.000+0000`;
-export const viralLoad = (uuid: string, date: string, result: { numeric?: number; lessThan?: number; ldl?: boolean }) =>
+export const viralLoad = (uuid: string, date: string, result: { numeric?: number; lessThan?: number; ldl?: boolean; reason?: string }) =>
   encounter(uuid, date, [
     obs(VIRAL_LOAD.group, null, vlAt(date), [
       obs(VIRAL_LOAD.sampleTaken, true, vlAt(date)),
+      ...(result.reason ? [obs(VIRAL_LOAD.testingReason, result.reason, vlAt(date))] : []),
       ...(result.numeric !== undefined ? [obs(VIRAL_LOAD.result, result.numeric, vlAt(date))] : []),
       ...(result.lessThan !== undefined ? [obs(VIRAL_LOAD.lessThanLimit, result.lessThan, vlAt(date))] : []),
       ...(result.ldl ? [obs(VIRAL_LOAD.ldl, true, vlAt(date))] : []),

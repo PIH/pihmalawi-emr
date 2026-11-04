@@ -159,3 +159,19 @@ export function adherencePercent(
   const percent = Math.round((100 * (dispensedLastVisit - pillsLeft)) / daysSinceLastVisit);
   return Math.max(0, Math.min(100, percent));
 }
+
+/**
+ * Whether a routine viral load is due, as the due-for-routine-viral-load alerts say: 6 months after starting an ART
+ * line when none has been done since, then whenever the last one is over 12 months old
+ */
+export function viralLoadDue({ lineStart, lastViralLoad, today }: { lineStart: string | null; lastViralLoad: string | null; today: string }): boolean {
+  if (!lineStart) {
+    return false;
+  }
+  const daysOnLine = dayjs(day(today)).diff(day(lineStart), 'day');
+  const noneSinceStart = !lastViralLoad || day(lastViralLoad) < day(lineStart);
+  if (daysOnLine > 360) {
+    return noneSinceStart || dayjs(day(today)).diff(day(lastViralLoad), 'day') > 360;
+  }
+  return daysOnLine > 180 && noneSinceStart;
+}

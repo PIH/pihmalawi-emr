@@ -100,7 +100,7 @@ test.describe('ART tests recorded in O3', () => {
     await page.getByLabel('Sample ID').fill('S-E2E-2');
     await page.getByRole('button', { name: 'Save and close' }).click();
 
-    const results = page.getByRole('region', { name: 'Viral load and CD4' });
+    const results = page.getByRole('region', { name: 'Viral load and follow-up tests' });
     await expect(results.getByText('No result')).toBeVisible();
     await results.getByRole('button', { name: 'Edit' }).first().click();
     await page.getByLabel('Viral load', { exact: true }).fill('4321');
@@ -112,5 +112,31 @@ test.describe('ART tests recorded in O3', () => {
     const members = (await res.json()).obs.flatMap((o) => o.groupMembers ?? []);
     expect(members.map((m) => m.encounter?.uuid)).toEqual(members.map(() => saved.uuid));
     expect(members.map((m) => m.display).join(' ')).toContain('S-E2E-2');
+  });
+
+  test('Record viral load and Record follow-up tests open blank forms, even while earlier ones are open for editing', async ({
+    page,
+    eligibleHivArtPatient,
+  }) => {
+    await openHivCare(page, eligibleHivArtPatient.uuid);
+    await page.getByRole('button', { name: 'Record viral load' }).click();
+    await page.getByLabel('Sample ID').fill('S-E2E-3');
+    await page.getByRole('button', { name: 'Save and close' }).click();
+    await page.getByRole('button', { name: 'Record follow-up tests' }).click();
+    await page.getByLabel('CD4 count').fill('321');
+    await page.getByRole('button', { name: 'Save and close' }).click();
+
+    const results = page.getByRole('region', { name: 'Viral load and follow-up tests' });
+    await expect(results.getByText('321 cells/µL')).toBeVisible();
+
+    await results.getByRole('button', { name: 'Edit' }).first().click();
+    await expect(page.getByLabel('Sample ID')).toHaveValue('S-E2E-3');
+    await page.getByRole('button', { name: 'Record viral load' }).click();
+    await expect(page.getByLabel('Sample ID')).toHaveValue('');
+
+    await results.getByRole('button', { name: 'Edit' }).last().click();
+    await expect(page.getByLabel('CD4 count')).toHaveValue('321');
+    await page.getByRole('button', { name: 'Record follow-up tests' }).click();
+    await expect(page.getByLabel('CD4 count')).toHaveValue('');
   });
 });
