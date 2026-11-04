@@ -1,6 +1,8 @@
 import {
   ART_INITIAL,
   ART_VISIT,
+  FOLLOW_UP_TESTING,
+  VIRAL_LOAD,
   CURRENTLY_LACTATING,
   CURRENTLY_PREGNANT,
   NEGATIVE,
@@ -26,6 +28,10 @@ export interface ArtField extends FieldSpec {
   unit?: string;
   /** Future dates allowed (the forms' allowFutureDates) */
   future?: boolean;
+  /** A boolean shown as one checkbox, saved only when ticked (the forms' checkbox style) */
+  checkbox?: boolean;
+  /** A coded question always shown as a dropdown, e.g. one whose answers come from the concept */
+  select?: boolean;
 }
 
 export const REGIMEN_OPTIONS: Array<Option> = REGIMENS.map((r) => ({ value: r.uuid, label: r.label }));
@@ -193,6 +199,70 @@ export const INITIAL_SECTIONS: Record<InitialSection, { title: string; fields: A
     }),
   },
 };
+
+const vlGroup = { concept: VIRAL_LOAD.group };
+
+/** viral-load-tests.xml's questions, all in its viral load obs group, in its order */
+export const VIRAL_LOAD_FIELDS: Array<ArtField> = [
+  {
+    name: 'testingReason',
+    concept: VIRAL_LOAD.testingReason,
+    kind: 'coded',
+    label: 'Reason for testing',
+    group: vlGroup,
+    options: [
+      { value: VIRAL_LOAD.testingReasonAnswers.routine, label: 'Routine' },
+      { value: VIRAL_LOAD.testingReasonAnswers.confirmed, label: 'Confirmed' },
+      { value: VIRAL_LOAD.testingReasonAnswers.targeted, label: 'Targeted' },
+    ],
+  },
+  { name: 'labLocation', concept: VIRAL_LOAD.labLocation, kind: 'coded', label: 'Lab location', group: vlGroup, options: [], select: true },
+  { name: 'labId', concept: VIRAL_LOAD.labId, kind: 'text', label: 'Lab ID', group: vlGroup },
+  { name: 'sampleTaken', concept: VIRAL_LOAD.sampleTaken, kind: 'boolean', label: 'Bled', group: vlGroup, checkbox: true },
+  { name: 'sampleId', concept: VIRAL_LOAD.sampleId, kind: 'text', label: 'Sample ID', group: vlGroup },
+  { name: 'result', concept: VIRAL_LOAD.result, kind: 'number', label: 'Viral load', group: vlGroup, unit: 'copies/mL' },
+  { name: 'lessThanLimit', concept: VIRAL_LOAD.lessThanLimit, kind: 'number', label: 'Less than (<)', group: vlGroup },
+  { name: 'ldl', concept: VIRAL_LOAD.ldl, kind: 'boolean', label: 'LDL', group: vlGroup, checkbox: true },
+  {
+    name: 'noResultReason',
+    concept: VIRAL_LOAD.noResultReason,
+    kind: 'coded',
+    label: 'Reason for no result',
+    group: vlGroup,
+    select: true,
+    options: [
+      { value: VIRAL_LOAD.noResultReasonAnswers.contaminated, label: 'Contaminated' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.missing, label: 'Missing' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.rejected, label: 'Rejected' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.equipmentFailure, label: 'Equipment failure' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.inappropriateContainer, label: 'Inappropriate container' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.suppliesNotAvailable, label: 'Supplies not available' },
+      { value: VIRAL_LOAD.noResultReasonAnswers.other, label: 'Other' },
+    ],
+  },
+];
+
+const glucoseGroup = { concept: FOLLOW_UP_TESTING.glucoseGroup };
+
+/** art-follow-up-testing.xml's questions, in its order */
+export const FOLLOW_UP_FIELDS: Array<ArtField> = [
+  { name: 'phq9Score', concept: FOLLOW_UP_TESTING.phq9Score, kind: 'number', label: 'PHQ-9 score' },
+  { name: 'cd4Count', concept: FOLLOW_UP_TESTING.cd4Count, kind: 'number', label: 'CD4 count' },
+  { name: 'cd4Percent', concept: FOLLOW_UP_TESTING.cd4Percent, kind: 'number', label: 'CD4 %' },
+  { name: 'serumGlucose', concept: FOLLOW_UP_TESTING.serumGlucose, kind: 'number', label: 'Serum glucose', group: glucoseGroup, reference: 'readonly' },
+  {
+    name: 'glucoseTestType',
+    concept: FOLLOW_UP_TESTING.glucoseTestType,
+    kind: 'coded',
+    label: 'Glucose test',
+    group: glucoseGroup,
+    reference: 'readonly',
+    options: [
+      { value: FOLLOW_UP_TESTING.glucoseTestTypeAnswers.fasting, label: 'Fasting' },
+      { value: FOLLOW_UP_TESTING.glucoseTestTypeAnswers.random, label: 'Random' },
+    ],
+  },
+];
 
 /** A field's value as the page shows it */
 export function displayValue(field: ArtField, value: unknown): string | null {

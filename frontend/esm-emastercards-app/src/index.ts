@@ -47,6 +47,12 @@ export const artVisitWorkspace = getAsyncLifecycle(() => import('./art/art-visit
 /** Edits a section of the ART card header (its ART initial encounter) natively */
 export const artInitialWorkspace = getAsyncLifecycle(() => import('./art/art-initial.workspace'), options);
 
+/** Records or edits a viral load test natively */
+export const viralLoadWorkspace = getAsyncLifecycle(() => import('./art/viral-load.workspace'), options);
+
+/** Records or edits ART follow-up tests natively */
+export const followUpTestingWorkspace = getAsyncLifecycle(() => import('./art/follow-up-testing.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

@@ -99,6 +99,16 @@
       "name": "pihmalawi-art-initial-workspace",
       "component": "artInitialWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-viral-load-workspace",
+      "component": "viralLoadWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-art-follow-up-testing-workspace",
+      "component": "followUpTestingWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

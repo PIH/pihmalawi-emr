@@ -71,6 +71,21 @@ export const ArtFieldInput: React.FC<ArtFieldInputProps> = ({ field, value, onCh
     );
   }
 
+  if (field.kind === 'boolean' && field.checkbox) {
+    return (
+      <div>
+        <Checkbox
+          id={id}
+          labelText={label}
+          checked={value === true || value === 'true'}
+          disabled={locked}
+          onChange={(_, { checked }) => onChange(checked ? true : null)}
+        />
+        {message}
+      </div>
+    );
+  }
+
   if (field.kind === 'boolean') {
     const [no, yes] = booleanLabels ?? [t('no', 'No'), t('yes', 'Yes')];
     return (
@@ -90,7 +105,7 @@ export const ArtFieldInput: React.FC<ArtFieldInputProps> = ({ field, value, onCh
     );
   }
 
-  if (field.kind === 'coded' && field.options.length <= 4) {
+  if (field.kind === 'coded' && !field.select && field.options.length <= 4) {
     return (
       <fieldset className={styles.fieldset}>
         <RadioButtonGroup
