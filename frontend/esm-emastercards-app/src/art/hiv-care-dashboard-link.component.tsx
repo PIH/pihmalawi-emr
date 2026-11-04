@@ -7,7 +7,8 @@ import { useArtCard } from './art.resource';
 const HivCareDashboardLink: React.FC<{ basePath: string; patientUuid?: string }> = ({ basePath, patientUuid }) => {
   const { patientUuid: chartPatientUuid } = usePatient();
   const { card } = useArtCard(patientUuid ?? chartPatientUuid);
-  if (!card) {
+  // every card is listed for every patient; the page is for those the card is available to
+  if (!card || card.state === 'UNAVAILABLE') {
     return null;
   }
   return (

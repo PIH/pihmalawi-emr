@@ -169,6 +169,12 @@ describe('MentalHealthDashboard', () => {
 });
 
 describe('MentalHealthDashboardLink', () => {
+  it('the link is hidden when the card is not available to the patient', () => {
+    withData('UNAVAILABLE', {}, 'Not available: Inactive program state (Mental Health eMastercard)');
+    const { container } = render(<MentalHealthDashboardLink basePath="/chart" patientUuid="p1" />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('the link shows only with a mental-health card', () => {
     vi.mocked(useEMastercard).mockReturnValue({ card: null, systemLocationsTag: null, isLoading: false, error: undefined });
     const { container } = render(<MentalHealthDashboardLink basePath="/chart" patientUuid="p1" />);

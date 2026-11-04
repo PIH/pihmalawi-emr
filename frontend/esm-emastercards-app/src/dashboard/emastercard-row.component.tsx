@@ -7,6 +7,12 @@ import { type EMastercardCard, launchFlowsheet } from '../emastercards.resource'
 import { visitDetails } from './visit-details';
 import styles from './emastercards.scss';
 
+/** The cards kept natively in O3, by key: the chart page each one opens */
+const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string }> = {
+  art: { path: 'hivCare', labelKey: 'openHivCare', label: 'Open HIV care' },
+  'mental-health': { path: 'mentalHealth', labelKey: 'openMentalHealth', label: 'Open mental health' },
+};
+
 interface EMastercardRowProps {
   card: EMastercardCard;
   patientUuid: string;
@@ -29,16 +35,14 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
     );
   }
 
-  // The ART card is kept natively in O3, on the HIV care page; its legacy flowsheet stays reachable for the pilot
-  if (card.key === 'art') {
+  // The ART and mental health cards are kept natively in O3, on their chart pages; their legacy flowsheets stay
+  // reachable for the pilot
+  const page = NATIVE_PAGES[card.key];
+  if (page) {
     return (
       <div className={styles.row}>
-        <Button
-          kind="ghost"
-          size="sm"
-          onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/hivCare` })}
-        >
-          {t('openHivCare', 'Open HIV care')}
+        <Button kind="ghost" size="sm" onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/${page.path}` })}>
+          {t(page.labelKey, page.label)}
         </Button>
         <span className={styles.details}>
           {card.created ? visitDetails(card) : null}

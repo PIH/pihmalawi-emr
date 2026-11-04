@@ -8,7 +8,8 @@ import { MH_CARD_KEY } from './mh-concepts';
 const MentalHealthDashboardLink: React.FC<{ basePath: string; patientUuid?: string }> = ({ basePath, patientUuid }) => {
   const { patientUuid: chartPatientUuid } = usePatient();
   const { card } = useEMastercard(patientUuid ?? chartPatientUuid, MH_CARD_KEY);
-  if (!card) {
+  // every card is listed for every patient; the page is for those the card is available to
+  if (!card || card.state === 'UNAVAILABLE') {
     return null;
   }
   return (
