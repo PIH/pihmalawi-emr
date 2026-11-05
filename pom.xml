@@ -36,7 +36,7 @@
 
 	<properties>
 		<openMRSVersion>2.8.7</openMRSVersion>
-		<addresshierarchyVersion>3.0.0-SNAPSHOT</addresshierarchyVersion>
+		<addresshierarchyVersion>3.0.0</addresshierarchyVersion>
 		<appframeworkVersion>2.19.0</appframeworkVersion>
 		<appuiVersion>1.18.0</appuiVersion>
 		<authenticationVersion>2.5.0</authenticationVersion>
@@ -68,7 +68,7 @@
 		<uiframeworkVersion>4.0.0</uiframeworkVersion>
 		<uilibraryVersion>2.0.7</uilibraryVersion>
 		<webservicesRestVersion>3.4.1</webservicesRestVersion>
-		<sdkVersion>6.9.0-SNAPSHOT</sdkVersion>
+		<sdkVersion>6.9.0</sdkVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 	</properties>
