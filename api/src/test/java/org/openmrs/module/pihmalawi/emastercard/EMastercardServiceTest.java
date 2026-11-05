@@ -122,6 +122,37 @@ public class EMastercardServiceTest extends BaseMalawiTest {
     }
 
     @Test
+    public void enrolmentIsTheProgramEnrolmentNotTheCardDate() {
+        createForm("ART eMastercard", "ART_INITIAL");
+        Patient p = artPatient(true);
+        createEncounter(p, encounterType("ART_INITIAL"), DateUtil.getDateTime(2026, 1, 5)).location(location).save();
+
+        EMastercardAccess access = emastercardService.evaluate(p, EMastercardRegistry.get("art"));
+        Assert.assertNotNull(access.getEnrolment());
+        Assert.assertEquals("HIV PROGRAM", access.getEnrolment().getProgram().getName());
+        Assert.assertEquals(DateUtil.getDateTime(2025, 1, 1), access.getEnrolment().getDateEnrolled());
+        Assert.assertEquals(location, access.getEnrolment().getLocation());
+    }
+
+    @Test
+    public void enrolmentPrefersTheActiveEnrolmentOverALaterCompletedOne() {
+        createForm("ART eMastercard", "ART_INITIAL");
+        Patient p = artPatient(true);
+        Program hiv = Context.getProgramWorkflowService().getProgramByName("HIV PROGRAM");
+        createPatientProgram(p, hiv, DateUtil.getDateTime(2025, 6, 1), DateUtil.getDateTime(2025, 7, 1)).save();
+
+        EMastercardAccess access = emastercardService.evaluate(p, EMastercardRegistry.get("art"));
+        Assert.assertEquals(DateUtil.getDateTime(2025, 1, 1), access.getEnrolment().getDateEnrolled());
+    }
+
+    @Test
+    public void noEnrolmentWithoutTheProgram() {
+        createForm("ART eMastercard", "ART_INITIAL");
+        Patient p = basePatient().save();
+        Assert.assertNull(emastercardService.evaluate(p, EMastercardRegistry.get("art")).getEnrolment());
+    }
+
+    @Test
     public void artUnavailableWhenTwoInitialEncounters() {
         createForm("ART eMastercard", "ART_INITIAL");
         Patient p = artPatient(true);

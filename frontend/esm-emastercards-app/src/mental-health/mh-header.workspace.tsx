@@ -12,6 +12,7 @@ import { MH_CARD_KEY, MH_FORMS, MH_HEADER } from './mh-concepts';
 import { MH_HEADER_SECTIONS, MH_START_FIELDS, type MhHeaderSection } from './mh-fields';
 import { checkAtLeastOneDiagnosis, checkDiagnosisDates } from './mh-rules';
 import { GroupedFields } from './grouped-fields';
+import { carryOver, useCarriedPatientGuardian } from '../shared/patient-guardian';
 import styles from '../art/art-panel.scss';
 
 export interface MhHeaderWorkspaceProps {
@@ -46,20 +47,29 @@ const MhHeaderWorkspace: React.FC<Workspace2DefinitionProps<MhHeaderWorkspacePro
   const title = starting ? t('startCard', 'Start the card') : t(`mhSection_${section}`, MH_HEADER_SECTIONS[section === 'start' ? 'diagnoses' : section].title);
 
   const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const { carried, isLoading: loadingCarried } = useCarriedPatientGuardian(patientUuid, MH_CARD_KEY);
   const [values, setValues] = useState<Record<string, FieldValue> | null>(null);
+  const [copiedFrom, setCopiedFrom] = useState<Array<string>>([]);
   const [location, setLocation] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = !loadingCard && !isLoading && card;
+  const ready = !loadingCard && !isLoading && !loadingCarried && card;
   useEffect(() => {
     if (ready && !values) {
-      setValues(encounterValues(fields, encounter));
+      const saved = encounterValues(fields, encounter);
+      if (starting || section === 'patientGuardian') {
+        const c = carryOver(fields, saved, carried);
+        setValues(c.values);
+        setCopiedFrom(c.filled.length ? c.from : []);
+      } else {
+        setValues(saved);
+      }
       setLocation(encounter?.location?.uuid ?? session?.sessionLocation?.uuid ?? '');
     }
-  }, [ready, values, fields, encounter, session]);
+  }, [ready, values, fields, encounter, session, starting, section, carried]);
 
   if (card?.state === 'UNAVAILABLE' || unknownHeaders) {
     return (
@@ -151,6 +161,17 @@ const MhHeaderWorkspace: React.FC<Workspace2DefinitionProps<MhHeaderWorkspacePro
             ))}
           </Select>
         </div>
+
+        {copiedFrom.length > 0 && !readOnly && (
+          <InlineNotification
+            kind="info"
+            lowContrast
+            hideCloseButton
+            title={t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
+              cards: copiedFrom.join(', '),
+            })}
+          />
+        )}
 
         {submitted && noDiagnosis && <InlineNotification kind="error" lowContrast hideCloseButton title={noDiagnosis.message} />}
 

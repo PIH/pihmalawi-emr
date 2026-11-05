@@ -2,6 +2,7 @@ package org.openmrs.module.pihmalawi.emastercard;
 
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
+import org.openmrs.PatientProgram;
 
 import java.util.Date;
 
@@ -20,6 +21,7 @@ public class EMastercardAccess {
 	private Date lastVisitDate;
 	private String lastVisitLocation;
 	private Date appointmentDate;
+	private PatientProgram enrolment;
 
 	public EMastercardAccess(EMastercard mastercard, Patient patient) {
 		this.mastercard = mastercard;
@@ -110,6 +112,18 @@ public class EMastercardAccess {
 
 	public void setAppointmentDate(Date appointmentDate) {
 		this.appointmentDate = appointmentDate;
+	}
+
+	/**
+	 * @return the patient's enrolment in the card's program: the current one, else the latest, or null when the
+	 *         card has no program or the patient was never enrolled
+	 */
+	public PatientProgram getEnrolment() {
+		return enrolment;
+	}
+
+	public void setEnrolment(PatientProgram enrolment) {
+		this.enrolment = enrolment;
 	}
 
 	/**

@@ -29,7 +29,7 @@ function withData(
   message: string | null = null,
 ) {
   mockUseArtCard.mockReturnValue({
-    card: card({ state, message, initialEncounterUuid: data.initial?.[0]?.uuid ?? null }),
+    card: card({ state, message, initialEncounterUuid: data.initial?.[0]?.uuid ?? null, enrolment: { uuid: 'pp1', program: 'HIV PROGRAM', dateEnrolled: '2018-12-03', dateCompleted: null, location: { uuid: 'neno-dh', display: 'Neno District Hospital' } } }),
     systemLocationsTag: 'Upper Neno',
     isLoading: false,
     error: undefined,
@@ -64,7 +64,15 @@ describe('HivCareDashboard', () => {
     render(<HivCareDashboard patientUuid="p1" />);
     expect(screen.getByText('Care and treatment')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'HIV care' })).toBeInTheDocument();
-    expect(screen.getByText('ART patient card · version 9 · enrolled 18-Feb-2019 at Neno District Hospital')).toBeInTheDocument();
+    // the program enrolment, not the card header's date (18-Feb-2019)
+    expect(screen.getByText('ART patient card · version 9 · enrolled 03-Dec-2018 at Neno District Hospital')).toBeInTheDocument();
+  });
+
+  it('leaves the enrolment out when the patient has no enrolment in the program', () => {
+    withData('EDIT', everything);
+    mockUseArtCard.mockReturnValue({ card: card({ state: 'EDIT', initialEncounterUuid: initial.uuid }), systemLocationsTag: null, isLoading: false, error: undefined });
+    render(<HivCareDashboard patientUuid="p1" />);
+    expect(screen.getByText('ART patient card · version 9')).toBeInTheDocument();
   });
 
   it('shows the headline row with what each number means', () => {

@@ -28,6 +28,7 @@ import {
 import { viralLoadDue } from './art-rules';
 import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters } from './art.resource';
 import { launchArtPanel, useLaunchArtPanel } from './launch-art-panel';
+import { enrolmentText } from '../emastercards.resource';
 import styles from '../care-page.scss';
 
 interface HivCareDashboardProps {
@@ -283,10 +284,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
   const cardDescription = [
     t('artPatientCard', 'ART patient card'),
     t('cardVersion', 'version {{version}}', { version: ART_CARD_VERSION }),
-    initial &&
-      (initial.location?.display
-        ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date: formatDay(initial.encounterDatetime), location: initial.location.display })
-        : t('enrolled', 'enrolled {{date}}', { date: formatDay(initial.encounterDatetime) })),
+    enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');

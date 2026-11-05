@@ -7,7 +7,13 @@ import { ART_INITIAL, YES } from './art-concepts';
 import { useArtCard, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
 import { saveArtEncounter } from './obs-diff';
 import { initial } from './test-art-data';
+import { useCarriedPatientGuardian } from '../shared/patient-guardian';
 import ArtInitialWorkspace from './art-initial.workspace';
+
+vi.mock('../shared/patient-guardian', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../shared/patient-guardian')>()),
+  useCarriedPatientGuardian: vi.fn(),
+}));
 
 vi.mock('./art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./art.resource')>()),
@@ -23,7 +29,8 @@ vi.mock('./obs-diff', async (importOriginal) => ({
 
 const mockSave = vi.mocked(saveArtEncounter);
 
-function setUp({ state = 'EDIT' as 'CREATE' | 'EDIT' | 'VIEW' | 'UNAVAILABLE', withHeader = true, gender = 'female', sameDay = {} } = {}) {
+function setUp({ state = 'EDIT' as 'CREATE' | 'EDIT' | 'VIEW' | 'UNAVAILABLE', withHeader = true, gender = 'female', sameDay = {}, carried = {} } = {}) {
+  vi.mocked(useCarriedPatientGuardian).mockReturnValue({ carried, isLoading: false });
   vi.mocked(useArtCard).mockReturnValue({
     card: card({ state, initialEncounterUuid: withHeader ? initial.uuid : null, message: state === 'UNAVAILABLE' ? 'Multiple ART eMastercard forms found' : null }),
     systemLocationsTag: 'Upper Neno',
@@ -66,6 +73,43 @@ describe('ArtInitialWorkspace', () => {
     expect(screen.getByLabelText('Link ID / HTC serial no.')).toBeInTheDocument();
     expect(screen.queryByLabelText('Guardian name')).not.toBeInTheDocument();
     expect(screen.queryByText('WHO stage')).not.toBeInTheDocument();
+  });
+
+  it("fills in patient and guardian from the patient's other cards", () => {
+    setUp({ state: 'CREATE', withHeader: false, carried: { guardianName: { value: 'Mh Guardian', from: 'Mental Health eMastercard' } } });
+    renderPanel('patientGuardian');
+    expect(screen.getByLabelText('Guardian name')).toHaveValue('Mh Guardian');
+    expect(screen.getByText('Patient and guardian details were filled in from Mental Health eMastercard. Check them, then save.')).toBeInTheDocument();
+  });
+
+  it("starting the card from another section also saves the other cards' patient and guardian details", async () => {
+    setUp({
+      state: 'CREATE',
+      withHeader: false,
+      carried: {
+        patientPhone: { value: 888123456, from: 'Mental Health eMastercard' },
+        guardianName: { value: 'Mh Guardian', from: 'Mental Health eMastercard' },
+      },
+    });
+    renderPanel('confirmatoryTest');
+    expect(
+      screen.getByText('Patient and guardian details from Mental Health eMastercard will be saved with this card: Patient phone, Guardian name.'),
+    ).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Link ID / HTC serial no.'), { target: { value: 'HTC-1' } });
+    await save();
+    expect(mockSave.mock.calls[0][1].payload.add).toEqual(
+      expect.arrayContaining([
+        { concept: ART_INITIAL.linkId, value: 'HTC-1' },
+        { concept: ART_INITIAL.patientPhone, value: '888123456' },
+        { concept: ART_INITIAL.guardianName, value: 'Mh Guardian' },
+      ]),
+    );
+  });
+
+  it("never overwrites the card's own patient and guardian answers", () => {
+    setUp({ carried: { guardianName: { value: 'Mh Guardian', from: 'Mental Health eMastercard' } } });
+    renderPanel('patientGuardian');
+    expect(screen.getByLabelText('Guardian name')).toHaveValue('Test Guardian');
   });
 
   it("saving a section never voids another section's obs", async () => {

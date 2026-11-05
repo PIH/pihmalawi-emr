@@ -148,11 +148,12 @@ export const MH_HEADER_SECTIONS: Record<MhHeaderSection, { title: string; fields
   },
 };
 
-/** The fields a clinician starts the card with, which the legacy form requires on its first save */
-export const MH_START_FIELDS: Array<ArtField> = [
-  MH_HEADER_SECTIONS.patientGuardian.fields.find((f) => f.name === 'agreesToFollowUp'),
-  ...diagnosisFields,
-];
+/**
+ * The fields a clinician starts the card with: the patient and guardian section, which may be filled in from the
+ * patient's other cards, and the diagnoses. The legacy form requires the follow-up agreement and a diagnosis on its
+ * first save.
+ */
+export const MH_START_FIELDS: Array<ArtField> = [...MH_HEADER_SECTIONS.patientGuardian.fields, ...diagnosisFields];
 
 /** The visit's mental status examination findings, in its order */
 export const MSE_FINDINGS: Array<{ key: string; answer: string; label: string }> = [
