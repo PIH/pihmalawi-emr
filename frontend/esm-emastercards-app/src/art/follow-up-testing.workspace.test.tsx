@@ -4,29 +4,29 @@ import userEvent from '@testing-library/user-event';
 import { usePatient, useSession } from '@openmrs/esm-framework';
 import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
 import { card } from '../test-cards';
-import { FOLLOW_UP_TESTING } from './art-concepts';
-import { useArtCard, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
-import { saveArtEncounter } from './obs-diff';
+import { ART_FORMS, FOLLOW_UP_TESTING } from './art-concepts';
+import { useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from './art.resource';
+import { saveEncounter } from './obs-diff';
 import FollowUpTestingWorkspace from './follow-up-testing.workspace';
 
 vi.mock('./art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./art.resource')>()),
-  useArtCard: vi.fn(),
-  useArtEncounters: vi.fn(),
+  useEMastercard: vi.fn(),
+  useCardEncounters: vi.fn(),
   useLocationsTagged: vi.fn(),
   useSameDayObs: vi.fn(),
 }));
 vi.mock('./obs-diff', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./obs-diff')>()),
-  saveArtEncounter: vi.fn(),
+  saveEncounter: vi.fn(),
 }));
 vi.mock('@openmrs/esm-patient-common-lib', () => ({ usePatientChartStore: vi.fn() }));
 
-const mockSave = vi.mocked(saveArtEncounter);
+const mockSave = vi.mocked(saveEncounter);
 
 function setUp(sameDay = {}) {
-  vi.mocked(useArtCard).mockReturnValue({ card: card({ state: 'EDIT' }), systemLocationsTag: 'Upper Neno', isLoading: false, error: undefined });
-  vi.mocked(useArtEncounters).mockReturnValue({ encounters: [], isLoading: false, error: undefined, mutate: vi.fn() });
+  vi.mocked(useEMastercard).mockReturnValue({ card: card({ state: 'EDIT' }), systemLocationsTag: 'Upper Neno', isLoading: false, error: undefined });
+  vi.mocked(useCardEncounters).mockReturnValue({ encounters: [], isLoading: false, error: undefined, mutate: vi.fn() });
   vi.mocked(useLocationsTagged).mockReturnValue([{ uuid: 'neno-dh', display: 'Neno District Hospital' }]);
   vi.mocked(useSameDayObs).mockReturnValue({ obs: sameDay as any, isLoading: false });
   vi.mocked(usePatient).mockReturnValue({ patient: { gender: 'female' }, patientUuid: 'p1', isLoading: false, error: null } as any);
@@ -64,8 +64,8 @@ describe('FollowUpTestingWorkspace', () => {
     await userEvent.click(screen.getByLabelText('Fasting'));
     await userEvent.click(screen.getByRole('button', { name: 'Save and close' }));
 
-    const [kind, args] = mockSave.mock.calls[0];
-    expect(kind).toBe('followUpTesting');
+    const [form, args] = mockSave.mock.calls[0];
+    expect(form).toBe(ART_FORMS.followUpTesting);
     expect(args.locationUuid).toBe('neno-dh');
     expect(args.payload.add).toEqual([
       { concept: FOLLOW_UP_TESTING.phq9Score, value: 4 },

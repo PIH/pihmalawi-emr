@@ -7,15 +7,15 @@ import { card } from '../test-cards';
 import EMastercardRow from './emastercard-row.component';
 
 const mockLaunchWorkspace2 = vi.mocked(launchWorkspace2);
-// Any card but ART, which opens the HIV care page instead
-const mentalHealth = (overrides = {}) => card({ key: 'mental-health', label: 'Mental Health eMastercard', ...overrides });
+// Any card still kept as a legacy flowsheet (ART and mental health open their O3 pages instead)
+const epilepsy = (overrides = {}) => card({ key: 'epilepsy', label: 'Epilepsy eMastercard', ...overrides });
 
 describe('EMastercardRow', () => {
   it('offers to create a card on a date, today by default', async () => {
-    render(<EMastercardRow card={mentalHealth({ state: 'CREATE' })} patientUuid="patient-uuid" />);
+    render(<EMastercardRow card={epilepsy({ state: 'CREATE' })} patientUuid="patient-uuid" />);
 
     expect(screen.getByLabelText('Encounter date')).toHaveValue(dayjs().format('YYYY-MM-DD'));
-    await userEvent.click(screen.getByRole('button', { name: 'Create new Mental Health eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create new Epilepsy eMastercard' }));
 
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
@@ -29,7 +29,7 @@ describe('EMastercardRow', () => {
   it('offers to edit an existing card, with when it was created, last visited and the appointment', () => {
     render(
       <EMastercardRow
-        card={mentalHealth({
+        card={epilepsy({
           state: 'EDIT',
           created: '2026-01-05',
           lastVisit: '2026-02-05',
@@ -40,7 +40,7 @@ describe('EMastercardRow', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Edit Mental Health eMastercard' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit Epilepsy eMastercard' })).toBeInTheDocument();
     expect(
       screen.getByText('Created: 05-Jan-2026, Visited: 05-Feb-2026 at Neno District Hospital, Appointment: 05-Mar-2026'),
     ).toBeInTheDocument();
@@ -49,14 +49,14 @@ describe('EMastercardRow', () => {
   it('opens a card the user may only view read-only, and says why', async () => {
     render(
       <EMastercardRow
-        card={mentalHealth({ state: 'VIEW', created: '2026-01-05', message: 'Readonly: Inactive program state' })}
+        card={epilepsy({ state: 'VIEW', created: '2026-01-05', message: 'Readonly: Inactive program state' })}
         patientUuid="patient-uuid"
       />,
     );
 
     expect(screen.getByText('Created: 05-Jan-2026, Visited: no, Appointment: none')).toBeInTheDocument();
     expect(screen.getByText('Readonly: Inactive program state')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'View Mental Health eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'View Epilepsy eMastercard' }));
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
       expect.objectContaining({ url: expect.stringContaining('&embedded=true&viewOnly=true') }),
@@ -93,5 +93,13 @@ describe('EMastercardRow', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Open HIV care' }));
     expect(navigate).toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Open legacy card' })).toBeInTheDocument();
+  });
+
+  it('the mental health row opens the Mental health page', async () => {
+    render(<EMastercardRow card={card({ key: 'mental-health', label: 'Mental Health eMastercard', state: 'EDIT', created: '2026-01-05' })} patientUuid="patient-uuid" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open mental health' }));
+    expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/patient-uuid/chart/mentalHealth' });
+    await userEvent.click(screen.getByRole('button', { name: 'Open legacy card' }));
+    expect(mockLaunchWorkspace2).toHaveBeenCalledWith('pihmalawi-emastercard-flowsheet-workspace', expect.anything());
   });
 });

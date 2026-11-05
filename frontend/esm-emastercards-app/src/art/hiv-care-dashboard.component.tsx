@@ -28,7 +28,7 @@ import {
 import { viralLoadDue } from './art-rules';
 import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters } from './art.resource';
 import { launchArtPanel, useLaunchArtPanel } from './launch-art-panel';
-import styles from './hiv-care.scss';
+import styles from '../care-page.scss';
 
 interface HivCareDashboardProps {
   patientUuid: string;

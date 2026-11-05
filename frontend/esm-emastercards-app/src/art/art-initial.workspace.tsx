@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import useSWR, { useSWRConfig } from 'swr';
+import { useSWRConfig } from 'swr';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonSet, InlineLoading, InlineNotification, Select, SelectItem, TextInput } from '@carbon/react';
 import {
   ConfigurableLink,
-  openmrsFetch,
-  restBaseUrl,
   usePatient,
   useSession,
   type Workspace2DefinitionProps,
@@ -15,7 +13,7 @@ import {
 import { ART_INITIAL } from './art-concepts';
 import { type ArtField, formatDay, INITIAL_SECTIONS, type InitialSection } from './art-fields';
 import { type RuleResult, sameDayValue } from './art-rules';
-import { obsValue, useArtCard, useArtEncounters, useLocationsTagged, useSameDayObs } from './art.resource';
+import { obsValue, useArtCard, useArtEncounters, useChws, useLocationsTagged, useSameDayObs } from './art.resource';
 import { buildObsPayload, type FieldValue, saveArtEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
 import styles from './art-panel.scss';
@@ -23,22 +21,6 @@ import styles from './art-panel.scss';
 export interface ArtInitialWorkspaceProps {
   patientUuid: string;
   section: InitialSection;
-}
-
-interface Relationship {
-  personA: { uuid?: string; display: string };
-  relationshipType: { uuid: string };
-}
-
-/** The patient's community health workers, as art-emastercard.xml shows them: person A of a CHW relationship */
-function useChws(patientUuid: string) {
-  const { data } = useSWR(
-    patientUuid ? `${restBaseUrl}/relationship?person=${patientUuid}&v=custom:(personA:(uuid,display),relationshipType:(uuid))` : null,
-    (url: string) => openmrsFetch<{ results: Array<Relationship> }>(url).then((res) => res.data?.results ?? []),
-  );
-  return (data ?? [])
-    .filter((r) => r.relationshipType?.uuid === ART_INITIAL.chwRelationshipType && r.personA?.uuid !== patientUuid)
-    .map((r) => r.personA.display);
 }
 
 /**
@@ -56,7 +38,7 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
   const { card, systemLocationsTag, isLoading: loadingCard } = useArtCard(patientUuid);
   const { encounters, isLoading } = useArtEncounters(patientUuid, 'initial');
   const locations = useLocationsTagged(systemLocationsTag);
-  const chws = useChws(section === 'patientGuardian' ? patientUuid : null);
+  const chws = useChws(section === 'patientGuardian' ? patientUuid : null, ART_INITIAL.chwRelationshipType);
 
   const { title, fields: allFields } = INITIAL_SECTIONS[section];
   const female = patient?.gender === 'female';

@@ -4,14 +4,16 @@ import {
   ART_FOLLOWUP_ENCOUNTER_TYPE_UUID,
   ART_INITIAL_ENCOUNTER_TYPE_UUID,
   ART_VISIT_FORM_UUID,
+  EPILEPSY_FOLLOWUP_ENCOUNTER_TYPE_UUID,
+  EPILEPSY_INITIAL_ENCOUNTER_TYPE_UUID,
   MENTAL_HEALTH_FOLLOWUP_ENCOUNTER_TYPE_UUID,
   MENTAL_HEALTH_INITIAL_ENCOUNTER_TYPE_UUID,
-  MENTAL_HEALTH_SCREENING_ENCOUNTER_TYPE_UUID,
   NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
 } from '../../core/constants';
 
 const WEIGHT_CONCEPT_UUID = '6569c44a-977f-11e1-8993-905e29aff6c1';
-const MENTAL_HEALTH_SCREENING_FORM_UUID = '8bb404f3-f224-40dd-b0c4-76e1b8a119e4';
+// "Epilepsy Visit", one of the Epilepsy eMastercard's flowsheet forms, which stays a legacy flowsheet.
+const EPILEPSY_VISIT_FORM_UUID = '11FF7E89-BCB4-4947-BDF0-5ABA4A963E85';
 // "Mental Health Visit", one of the Mental Health eMastercard's flowsheet forms.
 const MENTAL_HEALTH_VISIT_FORM_UUID = 'F374493E-8038-4F81-AE3D-79D2D0EC4D1C';
 
@@ -31,7 +33,31 @@ test.describe('Edit this encounter, in the O3 patient chart', () => {
     expect(res.ok()).toBeTruthy();
   });
 
-  test("opens the encounter's eMastercard to enter data in", async ({ page, api, eligibleMentalHealthPatient }) => {
+  test("opens the encounter's eMastercard to enter data in", async ({ page, api, eligibleEpilepsyPatient }) => {
+    for (const data of [
+      { encounterType: EPILEPSY_INITIAL_ENCOUNTER_TYPE_UUID, encounterDatetime: '2026-01-05' },
+      {
+        encounterType: EPILEPSY_FOLLOWUP_ENCOUNTER_TYPE_UUID,
+        form: EPILEPSY_VISIT_FORM_UUID,
+        encounterDatetime: '2026-02-05',
+        obs: [{ concept: WEIGHT_CONCEPT_UUID, value: 61 }],
+      },
+    ]) {
+      const res = await api.post('encounter', {
+        data: { patient: eligibleEpilepsyPatient.uuid, location: NENO_DISTRICT_HOSPITAL_LOCATION_UUID, ...data },
+      });
+      expect(res.ok()).toBeTruthy();
+    }
+
+    await editEncounterFromAllEncounters(page, eligibleEpilepsyPatient.uuid, /EPILEPSY_FOLLOWUP/);
+
+    const frame = page.locator('iframe[title="Epilepsy eMastercard"]');
+    await expect(frame).toHaveAttribute('src', /headerForm=file:configuration\/htmlforms\/epilepsy-emastercard\.xml/);
+    await expect(page.frameLocator('iframe[title="Epilepsy eMastercard"]').locator('.visit-table-row')).not.toHaveCount(0);
+    await expect(page.getByText('There was an error with this form')).toHaveCount(0);
+  });
+
+  test('"Edit this encounter" on a mental health visit opens the native panel', async ({ page, api, eligibleMentalHealthPatient }) => {
     for (const data of [
       { encounterType: MENTAL_HEALTH_INITIAL_ENCOUNTER_TYPE_UUID, encounterDatetime: '2026-01-05' },
       {
@@ -49,10 +75,8 @@ test.describe('Edit this encounter, in the O3 patient chart', () => {
 
     await editEncounterFromAllEncounters(page, eligibleMentalHealthPatient.uuid, /MENTAL_HEALTH_FOLLOWUP/);
 
-    const frame = page.locator('iframe[title="Mental Health eMastercard"]');
-    await expect(frame).toHaveAttribute('src', /headerForm=file:configuration\/htmlforms\/mental-health-emastercard\.xml/);
-    await expect(page.frameLocator('iframe[title="Mental Health eMastercard"]').locator('.visit-table-row')).not.toHaveCount(0);
-    await expect(page.getByText('There was an error with this form')).toHaveCount(0);
+    await expect(page.getByText('Edit mental health visit')).toBeVisible();
+    await expect(page.locator('iframe[title="Mental Health eMastercard"]')).toHaveCount(0);
   });
 
   test('"Edit this encounter" on an ART visit opens the native panel', async ({ page, api, eligibleHivArtPatient }) => {
@@ -86,15 +110,16 @@ test.describe('Edit this encounter, in the O3 patient chart', () => {
     const res = await api.post('encounter', {
       data: {
         patient: eligibleMentalHealthPatient.uuid,
-        encounterType: MENTAL_HEALTH_SCREENING_ENCOUNTER_TYPE_UUID,
-        form: MENTAL_HEALTH_SCREENING_FORM_UUID,
+        // the patient has no epilepsy card; O3 offers "Edit this encounter" only for encounters with a form
+        encounterType: EPILEPSY_FOLLOWUP_ENCOUNTER_TYPE_UUID,
+        form: EPILEPSY_VISIT_FORM_UUID,
         location: NENO_DISTRICT_HOSPITAL_LOCATION_UUID,
         encounterDatetime: '2026-02-05',
       },
     });
     expect(res.ok()).toBeTruthy();
 
-    await editEncounterFromAllEncounters(page, eligibleMentalHealthPatient.uuid, /MENTAL_HEALTH_SCREENING/);
+    await editEncounterFromAllEncounters(page, eligibleMentalHealthPatient.uuid, /EPILEPSY_FOLLOWUP/);
 
     await expect(page.getByText(/This encounter can't be edited here/)).toBeVisible();
     await expect(page.getByRole('link', { name: 'Open the patient dashboard' })).toBeVisible();

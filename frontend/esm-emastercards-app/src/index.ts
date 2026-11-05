@@ -2,6 +2,7 @@ import { defineConfigSchema, getAsyncLifecycle, getSyncLifecycle } from '@openmr
 import emastercardsDashboardLinkComponent from './dashboard/emastercards-dashboard-link.component';
 import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-link.component';
 import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
+import mentalHealthDashboardLinkComponent from './mental-health/mental-health-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -38,6 +39,13 @@ export const enrolmentWorkspace = getAsyncLifecycle(() => import('./enrolments/e
 
 export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkComponent, options);
 
+export const mentalHealthDashboardLink = getSyncLifecycle(mentalHealthDashboardLinkComponent, options);
+
+export const mentalHealthDashboard = getAsyncLifecycle(
+  () => import('./mental-health/mental-health-dashboard.component'),
+  options,
+);
+
 /** The ART patient card, natively: its header sections, regimens, results and ART visits */
 export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
 
@@ -52,6 +60,12 @@ export const viralLoadWorkspace = getAsyncLifecycle(() => import('./art/viral-lo
 
 /** Records or edits ART follow-up tests natively */
 export const followUpTestingWorkspace = getAsyncLifecycle(() => import('./art/follow-up-testing.workspace'), options);
+
+export const mhHeaderWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-header.workspace'), options);
+
+export const mhVisitWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-visit.workspace'), options);
+
+export const mhScreeningWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-screening.workspace'), options);
 
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(

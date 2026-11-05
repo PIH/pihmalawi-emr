@@ -5,6 +5,7 @@ import { openmrsFetch } from '@openmrs/esm-framework';
 import { card } from '../test-cards';
 import { useEMastercards } from '../emastercards.resource';
 import { ART_FORMS } from '../art/art-concepts';
+import { MH_FORMS } from '../mental-health/mh-concepts';
 import EncounterEditWorkspace from './encounter-edit.workspace';
 
 vi.mock('../emastercards.resource', async (importOriginal) => ({
@@ -14,6 +15,15 @@ vi.mock('../emastercards.resource', async (importOriginal) => ({
 
 vi.mock('../art/art-visit.workspace', () => ({
   default: ({ workspaceProps }) => <p>Native ART visit panel for {workspaceProps.encounterUuid}</p>,
+}));
+vi.mock('../mental-health/mh-visit.workspace', () => ({
+  default: ({ workspaceProps }) => <p>Native mental health visit panel for {workspaceProps.encounterUuid}</p>,
+}));
+vi.mock('../mental-health/mh-screening.workspace', () => ({
+  default: ({ workspaceProps }) => <p>Native screening panel for {workspaceProps.encounterUuid}</p>,
+}));
+vi.mock('../mental-health/mh-header.workspace', () => ({
+  default: ({ workspaceProps }) => <p>Native mental health header panel: {workspaceProps.section}</p>,
 }));
 vi.mock('../art/art-initial.workspace', () => ({
   default: ({ workspaceProps }) => <p>Native card header panel: {workspaceProps.section}</p>,
@@ -100,5 +110,27 @@ describe('EncounterEditWorkspace', () => {
     renderWorkspace('art-initial-uuid');
     await userEvent.click(await screen.findByRole('button', { name: 'Confirmatory HIV test' }));
     expect(screen.getByText('Native card header panel: confirmatoryTest')).toBeInTheDocument();
+  });
+
+  it('encounter-edit opens the native MH visit panel', async () => {
+    withCards(card({ key: 'mental-health', state: 'EDIT' }));
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'mh-visit-uuid', form: null, encounterType: { uuid: MH_FORMS.visit.encounterType } } } as any);
+    renderWorkspace('mh-visit-uuid');
+    expect(await screen.findByText('Native mental health visit panel for mh-visit-uuid')).toBeInTheDocument();
+  });
+
+  it('opens the native screening panel', async () => {
+    withCards(card({ key: 'mental-health', state: 'EDIT' }));
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'mh-s-uuid', form: null, encounterType: { uuid: MH_FORMS.screening.encounterType } } } as any);
+    renderWorkspace('mh-s-uuid');
+    expect(await screen.findByText('Native screening panel for mh-s-uuid')).toBeInTheDocument();
+  });
+
+  it('asks which section for a header', async () => {
+    withCards(card({ key: 'mental-health', state: 'EDIT' }));
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'mh-h-uuid', form: null, encounterType: { uuid: MH_FORMS.header.encounterType } } } as any);
+    renderWorkspace('mh-h-uuid');
+    await userEvent.click(await screen.findByRole('button', { name: 'History and exposures' }));
+    expect(screen.getByText('Native mental health header panel: historyExposures')).toBeInTheDocument();
   });
 });

@@ -215,6 +215,12 @@ describe('HivCareDashboardLink', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('the link is hidden when the ART card is not available to the patient', () => {
+    withData('UNAVAILABLE', {}, 'Not available: Inactive program state (ART eMastercard)');
+    const { container } = render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('shows the link when the patient has an ART card', () => {
     withData('EDIT');
     render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);

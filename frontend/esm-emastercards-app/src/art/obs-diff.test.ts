@@ -1,5 +1,5 @@
 import { openmrsFetch } from '@openmrs/esm-framework';
-import { buildObsPayload, encounterDatetimeFor, type FieldSpec, saveArtEncounter } from './obs-diff';
+import { buildObsPayload, encounterDatetimeFor, type FieldSpec, saveArtEncounter, saveEncounter } from './obs-diff';
 import { ART_FORMS, DEFAULT_PROVIDER, ENCOUNTER_ROLE } from './art-concepts';
 
 const mockOpenmrsFetch = vi.mocked(openmrsFetch);
@@ -288,5 +288,83 @@ describe('saveArtEncounter', () => {
     ).rejects.toThrow('Invalid obs');
     const deletes = mockOpenmrsFetch.mock.calls.filter(([, init]) => init?.method === 'DELETE').map(([url]) => url);
     expect(deletes).toEqual([expect.stringMatching(/\/obs\/added-1$/)]);
+  });
+});
+
+describe('obs comments', () => {
+  const otherDrugs: FieldSpec = { name: 'otherDrugs', concept: 'c-expose', kind: 'coded', comment: 'otherDrugsComment' };
+
+  it('saves a comment with the value', () => {
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'kachasu' }, [], {})).toEqual({
+      add: [{ concept: 'c-expose', value: 'current', comment: 'kachasu' }],
+      void: [],
+    });
+  });
+
+  it('comment changes replace the obs', () => {
+    const existing = [{ uuid: 'o1', concept: 'c-expose', value: 'current', comment: 'old' }];
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'new' }, existing, {})).toEqual({
+      add: [{ concept: 'c-expose', value: 'current', comment: 'new' }],
+      void: ['o1'],
+    });
+    expect(buildObsPayload([otherDrugs], { otherDrugs: 'current', otherDrugsComment: 'old' }, existing, {})).toEqual({ add: [], void: [] });
+  });
+
+  it('keeps a comment on a group member', () => {
+    const member: FieldSpec = { ...otherDrugs, group: { concept: 'c-group' } };
+    expect(buildObsPayload([member], { otherDrugs: 'current', otherDrugsComment: 'kachasu' }, [], {})).toEqual({
+      add: [{ concept: 'c-group', groupMembers: [{ concept: 'c-expose', value: 'current', comment: 'kachasu' }] }],
+      void: [],
+    });
+  });
+});
+
+describe('saveEncounter', () => {
+  it('saveEncounter posts the given form', async () => {
+    mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'enc-2' } } as any);
+    await saveEncounter(
+      { encounterType: 'type-x', form: 'form-x' },
+      { patientUuid: 'p1', datetime: '2026-11-04', locationUuid: 'l1', payload: { add: [], void: [] } },
+    );
+    const [, init] = mockOpenmrsFetch.mock.calls[0];
+    expect(init.body).toEqual(expect.objectContaining({ encounterType: 'type-x', form: 'form-x' }));
+  });
+});
+
+describe('review fixes', () => {
+  it('unticking a group checkbox voids the group and keeps none of its other members', () => {
+    const other: FieldSpec = { name: 'other', concept: 'c-dx', kind: 'coded', group: { concept: 'c-grp' } };
+    (other as any).checkbox = true;
+    const existing = [{ uuid: 'g1', concept: 'c-grp', value: null, groupMembers: [{ uuid: 'm1', concept: 'c-dx', value: 'other' }, { uuid: 'm2', concept: 'c-text', value: 'insomnia' }] }];
+    expect(buildObsPayload([other], { other: null }, existing, {})).toEqual({ add: [], void: ['g1'] });
+  });
+
+  it('clearing the answer a group is matched on voids it whole', () => {
+    const dx: FieldSpec = { name: 'dx', concept: 'c-dx', kind: 'coded', group: { concept: 'c-grp', match: { concept: 'c-dx', value: 'a' } } };
+    const existing = [{ uuid: 'g1', concept: 'c-grp', value: null, groupMembers: [{ uuid: 'm1', concept: 'c-dx', value: 'a' }, { uuid: 'm2', concept: 'c-old', value: 'yes' }] }];
+    expect(buildObsPayload([dx], { dx: null }, existing, {})).toEqual({ add: [], void: ['g1'] });
+  });
+
+  it("an untouched obs keeps a comment the panel doesn't ask about", () => {
+    const name: FieldSpec = { name: 'name', concept: 'c-name', kind: 'text' };
+    expect(buildObsPayload([name], { name: 'Mary' }, [{ uuid: 'o1', concept: 'c-name', value: 'Mary', comment: 'aunt' }], {})).toEqual({ add: [], void: [] });
+  });
+
+  it('a rewritten group keeps the comments of its unchanged members', () => {
+    const a: FieldSpec = { name: 'a', concept: 'c-a', kind: 'text', group: { concept: 'c-grp' } };
+    const b: FieldSpec = { name: 'b', concept: 'c-b', kind: 'number', group: { concept: 'c-grp' } };
+    const existing = [{ uuid: 'g1', concept: 'c-grp', value: null, groupMembers: [{ uuid: 'm1', concept: 'c-a', value: 'x', comment: 'note' }, { uuid: 'm2', concept: 'c-b', value: 1 }] }];
+    expect(buildObsPayload([a, b], { a: 'x', b: 2 }, existing, {}).add).toEqual([
+      { concept: 'c-grp', groupMembers: [{ concept: 'c-a', value: 'x', comment: 'note' }, { concept: 'c-b', value: 2 }] },
+    ]);
+  });
+
+  it("an unticked yes/no checkbox in a group doesn't drop the group's other answers", () => {
+    const bled: FieldSpec = { name: 'bled', concept: 'c-bled', kind: 'boolean', group: { concept: 'c-vl' } };
+    (bled as any).checkbox = true;
+    const sample: FieldSpec = { name: 'sample', concept: 'c-sample', kind: 'text', group: { concept: 'c-vl' } };
+    expect(buildObsPayload([bled, sample], { bled: null, sample: 'S-1' }, [], {}).add).toEqual([
+      { concept: 'c-vl', groupMembers: [{ concept: 'c-sample', value: 'S-1' }] },
+    ]);
   });
 });

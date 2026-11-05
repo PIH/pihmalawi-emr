@@ -72,7 +72,8 @@ test.describe('Enrolments tab in the O3 patient chart', () => {
     ]);
 
     await page.goto(`spa/patient/${unenrolledChronicCarePatient.uuid}/chart/eMastercards`);
-    await expect(page.getByRole('button', { name: 'Create new Mental Health eMastercard' })).toBeVisible();
+    // the mental health card is kept natively in O3, on its own page
+    await expect(page.getByRole('button', { name: 'Open mental health' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Create new Epilepsy eMastercard' })).toBeVisible();
   });
 

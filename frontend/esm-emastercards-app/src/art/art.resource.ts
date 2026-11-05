@@ -2,7 +2,8 @@ import useSWR from 'swr';
 import { fhirBaseUrl, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 import { type EMastercardCard, useEMastercards } from '../emastercards.resource';
 import { ART_FORMS, type ArtFormKind, ART_INITIAL, ART_VISIT, VIRAL_LOAD } from './art-concepts';
-import { type ExistingObs, type FieldValue } from './obs-diff';
+import { type CardForm, type ExistingObs, type FieldSpec, type FieldValue } from './obs-diff';
+import { MH_VISIT } from '../mental-health/mh-concepts';
 
 /** An obs of an ART encounter; coded values are the answer's uuid, booleans true or false */
 export interface ArtObs extends ExistingObs {
@@ -24,11 +25,12 @@ interface RestObs {
   obsDatetime: string;
   concept: { uuid: string };
   value: unknown;
+  comment?: string | null;
   groupMembers?: Array<RestObs> | null;
 }
 
-/** Boolean concepts, which REST may return as the true or false concept */
-const BOOLEAN_CONCEPTS = [ART_VISIT.arvsGivenTo, ART_INITIAL.ks, VIRAL_LOAD.sampleTaken, VIRAL_LOAD.ldl];
+/** Boolean concepts, which REST may return as the true or false concept; other cards add theirs */
+export const BOOLEAN_CONCEPTS = [ART_VISIT.arvsGivenTo, ART_INITIAL.ks, VIRAL_LOAD.sampleTaken, VIRAL_LOAD.ldl, MH_VISIT.sideEffects];
 
 function toValue(concept: string, value: unknown): ArtObs['value'] {
   if (value && typeof value === 'object') {
@@ -48,11 +50,12 @@ function toArtObs(o: RestObs): ArtObs {
     obsDatetime: o.obsDatetime,
     concept,
     value: toValue(concept, o.value),
+    ...(o.comment ? { comment: o.comment } : {}),
     ...(o.groupMembers?.length ? { groupMembers: o.groupMembers.map(toArtObs) } : {}),
   };
 }
 
-const obsRep = 'uuid,obsDatetime,concept:(uuid),value,groupMembers:(uuid,obsDatetime,concept:(uuid),value)';
+const obsRep = 'uuid,obsDatetime,concept:(uuid),value,comment,groupMembers:(uuid,obsDatetime,concept:(uuid),value,comment)';
 const encounterRep = `custom:(uuid,encounterDatetime,location:(uuid,display),visit:(uuid),form:(uuid),obs:(${obsRep}))`;
 
 /** Every ART hook's SWR key starts with this, so a save can refresh the whole HIV care page */
@@ -64,9 +67,15 @@ export function artSwrKey(patientUuid: string) {
  * The patient's encounters of one ART card form's encounter type, whatever form saved them, newest first
  */
 export function useArtEncounters(patientUuid: string, kind: ArtFormKind) {
-  const { encounterType } = ART_FORMS[kind];
+  return useCardEncounters(patientUuid, ART_FORMS[kind]);
+}
+
+/**
+ * The patient's encounters of a card form's encounter type, whatever form saved them, newest first
+ */
+export function useCardEncounters(patientUuid: string, { encounterType }: CardForm) {
   const { data, error, isLoading, mutate } = useSWR(
-    patientUuid ? [artSwrKey(patientUuid), kind] : null,
+    patientUuid ? [artSwrKey(patientUuid), encounterType] : null,
     async () => {
       const res = await openmrsFetch<{ results: Array<Omit<ArtEncounter, 'obs'> & { obs: Array<RestObs> }> }>(
         `${restBaseUrl}/encounter?patient=${patientUuid}&encounterType=${encounterType}&v=${encounterRep}&order=desc&limit=100`,
@@ -94,14 +103,38 @@ export function useArtEncounter(patientUuid: string, encounterUuid: string | und
 }
 
 /** The patient's ART eMastercard, as the eMastercards endpoint gives it, or null when they have none */
-export function useArtCard(patientUuid: string): {
+export function useArtCard(patientUuid: string) {
+  return useEMastercard(patientUuid, 'art');
+}
+
+/** One of the patient's eMastercards by key, as the eMastercards endpoint gives it, or null when they have none */
+export function useEMastercard(
+  patientUuid: string,
+  key: string,
+): {
   card: EMastercardCard | null;
   systemLocationsTag: string | null;
   isLoading: boolean;
   error: Error | undefined;
 } {
   const { cards, systemLocationsTag, isLoading, error } = useEMastercards(patientUuid);
-  return { card: cards.find((c) => c.key === 'art') ?? null, systemLocationsTag, isLoading, error };
+  return { card: cards.find((c) => c.key === key) ?? null, systemLocationsTag, isLoading, error };
+}
+
+interface Relationship {
+  personA: { uuid?: string; display: string };
+  relationshipType: { uuid: string };
+}
+
+/** The patient's community health workers, as the card headers show them: person A of a CHW relationship */
+export function useChws(patientUuid: string | null, relationshipType: string) {
+  const { data } = useSWR(
+    patientUuid ? `${restBaseUrl}/relationship?person=${patientUuid}&v=custom:(personA:(uuid,display),relationshipType:(uuid))` : null,
+    (url: string) => openmrsFetch<{ results: Array<Relationship> }>(url).then((res) => res.data?.results ?? []),
+  );
+  return (data ?? [])
+    .filter((r) => r.relationshipType?.uuid === relationshipType && r.personA?.uuid !== patientUuid)
+    .map((r) => r.personA.display);
 }
 
 /** The locations with a tag (every location when there is no tag), for location choices */
@@ -133,6 +166,35 @@ export function obsGroups(encounter: ArtEncounter | null | undefined, concept: s
 /** A group's member value */
 export function memberValue(group: ArtObs | undefined, concept: string): FieldValue {
   return (group?.groupMembers?.find((m) => m.concept === concept.toLowerCase())?.value as FieldValue) ?? null;
+}
+
+/**
+ * A panel's fields as an encounter holds them: group members from the group the field belongs to (told apart by
+ * its matching answer, when the form has several groups of one concept), and each comment under its own key
+ */
+export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounter | null | undefined): Record<string, FieldValue> {
+  const values: Record<string, FieldValue> = {};
+  fields.forEach((f) => {
+    let found: Array<ArtObs>;
+    if (f.group) {
+      const { match } = f.group;
+      const group = obsGroups(encounter, f.group.concept).find(
+        (g) =>
+          !match ||
+          g.groupMembers.some(
+            (m) => m.concept === match.concept.toLowerCase() && String(m.value).toLowerCase() === match.value.toLowerCase(),
+          ),
+      );
+      found = (group?.groupMembers ?? []).filter((m) => m.concept === f.concept.toLowerCase());
+    } else {
+      found = (encounter?.obs ?? []).filter((o) => o.concept === f.concept.toLowerCase() && !o.groupMembers);
+    }
+    values[f.name] = f.kind === 'multi' ? found.map((o) => String(o.value)) : ((found[0]?.value as FieldValue) ?? null);
+    if (f.comment) {
+      values[f.comment] = found[0]?.comment ?? null;
+    }
+  });
+  return values;
 }
 
 export interface SameDayObs {

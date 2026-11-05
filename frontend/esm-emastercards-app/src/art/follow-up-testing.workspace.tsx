@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Workspace2DefinitionProps } from '@openmrs/esm-framework';
 import { FOLLOW_UP_FIELDS } from './art-fields';
+import { ART_FORMS } from './art-concepts';
 import { ArtEncounterPanel } from './art-encounter-panel';
 
 export interface FollowUpTestingWorkspaceProps {
@@ -17,7 +18,8 @@ const FollowUpTestingWorkspace: React.FC<Workspace2DefinitionProps<FollowUpTesti
   const { t } = useTranslation();
   return (
     <ArtEncounterPanel
-      kind="followUpTesting"
+      form={ART_FORMS.followUpTesting}
+      cardKey="art"
       patientUuid={patientUuid}
       encounterUuid={encounterUuid}
       title={{ record: t('recordFollowUpTests', 'Record follow-up tests'), edit: t('editFollowUpTests', 'Edit follow-up tests') }}

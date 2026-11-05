@@ -6,7 +6,7 @@ export const configSchema = {
     _elements: { _type: Type.String },
     _description:
       "The patient chart pages (the part of the URL after /chart/) that don't show the vitals and biometrics header",
-    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare'],
+    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth'],
   },
   hiv: {
     programUuid: {

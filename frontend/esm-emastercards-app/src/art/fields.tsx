@@ -105,6 +105,22 @@ export const ArtFieldInput: React.FC<ArtFieldInputProps> = ({ field, value, onCh
     );
   }
 
+  if (field.kind === 'coded' && field.checkbox) {
+    const answer = field.options[0].value;
+    return (
+      <div>
+        <Checkbox
+          id={id}
+          labelText={label}
+          checked={typeof value === 'string' && value.toLowerCase() === answer.toLowerCase()}
+          disabled={locked}
+          onChange={(_, { checked }) => onChange(checked ? answer : null)}
+        />
+        {message}
+      </div>
+    );
+  }
+
   if (field.kind === 'coded' && !field.select && field.options.length <= 4) {
     return (
       <fieldset className={styles.fieldset}>
