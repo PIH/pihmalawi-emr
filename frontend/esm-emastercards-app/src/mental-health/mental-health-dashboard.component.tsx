@@ -14,11 +14,14 @@ import {
 } from '@carbon/react';
 import { NO, YES } from '../art/art-concepts';
 import { type ArtField, displayValue, formatDay } from '../art/art-fields';
-import { type ArtEncounter, encounterValues, memberValue, obsGroups, obsValue, useCardEncounters, useEMastercard } from '../art/art.resource';
+import { type ArtEncounter, encounterValues, memberValue, obsGroups, obsValue, useCardEncounters, useCardGroup, useEMastercard } from '../art/art.resource';
 import { CURRENT, EXPOSURE, MH_CARD_KEY, MH_FORMS, MH_HEADER, MH_VISIT, NON_CODED_TEXT } from './mh-concepts';
 import { MEDICATIONS, MH_HEADER_SECTIONS, MH_SCREENING_FIELDS, MH_VISIT_FIELDS, MSE_FINDINGS, type MhHeaderSection } from './mh-fields';
 import { mseState } from './mh-rules';
 import { launchMhPanel, useLaunchMhPanel } from './launch-mh-panel';
+import { enrolmentText } from '../emastercards.resource';
+import { CARD_PARAM, CardGroupTabs, selectedCard, useCurrentUrl } from '../shared/card-group';
+import LegacyCardPage from '../shared/legacy-card-page.component';
 import styles from '../care-page.scss';
 
 interface MentalHealthDashboardProps {
@@ -39,7 +42,8 @@ function medicationsOf(visit: ArtEncounter) {
       const name = med.key === 'other' ? (memberValue(g, NON_CODED_TEXT) as string) || med.short : med.short;
       const dose = memberValue(g, MH_VISIT.dose);
       const amount = [name, dose, label(MH_VISIT.doseUnits, memberValue(g, MH_VISIT.doseUnit))].filter((x) => x !== null && x !== '').join(' ');
-      return { amount, frequency: label(MH_VISIT.frequencies, memberValue(g, MH_VISIT.frequency)) };
+      const frequency = MH_VISIT.frequencies.find((f) => same(memberValue(g, MH_VISIT.frequency), f.value));
+      return { amount, name: med.key === 'other' ? name : med.name, frequency: frequency?.label ?? null, frequencyWords: frequency?.words ?? null };
     })
     .filter(Boolean);
 }
@@ -151,7 +155,7 @@ const Headline: React.FC<{ label: string; value: string | null; detail?: string 
  * The Mental Health eMastercard, natively in O3: the headline, the card header's sections, the mental status
  * examination and medication history, and the visits and screenings, each edited in its own side panel
  */
-const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUuid }) => {
+const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.ReactNode }> = ({ patientUuid, tabs }) => {
   const { t } = useTranslation();
   const { card, isLoading, error } = useEMastercard(patientUuid, MH_CARD_KEY);
   const { encounters: headers } = useCardEncounters(patientUuid, MH_FORMS.header);
@@ -200,10 +204,7 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
   const mseVisits = visits.slice(0, 4);
   const description = [
     t('mentalHealthPatientCard', 'Mental health patient card'),
-    header &&
-      (header.location?.display
-        ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date: formatDay(header.encounterDatetime), location: header.location.display })
-        : t('enrolled', 'enrolled {{date}}', { date: formatDay(header.encounterDatetime) })),
+    enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
@@ -221,23 +222,21 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
       </Button>
     );
 
-  const section = (key: MhHeaderSection) => {
-    const title = t(`mhSection_${key}`, MH_HEADER_SECTIONS[key].title);
+  const sectionAction = (key: MhHeaderSection) =>
+    canEdit &&
+    (header ? (
+      editButton(() => launchMhPanel('header', { patientUuid, section: key }))
+    ) : (
+      <Button kind="ghost" size="sm" onClick={() => launchMhPanel('header', { patientUuid, section: 'start' })}>
+        {t('startCard', 'Start the card')}
+      </Button>
+    ));
+
+  const sectionBody = (key: MhHeaderSection) => {
     const rows = sectionRows(key, header);
     const listed = key === 'diagnoses' || key === 'presentingFeatures';
     return (
-      <section aria-label={title} className={styles.card} key={key}>
-        <div className={styles.cardHeader}>
-          <h4 className={styles.cardTitle}>{title}</h4>
-          {canEdit &&
-            (header ? (
-              editButton(() => launchMhPanel('header', { patientUuid, section: key }))
-            ) : (
-              <Button kind="ghost" size="sm" onClick={() => launchMhPanel('header', { patientUuid, section: 'start' })}>
-                {t('startCard', 'Start the card')}
-              </Button>
-            ))}
-        </div>
+      <>
         {listed ? (
           <ul className={styles.history}>
             {rows.map((r) => (
@@ -255,9 +254,34 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
           </dl>
         )}
         {!rows.length && <p className={styles.empty}>{t('notRecorded', 'Not recorded yet')}</p>}
+      </>
+    );
+  };
+
+  const section = (key: MhHeaderSection, extra?: React.ReactNode) => {
+    const title = t(`mhSection_${key}`, MH_HEADER_SECTIONS[key].title);
+    return (
+      <section aria-label={title} className={styles.card} key={key}>
+        <div className={styles.cardHeader}>
+          <h4 className={styles.cardTitle}>{title}</h4>
+          {sectionAction(key)}
+        </div>
+        {sectionBody(key)}
+        {extra}
       </section>
     );
   };
+
+  // as in the mockup, the presenting features sit under the diagnoses, in the same card, with their own Edit
+  const presentingFeatures = (
+    <div aria-label={t('mhSection_presentingFeatures', MH_HEADER_SECTIONS.presentingFeatures.title)} role="group">
+      <div className={styles.subsectionHeader}>
+        <h5 className={styles.subtitle}>{t('mhSection_presentingFeatures', MH_HEADER_SECTIONS.presentingFeatures.title)}</h5>
+        {header && sectionAction('presentingFeatures')}
+      </div>
+      {sectionBody('presentingFeatures')}
+    </div>
+  );
 
   const visitColumns = [
     { key: 'date', header: t('visitDate', 'Visit date') },
@@ -332,6 +356,8 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
         </div>
       </div>
 
+      {tabs}
+
       {card.state === 'VIEW' && (
         <InlineNotification kind="info" lowContrast hideCloseButton title={card.message ?? t('viewOnly', 'You can view this card but not change it.')} />
       )}
@@ -350,7 +376,7 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
         <Headline
           label={t('currentMedication', 'Current medication')}
           value={meds.map((m) => m.amount).join(', ') || null}
-          detail={[...new Set(meds.map((m) => m.frequency).filter(Boolean))].join(', ') || null}
+          detail={meds.map((m) => [m.name, m.frequencyWords].filter(Boolean).join(' · ')).join(', ') || null}
         />
         <Headline
           label={t('dailyActivities', 'Daily activities')}
@@ -365,10 +391,9 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
       </section>
 
       <div className={styles.cards}>
-        {section('patientGuardian')}
-        {section('diagnoses')}
-        {section('presentingFeatures')}
+        {section('diagnoses', presentingFeatures)}
         {section('historyExposures')}
+        {section('patientGuardian')}
       </div>
 
       <div className={styles.cards}>
@@ -399,7 +424,13 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
                         );
                         return (
                           <TableCell key={v.uuid}>
-                            {state === 'present' ? t('present', 'Present') : state === 'absent' ? t('absent', 'Absent') : '–'}
+                            {state === 'present' ? (
+                              <span className={styles.present}>{t('present', 'Present')}</span>
+                            ) : state === 'absent' ? (
+                              t('absent', 'Absent')
+                            ) : (
+                              '–'
+                            )}
                           </TableCell>
                         );
                       })}
@@ -469,6 +500,30 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
       </section>
     </div>
   );
+};
+
+/**
+ * The Mental health page: the card the URL names among the patient's Mental Health Record cards, with a tab for
+ * each when there is more than one. The mental health card is kept natively; the others show their legacy card.
+ */
+const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUuid }) => {
+  const { t } = useTranslation();
+  const { cards } = useCardGroup(patientUuid, MH_CARD_KEY);
+  const url = useCurrentUrl();
+  const selected = selectedCard(cards, url.searchParams.get(CARD_PARAM), MH_CARD_KEY);
+  const tabs = (
+    <CardGroupTabs
+      patientUuid={patientUuid}
+      path="mentalHealth"
+      cards={cards}
+      selected={selected?.key ?? MH_CARD_KEY}
+      label={t('mentalHealthCards', 'Mental health cards')}
+    />
+  );
+  if (selected && selected.key !== MH_CARD_KEY) {
+    return <LegacyCardPage card={selected} patientUuid={patientUuid} title={t('mentalHealth', 'Mental health')} tabs={tabs} />;
+  }
+  return <MentalHealthCard patientUuid={patientUuid} tabs={tabs} />;
 };
 
 export default MentalHealthDashboard;

@@ -1,6 +1,7 @@
 package org.openmrs.module.pihmalawi.rest.controller;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientProgram;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.pihmalawi.emastercard.EMastercard;
@@ -79,9 +80,27 @@ public class EMastercardRestController {
 		ret.add("lastVisit", format(access.getLastVisitDate()));
 		ret.add("lastVisitLocation", access.getLastVisitLocation());
 		ret.add("appointment", format(access.getAppointmentDate()));
+		ret.add("enrolment", enrolment(access.getEnrolment()));
 		ret.add("flowsheetPath", access.getFlowsheetPath());
 		ret.add("formUuids", emastercardFormIndex.formUuidsFor(m));
 		ret.add("encounterTypeUuids", new ArrayList<String>(emastercardFormIndex.encounterTypeUuidsFor(m)));
+		return ret;
+	}
+
+	/**
+	 * @return the card's program enrolment as the chart shows it ("enrolled 12-Mar-2025 at Neno District Hospital")
+	 */
+	private SimpleObject enrolment(PatientProgram pp) {
+		if (pp == null) {
+			return null;
+		}
+		SimpleObject ret = new SimpleObject();
+		ret.add("uuid", pp.getUuid());
+		ret.add("program", pp.getProgram().getName());
+		ret.add("dateEnrolled", format(pp.getDateEnrolled()));
+		ret.add("dateCompleted", format(pp.getDateCompleted()));
+		ret.add("location", pp.getLocation() == null ? null
+		        : new SimpleObject().add("uuid", pp.getLocation().getUuid()).add("display", pp.getLocation().getName()));
 		return ret;
 	}
 

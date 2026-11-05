@@ -10,6 +10,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
 import org.openmrs.Person;
+import org.openmrs.Program;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.api.context.Context;
@@ -74,6 +75,7 @@ public class EMastercardService {
 				workflows.add(state.getProgramWorkflow());
 			}
 		}
+		access.setEnrolment(enrolment(p, workflows));
 		boolean readonly = m.isReadonlyOnceArtInitial() && hasEncounterOfType(p, "ART_INITIAL");
 		access.setReadonlyNote(readonly);
 		String name = f.getName();
@@ -188,6 +190,35 @@ public class EMastercardService {
 		if (!obs.isEmpty()) {
 			access.setAppointmentDate(obs.get(0).getValueDatetime());
 		}
+	}
+
+	/**
+	 * @return the patient's enrolment in the programs of the card's workflows: the active one enrolled most recently,
+	 *         else the one enrolled most recently, or null when there is none
+	 */
+	private PatientProgram enrolment(Patient p, List<ProgramWorkflow> workflows) {
+		List<Program> programs = new ArrayList<Program>();
+		for (ProgramWorkflow workflow : workflows) {
+			if (!programs.contains(workflow.getProgram())) {
+				programs.add(workflow.getProgram());
+			}
+		}
+		PatientProgram latest = null;
+		PatientProgram latestActive = null;
+		for (Program program : programs) {
+			for (PatientProgram pp : Context.getProgramWorkflowService().getPatientPrograms(p, program, null, null, null, null, false)) {
+				if (pp.getDateEnrolled() == null) {
+					continue;
+				}
+				if (latest == null || pp.getDateEnrolled().after(latest.getDateEnrolled())) {
+					latest = pp;
+				}
+				if (pp.getActive() && (latestActive == null || pp.getDateEnrolled().after(latestActive.getDateEnrolled()))) {
+					latestActive = pp;
+				}
+			}
+		}
+		return latestActive != null ? latestActive : latest;
 	}
 
 	private boolean hasEncounterOfType(Patient p, String encounterTypeName) {

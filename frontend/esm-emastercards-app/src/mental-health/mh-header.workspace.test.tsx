@@ -8,7 +8,13 @@ import { useCardEncounters, useEMastercard, useLocationsTagged } from '../art/ar
 import { saveEncounter } from '../art/obs-diff';
 import { CURRENT, EXPOSURE, MH_FORMS, MH_HEADER } from './mh-concepts';
 import { mhHeader } from './test-mh-data';
+import { useCarriedPatientGuardian } from '../shared/patient-guardian';
 import MhHeaderWorkspace from './mh-header.workspace';
+
+vi.mock('../shared/patient-guardian', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../shared/patient-guardian')>()),
+  useCarriedPatientGuardian: vi.fn(),
+}));
 
 vi.mock('../art/art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../art/art.resource')>()),
@@ -23,7 +29,8 @@ vi.mock('../art/obs-diff', async (importOriginal) => ({
 
 const mockSave = vi.mocked(saveEncounter);
 
-function setUp({ state = 'EDIT' as 'CREATE' | 'EDIT' | 'VIEW' | 'UNAVAILABLE', header = mhHeader as typeof mhHeader | null } = {}) {
+function setUp({ state = 'EDIT' as 'CREATE' | 'EDIT' | 'VIEW' | 'UNAVAILABLE', header = mhHeader as typeof mhHeader | null, carried = {} } = {}) {
+  vi.mocked(useCarriedPatientGuardian).mockReturnValue({ carried, isLoading: false });
   vi.mocked(useEMastercard).mockReturnValue({
     card: card({ key: 'mental-health', state, initialEncounterUuid: header?.uuid ?? null, message: state === 'UNAVAILABLE' ? 'Multiple forms found' : null }),
     systemLocationsTag: 'Upper Neno',
@@ -57,10 +64,11 @@ function renderPanel(section: 'start' | 'patientGuardian' | 'diagnoses' | 'prese
 const save = () => userEvent.click(screen.getByRole('button', { name: 'Save and close' }));
 
 describe('MhHeaderWorkspace', () => {
-  it('start panel asks follow-up and diagnoses, and creates the header', async () => {
+  it('start panel asks patient and guardian, follow-up and diagnoses, and creates the header', async () => {
     setUp({ state: 'CREATE', header: null });
     renderPanel('start');
-    expect(screen.queryByLabelText('Guardian name')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Guardian name')).toHaveValue('');
+    expect(screen.queryByText(/were filled in from/)).not.toBeInTheDocument();
     await userEvent.click(screen.getByLabelText('Schizophrenia'));
     fireEvent.change(screen.getByLabelText('Schizophrenia date'), { target: { value: '2025-03-12' } });
     await userEvent.click(screen.getByLabelText('Yes'));
@@ -80,6 +88,39 @@ describe('MhHeaderWorkspace', () => {
         },
       ]),
     );
+  });
+
+  it("start panel fills in patient and guardian from the patient's other cards, and saves them", async () => {
+    setUp({
+      state: 'CREATE',
+      header: null,
+      carried: {
+        patientPhone: { value: '0888 123 456', from: 'ART eMastercard' },
+        guardianName: { value: 'Art Guardian', from: 'ART eMastercard' },
+        agreesToFollowUp: { value: YES, from: 'ART eMastercard' },
+      },
+    });
+    renderPanel('start');
+    expect(screen.getByText('Patient and guardian details were filled in from ART eMastercard. Check them, then save.')).toBeInTheDocument();
+    expect(screen.getByLabelText('Guardian name')).toHaveValue('Art Guardian');
+    await userEvent.click(screen.getByLabelText('Schizophrenia'));
+    fireEvent.change(screen.getByLabelText('Schizophrenia date'), { target: { value: '2025-03-12' } });
+    await save();
+    expect(mockSave.mock.calls[0][1].payload.add).toEqual(
+      expect.arrayContaining([
+        // the mental health card keeps the patient's phone in a numeric concept
+        { concept: MH_HEADER.patientPhone, value: 888123456 },
+        { concept: MH_HEADER.guardianName, value: 'Art Guardian' },
+        { concept: MH_HEADER.agreesToFollowUp, value: YES },
+      ]),
+    );
+  });
+
+  it("never overwrites the card's own patient and guardian answers", () => {
+    setUp({ carried: { guardianName: { value: 'Art Guardian', from: 'ART eMastercard' } } });
+    renderPanel('patientGuardian');
+    expect(screen.getByLabelText('Guardian name')).toHaveValue('Test Guardian');
+    expect(screen.queryByText(/were filled in from/)).not.toBeInTheDocument();
   });
 
   it('any section opens the start panel while there is no header', () => {

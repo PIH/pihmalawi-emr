@@ -16,6 +16,14 @@ export interface EMastercardCard {
   lastVisit: string | null;
   lastVisitLocation: string | null;
   appointment: string | null;
+  /** The patient's enrolment in the card's program: the current one, else the latest; null without one */
+  enrolment: {
+    uuid: string;
+    program: string;
+    dateEnrolled: string;
+    dateCompleted: string | null;
+    location: { uuid: string; display: string } | null;
+  } | null;
   flowsheetPath: string;
   formUuids: Array<string>;
   encounterTypeUuids: Array<string>;
@@ -62,4 +70,20 @@ export function flowsheetUrl(card: EMastercardCard, options: { encounterDate?: s
 
 export function launchFlowsheet(card: EMastercardCard, patientUuid: string, options: { encounterDate?: string } = {}) {
   launchWorkspace2(flowsheetWorkspace, { card, patientUuid, url: flowsheetUrl(card, options) });
+}
+
+/** "enrolled 12-Mar-2025 at Neno District Hospital", from the card's program enrolment, or null without one */
+export function enrolmentText(
+  card: Pick<EMastercardCard, 'enrolment'> | null,
+  t: (key: string, fallback: string, options?: Record<string, unknown>) => string,
+  formatDay: (date: string) => string | null,
+): string | null {
+  const enrolment = card?.enrolment;
+  if (!enrolment?.dateEnrolled) {
+    return null;
+  }
+  const date = formatDay(enrolment.dateEnrolled);
+  return enrolment.location?.display
+    ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date, location: enrolment.location.display })
+    : t('enrolled', 'enrolled {{date}}', { date });
 }

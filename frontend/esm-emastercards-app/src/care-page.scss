@@ -64,6 +64,11 @@
   font-weight: 600;
 }
 
+.present {
+  color: $danger;
+  font-weight: 600;
+}
+
 .value {
   @include type.type-style('heading-03');
   font-weight: 600;
@@ -97,6 +102,18 @@
 
 .cardTitle {
   @include type.type-style('heading-compact-02');
+}
+
+.subsectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+  margin-top: layout.$spacing-03;
+
+  .subtitle {
+    margin-top: 0;
+  }
 }
 
 .subtitle {

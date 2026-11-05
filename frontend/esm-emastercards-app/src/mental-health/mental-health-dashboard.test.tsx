@@ -2,7 +2,8 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { card } from '../test-cards';
-import { type ArtEncounter, useCardEncounters, useEMastercard } from '../art/art.resource';
+import { navigate } from '@openmrs/esm-framework';
+import { type ArtEncounter, useCardEncounters, useCardGroup, useEMastercard } from '../art/art.resource';
 import { FINDINGS, MH_FORMS } from './mh-concepts';
 import { launchMhPanel } from './launch-mh-panel';
 import { mhHeader, mhScreening, mhVisit } from './test-mh-data';
@@ -13,6 +14,7 @@ vi.mock('../art/art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../art/art.resource')>()),
   useEMastercard: vi.fn(),
   useCardEncounters: vi.fn(),
+  useCardGroup: vi.fn(),
 }));
 vi.mock('@openmrs/esm-framework', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@openmrs/esm-framework')>()),
@@ -37,9 +39,12 @@ function withData(
   state: 'CREATE' | 'EDIT' | 'VIEW' | 'UNAVAILABLE',
   data: { header?: Array<ArtEncounter>; visits?: Array<ArtEncounter>; screenings?: Array<ArtEncounter> } = {},
   message: string | null = null,
+  extraCards: Array<ReturnType<typeof card>> = [],
 ) {
+  const mhCard = card({ key: 'mental-health', group: 'Mental Health Record', label: 'Mental Health eMastercard', state, message, initialEncounterUuid: data.header?.[0]?.uuid ?? null, enrolment: { uuid: 'pp1', program: 'Mental Health Care Program', dateEnrolled: '2025-02-20', dateCompleted: null, location: { uuid: 'neno-dh', display: 'Neno District Hospital' } } });
+  vi.mocked(useCardGroup).mockReturnValue({ cards: state === 'UNAVAILABLE' ? [] : [mhCard, ...extraCards], isLoading: false, error: undefined });
   vi.mocked(useEMastercard).mockReturnValue({
-    card: card({ key: 'mental-health', state, message, initialEncounterUuid: data.header?.[0]?.uuid ?? null }),
+    card: mhCard,
     systemLocationsTag: 'Upper Neno',
     isLoading: false,
     error: undefined,
@@ -65,7 +70,7 @@ describe('MentalHealthDashboard', () => {
     render(<MentalHealthDashboard patientUuid="p1" />);
     expect(screen.getByText('Care and treatment')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Mental health' })).toBeInTheDocument();
-    expect(screen.getByText('Mental health patient card · enrolled 12-Mar-2025 at Neno District Hospital')).toBeInTheDocument();
+    expect(screen.getByText('Mental health patient card · enrolled 20-Feb-2025 at Neno District Hospital')).toBeInTheDocument();
   });
 
   it('shows the headline row', () => {
@@ -75,7 +80,7 @@ describe('MentalHealthDashboard', () => {
     expect(headline.getAllByText('Yes').length).toBeGreaterThan(0);
     expect(headline.getAllByText('Assessed 08-Oct-2026')).toHaveLength(3);
     expect(headline.getByText('RIS 2 mg')).toBeInTheDocument();
-    expect(headline.getByText('BID')).toBeInTheDocument();
+    expect(headline.getByText('Risperidone · twice daily')).toBeInTheDocument();
     expect(headline.getByText('Able')).toBeInTheDocument();
     expect(headline.getByText('04-Nov-2026')).toBeInTheDocument();
     expect(headline.getByText('Booked 08-Oct-2026')).toBeInTheDocument();
@@ -84,8 +89,11 @@ describe('MentalHealthDashboard', () => {
   it('header cards show their answers', () => {
     withData('EDIT', everything);
     render(<MentalHealthDashboard patientUuid="p1" />);
-    expect(within(screen.getByRole('region', { name: 'Diagnoses' })).getByText('Schizophrenia · 12-Mar-2025')).toBeInTheDocument();
-    expect(within(screen.getByRole('region', { name: 'Presenting features' })).getByText('Hallucinations · 01-Mar-2025')).toBeInTheDocument();
+    const diagnoses = within(screen.getByRole('region', { name: 'Diagnoses' }));
+    expect(diagnoses.getByText('Schizophrenia · 12-Mar-2025')).toBeInTheDocument();
+    // the presenting features sit under the diagnoses, in the same card, as in the mockup
+    expect(within(diagnoses.getByRole('group', { name: 'Presenting features' })).getByText('Hallucinations · 01-Mar-2025')).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Presenting features' })).not.toBeInTheDocument();
     expect(within(screen.getByRole('region', { name: 'History and exposures' })).getByText('Past')).toBeInTheDocument();
     expect(within(screen.getByRole('region', { name: 'Patient and guardian' })).getByText('Test Guardian')).toBeInTheDocument();
   });
@@ -168,7 +176,62 @@ describe('MentalHealthDashboard', () => {
   });
 });
 
+const epilepsyCard = card({
+  key: 'epilepsy',
+  group: 'Mental Health Record',
+  label: 'Epilepsy eMastercard',
+  state: 'EDIT',
+  flowsheetPath: 'htmlformentryui/htmlform/flowsheet.page?headerForm=file:configuration/htmlforms/epilepsy-emastercard.xml&patientId=7',
+});
+
+describe('MentalHealthDashboard with more than one card', () => {
+  afterEach(() => window.history.replaceState(null, '', '/'));
+
+  it('shows a tab for each card, the mental health card first', () => {
+    withData('EDIT', everything, null, [epilepsyCard]);
+    render(<MentalHealthDashboard patientUuid="p1" />);
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['Mental health', 'Epilepsy']);
+    expect(screen.getByRole('tab', { name: 'Mental health' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('region', { name: 'Diagnoses' })).toBeInTheDocument();
+  });
+
+  it('opens the card the URL names: epilepsy shows its legacy card', () => {
+    window.history.replaceState(null, '', '/openmrs/spa/patient/p1/chart/mentalHealth?card=epilepsy');
+    withData('EDIT', everything, null, [epilepsyCard]);
+    render(<MentalHealthDashboard patientUuid="p1" />);
+    expect(screen.getByRole('tab', { name: 'Epilepsy' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText('Epilepsy eMastercard')).toBeInTheDocument();
+    expect(screen.getByTitle('Epilepsy eMastercard').getAttribute('src')).toContain('epilepsy-emastercard.xml');
+    expect(screen.queryByRole('region', { name: 'Diagnoses' })).not.toBeInTheDocument();
+  });
+
+  it('a tab opens its card', async () => {
+    withData('EDIT', everything, null, [epilepsyCard]);
+    render(<MentalHealthDashboard patientUuid="p1" />);
+    await userEvent.click(screen.getByRole('tab', { name: 'Epilepsy' }));
+    expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/p1/chart/mentalHealth?card=epilepsy' });
+  });
+
+  it('a patient with only an epilepsy card sees it, without tabs', () => {
+    withData('UNAVAILABLE', {}, 'Not available');
+    vi.mocked(useCardGroup).mockReturnValue({ cards: [epilepsyCard], isLoading: false, error: undefined });
+    render(<MentalHealthDashboard patientUuid="p1" />);
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+    expect(screen.getByTitle('Epilepsy eMastercard')).toBeInTheDocument();
+  });
+});
+
 describe('MentalHealthDashboardLink', () => {
+  it('expands to a link for each card when the patient has more than one', async () => {
+    withData('EDIT', everything, null, [epilepsyCard]);
+    render(<MentalHealthDashboardLink basePath="${openmrsSpaBase}/patient/p1/chart" patientUuid="p1" />);
+    expect(screen.getByRole('button', { name: 'Mental health' })).toHaveAttribute('aria-expanded', 'true');
+    const epilepsy = screen.getByRole('link', { name: 'Epilepsy' });
+    expect(screen.getByRole('link', { name: 'Mental health' })).toBeInTheDocument();
+    await userEvent.click(epilepsy);
+    expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/p1/chart/mentalHealth?card=epilepsy' });
+  });
+
   it('the link is hidden when the card is not available to the patient', () => {
     withData('UNAVAILABLE', {}, 'Not available: Inactive program state (Mental Health eMastercard)');
     const { container } = render(<MentalHealthDashboardLink basePath="/chart" patientUuid="p1" />);
@@ -176,7 +239,7 @@ describe('MentalHealthDashboardLink', () => {
   });
 
   it('the link shows only with a mental-health card', () => {
-    vi.mocked(useEMastercard).mockReturnValue({ card: null, systemLocationsTag: null, isLoading: false, error: undefined });
+    vi.mocked(useCardGroup).mockReturnValue({ cards: [], isLoading: false, error: undefined });
     const { container } = render(<MentalHealthDashboardLink basePath="/chart" patientUuid="p1" />);
     expect(container).toBeEmptyDOMElement();
     withData('EDIT');

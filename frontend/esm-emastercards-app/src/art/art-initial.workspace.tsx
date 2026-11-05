@@ -16,6 +16,7 @@ import { type RuleResult, sameDayValue } from './art-rules';
 import { obsValue, useArtCard, useArtEncounters, useChws, useLocationsTagged, useSameDayObs } from './art.resource';
 import { buildObsPayload, type FieldValue, saveArtEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
+import { carryOver, useCarriedPatientGuardian } from '../shared/patient-guardian';
 import styles from './art-panel.scss';
 
 export interface ArtInitialWorkspaceProps {
@@ -62,23 +63,35 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
     return refs;
   }, [sameDay, headerDay, encounter, referenceFields]);
 
+  const { carried, isLoading: loadingCarried } = useCarriedPatientGuardian(patientUuid, 'art');
   const [values, setValues] = useState<Record<string, FieldValue> | null>(null);
+  // patient and guardian answers copied from the patient's other cards: shown in the patient and guardian section,
+  // and saved with whichever section starts the card
+  const [copied, setCopied] = useState<{ fields: Array<ArtField>; values: Record<string, FieldValue>; from: Array<string> } | null>(null);
   const [location, setLocation] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = !loadingCard && !isLoading && !loadingSameDay && card;
+  const ready = !loadingCard && !isLoading && !loadingSameDay && !loadingCarried && card;
   useEffect(() => {
     if (!ready || values) {
       return;
     }
     const initial: Record<string, FieldValue> = {};
     fields.forEach((f) => (initial[f.name] = obsValue(encounter, f.concept, f.kind === 'multi')));
-    setValues(initial);
+    if (section === 'patientGuardian') {
+      const c = carryOver(fields, initial, carried);
+      setValues(c.values);
+      setCopied(c.filled.length ? { fields: [], values: {}, from: c.from } : null);
+    } else {
+      setValues(initial);
+      const c = encounter ? null : carryOver(INITIAL_SECTIONS.patientGuardian.fields, {}, carried);
+      setCopied(c?.filled.length ? { fields: c.filled, values: c.values, from: c.from } : null);
+    }
     setLocation(encounter?.location?.uuid ?? session?.sessionLocation?.uuid ?? '');
-  }, [ready, values, fields, encounter, session]);
+  }, [ready, values, fields, encounter, session, section, carried]);
 
   if (card?.state === 'UNAVAILABLE' || unknownHeaders) {
     return (
@@ -124,7 +137,7 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
         encounterUuid: encounter?.uuid,
         datetime: encounter?.encounterDatetime ?? date,
         locationUuid: location,
-        payload: buildObsPayload(fields, values, encounter?.obs ?? [], references),
+        payload: buildObsPayload([...fields, ...(copied?.fields ?? [])], { ...copied?.values, ...values }, encounter?.obs ?? [], references),
       });
       mutate(() => true);
       closeWorkspace({ discardUnsavedChanges: true });
@@ -167,6 +180,24 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
             ))}
           </Select>
         </div>
+
+        {copied && !readOnly && (
+          <InlineNotification
+            kind="info"
+            lowContrast
+            hideCloseButton
+            title={
+              copied.fields.length
+                ? t('patientGuardianWillBeCopied', 'Patient and guardian details from {{cards}} will be saved with this card: {{fields}}.', {
+                    cards: copied.from.join(', '),
+                    fields: copied.fields.map((f) => f.label).join(', '),
+                  })
+                : t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
+                    cards: copied.from.join(', '),
+                  })
+            }
+          />
+        )}
 
         <section className={styles.section}>
           {fields.map((f) => (

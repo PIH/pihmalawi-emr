@@ -20,7 +20,7 @@ export interface ArtEncounter {
   obs: Array<ArtObs>;
 }
 
-interface RestObs {
+export interface RestObs {
   uuid: string;
   obsDatetime: string;
   concept: { uuid: string };
@@ -43,7 +43,7 @@ function toValue(concept: string, value: unknown): ArtObs['value'] {
   return (value as ArtObs['value']) ?? null;
 }
 
-function toArtObs(o: RestObs): ArtObs {
+export function toArtObs(o: RestObs): ArtObs {
   const concept = o.concept.uuid.toLowerCase();
   return {
     uuid: o.uuid,
@@ -56,7 +56,7 @@ function toArtObs(o: RestObs): ArtObs {
 }
 
 const obsRep = 'uuid,obsDatetime,concept:(uuid),value,comment,groupMembers:(uuid,obsDatetime,concept:(uuid),value,comment)';
-const encounterRep = `custom:(uuid,encounterDatetime,location:(uuid,display),visit:(uuid),form:(uuid),obs:(${obsRep}))`;
+export const encounterRep = `custom:(uuid,encounterDatetime,location:(uuid,display),visit:(uuid),form:(uuid),obs:(${obsRep}))`;
 
 /** Every ART hook's SWR key starts with this, so a save can refresh the whole HIV care page */
 export function artSwrKey(patientUuid: string) {
@@ -119,6 +119,19 @@ export function useEMastercard(
 } {
   const { cards, systemLocationsTag, isLoading, error } = useEMastercards(patientUuid);
   return { card: cards.find((c) => c.key === key) ?? null, systemLocationsTag, isLoading, error };
+}
+
+/**
+ * The cards of the same group as the given card (e.g. the mental health and epilepsy cards of the Mental Health
+ * Record) that are available to the patient, in the order the dashboard lists them
+ */
+export function useCardGroup(
+  patientUuid: string,
+  key: string,
+): { cards: Array<EMastercardCard>; isLoading: boolean; error: Error | undefined } {
+  const { cards, isLoading, error } = useEMastercards(patientUuid);
+  const group = cards.find((c) => c.key === key)?.group;
+  return { cards: group ? cards.filter((c) => c.group === group && c.state !== 'UNAVAILABLE') : [], isLoading, error };
 }
 
 interface Relationship {

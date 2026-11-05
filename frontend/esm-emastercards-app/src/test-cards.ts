@@ -14,6 +14,7 @@ export function card(overrides: Partial<EMastercardCard> = {}): EMastercardCard 
     lastVisit: null,
     lastVisitLocation: null,
     appointment: null,
+    enrolment: null,
     flowsheetPath:
       'htmlformentryui/htmlform/flowsheet.page?headerForm=file:configuration/htmlforms/art-emastercard.xml&dashboardUrl=legacyui&patientId=7',
     formUuids: ['64db7fd5-c28d-4b85-87c4-d01e92ae004a'],
