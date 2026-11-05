@@ -39,22 +39,22 @@
 		<addresshierarchyVersion>3.0.0-SNAPSHOT</addresshierarchyVersion>
 		<appframeworkVersion>2.19.0</appframeworkVersion>
 		<appuiVersion>1.18.0</appuiVersion>
-		<authenticationVersion>2.5.0-SNAPSHOT</authenticationVersion>
+		<authenticationVersion>2.5.0</authenticationVersion>
 		<authenticationuiVersion>1.3.0</authenticationuiVersion>
 		<calculationVersion>2.0.0</calculationVersion>
 		<coreappsVersion>3.4.0</coreappsVersion>
 		<emrapiVersion>3.4.0</emrapiVersion>
 		<eventVersion>4.0.0</eventVersion>
 		<fhir2Version>4.2.0</fhir2Version>
-		<htmlformentryVersion>7.3.0-SNAPSHOT</htmlformentryVersion>
-		<htmlformentryuiVersion>3.3.0-SNAPSHOT</htmlformentryuiVersion>
+		<htmlformentryVersion>7.3.0</htmlformentryVersion>
+		<htmlformentryuiVersion>3.3.0</htmlformentryuiVersion>
 		<htmlwidgetsVersion>2.0.1</htmlwidgetsVersion>
 		<idgenVersion>5.0.4</idgenVersion>
 		<initializerVersion>2.12.0</initializerVersion>
 		<legacyuiVersion>2.2.0</legacyuiVersion>
 		<metadatamappingVersion>2.0.0</metadatamappingVersion>
-		<namephoneticsVersion>1.20.0-SNAPSHOT</namephoneticsVersion>
-		<owaVersion>1.16.0-SNAPSHOT</owaVersion>
+		<namephoneticsVersion>1.20.0</namephoneticsVersion>
+		<owaVersion>2.0.0</owaVersion>
 		<registrationappVersion>1.29.0</registrationappVersion>
 		<registrationcoreVersion>1.13.0</registrationcoreVersion>
 		<reportingcompatibilityVersion>2.11.0</reportingcompatibilityVersion>
