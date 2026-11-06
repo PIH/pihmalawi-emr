@@ -66,11 +66,19 @@ export function useCarriedPatientGuardian(patientUuid: string, cardKey: string) 
   return { carried: data ? pickPatientGuardian(data) : {}, isLoading: loadingCards || (uuids.length > 0 && isLoading) };
 }
 
+/**
+ * The largest number a whole-number concept keeps: the mental health card's patient phone is one, and a larger
+ * number (a phone with its 265 country code) is saved as this instead
+ */
+export const MAX_WHOLE_NUMBER = 2147483647;
+
 /** A carried answer as the field takes it: phone numbers stay digits where the card's concept is numeric */
 function asFieldValue(field: ArtField, value: FieldValue): FieldValue {
   if (field.kind === 'number') {
     const digits = String(value).replace(/\D/g, '');
-    return digits ? Number(digits) : null;
+    const n = digits ? Number(digits) : null;
+    // never copy a number the card cannot keep
+    return n !== null && n <= MAX_WHOLE_NUMBER ? n : null;
   }
   if (field.kind === 'coded') {
     return field.options?.some((o) => o.value.toLowerCase() === String(value).toLowerCase()) ? String(value) : null;

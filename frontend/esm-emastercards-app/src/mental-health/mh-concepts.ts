@@ -8,6 +8,9 @@ import { type CardForm } from '../art/obs-diff';
 /** The eMastercards endpoint's key for this card */
 export const MH_CARD_KEY = 'mental-health';
 
+/** The paper card's version, which the page names under its title */
+export const MH_CARD_VERSION = '1.4';
+
 export const MH_FORMS: { header: CardForm; visit: CardForm; screening: CardForm } = {
   header: { encounterType: '3f94849c-f245-4593-bcc8-879eaea29168', form: '38a60208-3227-4ce7-ab2a-5802f8866bd4' },
   visit: { encounterType: 'd51f45f8-0eea-4231-a7e9-c45d57f1cba1', form: 'f374493e-8038-4f81-ae3d-79d2d0ec4d1c' },

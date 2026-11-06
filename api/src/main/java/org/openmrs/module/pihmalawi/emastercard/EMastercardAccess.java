@@ -3,6 +3,7 @@ package org.openmrs.module.pihmalawi.emastercard;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 
 import java.util.Date;
 
@@ -22,6 +23,7 @@ public class EMastercardAccess {
 	private String lastVisitLocation;
 	private Date appointmentDate;
 	private PatientProgram enrolment;
+	private PatientState treatmentState;
 
 	public EMastercardAccess(EMastercard mastercard, Patient patient) {
 		this.mastercard = mastercard;
@@ -124,6 +126,18 @@ public class EMastercardAccess {
 
 	public void setEnrolment(PatientProgram enrolment) {
 		this.enrolment = enrolment;
+	}
+
+	/**
+	 * @return the patient's current state in the card's own workflow (e.g. On treatment in Mental health treatment,
+	 *         for the mental health card), or null when they are in none
+	 */
+	public PatientState getTreatmentState() {
+		return treatmentState;
+	}
+
+	public void setTreatmentState(PatientState treatmentState) {
+		this.treatmentState = treatmentState;
 	}
 
 	/**

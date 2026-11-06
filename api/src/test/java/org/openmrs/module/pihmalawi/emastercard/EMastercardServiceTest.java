@@ -13,8 +13,10 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 import org.openmrs.Privilege;
 import org.openmrs.Program;
+import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.Role;
 import org.openmrs.User;
@@ -32,6 +34,9 @@ public class EMastercardServiceTest extends BaseMalawiTest {
 
     private static final String ON_ARVS_STATE = "6687fa7c-977f-11e1-8993-905e29aff6c1";
     private static final String PRE_ART_CONTINUE_STATE = "6687f284-977f-11e1-8993-905e29aff6c1";
+    private static final String CHRONIC_CARE_ON_TREATMENT_STATE = "5925718D-EA5E-43EB-9AE2-1CB342D8E318";
+    private static final String MENTAL_HEALTH_ON_TREATMENT_STATE = "2F76D426-56A9-4651-B253-A2299B442C09";
+    private static final String EPILEPSY_ADVANCED_CARE_STATE = "61190A43-95FF-4C84-8A3F-DD7F5354171C";
     private static final String PDC_ON_TREATMENT_STATE = "b84735a5-82ae-4e3b-87db-250c43113977";
     private static final String DIAGNOSIS_CONCEPT = "656292d8-977f-11e1-8993-905e29aff6c1";
     private static final String APPOINTMENT_DATE_CONCEPT = "6569cbd4-977f-11e1-8993-905e29aff6c1";
@@ -143,6 +148,26 @@ public class EMastercardServiceTest extends BaseMalawiTest {
 
         EMastercardAccess access = emastercardService.evaluate(p, EMastercardRegistry.get("art"));
         Assert.assertEquals(DateUtil.getDateTime(2025, 1, 1), access.getEnrolment().getDateEnrolled());
+    }
+
+    @Test
+    public void eachCardShowsTheStateOfItsOwnTreatmentWorkflow() {
+        createForm("Mental Health eMastercard", "MENTAL_HEALTH_INITIAL");
+        createForm("Epilepsy eMastercard", "EPILEPSY_INITIAL");
+        PatientIdentifierType ccc = Context.getPatientService().getPatientIdentifierTypeByName("Chronic Care Number");
+        Patient p = basePatient().identifier(ccc, "CCC 1", location).save();
+        PatientProgram pp = enroll(p, createMentalHealthProgram(), CHRONIC_CARE_ON_TREATMENT_STATE);
+        addState(pp, EPILEPSY_ADVANCED_CARE_STATE, DateUtil.getDateTime(2026, 1, 9));
+        addState(pp, MENTAL_HEALTH_ON_TREATMENT_STATE, DateUtil.getDateTime(2026, 10, 16));
+
+        EMastercardAccess mh = emastercardService.evaluate(p, EMastercardRegistry.get("mental-health"));
+        Assert.assertEquals(DateUtil.getDateTime(2026, 10, 16), mh.getTreatmentState().getStartDate());
+        Assert.assertEquals(MENTAL_HEALTH_ON_TREATMENT_STATE, mh.getTreatmentState().getState().getUuid());
+        Assert.assertEquals(DateUtil.getDateTime(2025, 1, 1), mh.getEnrolment().getDateEnrolled());
+
+        EMastercardAccess epilepsy = emastercardService.evaluate(p, EMastercardRegistry.get("epilepsy"));
+        Assert.assertEquals(DateUtil.getDateTime(2026, 1, 9), epilepsy.getTreatmentState().getStartDate());
+        Assert.assertEquals(EPILEPSY_ADVANCED_CARE_STATE, epilepsy.getTreatmentState().getState().getUuid());
     }
 
     @Test
@@ -293,6 +318,53 @@ public class EMastercardServiceTest extends BaseMalawiTest {
         ProgramWorkflowState state = Context.getProgramWorkflowService().getStateByUuid(stateUuid);
         createState(pp, state, enrolled);
         return pp;
+    }
+
+    /**
+     * The Mental Health Care Program's workflows as in the distro: the chronic care treatment status both cards list
+     * (its On treatment state comes with the test metadata), and the mental health and epilepsy treatment workflows,
+     * each listed by its own card
+     *
+     * @return the program's name
+     */
+    private String createMentalHealthProgram() {
+        ProgramWorkflowState chronicCare = Context.getProgramWorkflowService().getStateByUuid(CHRONIC_CARE_ON_TREATMENT_STATE);
+        Assert.assertNotNull(chronicCare);
+        chronicCare.setRetired(false);
+        Program program = chronicCare.getProgramWorkflow().getProgram();
+        List<Concept> concepts = Context.getConceptService().getAllConcepts();
+        int c = 10;
+        for (String uuid : new String[] { MENTAL_HEALTH_ON_TREATMENT_STATE, EPILEPSY_ADVANCED_CARE_STATE }) {
+            ProgramWorkflowState existing = Context.getProgramWorkflowService().getStateByUuid(uuid);
+            if (existing != null) {
+                existing.setRetired(false);
+                existing.getProgramWorkflow().setRetired(false);
+                Assert.assertEquals(program, existing.getProgramWorkflow().getProgram());
+                continue;
+            }
+            ProgramWorkflow workflow = new ProgramWorkflow();
+            workflow.setConcept(concepts.get(c++));
+            program.addWorkflow(workflow);
+            ProgramWorkflowState state = new ProgramWorkflowState();
+            state.setUuid(uuid);
+            state.setConcept(concepts.get(c++));
+            state.setInitial(true);
+            state.setTerminal(false);
+            workflow.addState(state);
+        }
+        Context.getProgramWorkflowService().saveProgram(program);
+        return program.getName();
+    }
+
+
+    /** Adds a state to the enrolment, keeping its others (createState replaces them) */
+    private void addState(PatientProgram pp, String stateUuid, Date startDate) {
+        PatientState ps = new PatientState();
+        ps.setPatientProgram(pp);
+        ps.setState(Context.getProgramWorkflowService().getStateByUuid(stateUuid));
+        ps.setStartDate(startDate);
+        pp.getStates().add(ps);
+        Context.getProgramWorkflowService().savePatientProgram(pp);
     }
 
     private Form createForm(String name, String encounterTypeName) {

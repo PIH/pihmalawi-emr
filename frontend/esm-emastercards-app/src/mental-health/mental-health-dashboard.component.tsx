@@ -15,13 +15,16 @@ import {
 import { NO, YES } from '../art/art-concepts';
 import { type ArtField, displayValue, formatDay } from '../art/art-fields';
 import { type ArtEncounter, encounterValues, memberValue, obsGroups, obsValue, useCardEncounters, useCardGroup, useEMastercard } from '../art/art.resource';
-import { CURRENT, EXPOSURE, MH_CARD_KEY, MH_FORMS, MH_HEADER, MH_VISIT, NON_CODED_TEXT } from './mh-concepts';
+import { CURRENT, EXPOSURE, MH_CARD_KEY, MH_CARD_VERSION, MH_FORMS, MH_HEADER, MH_VISIT } from './mh-concepts';
+import { MedicationEntry, medicationChanges, medicationsOf, medicationText } from '../shared/medications';
 import { MEDICATIONS, MH_HEADER_SECTIONS, MH_SCREENING_FIELDS, MH_VISIT_FIELDS, MSE_FINDINGS, type MhHeaderSection } from './mh-fields';
 import { mseState } from './mh-rules';
 import { launchMhPanel, useLaunchMhPanel } from './launch-mh-panel';
 import { enrolmentText } from '../emastercards.resource';
-import { CARD_PARAM, CardGroupTabs, selectedCard, useCurrentUrl } from '../shared/card-group';
+import { CARD_PARAM, cardName, CardGroupTabs, selectedCard, useCurrentUrl } from '../shared/card-group';
 import LegacyCardPage from '../shared/legacy-card-page.component';
+import { EP_CARD_KEY } from '../epilepsy/ep-concepts';
+import EpilepsyCard from '../epilepsy/epilepsy-card.component';
 import styles from '../care-page.scss';
 
 interface MentalHealthDashboardProps {
@@ -29,42 +32,9 @@ interface MentalHealthDashboardProps {
 }
 
 const same = (a: unknown, b: string) => String(a ?? '').toLowerCase() === b.toLowerCase();
-const label = (options: Array<{ value: string; label: string }>, value: unknown) => options.find((o) => same(value, o.value))?.label ?? null;
 
-/** A visit's medications, as the card writes them: e.g. RIS 2 mg, with its frequency */
-function medicationsOf(visit: ArtEncounter) {
-  return obsGroups(visit, MH_VISIT.dispensingGroup)
-    .map((g) => {
-      const med = MEDICATIONS.find((m) => same(memberValue(g, MH_VISIT.medication), m.drug));
-      if (!med) {
-        return null;
-      }
-      const name = med.key === 'other' ? (memberValue(g, NON_CODED_TEXT) as string) || med.short : med.short;
-      const dose = memberValue(g, MH_VISIT.dose);
-      const amount = [name, dose, label(MH_VISIT.doseUnits, memberValue(g, MH_VISIT.doseUnit))].filter((x) => x !== null && x !== '').join(' ');
-      const frequency = MH_VISIT.frequencies.find((f) => same(memberValue(g, MH_VISIT.frequency), f.value));
-      return { amount, name: med.key === 'other' ? name : med.name, frequency: frequency?.label ?? null, frequencyWords: frequency?.words ?? null };
-    })
-    .filter(Boolean);
-}
-
-const medicationText = (m: { amount: string; frequency: string | null }) => [m.amount, m.frequency].filter(Boolean).join(' ');
-
-/** The visits at which the medications changed (the first visit with any counting as one), newest first */
-function medicationChanges(visits: Array<ArtEncounter>) {
-  const changes: Array<{ date: string; text: string }> = [];
-  [...visits].reverse().forEach((v) => {
-    const meds = medicationsOf(v);
-    if (!meds.length) {
-      return;
-    }
-    const text = meds.map(medicationText).sort().join(', ');
-    if (changes[changes.length - 1]?.text !== text) {
-      changes.push({ date: v.encounterDatetime, text });
-    }
-  });
-  return changes.reverse();
-}
+/** How many of the latest visits the mental status examination table shows */
+const MSE_VISITS = 4;
 
 /** Current use of chamba, alcohol and other drugs ticked at a visit */
 function currentUse(visit: ArtEncounter) {
@@ -103,7 +73,7 @@ function visitCells(v: ArtEncounter): Record<string, string | null> {
     stable: yesNoValue(v, MH_VISIT.stable),
     dailyActivities: yesNoValue(v, MH_VISIT.dailyActivities),
     counselling: yesNoValue(v, MH_VISIT.counselling),
-    medications: medicationsOf(v).map(medicationText).join(', ') || null,
+    medications: medicationsOf(v, MEDICATIONS).map(medicationText).join(', ') || null,
     next: show(f.nextAppointment),
   };
 }
@@ -166,7 +136,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
   const heading = (
     <div className={styles.heading}>
       <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
-      <h3 className={styles.title}>{t('mentalHealth', 'Mental health')}</h3>
+      <h3 className={styles.title}>{t('mentalHealthRecord', 'Mental Health Record')}</h3>
     </div>
   );
   if (isLoading) {
@@ -198,12 +168,13 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
   const stable = latest ? yesNoValue(latest, MH_VISIT.stable) : null;
   const suicideRisk = latest ? yesNoValue(latest, MH_VISIT.suicideRisk) : null;
   const daily = latest ? yesNoValue(latest, MH_VISIT.dailyActivities) : null;
-  const meds = latest ? medicationsOf(latest) : [];
+  const meds = latest ? medicationsOf(latest, MEDICATIONS) : [];
   const next = formatDay(obsValue(latest, MH_VISIT.nextAppointment) as string);
-  const changes = medicationChanges(visits);
-  const mseVisits = visits.slice(0, 4);
+  const changes = medicationChanges(visits, MEDICATIONS);
+  const mseVisits = visits.slice(0, MSE_VISITS);
   const description = [
     t('mentalHealthPatientCard', 'Mental health patient card'),
+    t('cardVersion', 'version {{version}}', { version: MH_CARD_VERSION }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -347,7 +318,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
       <div className={styles.pageHeader}>
         <div className={styles.heading}>
           <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
-          <h3 className={styles.title}>{t('mentalHealth', 'Mental health')}</h3>
+          <h3 className={styles.title}>{t('mentalHealthRecord', 'Mental Health Record')}</h3>
           <span className={styles.description}>{description}</span>
         </div>
         <div className={styles.actions}>
@@ -391,19 +362,22 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
       </section>
 
       <div className={styles.cards}>
+        {section('patientGuardian')}
         {section('diagnoses', presentingFeatures)}
         {section('historyExposures')}
-        {section('patientGuardian')}
       </div>
 
       <div className={styles.cards}>
-        <section aria-label={t('mentalStatusExamination', 'Mental status examination')} className={styles.card}>
+        <section aria-label={t('mentalStatusExamination', 'Mental Status Examination')} className={styles.card}>
           <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('mentalStatusExamination', 'Mental status examination')}</h4>
+            <h4 className={styles.cardTitle}>{t('mentalStatusExamination', 'Mental Status Examination')}</h4>
+            {mseVisits.length > 0 && (
+              <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count: MSE_VISITS })}</span>
+            )}
           </div>
           {mseVisits.length ? (
             <div className={styles.tableWrapper}>
-              <Table aria-label={t('mentalStatusExamination', 'Mental status examination')} size="sm">
+              <Table aria-label={t('mentalStatusExamination', 'Mental Status Examination')} size="sm">
                 <TableHead>
                   <TableRow>
                     <TableHeader>{t('finding', 'Finding')}</TableHeader>
@@ -444,15 +418,22 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
           )}
         </section>
 
-        <section aria-label={t('medicationHistory', 'Medication history')} className={styles.card}>
+        <section aria-label={t('medicationHistory', 'Medication History')} className={styles.card}>
           <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('medicationHistory', 'Medication history')}</h4>
+            <h4 className={styles.cardTitle}>{t('medicationHistory', 'Medication History')}</h4>
           </div>
           <ol className={styles.history}>
             {changes.map((c, i) => (
               <li key={c.date}>
                 <span className={styles.historyDate}>{formatDay(c.date)}</span>
-                <span className={styles.historyRegimen}>{c.text}</span>
+                <span className={styles.historyRegimen}>
+                  {c.medications.map((m, j) => (
+                    <React.Fragment key={j}>
+                      {j > 0 && ', '}
+                      <MedicationEntry medication={m} />
+                    </React.Fragment>
+                  ))}
+                </span>
                 {i === 0 && (
                   <Tag type="green" size="sm">
                     {t('current', 'Current')}
@@ -473,12 +454,12 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
         </section>
       </div>
 
-      <section aria-label={t('mentalHealthVisits', 'Mental health visits')} className={styles.card}>
+      <section aria-label={t('mentalHealthVisits', 'Mental Health Visits')} className={styles.card}>
         <div className={styles.cardHeader}>
-          <h4 className={styles.cardTitle}>{t('mentalHealthVisits', 'Mental health visits')}</h4>
+          <h4 className={styles.cardTitle}>{t('mentalHealthVisits', 'Mental Health Visits')}</h4>
         </div>
         {table(
-          t('mentalHealthVisits', 'Mental health visits'),
+          t('mentalHealthVisits', 'Mental Health Visits'),
           visitColumns,
           visits.map((v) => ({ uuid: v.uuid, cells: visitCells(v) })),
           (uuid) => launchMhPanel('visit', { patientUuid, encounterUuid: uuid }),
@@ -504,24 +485,38 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
 
 /**
  * The Mental health page: the card the URL names among the patient's Mental Health Record cards, with a tab for
- * each when there is more than one. The mental health card is kept natively; the others show their legacy card.
+ * each when there is more than one. The mental health and epilepsy cards are kept natively; others show their legacy
+ * card.
  */
 const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
-  const { cards } = useCardGroup(patientUuid, MH_CARD_KEY);
+  const { cards, inactive } = useCardGroup(patientUuid, MH_CARD_KEY);
   const url = useCurrentUrl();
   const selected = selectedCard(cards, url.searchParams.get(CARD_PARAM), MH_CARD_KEY);
   const tabs = (
-    <CardGroupTabs
-      patientUuid={patientUuid}
-      path="mentalHealth"
-      cards={cards}
-      selected={selected?.key ?? MH_CARD_KEY}
-      label={t('mentalHealthCards', 'Mental health cards')}
-    />
+    <div className={styles.tabsRow}>
+      <CardGroupTabs
+        patientUuid={patientUuid}
+        path="mentalHealth"
+        cards={cards}
+        selected={selected?.key ?? MH_CARD_KEY}
+        label={t('mentalHealthCards', 'Mental health cards')}
+      />
+      {/* as in the mockup: why a card of the record is missing, when the patient is not on treatment or in advanced care for it */}
+      {inactive.map((c) => (
+        <span key={c.key} className={styles.detail}>
+          {t('cardShowsWhen', '{{card}} shows only when it is a state on treatment/in advanced care in Enrolments', {
+            card: t(`cardName_${c.key}`, cardName(c)),
+          })}
+        </span>
+      ))}
+    </div>
   );
+  if (selected?.key === EP_CARD_KEY) {
+    return <EpilepsyCard patientUuid={patientUuid} title={t('mentalHealthRecord', 'Mental Health Record')} tabs={tabs} />;
+  }
   if (selected && selected.key !== MH_CARD_KEY) {
-    return <LegacyCardPage card={selected} patientUuid={patientUuid} title={t('mentalHealth', 'Mental health')} tabs={tabs} />;
+    return <LegacyCardPage card={selected} patientUuid={patientUuid} title={t('mentalHealthRecord', 'Mental Health Record')} tabs={tabs} />;
   }
   return <MentalHealthCard patientUuid={patientUuid} tabs={tabs} />;
 };

@@ -128,10 +128,17 @@ export function useEMastercard(
 export function useCardGroup(
   patientUuid: string,
   key: string,
-): { cards: Array<EMastercardCard>; isLoading: boolean; error: Error | undefined } {
+): { cards: Array<EMastercardCard>; inactive: Array<EMastercardCard>; isLoading: boolean; error: Error | undefined } {
   const { cards, isLoading, error } = useEMastercards(patientUuid);
   const group = cards.find((c) => c.key === key)?.group;
-  return { cards: group ? cards.filter((c) => c.group === group && c.state !== 'UNAVAILABLE') : [], isLoading, error };
+  const inGroup = group ? cards.filter((c) => c.group === group) : [];
+  return {
+    cards: inGroup.filter((c) => c.state !== 'UNAVAILABLE'),
+    // not available because the patient is not in one of the card's states, e.g. On treatment or In advanced care
+    inactive: inGroup.filter((c) => c.state === 'UNAVAILABLE' && /Inactive program state/i.test(c.message ?? '')),
+    isLoading,
+    error,
+  };
 }
 
 interface Relationship {

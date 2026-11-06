@@ -108,7 +108,7 @@ describe('EncounterEditWorkspace', () => {
       data: { uuid: 'art-initial-uuid', form: null, encounterType: { uuid: ART_FORMS.initial.encounterType } },
     } as any);
     renderWorkspace('art-initial-uuid');
-    await userEvent.click(await screen.findByRole('button', { name: 'Confirmatory HIV test' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirmatory HIV Test' }));
     expect(screen.getByText('Native card header panel: confirmatoryTest')).toBeInTheDocument();
   });
 
@@ -130,7 +130,7 @@ describe('EncounterEditWorkspace', () => {
     withCards(card({ key: 'mental-health', state: 'EDIT' }));
     mockOpenmrsFetch.mockResolvedValue({ data: { uuid: 'mh-h-uuid', form: null, encounterType: { uuid: MH_FORMS.header.encounterType } } } as any);
     renderWorkspace('mh-h-uuid');
-    await userEvent.click(await screen.findByRole('button', { name: 'History and exposures' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'History and Exposures' }));
     expect(screen.getByText('Native mental health header panel: historyExposures')).toBeInTheDocument();
   });
 });

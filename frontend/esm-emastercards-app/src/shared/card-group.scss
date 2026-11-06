@@ -1,0 +1,31 @@
+@use '@carbon/colors';
+@use '@carbon/layout';
+
+// laid out as the chart's other left navigation links (DashboardExtension), with the cards indented under the group
+.group {
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.icon {
+  margin-right: layout.$spacing-06;
+  fill: colors.$gray-70;
+}
+
+.title {
+  flex-grow: 1;
+}
+
+// the icon's width and margin, so a card lines up under the group's title
+.item {
+  padding-left: calc(#{layout.$spacing-05} + 16px + #{layout.$spacing-06}) !important;
+}

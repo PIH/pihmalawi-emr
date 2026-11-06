@@ -31,6 +31,12 @@ describe('carryOver', () => {
     { name: 'agreesToFollowUp', concept: 'c3', kind: 'coded', label: 'Agrees', options: [{ value: 'yes-uuid', label: 'Yes' }] },
   ];
 
+  it('never copies a phone number too big for a whole-number concept', () => {
+    const result = carryOver(fields, {}, { patientPhone: { value: '26598290773', from: 'ART eMastercard' } });
+    expect(result.values.patientPhone).toBeUndefined();
+    expect(result.filled).toEqual([]);
+  });
+
   it('fills only the empty fields, as each field takes the value', () => {
     const result = carryOver(fields, { patientPhone: null, guardianName: 'Mine', agreesToFollowUp: null }, {
       patientPhone: { value: '0888-123', from: 'ART eMastercard' },

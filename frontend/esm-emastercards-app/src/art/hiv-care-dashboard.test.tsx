@@ -29,7 +29,7 @@ function withData(
   message: string | null = null,
 ) {
   mockUseArtCard.mockReturnValue({
-    card: card({ state, message, initialEncounterUuid: data.initial?.[0]?.uuid ?? null, enrolment: { uuid: 'pp1', program: 'HIV PROGRAM', dateEnrolled: '2018-12-03', dateCompleted: null, location: { uuid: 'neno-dh', display: 'Neno District Hospital' } } }),
+    card: card({ state, message, initialEncounterUuid: data.initial?.[0]?.uuid ?? null, enrolment: { uuid: 'pp1', program: 'HIV PROGRAM', dateEnrolled: '2018-12-03', dateCompleted: null, location: { uuid: 'neno-dh', display: 'Neno District Hospital' }, state: null } }),
     systemLocationsTag: 'Upper Neno',
     isLoading: false,
     error: undefined,
@@ -107,8 +107,8 @@ describe('HivCareDashboard', () => {
   it('lists viral loads and follow-up tests newest first, with units and reasons', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    const region = within(screen.getByRole('region', { name: 'Viral load and follow-up tests' }));
-    const table = within(region.getByRole('table', { name: 'Viral load and follow-up tests' }));
+    const region = within(screen.getByRole('region', { name: 'Viral Load and Follow-Up Tests' }));
+    const table = within(region.getByRole('table', { name: 'Viral Load and Follow-Up Tests' }));
     ['Date', 'Test', 'Result', 'Reason'].forEach((h) => expect(table.getByRole('columnheader', { name: h })).toBeInTheDocument());
     const rows = table
       .getAllByRole('row')
@@ -130,14 +130,18 @@ describe('HivCareDashboard', () => {
   it("shows each header card's values", () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    const status = within(screen.getByRole('region', { name: 'Status at ART initiation' }));
+    // Patient and Guardian Details comes first, on the left
+    expect(
+      screen.getByRole('region', { name: 'Patient and Guardian Details' }).compareDocumentPosition(screen.getByRole('region', { name: 'Status at ART Initiation' })),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    const status = within(screen.getByRole('region', { name: 'Status at ART Initiation' }));
     expect(status.getByText('Stage 2')).toBeInTheDocument();
     expect(status.getByText('Herpes zoster')).toBeInTheDocument();
     expect(status.getByText('312')).toBeInTheDocument();
-    const test = within(screen.getByRole('region', { name: 'Confirmatory HIV test' }));
+    const test = within(screen.getByRole('region', { name: 'Confirmatory HIV Test' }));
     expect(test.getByText('Rapid')).toBeInTheDocument();
     expect(test.getByText('Neno District Hospital')).toBeInTheDocument();
-    const guardian = within(screen.getByRole('region', { name: 'Patient and guardian' }));
+    const guardian = within(screen.getByRole('region', { name: 'Patient and Guardian Details' }));
     expect(guardian.getByText('Test Guardian')).toBeInTheDocument();
     expect(guardian.getByText('Sister')).toBeInTheDocument();
     expect(guardian.getByText('Yes')).toBeInTheDocument();
@@ -146,16 +150,16 @@ describe('HivCareDashboard', () => {
   it('says a header card is not recorded yet when the header has none of its answers', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    expect(within(screen.getByRole('region', { name: 'Confirmatory HIV test' })).queryByText('Not recorded yet')).not.toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: 'Confirmatory HIV Test' })).queryByText('Not recorded yet')).not.toBeInTheDocument();
     withData('EDIT', { ...everything, initial: [{ ...everything.initial[0], obs: [] }] });
     render(<HivCareDashboard patientUuid="p2" />);
-    expect(within(screen.getAllByRole('region', { name: 'Confirmatory HIV test' })[1]).getByText('Not recorded yet')).toBeInTheDocument();
+    expect(within(screen.getAllByRole('region', { name: 'Confirmatory HIV Test' })[1]).getByText('Not recorded yet')).toBeInTheDocument();
   });
 
   it('lists ART visits newest first with the form\'s columns', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    const table = within(screen.getByRole('table', { name: 'ART visits' }));
+    const table = within(screen.getByRole('table', { name: 'ART Visits' }));
     ['Visit date', 'Height', 'Weight', 'BP', 'Preg/BF', 'TB status', 'Side effects', 'Pill count', 'Doses missed', 'ART regimen', 'ARVs given', 'CPT/IPT', 'Next appointment'].forEach((h) =>
       expect(table.getByRole('columnheader', { name: h })).toBeInTheDocument(),
     );
@@ -168,7 +172,7 @@ describe('HivCareDashboard', () => {
   it('shows visit-by-visit regimen changes, the current one tagged, under the initiation regimens', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    const history = within(screen.getByRole('region', { name: 'ART regimen history' }));
+    const history = within(screen.getByRole('region', { name: 'ART Regimen History' }));
     expect(history.getByText('First line')).toBeInTheDocument();
     expect(history.getByText('5A · TDF/3TC/EFV · since 18-Feb-2019')).toBeInTheDocument();
     const changes = history.getAllByRole('listitem');
@@ -186,7 +190,7 @@ describe('HivCareDashboard', () => {
     expect(screen.getByRole('button', { name: 'Record viral load' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Record follow-up tests' })).toBeDisabled();
     expect(screen.getByText(/Fill in the card header first/)).toBeInTheDocument();
-    const edit = within(screen.getByRole('region', { name: 'Status at ART initiation' })).getByRole('button', { name: 'Edit' });
+    const edit = within(screen.getByRole('region', { name: 'Status at ART Initiation' })).getByRole('button', { name: 'Edit' });
     await userEvent.click(edit);
     expect(launchArtPanel).toHaveBeenCalledWith('initial', { patientUuid: 'p1', section: 'status' });
   });
@@ -194,7 +198,7 @@ describe('HivCareDashboard', () => {
   it('EDIT: Edit on a visit row opens that visit', async () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
-    const row = within(screen.getByRole('table', { name: 'ART visits' })).getAllByRole('row')[1];
+    const row = within(screen.getByRole('table', { name: 'ART Visits' })).getAllByRole('row')[1];
     await userEvent.click(within(row).getByRole('button', { name: 'Edit' }));
     expect(launchArtPanel).toHaveBeenCalledWith('visit', { patientUuid: 'p1', encounterUuid: 'v3' });
   });

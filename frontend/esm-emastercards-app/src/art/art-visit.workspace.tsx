@@ -13,9 +13,8 @@ import {
   TextInput,
 } from '@carbon/react';
 import { usePatient, useSession, type Workspace2DefinitionProps, Workspace2 } from '@openmrs/esm-framework';
-import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
 import { ART_VISIT } from './art-concepts';
-import { ART_VISIT_FIELDS, type ArtField, formatDay, PREVENTIVE_THERAPIES, PREVENTIVE_THERAPY_FIELDS } from './art-fields';
+import { ART_VISIT_FIELDS, type ArtField, PREVENTIVE_THERAPIES, PREVENTIVE_THERAPY_FIELDS } from './art-fields';
 import {
   adherencePercent,
   checkDuplicate,
@@ -37,8 +36,9 @@ import {
   useLocationsTagged,
   useSameDayObs,
 } from './art.resource';
-import { buildObsPayload, encounterDatetimeFor, type FieldValue, saveArtEncounter } from './obs-diff';
+import { buildObsPayload, type FieldValue, saveArtEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
+import { checkRecordDay, RecordDateInput, resolveVisit, usePastVisitType, useRecordDate } from '../shared/record-date';
 import styles from './art-panel.scss';
 
 export interface ArtVisitWorkspaceProps {
@@ -80,7 +80,6 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
   const { mutate } = useSWRConfig();
   const session = useSession();
   const { patient } = usePatient(patientUuid);
-  const { visitContext } = usePatientChartStore(patientUuid);
   const { card, systemLocationsTag } = useArtCard(patientUuid);
   const { encounters: visits, isLoading } = useArtEncounters(patientUuid, 'visit');
   const locations = useLocationsTagged(systemLocationsTag);
@@ -90,8 +89,11 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
     encounterUuid && !visits.some((e) => e.uuid === encounterUuid) ? encounterUuid : undefined,
   );
   const editing = encounterUuid ? (visits.find((e) => e.uuid === encounterUuid) ?? fetched) : undefined;
-  const visitDate = editing?.encounterDatetime ?? (visitContext ? encounterDatetimeFor(visitContext) : null);
-  const visitDay = visitDate ? day(visitDate) : null;
+  // today's visit by default, or an earlier day for a past visit
+  const record = useRecordDate(patientUuid, editing);
+  const pastVisitType = usePastVisitType();
+  const visitDate = record.datetime;
+  const visitDay = record.day;
   const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(
     patientUuid,
     [...REFERENCE_FIELDS.map((f) => f.concept), ART_VISIT.nextAppointment],
@@ -164,6 +166,7 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
     visitDate,
     encounterUuid,
   );
+  const dateRule = record.editable ? checkRecordDay(record.day, patient?.birthDate) : null;
   const nextRule = checkNextAppointment(values.nextAppointment as string, visitDate);
   const tabletsRule: RuleResult = values.numArvsGiven === null || values.numArvsGiven === undefined ? { level: 'error', message: 'Required' } : null;
   const duplicateRule = checkDuplicate(visitDate, others.map((v) => ({ date: v.encounterDatetime, encounterUuid: v.uuid })), encounterUuid);
@@ -192,7 +195,7 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
   const save = async () => {
     setSubmitted(true);
     setError(null);
-    const blocking = [regimenRule, nextRule, tabletsRule, duplicateRule].some((r) => r?.level === 'error');
+    const blocking = [dateRule, regimenRule, nextRule, tabletsRule, duplicateRule].some((r) => r?.level === 'error');
     if (blocking) {
       return;
     }
@@ -203,8 +206,9 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
       await saveArtEncounter('visit', {
         patientUuid,
         encounterUuid,
-        visitUuid: editing ? undefined : visitContext?.uuid,
-        datetime: visitDate,
+...(editing
+          ? { datetime: visitDate }
+          : await resolveVisit(patientUuid, record.day, { visitContext: record.visitContext, locationUuid: location, visitTypeUuid: pastVisitType })),
         locationUuid: location,
         payload,
       });
@@ -236,7 +240,7 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
         <section className={styles.section}>
           <h4 className={styles.sectionTitle}>{t('visit', 'Visit')}</h4>
           <div className={styles.row}>
-            <TextInput id="art-visit-date" labelText={t('visitDate', 'Visit date')} value={formatDay(visitDate)} readOnly />
+            <RecordDateInput id="art-visit-date" label={t('visitDate', 'Visit date')} record={record} rule={dateRule} readOnly={readOnly} />
             <Select
               id="art-visit-location"
               labelText={t('location', 'Location')}

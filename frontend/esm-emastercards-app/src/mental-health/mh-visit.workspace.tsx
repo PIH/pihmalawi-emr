@@ -2,18 +2,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useSWRConfig } from 'swr';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonSet, InlineLoading, InlineNotification, RadioButton, RadioButtonGroup, Select, SelectItem, TextInput } from '@carbon/react';
+import { Button, ButtonSet, InlineLoading, InlineNotification, RadioButton, RadioButtonGroup, Select, SelectItem } from '@carbon/react';
 import { usePatient, useSession, type Workspace2DefinitionProps, Workspace2 } from '@openmrs/esm-framework';
-import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
-import { type ArtField, formatDay } from '../art/art-fields';
+import { type ArtField } from '../art/art-fields';
 import { checkDuplicate, checkHeightHistory, checkHeightWeight, checkNextAppointment, type RuleResult, sameDayValue } from '../art/art-rules';
 import { encounterValues, obsValue, useArtEncounter, useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from '../art/art.resource';
-import { buildObsPayload, encounterDatetimeFor, type FieldValue, saveEncounter } from '../art/obs-diff';
+import { buildObsPayload, type FieldValue, saveEncounter } from '../art/obs-diff';
 import { ArtFieldInput } from '../art/fields';
 import { MH_CARD_KEY, MH_FORMS, MH_VISIT } from './mh-concepts';
 import { MEDICATIONS, medicationFields, MH_VISIT_FIELDS, MSE_FINDINGS } from './mh-fields';
 import { mseState, setMse } from './mh-rules';
 import { GroupedFields } from './grouped-fields';
+import { checkRecordDay, RecordDateInput, resolveVisit, usePastVisitType, useRecordDate } from '../shared/record-date';
 import styles from '../art/art-panel.scss';
 
 export interface MhVisitWorkspaceProps {
@@ -55,7 +55,6 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
   const { mutate } = useSWRConfig();
   const session = useSession();
   const { patient } = usePatient(patientUuid);
-  const { visitContext } = usePatientChartStore(patientUuid);
   const { card, systemLocationsTag } = useEMastercard(patientUuid, MH_CARD_KEY);
   const { encounters: visits, isLoading } = useCardEncounters(patientUuid, MH_FORMS.visit);
   const locations = useLocationsTagged(systemLocationsTag);
@@ -64,8 +63,11 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
     encounterUuid && !visits.some((e) => e.uuid === encounterUuid) ? encounterUuid : undefined,
   );
   const editing = encounterUuid ? (visits.find((e) => e.uuid === encounterUuid) ?? fetched) : undefined;
-  const visitDate = editing?.encounterDatetime ?? (visitContext ? encounterDatetimeFor(visitContext) : null);
-  const visitDay = visitDate ? day(visitDate) : null;
+  // today's visit by default, or an earlier day for a past visit
+  const record = useRecordDate(patientUuid, editing);
+  const pastVisitType = usePastVisitType();
+  const visitDate = record.datetime;
+  const visitDay = record.day;
   const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(
     patientUuid,
     [...REFERENCE_FIELDS.map((f) => f.concept), MH_VISIT.nextAppointment],
@@ -126,6 +128,7 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
     const value = values[name] ?? references[name];
     return value === null || value === undefined ? null : Number(value);
   };
+  const dateRule = record.editable ? checkRecordDay(record.day, patient?.birthDate) : null;
   const nextRule = checkNextAppointment(values.nextAppointment as string, visitDate);
   const duplicateRule = checkDuplicate(visitDate, others.map((v) => ({ date: v.encounterDatetime, encounterUuid: v.uuid })), encounterUuid);
   const birthDate = patient?.birthDate;
@@ -146,7 +149,7 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
   const save = async () => {
     setSubmitted(true);
     setError(null);
-    if ([nextRule, duplicateRule].some((r) => r?.level === 'error')) {
+    if ([dateRule, nextRule, duplicateRule].some((r) => r?.level === 'error')) {
       return;
     }
     setSaving(true);
@@ -154,8 +157,9 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
       await saveEncounter(MH_FORMS.visit, {
         patientUuid,
         encounterUuid,
-        visitUuid: editing ? undefined : visitContext?.uuid,
-        datetime: visitDate,
+        ...(editing
+          ? { datetime: visitDate }
+          : await resolveVisit(patientUuid, record.day, { visitContext: record.visitContext, locationUuid: location, visitTypeUuid: pastVisitType })),
         locationUuid: location,
         payload: buildObsPayload(ALL_FIELDS, values, editing?.obs ?? [], references),
       });
@@ -184,7 +188,7 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
     <Workspace2 title={title} hasUnsavedChanges={dirty}>
       <div className={styles.panel}>
         <div className={styles.row}>
-          <TextInput id="mh-visit-date" labelText={t('visitDate', 'Visit date')} value={formatDay(visitDate)} readOnly />
+          <RecordDateInput id="mh-visit-date" label={t('visitDate', 'Visit date')} record={record} rule={dateRule} readOnly={readOnly} />
           <Select
             id="mh-visit-location"
             labelText={t('location', 'Location')}
@@ -213,7 +217,7 @@ const MhVisitWorkspace: React.FC<Workspace2DefinitionProps<MhVisitWorkspaceProps
         </section>
 
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle}>{t('mentalStatusExamination', 'Mental status examination')}</h4>
+          <h4 className={styles.sectionTitle}>{t('mentalStatusExamination', 'Mental Status Examination')}</h4>
           {MSE_FINDINGS.map((f) => {
             const state = mseState(list(values.msePresent), list(values.mseAbsent), f.answer);
             return (

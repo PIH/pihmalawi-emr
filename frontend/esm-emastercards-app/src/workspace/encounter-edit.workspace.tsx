@@ -16,6 +16,10 @@ import { MH_HEADER_SECTIONS, type MhHeaderSection } from '../mental-health/mh-fi
 import MhVisitWorkspace from '../mental-health/mh-visit.workspace';
 import MhScreeningWorkspace from '../mental-health/mh-screening.workspace';
 import MhHeaderWorkspace from '../mental-health/mh-header.workspace';
+import { epPanelForEncounter } from '../epilepsy/ep-panel-for-encounter';
+import { EP_HEADER_SECTIONS, type EpHeaderSection } from '../epilepsy/ep-fields';
+import EpVisitWorkspace from '../epilepsy/ep-visit.workspace';
+import EpHeaderWorkspace from '../epilepsy/ep-header.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -35,8 +39,8 @@ interface Encounter {
 }
 
 /**
- * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART and mental health card
- * encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health and epilepsy
+ * card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<
@@ -58,6 +62,29 @@ const EncounterEditWorkspace: React.FC<
   const artPanel = encounter ? artPanelForEncounter(encounter) : null;
   const [mhSection, setMhSection] = useState<MhHeaderSection | null>(null);
   const mhPanel = encounter ? mhPanelForEncounter(encounter) : null;
+  const [epSection, setEpSection] = useState<EpHeaderSection | null>(null);
+  const epPanel = encounter ? epPanelForEncounter(encounter) : null;
+
+  if (epPanel && patientUuid) {
+    if (epPanel === 'visit') {
+      return <EpVisitWorkspace {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (epSection) {
+      return <EpHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: epSection }} />;
+    }
+    return (
+      <Workspace2 title={t('epilepsyCardHeader', 'Epilepsy card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseEpHeaderSection', 'Which part of the epilepsy card header should open?')}</p>
+          {(Object.keys(EP_HEADER_SECTIONS) as Array<EpHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setEpSection(key)}>
+              {t(`epSection_${key}`, EP_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (mhPanel && patientUuid) {
     if (mhPanel === 'visit') {

@@ -11,6 +11,7 @@ import styles from './emastercards.scss';
 const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string }> = {
   art: { path: 'hivCare', labelKey: 'openHivCare', label: 'Open HIV care' },
   'mental-health': { path: 'mentalHealth', labelKey: 'openMentalHealth', label: 'Open mental health' },
+  epilepsy: { path: 'mentalHealth?card=epilepsy', labelKey: 'openEpilepsy', label: 'Open epilepsy' },
 };
 
 interface EMastercardRowProps {
@@ -35,7 +36,7 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
     );
   }
 
-  // The ART and mental health cards are kept natively in O3, on their chart pages; their legacy flowsheets stay
+  // The ART, mental health and epilepsy cards are kept natively in O3, on their chart pages; their legacy flowsheets stay
   // reachable for the pilot
   const page = NATIVE_PAGES[card.key];
   if (page) {
