@@ -74,6 +74,14 @@
   font-weight: 600;
 }
 
+.tabsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: layout.$spacing-05;
+  border-bottom: 1px solid $ui-03;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));

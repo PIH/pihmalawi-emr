@@ -2,6 +2,7 @@ package org.openmrs.module.pihmalawi.rest.controller;
 
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.pihmalawi.emastercard.EMastercard;
@@ -80,7 +81,7 @@ public class EMastercardRestController {
 		ret.add("lastVisit", format(access.getLastVisitDate()));
 		ret.add("lastVisitLocation", access.getLastVisitLocation());
 		ret.add("appointment", format(access.getAppointmentDate()));
-		ret.add("enrolment", enrolment(access.getEnrolment()));
+		ret.add("enrolment", enrolment(access.getEnrolment(), access.getTreatmentState()));
 		ret.add("flowsheetPath", access.getFlowsheetPath());
 		ret.add("formUuids", emastercardFormIndex.formUuidsFor(m));
 		ret.add("encounterTypeUuids", new ArrayList<String>(emastercardFormIndex.encounterTypeUuidsFor(m)));
@@ -88,9 +89,10 @@ public class EMastercardRestController {
 	}
 
 	/**
-	 * @return the card's program enrolment as the chart shows it ("enrolled 12-Mar-2025 at Neno District Hospital")
+	 * @return the card's program enrolment as the chart shows it: the state of the card's own workflow and since when ("On treatment since
+	 *         16-Oct-2026 at Neno District Hospital"), else the enrolment date
 	 */
-	private SimpleObject enrolment(PatientProgram pp) {
+	private SimpleObject enrolment(PatientProgram pp, PatientState state) {
 		if (pp == null) {
 			return null;
 		}
@@ -101,6 +103,9 @@ public class EMastercardRestController {
 		ret.add("dateCompleted", format(pp.getDateCompleted()));
 		ret.add("location", pp.getLocation() == null ? null
 		        : new SimpleObject().add("uuid", pp.getLocation().getUuid()).add("display", pp.getLocation().getName()));
+		ret.add("state", state == null ? null
+		        : new SimpleObject().add("name", state.getState().getConcept().getName().getName())
+		                .add("startDate", format(state.getStartDate())));
 		return ret;
 	}
 

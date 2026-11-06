@@ -67,6 +67,12 @@ export const mhVisitWorkspace = getAsyncLifecycle(() => import('./mental-health/
 
 export const mhScreeningWorkspace = getAsyncLifecycle(() => import('./mental-health/mh-screening.workspace'), options);
 
+/** Edits a section of the epilepsy card header natively */
+export const epHeaderWorkspace = getAsyncLifecycle(() => import('./epilepsy/ep-header.workspace'), options);
+
+/** Records or edits an epilepsy visit natively */
+export const epVisitWorkspace = getAsyncLifecycle(() => import('./epilepsy/ep-visit.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

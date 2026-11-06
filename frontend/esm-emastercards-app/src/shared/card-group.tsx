@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SideNavMenu, SideNavMenuItem, Tab, TabList, Tabs } from '@carbon/react';
-import { interpolateUrl, navigate } from '@openmrs/esm-framework';
+import { Tab, TabList, Tabs } from '@carbon/react';
+import { ChevronDown, ChevronUp } from '@carbon/react/icons';
+import { ConfigurableLink, MaybeIcon, navigate } from '@openmrs/esm-framework';
+import styles from './card-group.scss';
 import { type EMastercardCard } from '../emastercards.resource';
 
 /** The search parameter that picks which of a group's cards a chart page shows */
@@ -9,7 +11,7 @@ export const CARD_PARAM = 'card';
 
 /** Short names for the cards a page's tabs and the left navigation list; others use their label */
 const CARD_NAMES: Record<string, string> = {
-  'mental-health': 'Mental health',
+  'mental-health': 'Mental Health',
   epilepsy: 'Epilepsy',
 };
 
@@ -41,34 +43,39 @@ const cardUrl = (basePath: string, path: string, key: string) => `${basePath}/${
  * A group's entry in the chart's left navigation when the patient has more than one of its cards: the group,
  * expanded, with a link to each card's page
  */
-export const CardGroupNav: React.FC<{ basePath: string; path: string; title: string; cards: Array<EMastercardCard>; defaultKey: string }> = ({
-  basePath,
-  path,
-  title,
-  cards,
-  defaultKey,
-}) => {
+export const CardGroupNav: React.FC<{
+  basePath: string;
+  path: string;
+  title: string;
+  icon?: string;
+  cards: Array<EMastercardCard>;
+  defaultKey: string;
+}> = ({ basePath, path, title, icon, cards, defaultKey }) => {
   const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(true);
   const url = useCurrentUrl();
   const onPage = url.pathname.split('/').includes(path);
   const current = onPage ? selectedCard(cards, url.searchParams.get(CARD_PARAM), defaultKey) : null;
   return (
-    <SideNavMenu title={t(title)} defaultExpanded isActive={onPage}>
-      {cards.map((c) => (
-        <SideNavMenuItem
-          key={c.key}
-          href={interpolateUrl(cardUrl(basePath, path, c.key))}
-          isActive={current?.key === c.key}
-          className={current?.key === c.key ? 'active-left-nav-link' : undefined}
-          onClick={(e: React.MouseEvent) => {
-            e.preventDefault();
-            navigate({ to: cardUrl(basePath, path, c.key) });
-          }}
-        >
-          {t(`cardName_${c.key}`, cardName(c))}
-        </SideNavMenuItem>
-      ))}
-    </SideNavMenu>
+    <div>
+      <button type="button" className={`cds--side-nav__link ${styles.group}`} aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+        <span className={styles.menu}>
+          <MaybeIcon icon={icon} className={styles.icon} size={16} />
+          <span className={styles.title}>{t(title)}</span>
+          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </span>
+      </button>
+      {expanded &&
+        cards.map((c) => (
+          <ConfigurableLink
+            key={c.key}
+            className={`cds--side-nav__link ${styles.item} ${current?.key === c.key ? 'active-left-nav-link' : ''}`}
+            to={cardUrl(basePath, path, c.key)}
+          >
+            {t(`cardName_${c.key}`, cardName(c))}
+          </ConfigurableLink>
+        ))}
+    </div>
   );
 };
 

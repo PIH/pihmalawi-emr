@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import dayjs from 'dayjs';
 import { useSWRConfig } from 'swr';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonSet, InlineLoading, InlineNotification, Select, SelectItem, TextInput } from '@carbon/react';
-import { useSession, Workspace2 } from '@openmrs/esm-framework';
-import { usePatientChartStore } from '@openmrs/esm-patient-common-lib';
-import { type ArtField, formatDay } from './art-fields';
+import { Button, ButtonSet, InlineLoading, InlineNotification, Select, SelectItem } from '@carbon/react';
+import { usePatient, useSession, Workspace2 } from '@openmrs/esm-framework';
+import { type ArtField } from './art-fields';
 import { checkDuplicate, type RuleResult, sameDayValue } from './art-rules';
 import {
   encounterValues,
@@ -15,8 +13,9 @@ import {
   useLocationsTagged,
   useSameDayObs,
 } from './art.resource';
-import { buildObsPayload, type CardForm, encounterDatetimeFor, type FieldValue, saveEncounter } from './obs-diff';
+import { buildObsPayload, type CardForm, type FieldValue, saveEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
+import { checkRecordDay, RecordDateInput, resolveVisit, usePastVisitType, useRecordDate } from '../shared/record-date';
 import styles from './art-panel.scss';
 
 interface ArtEncounterPanelProps {
@@ -59,7 +58,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
   const session = useSession();
-  const { visitContext } = usePatientChartStore(patientUuid);
+  const { patient } = usePatient(patientUuid);
   const { card, systemLocationsTag } = useEMastercard(patientUuid, cardKey);
   const { encounters, isLoading } = useCardEncounters(patientUuid, form);
   const locations = useLocationsTagged(taggedLocations ? systemLocationsTag : null);
@@ -69,8 +68,11 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
     encounterUuid && !encounters.some((e) => e.uuid === encounterUuid) ? encounterUuid : undefined,
   );
   const editing = encounterUuid ? (encounters.find((e) => e.uuid === encounterUuid) ?? fetched) : undefined;
-  const date = editing?.encounterDatetime ?? (visitContext ? encounterDatetimeFor(visitContext) : null);
-  const day = date ? dayjs(date).format('YYYY-MM-DD') : null;
+  // today's visit by default, or an earlier day for a past visit
+  const record = useRecordDate(patientUuid, editing);
+  const pastVisitType = usePastVisitType();
+  const date = record.datetime;
+  const day = record.day;
   const referenceFields = fields.filter((f) => f.reference);
   const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(patientUuid, referenceFields.map((f) => f.concept), day);
   const references = useMemo(() => {
@@ -114,12 +116,13 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const shownFields = fields.filter((f) => isShown(f, values));
   const fieldRules = rules(values, date);
   const blocked = shownFields.some((f) => fieldRules[f.name]?.level === 'error');
+  const dateRule = record.editable ? checkRecordDay(record.day, patient?.birthDate) : null;
   const duplicate = checkDuplicate(date, encounters.filter((e) => e.uuid !== encounterUuid).map((e) => ({ date: e.encounterDatetime, encounterUuid: e.uuid })), encounterUuid);
 
   const save = async () => {
     setSubmitted(true);
     setError(null);
-    if (duplicate || blocked) {
+    if (duplicate || blocked || dateRule) {
       return;
     }
     setSaving(true);
@@ -127,8 +130,9 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
       await saveEncounter(form, {
         patientUuid,
         encounterUuid,
-        visitUuid: editing ? undefined : visitContext?.uuid,
-        datetime: date,
+...(editing
+          ? { datetime: date }
+          : await resolveVisit(patientUuid, record.day, { visitContext: record.visitContext, locationUuid: location, visitTypeUuid: pastVisitType })),
         locationUuid: location,
         payload: buildObsPayload(shownFields, values, editing?.obs ?? [], references),
       });
@@ -145,7 +149,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
     <Workspace2 title={heading} hasUnsavedChanges={dirty}>
       <div className={styles.panel}>
         <div className={styles.row}>
-          <TextInput id={`card-${form.encounterType}-date`} labelText={t('date', 'Date')} value={formatDay(date)} readOnly />
+          <RecordDateInput id={`card-${form.encounterType}-date`} label={t('date', 'Date')} record={record} rule={dateRule} readOnly={readOnly} />
           <Select
             id={`card-${form.encounterType}-location`}
             labelText={t('location', 'Location')}

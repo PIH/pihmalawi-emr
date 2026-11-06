@@ -393,15 +393,15 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
       </section>
 
       <div className={styles.cards}>
+        {section('patientGuardian')}
         {section('status')}
         {section('confirmatoryTest')}
-        {section('patientGuardian')}
       </div>
 
       <div className={styles.cards}>
-        <section aria-label={t('regimenHistory', 'ART regimen history')} className={styles.card}>
+        <section aria-label={t('regimenHistory', 'ART Regimen History')} className={styles.card}>
           <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('regimenHistory', 'ART regimen history')}</h4>
+            <h4 className={styles.cardTitle}>{t('regimenHistory', 'ART Regimen History')}</h4>
             {editButton(() => launchArtPanel('initial', { patientUuid, section: 'regimens' }))}
           </div>
           <h5 className={styles.subtitle}>{t('atInitiation', 'At initiation')}</h5>
@@ -438,12 +438,12 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
           {!changes.length && <p className={styles.empty}>{t('noArtVisits', 'No ART visits recorded yet')}</p>}
         </section>
 
-        <section aria-label={t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')} className={styles.card}>
+        <section aria-label={t('viralLoadAndFollowUpTests', 'Viral Load and Follow-Up Tests')} className={styles.card}>
           <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')}</h4>
+            <h4 className={styles.cardTitle}>{t('viralLoadAndFollowUpTests', 'Viral Load and Follow-Up Tests')}</h4>
           </div>
           <div className={styles.tableWrapper}>
-            <Table aria-label={t('viralLoadAndFollowUpTests', 'Viral load and follow-up tests')} size="sm">
+            <Table aria-label={t('viralLoadAndFollowUpTests', 'Viral Load and Follow-Up Tests')} size="sm">
               <TableHead>
                 <TableRow>
                   <TableHeader>{t('date', 'Date')}</TableHeader>
@@ -476,12 +476,12 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
         </section>
       </div>
 
-      <section aria-label={t('artVisits', 'ART visits')} className={styles.card}>
+      <section aria-label={t('artVisits', 'ART Visits')} className={styles.card}>
         <div className={styles.cardHeader}>
-          <h4 className={styles.cardTitle}>{t('artVisits', 'ART visits')}</h4>
+          <h4 className={styles.cardTitle}>{t('artVisits', 'ART Visits')}</h4>
         </div>
         <div className={styles.tableWrapper}>
-          <Table aria-label={t('artVisits', 'ART visits')} size="sm">
+          <Table aria-label={t('artVisits', 'ART Visits')} size="sm">
             <TableHead>
               <TableRow>
                 {columns.map((c) => (

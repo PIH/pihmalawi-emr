@@ -83,7 +83,7 @@ function exposureFields(
 /** mental-health-emastercard.xml's questions, by the card on the Mental health page that shows and edits them */
 export const MH_HEADER_SECTIONS: Record<MhHeaderSection, { title: string; fields: Array<ArtField> }> = {
   patientGuardian: {
-    title: 'Patient and guardian',
+    title: 'Patient and Guardian Details',
     fields: [
       { name: 'transferInDate', concept: MH_HEADER.transferInDate, kind: 'date', label: 'Transfer-in date', future: true },
       { name: 'patientPhone', concept: MH_HEADER.patientPhone, kind: 'number', label: 'Patient phone' },
@@ -105,11 +105,11 @@ export const MH_HEADER_SECTIONS: Record<MhHeaderSection, { title: string; fields
   },
   diagnoses: { title: 'Diagnoses', fields: diagnosisFields },
   presentingFeatures: {
-    title: 'Presenting features',
+    title: 'Presenting Features',
     fields: presentingFeatureFields,
   },
   historyExposures: {
-    title: 'History and exposures',
+    title: 'History and Exposures',
     fields: [
       { name: 'familyEpilepsy', concept: MH_HEADER.familyHistory.epilepsy, kind: 'coded', label: 'Family history: epilepsy', options: YES_NO_UNKNOWN },
       { name: 'familyMentalIllness', concept: MH_HEADER.familyHistory.mentalIllness, kind: 'coded', label: 'Family history: mental illness', options: YES_NO_UNKNOWN },

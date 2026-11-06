@@ -16,13 +16,17 @@ export interface EMastercardCard {
   lastVisit: string | null;
   lastVisitLocation: string | null;
   appointment: string | null;
-  /** The patient's enrolment in the card's program: the current one, else the latest; null without one */
+  /**
+   * The patient's enrolment in the card's program: the current one, else the latest; null without one. Its state is
+   * the patient's current state in the card's own workflow (e.g. Mental health treatment), when they have one.
+   */
   enrolment: {
     uuid: string;
     program: string;
     dateEnrolled: string;
     dateCompleted: string | null;
     location: { uuid: string; display: string } | null;
+    state: { name: string; startDate: string } | null;
   } | null;
   flowsheetPath: string;
   formUuids: Array<string>;
@@ -72,7 +76,11 @@ export function launchFlowsheet(card: EMastercardCard, patientUuid: string, opti
   launchWorkspace2(flowsheetWorkspace, { card, patientUuid, url: flowsheetUrl(card, options) });
 }
 
-/** "enrolled 12-Mar-2025 at Neno District Hospital", from the card's program enrolment, or null without one */
+/**
+ * When the patient started on the card, as the Enrolments page says it: the state of the card's own workflow and
+ * since when ("On treatment since 16-Oct-2026 at Neno District Hospital"), else the enrolment date ("enrolled
+ * 12-Mar-2025 at Neno District Hospital"); null without an enrolment
+ */
 export function enrolmentText(
   card: Pick<EMastercardCard, 'enrolment'> | null,
   t: (key: string, fallback: string, options?: Record<string, unknown>) => string,
@@ -81,6 +89,13 @@ export function enrolmentText(
   const enrolment = card?.enrolment;
   if (!enrolment?.dateEnrolled) {
     return null;
+  }
+  const location = enrolment.location?.display;
+  if (enrolment.state?.startDate) {
+    const options = { state: enrolment.state.name, date: formatDay(enrolment.state.startDate), location };
+    return location
+      ? t('stateSinceAt', '{{state}} since {{date}} at {{location}}', options)
+      : t('stateSince', '{{state}} since {{date}}', options);
   }
   const date = formatDay(enrolment.dateEnrolled);
   return enrolment.location?.display

@@ -120,7 +120,7 @@ const init = (name: string, kind: ArtField['kind'], label: string, extra: Partia
 /** art-emastercard.xml's questions, by the card on the HIV care page that shows and edits them */
 export const INITIAL_SECTIONS: Record<InitialSection, { title: string; fields: Array<ArtField> }> = {
   status: {
-    title: 'Status at ART initiation',
+    title: 'Status at ART Initiation',
     fields: [
       init('hivRelatedDiseases', 'text', 'HIV-related diseases'),
       init('urineLamCrag', 'coded', 'Urine LAM / CrAg result', {
@@ -166,7 +166,7 @@ export const INITIAL_SECTIONS: Record<InitialSection, { title: string; fields: A
     ],
   },
   confirmatoryTest: {
-    title: 'Confirmatory HIV test',
+    title: 'Confirmatory HIV Test',
     fields: [
       init('confirmatoryTestLocation', 'text', 'Facility'),
       init('linkId', 'text', 'Link ID / HTC serial no.'),
@@ -182,7 +182,7 @@ export const INITIAL_SECTIONS: Record<InitialSection, { title: string; fields: A
     ],
   },
   patientGuardian: {
-    title: 'Patient and guardian',
+    title: 'Patient and Guardian Details',
     fields: [
       init('patientPhone', 'text', 'Patient phone'),
       init('guardianName', 'text', 'Guardian name'),
@@ -192,7 +192,7 @@ export const INITIAL_SECTIONS: Record<InitialSection, { title: string; fields: A
     ],
   },
   regimens: {
-    title: 'ART regimens at initiation',
+    title: 'ART Regimens at Initiation',
     fields: ART_INITIAL.regimens.flatMap((slot, i) => {
       const label = ['First line', 'Alternative first line', 'Second line'][i];
       return [

@@ -9,6 +9,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 import org.openmrs.Person;
 import org.openmrs.Program;
 import org.openmrs.ProgramWorkflow;
@@ -76,6 +77,7 @@ public class EMastercardService {
 			}
 		}
 		access.setEnrolment(enrolment(p, workflows));
+		access.setTreatmentState(treatmentState(p, m, states));
 		boolean readonly = m.isReadonlyOnceArtInitial() && hasEncounterOfType(p, "ART_INITIAL");
 		access.setReadonlyNote(readonly);
 		String name = f.getName();
@@ -219,6 +221,41 @@ public class EMastercardService {
 			}
 		}
 		return latestActive != null ? latestActive : latest;
+	}
+
+	/**
+	 * @return the patient's current state in the card's own workflows: those of the states only this card lists.
+	 *         The mental health and epilepsy cards share the Chronic care treatment status workflow, but each has its
+	 *         own treatment workflow, whose state is the one that card's page shows.
+	 */
+	private PatientState treatmentState(Patient p, EMastercard m, List<ProgramWorkflowState> states) {
+		List<ProgramWorkflow> own = new ArrayList<ProgramWorkflow>();
+		for (ProgramWorkflowState state : states) {
+			if (!listedByAnotherCard(m, state.getUuid()) && !own.contains(state.getProgramWorkflow())) {
+				own.add(state.getProgramWorkflow());
+			}
+		}
+		PatientState latest = null;
+		for (ProgramWorkflow workflow : own) {
+			PatientState ps = Helper.getMostRecentStateAtDate(p, workflow, new Date());
+			if (ps != null && (latest == null || ps.getStartDate().after(latest.getStartDate()))) {
+				latest = ps;
+			}
+		}
+		return latest;
+	}
+
+	private boolean listedByAnotherCard(EMastercard m, String stateUuid) {
+		for (EMastercard other : EMastercardRegistry.getAll()) {
+			if (other != m) {
+				for (String uuid : other.getActiveStateUuids()) {
+					if (uuid.equalsIgnoreCase(stateUuid)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean hasEncounterOfType(Patient p, String encounterTypeName) {

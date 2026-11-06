@@ -8,6 +8,12 @@ export const configSchema = {
       "The patient chart pages (the part of the URL after /chart/) that don't show the vitals and biometrics header",
     _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth'],
   },
+  pastVisitTypeUuid: {
+    _type: Type.UUID,
+    _description:
+      'The visit type of the O3 visit created when a card visit is entered for a past day the patient has no visit on (the emr.atFacilityVisitType global property)',
+    _default: 'f01c54cb-2225-471a-9cd5-d348552c337c',
+  },
   hiv: {
     programUuid: {
       _type: Type.UUID,
@@ -34,6 +40,7 @@ export const configSchema = {
 
 export interface ConfigObject {
   pagesWithoutVitalsHeader: Array<string>;
+  pastVisitTypeUuid: string;
   hiv: {
     programUuid: string;
     viralLoadConceptUuid: string;

@@ -17,11 +17,12 @@ const MentalHealthDashboardLink: React.FC<{ basePath: string; patientUuid?: stri
     return null;
   }
   if (cards.length > 1) {
-    return <CardGroupNav basePath={basePath} path="mentalHealth" title="Mental health" cards={cards} defaultKey={MH_CARD_KEY} />;
+    // titled by the record the cards belong to, the Mental Health Record
+    return <CardGroupNav basePath={basePath} path="mentalHealth" title={cards[0].group} icon="omrs-icon-medication" cards={cards} defaultKey={MH_CARD_KEY} />;
   }
   return (
     <BrowserRouter>
-      <DashboardExtension basePath={basePath} title="Mental health" path="mentalHealth" icon="omrs-icon-medication" />
+      <DashboardExtension basePath={basePath} title="Mental Health" path="mentalHealth" icon="omrs-icon-medication" />
     </BrowserRouter>
   );
 };
