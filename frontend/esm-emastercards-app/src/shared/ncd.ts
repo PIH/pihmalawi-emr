@@ -151,6 +151,11 @@ export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolea
   ageAtOnset: { whole: true },
   peakFlow: { whole: true },
   gfr: { whole: true },
+  temperature: { min: 25, max: 43 },
+  bmiMuac: { min: 0 },
+  totalBilirubin: { whole: true },
+  directBilirubin: { whole: true },
+  indirectBilirubin: { whole: true },
   haemoglobin: { whole: true },
 };
 

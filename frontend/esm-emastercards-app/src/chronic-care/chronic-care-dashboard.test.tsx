@@ -32,10 +32,10 @@ const htn = card({
   label: 'Hypertension and Diabetes eMastercard',
   state: 'EDIT',
 });
-const scd = card({
-  key: 'scd',
+const ncdOther = card({
+  key: 'ncd-other',
   group,
-  label: 'Sickle Cell Disease eMastercard',
+  label: 'NCD Other eMastercard',
   state: 'EDIT',
 });
 const inactive = (key: string, label: string, state: { name: string; startDate: string } | null) =>
@@ -75,9 +75,9 @@ describe('ChronicCareDashboard', () => {
   });
 
   it("shows another chronic care card's legacy flowsheet, with a tab for each card", () => {
-    withCards([htn, scd], [], 'http://x/openmrs/spa/patient/p1/chart/chronicCare?card=scd');
+    withCards([htn, ncdOther], [], 'http://x/openmrs/spa/patient/p1/chart/chronicCare?card=ncd-other');
     render(<ChronicCareDashboard patientUuid="p1" />);
-    expect(screen.getByText('Legacy page: Sickle Cell Disease eMastercard')).toBeInTheDocument();
+    expect(screen.getByText('Legacy page: NCD Other eMastercard')).toBeInTheDocument();
   });
 
   it("notes a card only when the patient has a state for it that isn't on treatment, not every chronic condition", () => {
