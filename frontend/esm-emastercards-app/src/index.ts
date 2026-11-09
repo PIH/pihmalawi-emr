@@ -124,6 +124,21 @@ export const cvdQuarterlyLabsWorkspace = cvdPanel('CvdQuarterlyLabsWorkspace');
 export const cvdProtocolLabsWorkspace = cvdPanel('CvdProtocolLabsWorkspace');
 export const cvdHospitalisationWorkspace = cvdPanel('CvdHospitalisationWorkspace');
 
+/** Edits a section of the chronic kidney disease card header natively */
+export const ckdHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/ckd-header.workspace'), options);
+
+/** Records or edits a chronic kidney disease visit natively */
+export const ckdVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/ckd-visit.workspace'), options);
+
+const ckdPanel = (name: 'CkdQuarterlyLabsWorkspace' | 'CkdAnnualLabsWorkspace' | 'CkdImagingWorkspace' | 'CkdHospitalisationWorkspace') =>
+  getAsyncLifecycle(() => import('./chronic-care/ckd-encounter-workspaces').then((m) => ({ default: m[name] })), options);
+
+/** Records or edits the chronic kidney disease card's laboratory tests, ultrasounds and hospitalisations natively */
+export const ckdQuarterlyLabsWorkspace = ckdPanel('CkdQuarterlyLabsWorkspace');
+export const ckdAnnualLabsWorkspace = ckdPanel('CkdAnnualLabsWorkspace');
+export const ckdImagingWorkspace = ckdPanel('CkdImagingWorkspace');
+export const ckdHospitalisationWorkspace = ckdPanel('CkdHospitalisationWorkspace');
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
 

@@ -255,6 +255,36 @@
       "name": "pihmalawi-cvd-hospitalisation-workspace",
       "component": "cvdHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-header-workspace",
+      "component": "ckdHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-visit-workspace",
+      "component": "ckdVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-quarterly-labs-workspace",
+      "component": "ckdQuarterlyLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-annual-labs-workspace",
+      "component": "ckdAnnualLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-imaging-workspace",
+      "component": "ckdImagingWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ckd-hospitalisation-workspace",
+      "component": "ckdHospitalisationWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

@@ -6,7 +6,14 @@ export const configSchema = {
     _elements: { _type: Type.String },
     _description:
       "The patient chart pages (the part of the URL after /chart/) that don't show the vitals and biometrics header",
-    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth'],
+    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare'],
+  },
+  pagesWithoutBannerDetails: {
+    _type: Type.Array,
+    _elements: { _type: Type.String },
+    _description:
+      "The patient chart pages (the part of the URL after /chart/) whose patient banner has no Show more / Show less button",
+    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare'],
   },
   pastVisitTypeUuid: {
     _type: Type.UUID,
@@ -40,6 +47,7 @@ export const configSchema = {
 
 export interface ConfigObject {
   pagesWithoutVitalsHeader: Array<string>;
+  pagesWithoutBannerDetails: Array<string>;
   pastVisitTypeUuid: string;
   hiv: {
     programUuid: string;

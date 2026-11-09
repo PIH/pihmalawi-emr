@@ -15,6 +15,7 @@ const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: stri
   'htn-dm': { path: 'chronicCare?card=htn-dm', labelKey: 'openHtnDm', label: 'Open hypertension and diabetes' },
   asthma: { path: 'chronicCare?card=asthma', labelKey: 'openCld', label: 'Open chronic lung disease' },
   chf: { path: 'chronicCare?card=chf', labelKey: 'openCvd', label: 'Open cardiac and vascular disease' },
+  ckd: { path: 'chronicCare?card=ckd', labelKey: 'openCkd', label: 'Open chronic kidney disease' },
 };
 
 interface EMastercardRowProps {
