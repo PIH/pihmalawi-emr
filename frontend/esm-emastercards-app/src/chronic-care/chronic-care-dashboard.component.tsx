@@ -11,6 +11,8 @@ import { CVD_CARD_KEY } from './cvd-concepts';
 import CvdCard from './cvd-card.component';
 import { CKD_CARD_KEY } from './ckd-concepts';
 import CkdCard from './ckd-card.component';
+import { SCD_CARD_KEY } from './scd-concepts';
+import ScdCard from './scd-card.component';
 import styles from '../care-page.scss';
 
 /**
@@ -43,6 +45,9 @@ const ChronicCareDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }
       ))}
     </div>
   );
+  if (selected?.key === SCD_CARD_KEY) {
+    return <ScdCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  }
   if (selected?.key === CKD_CARD_KEY) {
     return <CkdCard patientUuid={patientUuid} title={title} tabs={tabs} />;
   }

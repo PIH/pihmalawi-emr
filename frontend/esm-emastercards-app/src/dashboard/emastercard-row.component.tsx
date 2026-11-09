@@ -16,6 +16,7 @@ const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: stri
   asthma: { path: 'chronicCare?card=asthma', labelKey: 'openCld', label: 'Open chronic lung disease' },
   chf: { path: 'chronicCare?card=chf', labelKey: 'openCvd', label: 'Open cardiac and vascular disease' },
   ckd: { path: 'chronicCare?card=ckd', labelKey: 'openCkd', label: 'Open chronic kidney disease' },
+  scd: { path: 'chronicCare?card=scd', labelKey: 'openScd', label: 'Open sickle cell disease' },
 };
 
 interface EMastercardRowProps {

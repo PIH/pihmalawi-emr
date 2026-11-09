@@ -8,14 +8,14 @@ import EMastercardRow from './emastercard-row.component';
 
 const mockLaunchWorkspace2 = vi.mocked(launchWorkspace2);
 // Any card still kept as a legacy flowsheet (ART, mental health and epilepsy open their O3 pages instead)
-const legacy = (overrides = {}) => card({ key: 'scd', label: 'Sickle Cell Disease eMastercard', ...overrides });
+const legacy = (overrides = {}) => card({ key: 'ncd-other', label: 'NCD Other eMastercard', ...overrides });
 
 describe('EMastercardRow', () => {
   it('offers to create a card on a date, today by default', async () => {
     render(<EMastercardRow card={legacy({ state: 'CREATE' })} patientUuid="patient-uuid" />);
 
     expect(screen.getByLabelText('Encounter date')).toHaveValue(dayjs().format('YYYY-MM-DD'));
-    await userEvent.click(screen.getByRole('button', { name: 'Create new Sickle Cell Disease eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create new NCD Other eMastercard' }));
 
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
@@ -40,7 +40,7 @@ describe('EMastercardRow', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Edit Sickle Cell Disease eMastercard' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit NCD Other eMastercard' })).toBeInTheDocument();
     expect(
       screen.getByText('Created: 05-Jan-2026, Visited: 05-Feb-2026 at Neno District Hospital, Appointment: 05-Mar-2026'),
     ).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('EMastercardRow', () => {
 
     expect(screen.getByText('Created: 05-Jan-2026, Visited: no, Appointment: none')).toBeInTheDocument();
     expect(screen.getByText('Readonly: Inactive program state')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'View Sickle Cell Disease eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'View NCD Other eMastercard' }));
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
       expect.objectContaining({ url: expect.stringContaining('&embedded=true&viewOnly=true') }),

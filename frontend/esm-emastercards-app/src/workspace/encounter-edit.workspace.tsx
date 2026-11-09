@@ -55,6 +55,11 @@ import {
   CkdImagingWorkspace,
   CkdQuarterlyLabsWorkspace,
 } from '../chronic-care/ckd-encounter-workspaces';
+import { scdPanelForEncounter } from '../chronic-care/launch-scd-panel';
+import { SCD_HEADER_SECTIONS, type ScdHeaderSection } from '../chronic-care/scd-fields';
+import ScdHeaderWorkspace from '../chronic-care/scd-header.workspace';
+import ScdVisitWorkspace from '../chronic-care/scd-visit.workspace';
+import { ScdAnnualMonitoringWorkspace, ScdHospitalisationWorkspace, ScdQuarterlyScreeningWorkspace } from '../chronic-care/scd-encounter-workspaces';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -75,13 +80,15 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
-const EncounterEditWorkspace: React.FC<
-  Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>
-> = (props) => {
-  const { closeWorkspace, workspaceProps: { encounterUuid }, groupProps } = props;
+const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>> = (props) => {
+  const {
+    closeWorkspace,
+    workspaceProps: { encounterUuid },
+    groupProps,
+  } = props;
   const { t } = useTranslation();
   const patientUuid = groupProps?.patientUuid;
   const { data: encounter, error: encounterError } = useSWR(
@@ -107,6 +114,36 @@ const EncounterEditWorkspace: React.FC<
   const cvdPanel = encounter ? cvdPanelForEncounter(encounter) : null;
   const [ckdSection, setCkdSection] = useState<CkdHeaderSection | null>(null);
   const ckdPanel = encounter ? ckdPanelForEncounter(encounter) : null;
+  const [scdSection, setScdSection] = useState<ScdHeaderSection | null>(null);
+  const scdPanel = encounter ? scdPanelForEncounter(encounter) : null;
+
+  if (scdPanel && patientUuid) {
+    const encounterPanels = {
+      visit: ScdVisitWorkspace,
+      quarterlyScreening: ScdQuarterlyScreeningWorkspace,
+      annualMonitoring: ScdAnnualMonitoringWorkspace,
+      hospitalisation: ScdHospitalisationWorkspace,
+    };
+    if (scdPanel !== 'header') {
+      const Panel = encounterPanels[scdPanel];
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (scdSection) {
+      return <ScdHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: scdSection }} />;
+    }
+    return (
+      <Workspace2 title={t('scdCardHeader', 'Sickle cell disease card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseScdHeaderSection', 'Which part of the sickle cell disease card header should open?')}</p>
+          {(Object.keys(SCD_HEADER_SECTIONS) as Array<ScdHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setScdSection(key)}>
+              {t(`scdSection_${key}`, SCD_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (ckdPanel && patientUuid) {
     const encounterPanels = {
@@ -309,9 +346,7 @@ const EncounterEditWorkspace: React.FC<
   } else if (!encounter || isLoading) {
     content = <InlineLoading description={t('loading', 'Loading...')} />;
   } else if (selected) {
-    content = (
-      <FlowsheetFrame title={selected.label} url={flowsheetUrl(selected)} onClose={close} onDirtyChange={setDirty} />
-    );
+    content = <FlowsheetFrame title={selected.label} url={flowsheetUrl(selected)} onClose={close} onDirtyChange={setDirty} />;
   } else if (matches.length > 1) {
     content = (
       <div className={styles.message}>
@@ -326,12 +361,7 @@ const EncounterEditWorkspace: React.FC<
   } else {
     content = (
       <div className={styles.message}>
-        <p>
-          {t(
-            'cannotEditHere',
-            "This encounter can't be edited here, because it isn't on any of the patient's eMastercards.",
-          )}
-        </p>
+        <p>{t('cannotEditHere', "This encounter can't be edited here, because it isn't on any of the patient's eMastercards.")}</p>
         <Link href={`${window.openmrsBase}/patientDashboard.form?patientId=${patientUuid}`}>
           {t('openPatientDashboard', 'Open the patient dashboard')}
         </Link>

@@ -30,6 +30,8 @@ export interface NcdHeaderConfig {
   diagnosisNames: string;
   /** The card's name, for the message when it has several headers */
   cardName: string;
+  /** Answers saved with the fields they belong to, never asked: e.g. the card's diagnosis, which the form saves in a hidden checkbox */
+  fixed?: Record<string, FieldValue>;
 }
 
 export interface NcdHeaderPanelProps {
@@ -138,7 +140,7 @@ export const NcdHeaderPanel: React.FC<
         encounterUuid: encounter?.uuid,
         datetime: encounter?.encounterDatetime ?? date,
         locationUuid: location,
-        payload: buildObsPayload(fields, values, encounter?.obs ?? [], {}),
+        payload: buildObsPayload(fields, { ...values, ...config.fixed }, encounter?.obs ?? [], {}),
       });
       mutate(() => true);
       closeWorkspace({ discardUnsavedChanges: true });
@@ -151,7 +153,7 @@ export const NcdHeaderPanel: React.FC<
 
   const grouped = (sectionFields: Array<ArtField>) => (
     <GroupedFields
-      fields={sectionFields.filter((f) => !f.shownWhen || f.shownWhen(values))}
+      fields={sectionFields.filter((f) => !f.hidden && (!f.shownWhen || f.shownWhen(values)))}
       values={values}
       readOnly={readOnly}
       rules={shownRules}

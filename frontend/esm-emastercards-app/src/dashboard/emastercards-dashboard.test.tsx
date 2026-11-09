@@ -18,7 +18,7 @@ describe('EMastercardsDashboard', () => {
       cards: [
         card({ key: 'art' }),
         card({ key: 'ncd-other', group: 'Chronic Care Record', label: 'NCD Other eMastercard' }),
-        card({ key: 'scd', group: 'Chronic Care Record', label: 'Sickle Cell Disease eMastercard' }),
+        card({ key: 'chronic-care', group: 'Chronic Care Record', label: 'Chronic Care eMastercard' }),
       ],
       isLoading: false,
       error: undefined,
@@ -33,7 +33,7 @@ describe('EMastercardsDashboard', () => {
     const buttons = within(chronicCare)
       .getAllByRole('button')
       .map((b) => b.textContent);
-    expect(buttons).toEqual(['Create new NCD Other eMastercard', 'Create new Sickle Cell Disease eMastercard']);
+    expect(buttons).toEqual(['Create new NCD Other eMastercard', 'Create new Chronic Care eMastercard']);
   });
 
   it('says when the cards could not be loaded', () => {

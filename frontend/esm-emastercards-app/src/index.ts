@@ -139,6 +139,20 @@ export const ckdAnnualLabsWorkspace = ckdPanel('CkdAnnualLabsWorkspace');
 export const ckdImagingWorkspace = ckdPanel('CkdImagingWorkspace');
 export const ckdHospitalisationWorkspace = ckdPanel('CkdHospitalisationWorkspace');
 
+/** Edits a section of the sickle cell disease card header natively */
+export const scdHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/scd-header.workspace'), options);
+
+/** Records or edits a sickle cell disease visit natively */
+export const scdVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/scd-visit.workspace'), options);
+
+const scdPanel = (name: 'ScdQuarterlyScreeningWorkspace' | 'ScdAnnualMonitoringWorkspace' | 'ScdHospitalisationWorkspace') =>
+  getAsyncLifecycle(() => import('./chronic-care/scd-encounter-workspaces').then((m) => ({ default: m[name] })), options);
+
+/** Records or edits the sickle cell disease card's screening, monitoring and hospitalisations natively */
+export const scdQuarterlyScreeningWorkspace = scdPanel('ScdQuarterlyScreeningWorkspace');
+export const scdAnnualMonitoringWorkspace = scdPanel('ScdAnnualMonitoringWorkspace');
+export const scdHospitalisationWorkspace = scdPanel('ScdHospitalisationWorkspace');
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
 
