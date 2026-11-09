@@ -19,6 +19,9 @@ export interface CardMedication {
 const same = (a: unknown, b: string) => String(a ?? '').toLowerCase() === b.toLowerCase();
 const label = (options: Array<{ value: string; label: string }>, value: unknown) => options.find((o) => same(value, o.value))?.label ?? null;
 
+/** What an Other medication was: the cards' non-coded text, or the chronic kidney disease visit's Other medication */
+const OTHER_MEDICATION_TEXTS = [NON_CODED_TEXT, 'c8a4d207-0a73-4471-955c-c1f47cbbe2b5'];
+
 /** The dose units the cards' visits offer: the mental health ones, and the chronic lung disease visit's puffs */
 const DOSE_UNITS = [...MH_VISIT.doseUnits, { value: '162372aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', label: 'puff(s)' }];
 
@@ -30,7 +33,8 @@ export function medicationsOf(visit: ArtEncounter, medications: Array<CardMedica
       if (!med) {
         return null;
       }
-      const name = med.key === 'other' ? (memberValue(g, NON_CODED_TEXT) as string) || med.short : med.short;
+      const otherName = OTHER_MEDICATION_TEXTS.map((c) => memberValue(g, c) as string).find(Boolean);
+      const name = med.key === 'other' ? otherName || med.short : med.short;
       const dose = [memberValue(g, MH_VISIT.dose), label(DOSE_UNITS, memberValue(g, MH_VISIT.doseUnit))]
         .filter((x) => x !== null && x !== '')
         .join(' ');

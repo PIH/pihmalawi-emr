@@ -45,6 +45,16 @@ import {
   CvdProtocolLabsWorkspace,
   CvdQuarterlyLabsWorkspace,
 } from '../chronic-care/cvd-encounter-workspaces';
+import { ckdPanelForEncounter } from '../chronic-care/launch-ckd-panel';
+import { CKD_HEADER_SECTIONS, type CkdHeaderSection } from '../chronic-care/ckd-fields';
+import CkdHeaderWorkspace from '../chronic-care/ckd-header.workspace';
+import CkdVisitWorkspace from '../chronic-care/ckd-visit.workspace';
+import {
+  CkdAnnualLabsWorkspace,
+  CkdHospitalisationWorkspace,
+  CkdImagingWorkspace,
+  CkdQuarterlyLabsWorkspace,
+} from '../chronic-care/ckd-encounter-workspaces';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -65,7 +75,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<
@@ -95,6 +105,37 @@ const EncounterEditWorkspace: React.FC<
   const cldPanel = encounter ? cldPanelForEncounter(encounter) : null;
   const [cvdSection, setCvdSection] = useState<CvdHeaderSection | null>(null);
   const cvdPanel = encounter ? cvdPanelForEncounter(encounter) : null;
+  const [ckdSection, setCkdSection] = useState<CkdHeaderSection | null>(null);
+  const ckdPanel = encounter ? ckdPanelForEncounter(encounter) : null;
+
+  if (ckdPanel && patientUuid) {
+    const encounterPanels = {
+      visit: CkdVisitWorkspace,
+      quarterlyLabs: CkdQuarterlyLabsWorkspace,
+      annualLabs: CkdAnnualLabsWorkspace,
+      imaging: CkdImagingWorkspace,
+      hospitalisation: CkdHospitalisationWorkspace,
+    };
+    if (ckdPanel !== 'header') {
+      const Panel = encounterPanels[ckdPanel];
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (ckdSection) {
+      return <CkdHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: ckdSection }} />;
+    }
+    return (
+      <Workspace2 title={t('ckdCardHeader', 'Chronic kidney disease card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseCkdHeaderSection', 'Which part of the chronic kidney disease card header should open?')}</p>
+          {(Object.keys(CKD_HEADER_SECTIONS) as Array<CkdHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setCkdSection(key)}>
+              {t(`ckdSection_${key}`, CKD_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (cvdPanel && patientUuid) {
     const encounterPanels = {

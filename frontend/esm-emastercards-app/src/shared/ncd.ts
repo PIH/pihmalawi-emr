@@ -150,6 +150,8 @@ export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolea
   cigarettes: { whole: true },
   ageAtOnset: { whole: true },
   peakFlow: { whole: true },
+  gfr: { whole: true },
+  haemoglobin: { whole: true },
 };
 
 /** A number outside its concept's limits, or with decimals the concept doesn't allow */
