@@ -39,6 +39,8 @@ export interface ArtField extends FieldSpec {
   hidden?: boolean;
   /** A label shown above the field, heading the fields after it, e.g. Complications */
   heading?: string;
+  /** Asked only when the other answers allow it, e.g. the TB year only for a patient who has had TB */
+  shownWhen?: (values: Record<string, unknown>) => boolean;
 }
 
 export const REGIMEN_OPTIONS: Array<Option> = REGIMENS.map((r) => ({ value: r.uuid, label: r.label }));

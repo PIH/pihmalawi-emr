@@ -94,6 +94,18 @@ export const htnAnnualLabsWorkspace = getAsyncLifecycle(() => import('./chronic-
 /** Records or edits a hypertension and diabetes hospitalisation natively */
 export const htnHospitalisationWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-hospitalisation.workspace'), options);
 
+/** Edits a section of the chronic lung disease card header natively */
+export const cldHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/cld-header.workspace'), options);
+
+/** Records or edits a chronic lung disease visit natively */
+export const cldVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/cld-visit.workspace'), options);
+
+/** Records or edits a chronic lung disease peak flow natively */
+export const cldPeakFlowWorkspace = getAsyncLifecycle(() => import('./chronic-care/cld-peak-flow.workspace'), options);
+
+/** Records or edits a chronic lung disease hospitalisation natively */
+export const cldHospitalisationWorkspace = getAsyncLifecycle(() => import('./chronic-care/cld-hospitalisation.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(
   () => import('./vitals-header/vitals-header-on-some-pages.extension'),

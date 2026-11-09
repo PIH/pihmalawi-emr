@@ -13,6 +13,7 @@ const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: stri
   'mental-health': { path: 'mentalHealth', labelKey: 'openMentalHealth', label: 'Open mental health' },
   epilepsy: { path: 'mentalHealth?card=epilepsy', labelKey: 'openEpilepsy', label: 'Open epilepsy' },
   'htn-dm': { path: 'chronicCare?card=htn-dm', labelKey: 'openHtnDm', label: 'Open hypertension and diabetes' },
+  asthma: { path: 'chronicCare?card=asthma', labelKey: 'openCld', label: 'Open chronic lung disease' },
 };
 
 interface EMastercardRowProps {

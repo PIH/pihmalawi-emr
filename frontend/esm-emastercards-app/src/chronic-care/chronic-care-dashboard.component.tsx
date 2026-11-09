@@ -5,11 +5,13 @@ import { CARD_PARAM, cardName, CardGroupTabs, selectedCard, useCurrentUrl } from
 import LegacyCardPage from '../shared/legacy-card-page.component';
 import { HTN_CARD_KEY } from './htn-concepts';
 import HtnCard from './htn-card.component';
+import { CLD_CARD_KEY } from './cld-concepts';
+import CldCard from './cld-card.component';
 import styles from '../care-page.scss';
 
 /**
- * The Chronic Care Record page: the patient's chronic care cards as tabs, the hypertension and diabetes card
- * natively and the others in their legacy flowsheet
+ * The Chronic Care Record page: the patient's chronic care cards as tabs, the hypertension and diabetes and chronic
+ * lung disease cards natively and the others in their legacy flowsheet
  */
 const ChronicCareDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   const { t } = useTranslation();
@@ -37,6 +39,9 @@ const ChronicCareDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }
       ))}
     </div>
   );
+  if (selected?.key === CLD_CARD_KEY) {
+    return <CldCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  }
   if (selected && selected.key !== HTN_CARD_KEY) {
     return <LegacyCardPage card={selected} patientUuid={patientUuid} title={title} tabs={tabs} />;
   }

@@ -1,95 +1,25 @@
 import dayjs from 'dayjs';
 import { type ArtField } from '../art/art-fields';
-import { type RuleResult } from '../art/art-rules';
 import { encounterValues, type ArtEncounter } from '../art/art.resource';
 import { type FieldValue } from '../art/obs-diff';
-import { leaderOf } from '../mental-health/grouped-fields';
-import { HTN_VISIT, UNKNOWN } from './htn-concepts';
+import { checkNcdHeader, checkRange, clearUnasked, LIMITS, rangeRules, showsTbYear } from '../shared/ncd';
+import { HTN_VISIT } from './htn-concepts';
 import { type Condition, DIAGNOSIS_CONDITIONS, HTN_HEADER_SECTIONS } from './htn-fields';
 
 const empty = (value: FieldValue) => value === null || value === undefined || value === '';
 
-/**
- * The concepts' absolute limits (concepts.csv's absolute high and low), which the forms refuse a number outside of,
- * and whether they allow decimals
- */
-export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolean }> = {
-  height: { min: 10, max: 228 },
-  weight: { min: 0, max: 250 },
-  systolicBp: { min: 20, max: 250, whole: true },
-  diastolicBp: { min: 0, max: 150, whole: true },
-  pulse: { min: 0, max: 230, whole: true },
-  hbA1c: { min: 2, max: 16 },
-  fruitVegetables: { min: 0, whole: true },
-  exercise: { min: 0, max: 7, whole: true },
-  cvRisk: { min: 0, max: 100, whole: true },
-  tbYear: { min: 1950, max: 2050, whole: true },
-};
+export { checkRange, LIMITS, rangeRules, showsTbYear };
 
-/** A number outside its concept's limits, or with decimals the concept doesn't allow */
-export function checkRange(name: string, value: FieldValue): RuleResult {
-  const limit = LIMITS[name];
-  if (!limit || empty(value)) {
-    return null;
-  }
-  const n = Number(value);
-  if (Number.isNaN(n)) {
-    return { level: 'error', message: 'Must be a number' };
-  }
-  if (limit.whole && !Number.isInteger(n)) {
-    return { level: 'error', message: 'Must be a whole number' };
-  }
-  const { min, max } = limit;
-  if ((min !== undefined && n < min) || (max !== undefined && n > max)) {
-    if (min !== undefined && max !== undefined) {
-      return { level: 'error', message: `Must be between ${min} and ${max}` };
-    }
-    return {
-      level: 'error',
-      message: min !== undefined ? `Must be at least ${min}` : `Must be at most ${max}`,
-    };
-  }
-  return null;
-}
-
-/** Each named field's limit, as the panel shows it while the number is typed */
-export const rangeRules = (values: Record<string, FieldValue>, names: Array<string>): Record<string, RuleResult> =>
-  Object.fromEntries(names.map((n) => [n, checkRange(n, values[n])]));
-
-/** Whether the header shows the TB year: not for a patient who never had TB */
-export const showsTbYear = (values: Record<string, FieldValue>) => String(values.tbStatus ?? '').toLowerCase() !== UNKNOWN;
+const DIAGNOSES = HTN_HEADER_SECTIONS.diagnoses.fields.filter((f) => f.checkbox).map((f) => f.name);
 
 /**
- * The header's rules, as the form and its validate_dx_fields.js apply them: the required answers, a date for every
- * diagnosis and complication ticked, no future date unless the form allows one, one type of diabetes, and each number
- * within its concept's limits
+ * The header's rules, as the form and its validate_dx_fields.js apply them: the NCD headers' rules (required answers,
+ * dated diagnoses and complications, no future dates, concept limits, at least one diagnosis) and one type of diabetes
  */
 export function checkHeader(fields: Array<ArtField>, values: Record<string, FieldValue>, today = dayjs().format('YYYY-MM-DD')) {
-  const rules: Record<string, RuleResult> = {};
-  fields.forEach((f) => {
-    const value = values[f.name];
-    const leader = leaderOf(f, fields);
-    if ((leader && !values[leader.name]) || (f.name === 'tbYear' && !showsTbYear(values))) {
-      return;
-    }
-    if ((f.required || (leader && f.kind === 'date')) && empty(value)) {
-      rules[f.name] = { level: 'error', message: 'Required' };
-    } else if (f.kind === 'date' && !f.future && value && String(value).slice(0, 10) > today) {
-      rules[f.name] = { level: 'error', message: 'Cannot be in the future' };
-    } else {
-      rules[f.name] = checkRange(f.name, value);
-    }
-  });
-  // the card is for at least one of its conditions: it cannot be saved without a diagnosis
-  const diagnoses = fields.filter((f) => f.checkbox && f.name.replace('diagnosis_', '') in DIAGNOSIS_CONDITIONS);
-  if (diagnoses.length && !diagnoses.some((f) => values[f.name])) {
-    rules.diagnosis = { level: 'error', message: 'Tick at least one diagnosis' };
-  }
+  const rules = checkNcdHeader(fields, values, { diagnoses: DIAGNOSES, today });
   if (values.diagnosis_dm1 && values.diagnosis_dm2) {
-    rules.diagnosis_dm2 = {
-      level: 'error',
-      message: 'A patient cannot have both Type 1 and Type 2 DM',
-    };
+    rules.diagnosis_dm2 = { level: 'error', message: 'A patient cannot have both Type 1 and Type 2 DM' };
   }
   return rules;
 }
@@ -108,10 +38,7 @@ export function applyHeaderChange(previous: Record<string, FieldValue>, next: Re
     out.diagnosis_dm1 = null;
     out.diagnosis_dm1Date = null;
   }
-  if (!showsTbYear(out)) {
-    out.tbYear = null;
-  }
-  return out;
+  return clearUnasked(HTN_HEADER_SECTIONS.history.fields, out);
 }
 
 /**

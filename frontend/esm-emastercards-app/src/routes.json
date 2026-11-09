@@ -195,6 +195,26 @@
       "name": "pihmalawi-htn-hospitalisation-workspace",
       "component": "htnHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cld-header-workspace",
+      "component": "cldHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cld-visit-workspace",
+      "component": "cldVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cld-peak-flow-workspace",
+      "component": "cldPeakFlowWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cld-hospitalisation-workspace",
+      "component": "cldHospitalisationWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

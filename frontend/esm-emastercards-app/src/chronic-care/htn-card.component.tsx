@@ -1,14 +1,27 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { Button, InlineLoading, InlineNotification, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tag } from '@carbon/react';
+import { Button, InlineLoading, InlineNotification } from '@carbon/react';
 import { YES } from '../art/art-concepts';
-import { type ArtField, displayValue, formatDay } from '../art/art-fields';
-import { sameDayValue } from '../art/art-rules';
-import { type ArtEncounter, encounterValues, obsValue, useCardEncounters, useEMastercard, useObsOnDays } from '../art/art.resource';
-import { type FieldValue } from '../art/obs-diff';
+import { type ArtField, formatDay } from '../art/art-fields';
+import { type ArtEncounter, obsValue, useCardEncounters, useEMastercard, useObsOnDays } from '../art/art.resource';
 import { enrolmentText } from '../emastercards.resource';
-import { MedicationEntry, medicationChanges, medicationDetail, medicationsOf, medicationText } from '../shared/medications';
+import { medicationDetail, medicationsOf, medicationText } from '../shared/medications';
+import {
+  type Column,
+  day,
+  EncounterTable,
+  fieldCells,
+  HeaderSectionCard,
+  Headline,
+  MedicationHistoryCard,
+  MonitoringCard,
+  type MonitoringRow,
+  RedIf,
+  type Referenced,
+  shown,
+  TableCard,
+  valueOf,
+} from '../shared/ncd-card';
 import { HTN_CARD_KEY, HTN_CARD_VERSION, HTN_FORMS, HTN_VISIT } from './htn-concepts';
 import {
   FOOT_CHECK_FIELDS,
@@ -31,27 +44,7 @@ const RECENT_VISITS = 4;
 const REFERENCED_VISITS = 12;
 
 const F = HTN_VISIT_FIELDS;
-const day = (date: string) => dayjs(date).format('YYYY-MM-DD');
 const same = (a: unknown, b: string) => String(a ?? '').toLowerCase() === b.toLowerCase();
-
-type Referenced = Record<string, Record<string, Array<{ value: FieldValue; obsDatetime: string; encounterUuid: string }>>>;
-
-/**
- * A visit's answer to a question, or for an obsreference field without one, the value recorded the same day in
- * another encounter, as the flowsheet shows it
- */
-function valueOf(v: ArtEncounter | undefined, field: ArtField, referenced: Referenced): FieldValue {
-  if (!v) {
-    return null;
-  }
-  const own = obsValue(v, field.concept, field.kind === 'multi');
-  if ((own !== null && !(Array.isArray(own) && !own.length)) || !field.reference) {
-    return own;
-  }
-  return sameDayValue(referenced[day(v.encounterDatetime)]?.[field.concept.toLowerCase()] ?? [], v.encounterDatetime);
-}
-
-const shown = (v: ArtEncounter | undefined, field: ArtField, referenced: Referenced) => displayValue(field, valueOf(v, field, referenced));
 
 function bloodPressure(v: ArtEncounter | undefined, referenced: Referenced) {
   const systolic = valueOf(v, F.systolicBp, referenced);
@@ -83,112 +76,6 @@ const footFindings = (v: ArtEncounter) =>
   FOOT_CHECK_FIELDS.filter((f) => same(obsValue(v, f.concept), YES))
     .map((f) => f.label.replace('Foot check: ', ''))
     .join(', ') || null;
-
-/**
- * A header section's answers as the page lists them: the diagnoses and complications ticked, with their dates, then
- * every other answer by its label
- */
-function sectionRows(key: HtnHeaderSection, header: ArtEncounter | null) {
-  const { fields } = HTN_HEADER_SECTIONS[key];
-  const values = encounterValues(fields, header);
-  const listed = fields
-    .filter((f) => f.checkbox && values[f.name])
-    .map((f) => ({
-      key: f.name,
-      value: [f.label, formatDay(values[`${f.name}Date`] as string)].filter(Boolean).join(' · '),
-    }));
-  // the label the checkboxes are asked under, e.g. Complications
-  const heading = fields.find((f) => f.checkbox && f.heading)?.heading ?? null;
-  const dated = new Set(fields.filter((f) => f.checkbox).map((f) => `${f.name}Date`));
-  const labelled = fields
-    .filter((f) => !f.checkbox && !dated.has(f.name))
-    .map((f) => ({
-      key: f.name,
-      label: f.label,
-      value: displayValue(f, values[f.name]),
-    }))
-    .filter((r) => r.value !== null);
-  return { listed, labelled, heading };
-}
-
-const Headline: React.FC<{
-  label: string;
-  value: string | null;
-  detail?: string | null;
-  alert?: boolean;
-}> = ({ label, value, detail, alert }) => (
-  <div className={styles.headline}>
-    <span className={styles.label}>{label}</span>
-    <span className={alert ? `${styles.value} ${styles.present}` : styles.value}>{value ?? '–'}</span>
-    {detail && <span className={styles.detail}>{detail}</span>}
-  </div>
-);
-
-interface Column {
-  key: string;
-  header: string;
-}
-
-/** A form's encounters as a table, each row edited in the form's panel */
-const EncounterTable: React.FC<{
-  label: string;
-  columns: Array<Column>;
-  encounters: Array<ArtEncounter>;
-  cells: (e: ArtEncounter) => Record<string, React.ReactNode>;
-  onEdit?: (e: ArtEncounter) => void;
-  empty: string;
-}> = ({ label, columns, encounters, cells, onEdit, empty }) => {
-  const { t } = useTranslation();
-  if (!encounters.length) {
-    return <p className={styles.empty}>{empty}</p>;
-  }
-  return (
-    <div className={styles.tableWrapper}>
-      <Table aria-label={label} size="sm">
-        <TableHead>
-          <TableRow>
-            {columns.map((c) => (
-              <TableHeader key={c.key}>{c.header}</TableHeader>
-            ))}
-            {onEdit && <TableHeader aria-label={t('actions', 'Actions')} />}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {encounters.map((e) => {
-            const row = cells(e);
-            return (
-              <TableRow key={e.uuid}>
-                {columns.map((c) => (
-                  <TableCell key={c.key}>{row[c.key] ?? ''}</TableCell>
-                ))}
-                {onEdit && (
-                  <TableCell>
-                    <Button kind="ghost" size="sm" onClick={() => onEdit(e)}>
-                      {t('editSection', 'Edit')}
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
-  );
-};
-
-/** A form's answers as table cells, those in obs groups (e.g. the HIV test) included */
-function fieldCells(fields: Array<ArtField>, e: ArtEncounter, referenced: Referenced = {}) {
-  const values = encounterValues(fields, e);
-  return {
-    date: formatDay(e.encounterDatetime),
-    ...Object.fromEntries(
-      fields
-        .filter((f) => !f.hidden)
-        .map((f) => [f.name, f.reference && values[f.name] === null ? shown(e, f, referenced) : displayValue(f, values[f.name])]),
-    ),
-  };
-}
 
 interface HtnCardProps {
   patientUuid: string;
@@ -262,8 +149,6 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
     .find((x) => x.hbA1c || x.glucose);
   const meds = medicationVisit ? medicationsOf(medicationVisit, HTN_MEDICATIONS) : [];
   const next = formatDay(obsValue(latest, HTN_VISIT.nextAppointment) as string);
-  const changes = medicationChanges(visits, HTN_MEDICATIONS);
-  const recent = visits.slice(0, RECENT_VISITS);
   const description = [
     t('htnPatientCard', 'Hypertension and diabetes patient card'),
     t('cardVersion', 'version {{version}}', { version: HTN_CARD_VERSION }),
@@ -278,61 +163,25 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
         {t('editSection', 'Edit')}
       </Button>
     );
-  const recordButton = (panel: 'quarterlyLabs' | 'annualLabs' | 'hospitalisation') =>
-    canRecord && (
-      <Button kind="ghost" size="sm" onClick={() => launch(panel)}>
-        {t('record', 'Record')}
-      </Button>
-    );
+  const onRecord = (panel: 'quarterlyLabs' | 'annualLabs' | 'hospitalisation') => (canRecord ? () => launch(panel) : undefined);
 
-  const section = (key: HtnHeaderSection) => {
-    const sectionTitle = t(`htnSection_${key}`, HTN_HEADER_SECTIONS[key].title);
-    const { listed, labelled, heading } = sectionRows(key, header);
-    return (
-      <section aria-label={sectionTitle} className={styles.card} key={key}>
-        <div className={styles.cardHeader}>
-          <h4 className={styles.cardTitle}>{sectionTitle}</h4>
-          {canEdit &&
-            (header ? (
-              editButton(() => launchHtnPanel('header', { patientUuid, section: key }))
-            ) : (
-              <Button kind="ghost" size="sm" onClick={() => launchHtnPanel('header', { patientUuid, section: 'start' })}>
-                {t('startCard', 'Start the card')}
-              </Button>
-            ))}
-        </div>
-        {listed.length > 0 && heading && <h5 className={styles.subsectionHeader}>{t(`heading_${heading}`, heading)}</h5>}
-        {listed.length > 0 && (
-          <ul className={styles.history}>
-            {listed.map((r) => (
-              <li key={r.key}>{r.value}</li>
-            ))}
-          </ul>
-        )}
-        {labelled.length > 0 && (
-          <dl className={styles.fields}>
-            {labelled.map((r) => (
-              <React.Fragment key={r.key}>
-                <dt>{r.label}</dt>
-                <dd>{r.value}</dd>
-              </React.Fragment>
-            ))}
-          </dl>
-        )}
-        {!listed.length && !labelled.length && <p className={styles.empty}>{t('notRecorded', 'Not recorded yet')}</p>}
-      </section>
-    );
-  };
+  const section = (key: HtnHeaderSection) => (
+    <HeaderSectionCard
+      key={key}
+      title={t(`htnSection_${key}`, HTN_HEADER_SECTIONS[key].title)}
+      fields={HTN_HEADER_SECTIONS[key].fields}
+      header={header}
+      canEdit={canEdit}
+      onEdit={() => launchHtnPanel('header', { patientUuid, section: key })}
+      onStart={() => launchHtnPanel('header', { patientUuid, section: 'start' })}
+    />
+  );
 
-  const redIf = (value: string | null, raised: boolean) => (value ? <span className={raised ? styles.present : undefined}>{value}</span> : '–');
+  const redIf = (value: string | null, raised: boolean) => <RedIf value={value} raised={raised} />;
   const yesInRed = (value: string | null) => (value === 'Yes' ? <span className={styles.present}>{t('yes', 'Yes')}</span> : (value ?? '–'));
 
   // the measurements and risk factors of the latest visits, as the mental status examination is shown on the mental health card
-  const monitoringRows: Array<{
-    key: string;
-    label: string;
-    cell: (v: ArtEncounter) => React.ReactNode;
-  }> = [
+  const monitoringRows: Array<MonitoringRow> = [
     {
       key: 'bp',
       label: t('bloodPressure', 'Blood pressure'),
@@ -571,79 +420,17 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
       </div>
 
       <div className={styles.cards}>
-        <section aria-label={t('monitoring', 'Monitoring')} className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('monitoring', 'Monitoring')}</h4>
-            {recent.length > 0 && (
-              <span className={styles.detail}>
-                {t('lastVisits', 'Last {{count}} visits', {
-                  count: RECENT_VISITS,
-                })}
-              </span>
-            )}
-          </div>
-          {recent.length ? (
-            <div className={styles.tableWrapper}>
-              <Table aria-label={t('monitoring', 'Monitoring')} size="sm">
-                <TableHead>
-                  <TableRow>
-                    <TableHeader>{t('finding', 'Finding')}</TableHeader>
-                    {recent.map((v) => (
-                      <TableHeader key={v.uuid}>{formatDay(v.encounterDatetime)}</TableHeader>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {monitoringRows.map((r) => (
-                    <TableRow key={r.key}>
-                      <TableCell>{r.label}</TableCell>
-                      {recent.map((v) => (
-                        <TableCell key={v.uuid}>{r.cell(v)}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <p className={styles.empty}>{t('noHtnVisits', 'No hypertension and diabetes visits recorded yet')}</p>
-          )}
-        </section>
-
-        <section aria-label={t('medicationHistory', 'Medication History')} className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('medicationHistory', 'Medication History')}</h4>
-          </div>
-          <ol className={styles.history}>
-            {changes.map((c, i) => (
-              <li key={c.date}>
-                <span className={styles.historyDate}>{formatDay(c.date)}</span>
-                <span className={styles.historyRegimen}>
-                  {c.medications.map((m, j) => (
-                    <React.Fragment key={j}>
-                      {j > 0 && ', '}
-                      <MedicationEntry medication={m} />
-                    </React.Fragment>
-                  ))}
-                </span>
-                {i === 0 && (
-                  <Tag type="green" size="sm">
-                    {t('current', 'Current')}
-                  </Tag>
-                )}
-              </li>
-            ))}
-          </ol>
-          {!changes.length && <p className={styles.empty}>{t('noMedications', 'No medications recorded yet')}</p>}
-        </section>
+        <MonitoringCard
+          visits={visits}
+          count={RECENT_VISITS}
+          rows={monitoringRows}
+          empty={t('noHtnVisits', 'No hypertension and diabetes visits recorded yet')}
+        />
+        <MedicationHistoryCard visits={visits} medications={HTN_MEDICATIONS} />
       </div>
 
       <div className={styles.cards}>
-        <section aria-label={t('quarterlyLabs', 'Quarterly Laboratory Tests')} className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('quarterlyLabs', 'Quarterly Laboratory Tests')}</h4>
-            {recordButton('quarterlyLabs')}
-          </div>
+        <TableCard title={t('quarterlyLabs', 'Quarterly Laboratory Tests')} onRecord={onRecord('quarterlyLabs')}>
           <EncounterTable
             label={t('quarterlyLabs', 'Quarterly Laboratory Tests')}
             columns={labColumns(HTN_QUARTERLY_LAB_FIELDS)}
@@ -660,13 +447,9 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
             }
             empty={t('noLabTests', 'No tests recorded yet')}
           />
-        </section>
+        </TableCard>
 
-        <section aria-label={t('annualLabs', 'Annual Laboratory Tests')} className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h4 className={styles.cardTitle}>{t('annualLabs', 'Annual Laboratory Tests')}</h4>
-            {recordButton('annualLabs')}
-          </div>
+        <TableCard title={t('annualLabs', 'Annual Laboratory Tests')} onRecord={onRecord('annualLabs')}>
           <EncounterTable
             label={t('annualLabs', 'Annual Laboratory Tests')}
             columns={labColumns(HTN_ANNUAL_LAB_FIELDS)}
@@ -683,14 +466,10 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
             }
             empty={t('noLabTests', 'No tests recorded yet')}
           />
-        </section>
+        </TableCard>
       </div>
 
-      <section aria-label={t('hospitalisationHistory', 'Hospitalisation History')} className={styles.card}>
-        <div className={styles.cardHeader}>
-          <h4 className={styles.cardTitle}>{t('hospitalisationHistory', 'Hospitalisation History')}</h4>
-          {recordButton('hospitalisation')}
-        </div>
+      <TableCard title={t('hospitalisationHistory', 'Hospitalisation History')} onRecord={onRecord('hospitalisation')}>
         <EncounterTable
           label={t('hospitalisationHistory', 'Hospitalisation History')}
           columns={labColumns(HTN_HOSPITALISATION_FIELDS, t('dateOfDischarge', 'Date of discharge'))}
@@ -707,7 +486,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
           }
           empty={t('noHospitalisations', 'No hospitalisations recorded yet')}
         />
-      </section>
+      </TableCard>
 
       <section aria-label={t('htnVisits', 'Hypertension and Diabetes Visits')} className={styles.card}>
         <div className={styles.cardHeader}>
