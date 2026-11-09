@@ -35,6 +35,8 @@ interface ArtEncounterPanelProps {
   isShown?: (field: ArtField, values: Record<string, FieldValue>) => boolean;
   /** Each field's rule given the answers and the encounter's date; an error blocks saving */
   rules?: (values: Record<string, FieldValue>, date: string) => Record<string, RuleResult>;
+  /** The values as saved, given the encounter's day: sets the hidden fields, e.g. a sample date to the test's date */
+  prepare?: (values: Record<string, FieldValue>, day: string) => Record<string, FieldValue>;
   closeWorkspace: (options?: { discardUnsavedChanges?: boolean }) => void;
 }
 
@@ -53,6 +55,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   onFieldChange = (_, values) => values,
   isShown = () => true,
   rules = () => ({}),
+  prepare = (values) => values,
   closeWorkspace,
 }) => {
   const { t } = useTranslation();
@@ -134,7 +137,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
           ? { datetime: date }
           : await resolveVisit(patientUuid, record.day, { visitContext: record.visitContext, locationUuid: location, visitTypeUuid: pastVisitType })),
         locationUuid: location,
-        payload: buildObsPayload(shownFields, values, editing?.obs ?? [], references),
+        payload: buildObsPayload(shownFields, prepare(values, record.day), editing?.obs ?? [], references),
       });
       mutate(() => true);
       closeWorkspace({ discardUnsavedChanges: true });
@@ -169,7 +172,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
         {submitted && duplicate && <InlineNotification kind="error" lowContrast hideCloseButton title={duplicate.message} />}
 
         <section className={styles.section}>
-          {shownFields.map((f) => (
+          {shownFields.filter((f) => !f.hidden).map((f) => (
             <ArtFieldInput
               key={f.name}
               field={f}

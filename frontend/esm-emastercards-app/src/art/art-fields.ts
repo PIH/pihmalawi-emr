@@ -35,6 +35,10 @@ export interface ArtField extends FieldSpec {
   checkbox?: boolean;
   /** A coded question always shown as a dropdown, e.g. one whose answers come from the concept */
   select?: boolean;
+  /** Saved but not asked: the form's hidden fields, whose value the panel sets (see ArtEncounterPanel's prepare) */
+  hidden?: boolean;
+  /** A label shown above the field, heading the fields after it, e.g. Complications */
+  heading?: string;
 }
 
 export const REGIMEN_OPTIONS: Array<Option> = REGIMENS.map((r) => ({ value: r.uuid, label: r.label }));

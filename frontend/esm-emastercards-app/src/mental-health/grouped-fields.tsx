@@ -51,6 +51,7 @@ export const GroupedFields: React.FC<GroupedFieldsProps> = ({ fields, values, on
         }
         return (
           <div key={f.name} className={leader ? styles.dependent : undefined}>
+            {f.heading && <p className={styles.legend}>{t(`heading_${f.heading}`, f.heading)}</p>}
             <ArtFieldInput
               field={f}
               value={values[f.name] ?? null}
