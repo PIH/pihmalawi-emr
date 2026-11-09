@@ -60,6 +60,11 @@ import { SCD_HEADER_SECTIONS, type ScdHeaderSection } from '../chronic-care/scd-
 import ScdHeaderWorkspace from '../chronic-care/scd-header.workspace';
 import ScdVisitWorkspace from '../chronic-care/scd-visit.workspace';
 import { ScdAnnualMonitoringWorkspace, ScdHospitalisationWorkspace, ScdQuarterlyScreeningWorkspace } from '../chronic-care/scd-encounter-workspaces';
+import { ncoPanelForEncounter } from '../chronic-care/launch-nco-panel';
+import { NCO_HEADER_SECTIONS, type NcoHeaderSection } from '../chronic-care/nco-fields';
+import NcoHeaderWorkspace from '../chronic-care/nco-header.workspace';
+import NcoVisitWorkspace from '../chronic-care/nco-visit.workspace';
+import { NcoAnnualLabsWorkspace, NcoHospitalisationWorkspace, NcoQuarterlyLabsWorkspace } from '../chronic-care/nco-encounter-workspaces';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -80,7 +85,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>> = (props) => {
@@ -116,6 +121,36 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
   const ckdPanel = encounter ? ckdPanelForEncounter(encounter) : null;
   const [scdSection, setScdSection] = useState<ScdHeaderSection | null>(null);
   const scdPanel = encounter ? scdPanelForEncounter(encounter) : null;
+  const [ncoSection, setNcoSection] = useState<NcoHeaderSection | null>(null);
+  const ncoPanel = encounter ? ncoPanelForEncounter(encounter) : null;
+
+  if (ncoPanel && patientUuid) {
+    const encounterPanels = {
+      visit: NcoVisitWorkspace,
+      quarterlyLabs: NcoQuarterlyLabsWorkspace,
+      annualLabs: NcoAnnualLabsWorkspace,
+      hospitalisation: NcoHospitalisationWorkspace,
+    };
+    if (ncoPanel !== 'header') {
+      const Panel = encounterPanels[ncoPanel];
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (ncoSection) {
+      return <NcoHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: ncoSection }} />;
+    }
+    return (
+      <Workspace2 title={t('ncoCardHeader', 'NCD other card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseNcoHeaderSection', 'Which part of the NCD other card header should open?')}</p>
+          {(Object.keys(NCO_HEADER_SECTIONS) as Array<NcoHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setNcoSection(key)}>
+              {t(`ncoSection_${key}`, NCO_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (scdPanel && patientUuid) {
     const encounterPanels = {

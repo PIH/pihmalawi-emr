@@ -153,6 +153,20 @@ export const scdQuarterlyScreeningWorkspace = scdPanel('ScdQuarterlyScreeningWor
 export const scdAnnualMonitoringWorkspace = scdPanel('ScdAnnualMonitoringWorkspace');
 export const scdHospitalisationWorkspace = scdPanel('ScdHospitalisationWorkspace');
 
+/** Edits a section of the NCD other card header natively */
+export const ncoHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/nco-header.workspace'), options);
+
+/** Records or edits an NCD other visit natively */
+export const ncoVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/nco-visit.workspace'), options);
+
+const ncoPanel = (name: 'NcoQuarterlyLabsWorkspace' | 'NcoAnnualLabsWorkspace' | 'NcoHospitalisationWorkspace') =>
+  getAsyncLifecycle(() => import('./chronic-care/nco-encounter-workspaces').then((m) => ({ default: m[name] })), options);
+
+/** Records or edits the NCD other card's laboratory tests and hospitalisations natively */
+export const ncoQuarterlyLabsWorkspace = ncoPanel('NcoQuarterlyLabsWorkspace');
+export const ncoAnnualLabsWorkspace = ncoPanel('NcoAnnualLabsWorkspace');
+export const ncoHospitalisationWorkspace = ncoPanel('NcoHospitalisationWorkspace');
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
 
