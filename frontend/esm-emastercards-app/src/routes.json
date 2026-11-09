@@ -310,6 +310,31 @@
       "name": "pihmalawi-scd-hospitalisation-workspace",
       "component": "scdHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-nco-header-workspace",
+      "component": "ncoHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-nco-visit-workspace",
+      "component": "ncoVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-nco-quarterly-labs-workspace",
+      "component": "ncoQuarterlyLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-nco-annual-labs-workspace",
+      "component": "ncoAnnualLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-nco-hospitalisation-workspace",
+      "component": "ncoHospitalisationWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

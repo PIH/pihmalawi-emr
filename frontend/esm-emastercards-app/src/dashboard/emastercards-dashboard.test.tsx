@@ -17,8 +17,8 @@ describe('EMastercardsDashboard', () => {
       systemLocationsTag: null,
       cards: [
         card({ key: 'art' }),
-        card({ key: 'ncd-other', group: 'Chronic Care Record', label: 'NCD Other eMastercard' }),
-        card({ key: 'chronic-care', group: 'Chronic Care Record', label: 'Chronic Care eMastercard' }),
+        card({ key: 'nutrition', group: 'Nutrition Record', label: 'Nutrition eMastercard' }),
+        card({ key: 'nutrition-adults', group: 'Nutrition Record', label: 'Nutrition Adults eMastercard' }),
       ],
       isLoading: false,
       error: undefined,
@@ -28,12 +28,12 @@ describe('EMastercardsDashboard', () => {
     render(<EMastercardsDashboard patientUuid="patient-uuid" />);
 
     const groups = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
-    expect(groups).toEqual(['ART Patient Card', 'Chronic Care Record']);
-    const chronicCare = screen.getByRole('region', { name: 'Chronic Care Record' });
-    const buttons = within(chronicCare)
+    expect(groups).toEqual(['ART Patient Card', 'Nutrition Record']);
+    const nutrition = screen.getByRole('region', { name: 'Nutrition Record' });
+    const buttons = within(nutrition)
       .getAllByRole('button')
       .map((b) => b.textContent);
-    expect(buttons).toEqual(['Create new NCD Other eMastercard', 'Create new Chronic Care eMastercard']);
+    expect(buttons).toEqual(['Create new Nutrition eMastercard', 'Create new Nutrition Adults eMastercard']);
   });
 
   it('says when the cards could not be loaded', () => {
