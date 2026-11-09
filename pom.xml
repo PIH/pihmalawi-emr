@@ -68,7 +68,7 @@
 		<uiframeworkVersion>4.0.0</uiframeworkVersion>
 		<uilibraryVersion>2.0.7</uilibraryVersion>
 		<webservicesRestVersion>3.4.1</webservicesRestVersion>
-		<sdkVersion>6.9.0-SNAPSHOT</sdkVersion>
+		<sdkVersion>6.9.0</sdkVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 	</properties>
