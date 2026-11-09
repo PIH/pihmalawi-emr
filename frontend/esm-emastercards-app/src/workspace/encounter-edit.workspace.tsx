@@ -20,6 +20,13 @@ import { epPanelForEncounter } from '../epilepsy/ep-panel-for-encounter';
 import { EP_HEADER_SECTIONS, type EpHeaderSection } from '../epilepsy/ep-fields';
 import EpVisitWorkspace from '../epilepsy/ep-visit.workspace';
 import EpHeaderWorkspace from '../epilepsy/ep-header.workspace';
+import { htnPanelForEncounter } from '../chronic-care/launch-htn-panel';
+import { HTN_HEADER_SECTIONS, type HtnHeaderSection } from '../chronic-care/htn-fields';
+import HtnHeaderWorkspace from '../chronic-care/htn-header.workspace';
+import HtnVisitWorkspace from '../chronic-care/htn-visit.workspace';
+import HtnQuarterlyLabsWorkspace from '../chronic-care/htn-quarterly-labs.workspace';
+import HtnAnnualLabsWorkspace from '../chronic-care/htn-annual-labs.workspace';
+import HtnHospitalisationWorkspace from '../chronic-care/htn-hospitalisation.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -39,8 +46,8 @@ interface Encounter {
 }
 
 /**
- * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health and epilepsy
- * card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
+ * hypertension and diabetes card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<
@@ -64,6 +71,36 @@ const EncounterEditWorkspace: React.FC<
   const mhPanel = encounter ? mhPanelForEncounter(encounter) : null;
   const [epSection, setEpSection] = useState<EpHeaderSection | null>(null);
   const epPanel = encounter ? epPanelForEncounter(encounter) : null;
+  const [htnSection, setHtnSection] = useState<HtnHeaderSection | null>(null);
+  const htnPanel = encounter ? htnPanelForEncounter(encounter) : null;
+
+  if (htnPanel && patientUuid) {
+    const encounterPanels = {
+      visit: HtnVisitWorkspace,
+      quarterlyLabs: HtnQuarterlyLabsWorkspace,
+      annualLabs: HtnAnnualLabsWorkspace,
+      hospitalisation: HtnHospitalisationWorkspace,
+    };
+    if (htnPanel !== 'header') {
+      const Panel = encounterPanels[htnPanel];
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (htnSection) {
+      return <HtnHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: htnSection }} />;
+    }
+    return (
+      <Workspace2 title={t('htnCardHeader', 'Hypertension and diabetes card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseHtnHeaderSection', 'Which part of the hypertension and diabetes card header should open?')}</p>
+          {(Object.keys(HTN_HEADER_SECTIONS) as Array<HtnHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setHtnSection(key)}>
+              {t(`htnSection_${key}`, HTN_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (epPanel && patientUuid) {
     if (epPanel === 'visit') {

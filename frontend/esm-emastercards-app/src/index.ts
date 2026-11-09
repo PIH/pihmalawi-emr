@@ -3,6 +3,7 @@ import emastercardsDashboardLinkComponent from './dashboard/emastercards-dashboa
 import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-link.component';
 import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
 import mentalHealthDashboardLinkComponent from './mental-health/mental-health-dashboard-link.component';
+import chronicCareDashboardLinkComponent from './chronic-care/chronic-care-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -72,6 +73,26 @@ export const epHeaderWorkspace = getAsyncLifecycle(() => import('./epilepsy/ep-h
 
 /** Records or edits an epilepsy visit natively */
 export const epVisitWorkspace = getAsyncLifecycle(() => import('./epilepsy/ep-visit.workspace'), options);
+
+export const chronicCareDashboardLink = getSyncLifecycle(chronicCareDashboardLinkComponent, options);
+
+/** The Chronic Care Record: the hypertension and diabetes card natively, the other chronic care cards' flowsheets */
+export const chronicCareDashboard = getAsyncLifecycle(() => import('./chronic-care/chronic-care-dashboard.component'), options);
+
+/** Edits a section of the hypertension and diabetes card header natively */
+export const htnHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-header.workspace'), options);
+
+/** Records or edits a hypertension and diabetes visit natively */
+export const htnVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-visit.workspace'), options);
+
+/** Records or edits the hypertension and diabetes quarterly laboratory tests natively */
+export const htnQuarterlyLabsWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-quarterly-labs.workspace'), options);
+
+/** Records or edits the hypertension and diabetes annual laboratory tests natively */
+export const htnAnnualLabsWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-annual-labs.workspace'), options);
+
+/** Records or edits a hypertension and diabetes hospitalisation natively */
+export const htnHospitalisationWorkspace = getAsyncLifecycle(() => import('./chronic-care/htn-hospitalisation.workspace'), options);
 
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(

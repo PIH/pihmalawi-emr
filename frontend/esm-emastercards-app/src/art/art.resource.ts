@@ -242,31 +242,45 @@ export function useSameDayObs(patientUuid: string, conceptUuids: Array<string>, 
   const codes = conceptUuids.filter(Boolean);
   const { data, isLoading } = useSWR(
     patientUuid && day && codes.length ? [artSwrKey(patientUuid), 'same-day', day, ...codes] : null,
-    async () => {
-      const res = await openmrsFetch<{ entry?: Array<{ resource: FhirObservation }> }>(
-        `${fhirBaseUrl}/Observation?subject:Patient=${patientUuid}&code=${codes.join(',')}&date=${day}&_sort=-date&_count=100`,
-      );
-      const byConcept: Record<string, Array<SameDayObs>> = {};
-      (res.data?.entry ?? []).forEach(({ resource: r }) => {
-        const concept = r.code?.coding?.[0]?.code?.toLowerCase();
-        if (!concept) {
-          return;
-        }
-        const value =
-          r.valueQuantity?.value ??
-          r.valueDateTime ??
-          r.valueBoolean ??
-          r.valueString ??
-          r.valueCodeableConcept?.coding?.[0]?.code ??
-          null;
-        (byConcept[concept] ??= []).push({
-          value,
-          obsDatetime: r.effectiveDateTime,
-          encounterUuid: r.encounter?.reference?.replace('Encounter/', '') ?? null,
-        });
-      });
-      return byConcept;
-    },
+    () => fetchSameDayObs(patientUuid, codes, day),
   );
   return { obs: data ?? ({} as Record<string, Array<SameDayObs>>), isLoading };
+}
+
+/** The patient's obs of some concepts recorded on one day, in any encounter, newest first, by concept */
+export async function fetchSameDayObs(patientUuid: string, codes: Array<string>, day: string) {
+  const res = await openmrsFetch<{ entry?: Array<{ resource: FhirObservation }> }>(
+    `${fhirBaseUrl}/Observation?subject:Patient=${patientUuid}&code=${codes.join(',')}&date=${day}&_sort=-date&_count=100`,
+  );
+  const byConcept: Record<string, Array<SameDayObs>> = {};
+  (res.data?.entry ?? []).forEach(({ resource: r }) => {
+    const concept = r.code?.coding?.[0]?.code?.toLowerCase();
+    if (!concept) {
+      return;
+    }
+    const value =
+      r.valueQuantity?.value ?? r.valueDateTime ?? r.valueBoolean ?? r.valueString ?? r.valueCodeableConcept?.coding?.[0]?.code ?? null;
+    (byConcept[concept] ??= []).push({
+      value,
+      obsDatetime: r.effectiveDateTime,
+      encounterUuid: r.encounter?.reference?.replace('Encounter/', '') ?? null,
+    });
+  });
+  return byConcept;
+}
+
+/**
+ * The obs of some concepts recorded on each of some days, in any encounter, by day and concept: the values a card's
+ * obsreference fields show for its visits, e.g. blood pressure taken with the vitals
+ */
+export function useObsOnDays(patientUuid: string, conceptUuids: Array<string>, days: Array<string>) {
+  const codes = conceptUuids.filter(Boolean);
+  const { data } = useSWR(
+    patientUuid && days.length && codes.length ? [artSwrKey(patientUuid), 'on-days', ...days, '|', ...codes] : null,
+    async () => {
+      const results = await Promise.all(days.map((day) => fetchSameDayObs(patientUuid, codes, day)));
+      return Object.fromEntries(days.map((day, i) => [day, results[i]]));
+    },
+  );
+  return data ?? ({} as Record<string, Record<string, Array<SameDayObs>>>);
 }

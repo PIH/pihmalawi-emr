@@ -77,6 +77,24 @@
       }
     },
     {
+      "name": "chronic-care-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "chronicCareDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-chronic-care-dashboard-slot",
+        "path": "chronicCare"
+      },
+      "order": 10
+    },
+    {
+      "name": "chronic-care-dashboard",
+      "slot": "pihmalawi-chronic-care-dashboard-slot",
+      "component": "chronicCareDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
       "name": "pihmalawi-vitals-header",
       "slot": "patient-info-slot",
       "component": "vitalsHeaderOnSomePages"
@@ -151,6 +169,31 @@
     {
       "name": "pihmalawi-ep-visit-workspace",
       "component": "epVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-htn-header-workspace",
+      "component": "htnHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-htn-visit-workspace",
+      "component": "htnVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-htn-quarterly-labs-workspace",
+      "component": "htnQuarterlyLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-htn-annual-labs-workspace",
+      "component": "htnAnnualLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-htn-hospitalisation-workspace",
+      "component": "htnHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
     }
   ],
