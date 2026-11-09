@@ -135,6 +135,7 @@ export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolea
   systolicBp: { min: 20, max: 250, whole: true },
   diastolicBp: { min: 0, max: 150, whole: true },
   pulse: { min: 0, max: 230, whole: true },
+  spo2: { min: 30, max: 100, whole: true },
   hbA1c: { min: 2, max: 16 },
   fruitVegetables: { min: 0, whole: true },
   exercise: { min: 0, max: 7, whole: true },

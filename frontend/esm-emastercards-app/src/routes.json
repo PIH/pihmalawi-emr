@@ -215,6 +215,46 @@
       "name": "pihmalawi-cld-hospitalisation-workspace",
       "component": "cldHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-header-workspace",
+      "component": "cvdHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-visit-workspace",
+      "component": "cvdVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-echo-workspace",
+      "component": "cvdEchoWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-ekg-workspace",
+      "component": "cvdEkgWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-chest-xray-workspace",
+      "component": "cvdChestXrayWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-quarterly-labs-workspace",
+      "component": "cvdQuarterlyLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-protocol-labs-workspace",
+      "component": "cvdProtocolLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cvd-hospitalisation-workspace",
+      "component": "cvdHospitalisationWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

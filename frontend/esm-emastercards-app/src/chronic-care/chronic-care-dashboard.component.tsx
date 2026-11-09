@@ -7,6 +7,8 @@ import { HTN_CARD_KEY } from './htn-concepts';
 import HtnCard from './htn-card.component';
 import { CLD_CARD_KEY } from './cld-concepts';
 import CldCard from './cld-card.component';
+import { CVD_CARD_KEY } from './cvd-concepts';
+import CvdCard from './cvd-card.component';
 import styles from '../care-page.scss';
 
 /**
@@ -39,6 +41,9 @@ const ChronicCareDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }
       ))}
     </div>
   );
+  if (selected?.key === CVD_CARD_KEY) {
+    return <CvdCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  }
   if (selected?.key === CLD_CARD_KEY) {
     return <CldCard patientUuid={patientUuid} title={title} tabs={tabs} />;
   }

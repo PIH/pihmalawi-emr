@@ -26,7 +26,7 @@ export interface NcdHeaderConfig {
   checkHeader: (fields: Array<ArtField>, values: Record<string, FieldValue>) => Record<string, RuleResult>;
   /** The answers after a change, e.g. one type of diabetes unticking the other; else those no longer asked are cleared */
   applyChange?: (previous: Record<string, FieldValue>, next: Record<string, FieldValue>) => Record<string, FieldValue>;
-  /** What to tick when no diagnosis is, e.g. Type 1 DM, Type 2 DM or Hypertension */
+  /** What to tick when no diagnosis is, e.g. Type 1 DM, Type 2 DM or Hypertension; empty for a card with many */
   diagnosisNames: string;
   /** The card's name, for the message when it has several headers */
   cardName: string;
@@ -223,7 +223,11 @@ export const NcdHeaderPanel: React.FC<
             kind="error"
             lowContrast
             hideCloseButton
-            title={t('tickOneDiagnosisOf', 'Tick at least one diagnosis: {{diagnoses}}.', { diagnoses: config.diagnosisNames })}
+            title={
+              config.diagnosisNames
+                ? t('tickOneDiagnosisOf', 'Tick at least one diagnosis: {{diagnoses}}.', { diagnoses: config.diagnosisNames })
+                : t('tickOneDiagnosis', 'Tick at least one diagnosis.')
+            }
           />
         )}
 
