@@ -35,6 +35,8 @@ interface ArtEncounterPanelProps {
   isShown?: (field: ArtField, values: Record<string, FieldValue>) => boolean;
   /** Each field's rule given the answers and the encounter's date; an error blocks saving */
   rules?: (values: Record<string, FieldValue>, date: string) => Record<string, RuleResult>;
+  /** The fields whose errors show while the value is typed, e.g. a number outside its concept's limits */
+  live?: Array<string>;
   /** The values as saved, given the encounter's day: sets the hidden fields, e.g. a sample date to the test's date */
   prepare?: (values: Record<string, FieldValue>, day: string) => Record<string, FieldValue>;
   closeWorkspace: (options?: { discardUnsavedChanges?: boolean }) => void;
@@ -56,6 +58,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   isShown = () => true,
   rules = () => ({}),
   prepare = (values) => values,
+  live = [],
   closeWorkspace,
 }) => {
   const { t } = useTranslation();
@@ -179,7 +182,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
               value={values[f.name] ?? null}
               reference={references[f.name]}
               readOnly={readOnly}
-              rule={submitted || fieldRules[f.name]?.level === 'warning' ? (fieldRules[f.name] ?? null) : null}
+              rule={submitted || live.includes(f.name) || fieldRules[f.name]?.level === 'warning' ? (fieldRules[f.name] ?? null) : null}
               onChange={(value) => {
                 setValues((v) => onFieldChange(f.name, { ...v, [f.name]: value }));
                 setDirty(true);

@@ -18,7 +18,7 @@ describe('EMastercardsDashboard', () => {
       cards: [
         card({ key: 'art' }),
         card({ key: 'ckd', group: 'Chronic Care Record', label: 'Chronic Kidney Disease eMastercard' }),
-        card({ key: 'asthma', group: 'Chronic Care Record', label: 'Chronic Lung Disease eMastercard' }),
+        card({ key: 'chf', group: 'Chronic Care Record', label: 'Cardiac and Vascular Disease eMastercard' }),
       ],
       isLoading: false,
       error: undefined,
@@ -33,7 +33,7 @@ describe('EMastercardsDashboard', () => {
     const buttons = within(chronicCare)
       .getAllByRole('button')
       .map((b) => b.textContent);
-    expect(buttons).toEqual(['Create new Chronic Kidney Disease eMastercard', 'Create new Chronic Lung Disease eMastercard']);
+    expect(buttons).toEqual(['Create new Chronic Kidney Disease eMastercard', 'Create new Cardiac and Vascular Disease eMastercard']);
   });
 
   it('says when the cards could not be loaded', () => {

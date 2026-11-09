@@ -30,7 +30,15 @@ export interface RestObs {
 }
 
 /** Boolean concepts, which REST may return as the true or false concept; other cards add theirs */
-export const BOOLEAN_CONCEPTS = [ART_VISIT.arvsGivenTo, ART_INITIAL.ks, VIRAL_LOAD.sampleTaken, VIRAL_LOAD.ldl, MH_VISIT.sideEffects];
+export const BOOLEAN_CONCEPTS = [
+  ART_VISIT.arvsGivenTo,
+  ART_INITIAL.ks,
+  VIRAL_LOAD.sampleTaken,
+  VIRAL_LOAD.ldl,
+  MH_VISIT.sideEffects,
+  // the chronic lung disease visit's Planned visit
+  '6558913e-977f-11e1-8993-905e29aff6c1',
+];
 
 function toValue(concept: string, value: unknown): ArtObs['value'] {
   if (value && typeof value === 'object') {

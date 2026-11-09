@@ -1,115 +1,19 @@
-import { NO, YES } from '../art/art-concepts';
-import { type ArtField, type Option } from '../art/art-fields';
+import { YES } from '../art/art-concepts';
+import { type ArtField } from '../art/art-fields';
+import { datedGroups, NCD_HIV_TB_FIELDS, NCD_PATIENT_GUARDIAN_FIELDS, question, YES_NO, YES_NO_UNKNOWN } from '../shared/ncd';
 import { medicationFields } from '../mental-health/mh-fields';
-import { type DrugClass, HTN_ANNUAL_LABS, HTN_HEADER, HTN_HOSPITALISATION, HTN_QUARTERLY_LABS, HTN_VISIT, UNKNOWN } from './htn-concepts';
-
-const YES_NO: Array<Option> = [
-  { value: YES, label: 'Yes' },
-  { value: NO, label: 'No' },
-];
-const YES_NO_UNKNOWN: Array<Option> = [...YES_NO, { value: UNKNOWN, label: 'Unknown' }];
+import { type DrugClass, HTN_ANNUAL_LABS, HTN_HEADER, HTN_HOSPITALISATION, HTN_QUARTERLY_LABS, HTN_VISIT } from './htn-concepts';
 
 /** The header's sections, each shown in its own card on the page and edited in its own panel */
 export type HtnHeaderSection = 'patientGuardian' | 'diagnoses' | 'history';
 
-const question = (name: string, concept: string, label: string, options: Array<Option>): ArtField => ({
-  name,
-  concept,
-  kind: 'coded',
-  label,
-  options,
-});
-
-/**
- * A checkbox per answer, each with its date, in its own obs group, as the form's diagnoses and complications are; the
- * form requires the date of each one ticked and refuses a future one
- */
-function datedGroups(
-  prefix: string,
-  groupConcept: string,
-  answerConcept: string,
-  answers: Array<{ key: string; answer: string; label: string }>,
-): Array<ArtField> {
-  return answers.flatMap((a) => {
-    const group = {
-      concept: groupConcept,
-      match: { concept: answerConcept, value: a.answer },
-    };
-    const name = `${prefix}_${a.key}`;
-    return [
-      {
-        name,
-        concept: answerConcept,
-        kind: 'coded' as const,
-        label: a.label,
-        checkbox: true,
-        options: [{ value: a.answer, label: a.label }],
-        group,
-      },
-      {
-        name: `${name}Date`,
-        concept: HTN_HEADER.diagnosisDate,
-        kind: 'date' as const,
-        label: `${a.label}: date`,
-        group,
-      },
-    ];
-  });
-}
-
 /** hypertension-and-diabetes-emastercard.xml's questions, by the card on the page that shows and edits them */
 export const HTN_HEADER_SECTIONS: Record<HtnHeaderSection, { title: string; fields: Array<ArtField> }> = {
-  patientGuardian: {
-    title: 'Patient and Guardian Details',
-    fields: [
-      {
-        name: 'transferInDate',
-        concept: HTN_HEADER.transferInDate,
-        kind: 'date',
-        label: 'Transfer-in date',
-        future: true,
-      },
-      {
-        name: 'patientPhone',
-        concept: HTN_HEADER.patientPhone,
-        kind: 'number',
-        label: 'Patient phone',
-      },
-      {
-        name: 'guardianName',
-        concept: HTN_HEADER.guardianName,
-        kind: 'text',
-        label: 'Guardian name',
-      },
-      {
-        name: 'guardianPhone',
-        concept: HTN_HEADER.guardianPhone,
-        kind: 'text',
-        label: 'Guardian phone',
-      },
-      {
-        name: 'guardianRelation',
-        concept: HTN_HEADER.relationToPatient,
-        kind: 'text',
-        label: 'Guardian relation to patient',
-      },
-      {
-        name: 'agreesToFollowUp',
-        concept: HTN_HEADER.agreesToFollowUp,
-        kind: 'coded',
-        label: 'Agrees to follow-up',
-        required: true,
-        options: [
-          { value: NO, label: 'No' },
-          { value: YES, label: 'Yes' },
-        ],
-      },
-    ],
-  },
+  patientGuardian: { title: 'Patient and Guardian Details', fields: NCD_PATIENT_GUARDIAN_FIELDS },
   diagnoses: {
     title: 'Diagnoses and Family History',
     fields: [
-      ...datedGroups('diagnosis', HTN_HEADER.diagnosisGroup, HTN_HEADER.diagnosis, HTN_HEADER.diagnoses),
+      ...datedGroups('diagnosis', HTN_HEADER.diagnosisGroup, HTN_HEADER.diagnosis, HTN_HEADER.diagnosisDate, HTN_HEADER.diagnoses),
       question('familyDiabetes', HTN_HEADER.familyDiabetes, 'Family history: diabetes', YES_NO_UNKNOWN),
       question('familyHypertension', HTN_HEADER.familyHypertension, 'Family history: hypertension', YES_NO_UNKNOWN),
     ],
@@ -117,36 +21,11 @@ export const HTN_HEADER_SECTIONS: Record<HtnHeaderSection, { title: string; fiel
   history: {
     title: 'Patient History and Complications',
     fields: [
-      question('hivStatus', HTN_HEADER.hivStatus, 'HIV status', [
-        { value: HTN_HEADER.reactive, label: 'Reactive' },
-        { value: HTN_HEADER.nonReactive, label: 'Non-reactive' },
-        { value: UNKNOWN, label: 'Unknown' },
-      ]),
-      {
-        name: 'hivTestDate',
-        concept: HTN_HEADER.hivTestDate,
-        kind: 'date',
-        label: 'HIV test date',
-        future: true,
-      },
-      {
-        name: 'artStartDate',
-        concept: HTN_HEADER.artStartDate,
-        kind: 'date',
-        label: 'ART start date',
-        future: true,
-      },
-      question('tbStatus', HTN_HEADER.tbStatus, 'TB', HTN_HEADER.tbStatuses),
-      {
-        name: 'tbYear',
-        concept: HTN_HEADER.tbYear,
-        kind: 'number',
-        label: 'TB year',
-      },
+      ...NCD_HIV_TB_FIELDS,
       // headed Complications, as the TB and HIV questions are by their labels
-      ...datedGroups('complication', HTN_HEADER.complicationGroup, HTN_HEADER.complication, HTN_HEADER.complications).map((f, i) =>
-        i === 0 ? { ...f, heading: 'Complications' } : f,
-      ),
+      ...datedGroups('complication', HTN_HEADER.complicationGroup, HTN_HEADER.complication, HTN_HEADER.diagnosisDate, HTN_HEADER.complications, {
+        heading: 'Complications',
+      }),
     ],
   },
 };

@@ -8,14 +8,14 @@ import EMastercardRow from './emastercard-row.component';
 
 const mockLaunchWorkspace2 = vi.mocked(launchWorkspace2);
 // Any card still kept as a legacy flowsheet (ART, mental health and epilepsy open their O3 pages instead)
-const lung = (overrides = {}) => card({ key: 'asthma', label: 'Chronic Lung Disease eMastercard', ...overrides });
+const legacy = (overrides = {}) => card({ key: 'chf', label: 'Cardiac and Vascular Disease eMastercard', ...overrides });
 
 describe('EMastercardRow', () => {
   it('offers to create a card on a date, today by default', async () => {
-    render(<EMastercardRow card={lung({ state: 'CREATE' })} patientUuid="patient-uuid" />);
+    render(<EMastercardRow card={legacy({ state: 'CREATE' })} patientUuid="patient-uuid" />);
 
     expect(screen.getByLabelText('Encounter date')).toHaveValue(dayjs().format('YYYY-MM-DD'));
-    await userEvent.click(screen.getByRole('button', { name: 'Create new Chronic Lung Disease eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create new Cardiac and Vascular Disease eMastercard' }));
 
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
@@ -29,7 +29,7 @@ describe('EMastercardRow', () => {
   it('offers to edit an existing card, with when it was created, last visited and the appointment', () => {
     render(
       <EMastercardRow
-        card={lung({
+        card={legacy({
           state: 'EDIT',
           created: '2026-01-05',
           lastVisit: '2026-02-05',
@@ -40,7 +40,7 @@ describe('EMastercardRow', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Edit Chronic Lung Disease eMastercard' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit Cardiac and Vascular Disease eMastercard' })).toBeInTheDocument();
     expect(
       screen.getByText('Created: 05-Jan-2026, Visited: 05-Feb-2026 at Neno District Hospital, Appointment: 05-Mar-2026'),
     ).toBeInTheDocument();
@@ -49,14 +49,14 @@ describe('EMastercardRow', () => {
   it('opens a card the user may only view read-only, and says why', async () => {
     render(
       <EMastercardRow
-        card={lung({ state: 'VIEW', created: '2026-01-05', message: 'Readonly: Inactive program state' })}
+        card={legacy({ state: 'VIEW', created: '2026-01-05', message: 'Readonly: Inactive program state' })}
         patientUuid="patient-uuid"
       />,
     );
 
     expect(screen.getByText('Created: 05-Jan-2026, Visited: no, Appointment: none')).toBeInTheDocument();
     expect(screen.getByText('Readonly: Inactive program state')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'View Chronic Lung Disease eMastercard' }));
+    await userEvent.click(screen.getByRole('button', { name: 'View Cardiac and Vascular Disease eMastercard' }));
     expect(mockLaunchWorkspace2).toHaveBeenCalledWith(
       'pihmalawi-emastercard-flowsheet-workspace',
       expect.objectContaining({ url: expect.stringContaining('&embedded=true&viewOnly=true') }),
