@@ -21,10 +21,7 @@ export function startupApp() {
 
 export const emastercardsDashboardLink = getSyncLifecycle(emastercardsDashboardLinkComponent, options);
 
-export const emastercardsDashboard = getAsyncLifecycle(
-  () => import('./dashboard/emastercards-dashboard.component'),
-  options,
-);
+export const emastercardsDashboard = getAsyncLifecycle(() => import('./dashboard/emastercards-dashboard.component'), options);
 
 export const flowsheetWorkspace = getAsyncLifecycle(() => import('./workspace/flowsheet.workspace'), options);
 
@@ -42,10 +39,7 @@ export const hivCareDashboardLink = getSyncLifecycle(hivCareDashboardLinkCompone
 
 export const mentalHealthDashboardLink = getSyncLifecycle(mentalHealthDashboardLinkComponent, options);
 
-export const mentalHealthDashboard = getAsyncLifecycle(
-  () => import('./mental-health/mental-health-dashboard.component'),
-  options,
-);
+export const mentalHealthDashboard = getAsyncLifecycle(() => import('./mental-health/mental-health-dashboard.component'), options);
 
 /** The ART patient card, natively: its header sections, regimens, results and ART visits */
 export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
@@ -106,11 +100,32 @@ export const cldPeakFlowWorkspace = getAsyncLifecycle(() => import('./chronic-ca
 /** Records or edits a chronic lung disease hospitalisation natively */
 export const cldHospitalisationWorkspace = getAsyncLifecycle(() => import('./chronic-care/cld-hospitalisation.workspace'), options);
 
+/** Edits a section of the cardiac and vascular disease card header natively */
+export const cvdHeaderWorkspace = getAsyncLifecycle(() => import('./chronic-care/cvd-header.workspace'), options);
+
+/** Records or edits a cardiac and vascular disease visit natively */
+export const cvdVisitWorkspace = getAsyncLifecycle(() => import('./chronic-care/cvd-visit.workspace'), options);
+
+const cvdPanel = (
+  name:
+    | 'CvdEchoWorkspace'
+    | 'CvdEkgWorkspace'
+    | 'CvdChestXrayWorkspace'
+    | 'CvdQuarterlyLabsWorkspace'
+    | 'CvdProtocolLabsWorkspace'
+    | 'CvdHospitalisationWorkspace',
+) => getAsyncLifecycle(() => import('./chronic-care/cvd-encounter-workspaces').then((m) => ({ default: m[name] })), options);
+
+/** Records or edits the cardiac and vascular disease card's imaging, laboratory tests and hospitalisations natively */
+export const cvdEchoWorkspace = cvdPanel('CvdEchoWorkspace');
+export const cvdEkgWorkspace = cvdPanel('CvdEkgWorkspace');
+export const cvdChestXrayWorkspace = cvdPanel('CvdChestXrayWorkspace');
+export const cvdQuarterlyLabsWorkspace = cvdPanel('CvdQuarterlyLabsWorkspace');
+export const cvdProtocolLabsWorkspace = cvdPanel('CvdProtocolLabsWorkspace');
+export const cvdHospitalisationWorkspace = cvdPanel('CvdHospitalisationWorkspace');
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
-export const vitalsHeaderOnSomePages = getAsyncLifecycle(
-  () => import('./vitals-header/vitals-header-on-some-pages.extension'),
-  options,
-);
+export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
 
 /** Each vital and biometric from the latest time it was recorded, for the vitals header */
 export const latestVitals = getAsyncLifecycle(() => import('./vitals-header/latest-vitals.extension'), options);

@@ -219,7 +219,8 @@ export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounte
     }
     values[f.name] = f.kind === 'multi' ? found.map((o) => String(o.value)) : ((found[0]?.value as FieldValue) ?? null);
     if (f.comment) {
-      values[f.comment] = found[0]?.comment ?? null;
+      const commented = f.commentAnswer ? found.find((o) => String(o.value).toLowerCase() === f.commentAnswer.toLowerCase()) : found[0];
+      values[f.comment] = commented?.comment ?? null;
     }
   });
   return values;

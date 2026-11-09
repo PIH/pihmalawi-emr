@@ -18,9 +18,17 @@ export function leaderOf(field: ArtField, fields: Array<ArtField>): ArtField | n
   return (key && !field.checkbox && fields.find((f) => f.checkbox && groupKey(f) === key)) || null;
 }
 
+/** Whether a field's answer is one that is specified in its comment field */
+const specified = (f: ArtField, value: FieldValue) =>
+  f.commentAnswer ? Array.isArray(value) && value.some((v) => v.toLowerCase() === f.commentAnswer.toLowerCase()) : !!value;
+
 /** Changes one field, clearing what depends on it when a checkbox is unticked */
 export function changeField(fields: Array<ArtField>, values: Record<string, FieldValue>, field: ArtField, value: FieldValue) {
   const next = { ...values, [field.name]: value };
+  // an answer that is specified, e.g. an Other family planning method, loses what it was once unticked
+  if (field.commentAnswer && !(Array.isArray(value) && value.some((v) => v.toLowerCase() === field.commentAnswer.toLowerCase()))) {
+    next[field.comment] = null;
+  }
   if (field.checkbox && !value) {
     fields.filter((f) => leaderOf(f, fields) === field).forEach((f) => (next[f.name] = null));
     if (field.comment) {
@@ -60,7 +68,7 @@ export const GroupedFields: React.FC<GroupedFieldsProps> = ({ fields, values, on
               rule={rules[f.name] ?? null}
               onChange={(value) => onChange(changeField(fields, values, f, value))}
             />
-            {f.comment && values[f.name] && (
+            {f.comment && specified(f, values[f.name]) && (
               <TextInput
                 id={`mh-${f.comment}`}
                 labelText={t('specify', 'Specify')}

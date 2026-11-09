@@ -18,6 +18,8 @@ export interface FieldSpec {
   group?: { concept: string; match?: { concept: string; value: string } };
   /** The values key holding this obs's comment, for an answer the forms "specify" in a comment field */
   comment?: string;
+  /** For a question with several answers: the answer whose obs holds the comment, e.g. an Other family planning method */
+  commentAnswer?: string;
 }
 
 /** A form's encounter type and form, which every encounter it saves carries */
@@ -121,10 +123,20 @@ function diffField(
   const mine = obs.filter((o) => o.concept.toLowerCase() === field.concept.toLowerCase());
   if (field.kind === 'multi') {
     const answers = (Array.isArray(value) ? value : isEmpty(value) ? [] : [String(value)]).map((a) => a.toLowerCase());
-    mine.filter((o) => !answers.includes(normalize('multi', o.value))).forEach((o) => out.void.push(o.uuid));
+    const commented = field.commentAnswer?.toLowerCase();
+    // the answer holding the comment is replaced when its comment changes
+    const stale = (o: ExistingObs) =>
+      !answers.includes(normalize('multi', o.value)) || (commented === normalize('multi', o.value) && !sameComment(o.comment, comment));
+    mine.filter(stale).forEach((o) => out.void.push(o.uuid));
     answers
-      .filter((a) => !mine.some((o) => normalize('multi', o.value) === a))
-      .forEach((a) => out.add.push({ concept: field.concept, value: (value as Array<string>).find((v) => v.toLowerCase() === a) }));
+      .filter((a) => !mine.some((o) => normalize('multi', o.value) === a && !stale(o)))
+      .forEach((a) =>
+        out.add.push({
+          concept: field.concept,
+          value: (value as Array<string>).find((v) => v.toLowerCase() === a),
+          ...(a === commented && comment ? { comment } : {}),
+        }),
+      );
     return;
   }
   const current = mine[0];

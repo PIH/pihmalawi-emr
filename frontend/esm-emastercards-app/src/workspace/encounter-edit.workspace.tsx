@@ -33,6 +33,18 @@ import CldHeaderWorkspace from '../chronic-care/cld-header.workspace';
 import CldVisitWorkspace from '../chronic-care/cld-visit.workspace';
 import CldPeakFlowWorkspace from '../chronic-care/cld-peak-flow.workspace';
 import CldHospitalisationWorkspace from '../chronic-care/cld-hospitalisation.workspace';
+import { cvdPanelForEncounter } from '../chronic-care/launch-cvd-panel';
+import { CVD_HEADER_SECTIONS, type CvdHeaderSection } from '../chronic-care/cvd-fields';
+import CvdHeaderWorkspace from '../chronic-care/cvd-header.workspace';
+import CvdVisitWorkspace from '../chronic-care/cvd-visit.workspace';
+import {
+  CvdChestXrayWorkspace,
+  CvdEchoWorkspace,
+  CvdEkgWorkspace,
+  CvdHospitalisationWorkspace,
+  CvdProtocolLabsWorkspace,
+  CvdQuarterlyLabsWorkspace,
+} from '../chronic-care/cvd-encounter-workspaces';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -53,7 +65,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * hypertension and diabetes and chronic lung disease card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<
@@ -81,6 +93,39 @@ const EncounterEditWorkspace: React.FC<
   const htnPanel = encounter ? htnPanelForEncounter(encounter) : null;
   const [cldSection, setCldSection] = useState<CldHeaderSection | null>(null);
   const cldPanel = encounter ? cldPanelForEncounter(encounter) : null;
+  const [cvdSection, setCvdSection] = useState<CvdHeaderSection | null>(null);
+  const cvdPanel = encounter ? cvdPanelForEncounter(encounter) : null;
+
+  if (cvdPanel && patientUuid) {
+    const encounterPanels = {
+      visit: CvdVisitWorkspace,
+      echo: CvdEchoWorkspace,
+      ekg: CvdEkgWorkspace,
+      chestXray: CvdChestXrayWorkspace,
+      quarterlyLabs: CvdQuarterlyLabsWorkspace,
+      protocolLabs: CvdProtocolLabsWorkspace,
+      hospitalisation: CvdHospitalisationWorkspace,
+    };
+    if (cvdPanel !== 'header') {
+      const Panel = encounterPanels[cvdPanel];
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (cvdSection) {
+      return <CvdHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: cvdSection }} />;
+    }
+    return (
+      <Workspace2 title={t('cvdCardHeader', 'Cardiac and vascular disease card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseCvdHeaderSection', 'Which part of the cardiac and vascular disease card header should open?')}</p>
+          {(Object.keys(CVD_HEADER_SECTIONS) as Array<CvdHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setCvdSection(key)}>
+              {t(`cvdSection_${key}`, CVD_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (cldPanel && patientUuid) {
     const encounterPanels = { visit: CldVisitWorkspace, peakFlow: CldPeakFlowWorkspace, hospitalisation: CldHospitalisationWorkspace };

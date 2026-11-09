@@ -149,7 +149,12 @@ export function sectionRows(fields: Array<ArtField>, header: ArtEncounter | null
   const dated = new Set(fields.filter((f) => f.checkbox && f.group).map((f) => `${f.name}Date`));
   const labelled = fields
     .filter((f) => !(f.checkbox && f.group) && !dated.has(f.name))
-    .map((f) => ({ key: f.name, label: f.label, value: displayValue(f, values[f.name]) }))
+    .map((f) => {
+      const value = displayValue(f, values[f.name]);
+      // what an Other answer was, e.g. an Other family planning method
+      const specify = f.comment ? (values[f.comment] as string | null) : null;
+      return { key: f.name, label: f.label, value: value && specify ? `${value} (${specify})` : value };
+    })
     .filter((r) => r.value !== null);
   return { listed, labelled, heading };
 }
