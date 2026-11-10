@@ -36,7 +36,7 @@ export const shown = (v: ArtEncounter | undefined, field: ArtField, referenced: 
   displayValue(field, valueOf(v, field, referenced));
 
 /** A form's answers as table cells, those in obs groups (e.g. an HIV test) included */
-export function fieldCells(fields: Array<ArtField>, e: ArtEncounter, referenced: Referenced = {}) {
+export function fieldCells(fields: Array<ArtField>, e: ArtEncounter, referenced: Referenced = {}): Record<string, string | null> {
   const values = encounterValues(fields, e);
   return {
     date: formatDay(e.encounterDatetime),

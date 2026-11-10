@@ -34,14 +34,25 @@ function withData(
   message: string | null = null,
 ) {
   mockUseArtCard.mockReturnValue({
-    card: card({ state, message, initialEncounterUuid: data.initial?.[0]?.uuid ?? null, enrolment: { uuid: 'pp1', program: 'HIV PROGRAM', dateEnrolled: '2018-12-03', dateCompleted: null, location: { uuid: 'neno-dh', display: 'Neno District Hospital' }, state: null } }),
+    card: card({
+      state,
+      message,
+      initialEncounterUuid: data.initial?.[0]?.uuid ?? null,
+      enrolment: {
+        uuid: 'pp1',
+        program: 'HIV PROGRAM',
+        dateEnrolled: '2018-12-03',
+        dateCompleted: null,
+        location: { uuid: 'neno-dh', display: 'Neno District Hospital' },
+        state: null,
+      },
+    }),
     systemLocationsTag: 'Upper Neno',
     isLoading: false,
     error: undefined,
   });
   mockUseArtEncounters.mockImplementation((_patient, kind) => ({
-    encounters:
-      { initial: data.initial ?? [], visit: data.visits ?? [], viralLoad: data.viralLoad ?? [], followUpTesting: followUpTests }[kind],
+    encounters: { initial: data.initial ?? [], visit: data.visits ?? [], viralLoad: data.viralLoad ?? [], followUpTesting: followUpTests }[kind],
     isLoading: false,
     error: undefined,
     mutate: vi.fn(),
@@ -68,14 +79,19 @@ describe('HivCareDashboard', () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
     expect(screen.getByText('Care and treatment')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'HIV care' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'HIV Care' })).toBeInTheDocument();
     // the program enrolment, not the card header's date (18-Feb-2019)
     expect(screen.getByText('ART patient card · version 9 · enrolled 03-Dec-2018 at Neno District Hospital')).toBeInTheDocument();
   });
 
   it('leaves the enrolment out when the patient has no enrolment in the program', () => {
     withData('EDIT', everything);
-    mockUseArtCard.mockReturnValue({ card: card({ state: 'EDIT', initialEncounterUuid: initial.uuid }), systemLocationsTag: null, isLoading: false, error: undefined });
+    mockUseArtCard.mockReturnValue({
+      card: card({ state: 'EDIT', initialEncounterUuid: initial.uuid }),
+      systemLocationsTag: null,
+      isLoading: false,
+      error: undefined,
+    });
     render(<HivCareDashboard patientUuid="p1" />);
     expect(screen.getByText('ART patient card · version 9')).toBeInTheDocument();
   });
@@ -118,7 +134,12 @@ describe('HivCareDashboard', () => {
     const rows = table
       .getAllByRole('row')
       .slice(1)
-      .map((r) => within(r).getAllByRole('cell').slice(0, 4).map((c) => c.textContent));
+      .map((r) =>
+        within(r)
+          .getAllByRole('cell')
+          .slice(0, 4)
+          .map((c) => c.textContent),
+      );
     expect(rows).toEqual([
       ['02-Sep-2025', 'Viral load', 'LDL', 'Routine'],
       ['02-Sep-2025', 'CD4 count', '540 cells/µL', '–'],
@@ -137,7 +158,9 @@ describe('HivCareDashboard', () => {
     render(<HivCareDashboard patientUuid="p1" />);
     // Patient and Guardian Details comes first, on the left
     expect(
-      screen.getByRole('region', { name: 'Patient and Guardian Details' }).compareDocumentPosition(screen.getByRole('region', { name: 'Status at ART Initiation' })),
+      screen
+        .getByRole('region', { name: 'Patient and Guardian Details' })
+        .compareDocumentPosition(screen.getByRole('region', { name: 'Status at ART Initiation' })),
     ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     const status = within(screen.getByRole('region', { name: 'Status at ART Initiation' }));
     expect(status.getByText('Stage 2')).toBeInTheDocument();
@@ -161,13 +184,25 @@ describe('HivCareDashboard', () => {
     expect(within(screen.getAllByRole('region', { name: 'Confirmatory HIV Test' })[1]).getByText('Not recorded yet')).toBeInTheDocument();
   });
 
-  it('lists ART visits newest first with the form\'s columns', () => {
+  it("lists ART visits newest first with the form's columns", () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);
     const table = within(screen.getByRole('table', { name: 'ART Visits' }));
-    ['Visit date', 'Height', 'Weight', 'BP', 'Preg/BF', 'TB status', 'Side effects', 'Pill count', 'Doses missed', 'ART regimen', 'ARVs given', 'CPT/IPT', 'Next appointment'].forEach((h) =>
-      expect(table.getByRole('columnheader', { name: h })).toBeInTheDocument(),
-    );
+    [
+      'Visit date',
+      'Height',
+      'Weight',
+      'BP',
+      'Preg/BF',
+      'TB status',
+      'Side effects',
+      'Pill count',
+      'Doses missed',
+      'ART regimen',
+      'ARVs given',
+      'CPT/IPT',
+      'Next appointment',
+    ].forEach((h) => expect(table.getByRole('columnheader', { name: h })).toBeInTheDocument());
     const rows = table.getAllByRole('row').slice(1);
     expect(rows.map((r) => within(r).getAllByRole('cell')[0].textContent)).toEqual(['05-Aug-2026', '06-May-2026', '10-Jan-2022']);
     expect(within(rows[0]).getByText('CTX 960 × 90')).toBeInTheDocument();
@@ -226,8 +261,7 @@ describe('HivCareDashboard', () => {
 });
 
 describe('HivCareDashboardLink', () => {
-  const withCards = (cards: Array<ReturnType<typeof card>>) =>
-    vi.mocked(useHivCards).mockReturnValue({ cards, inactive: [], isLoading: false });
+  const withCards = (cards: Array<ReturnType<typeof card>>) => vi.mocked(useHivCards).mockReturnValue({ cards, inactive: [], isLoading: false });
 
   it('the link is hidden when no HIV card is available to the patient', () => {
     withCards([]);
@@ -235,17 +269,31 @@ describe('HivCareDashboardLink', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('shows the link when the patient has one HIV card', () => {
+  it('names the card under HIV Care when the patient has only the ART card', () => {
     withCards([card({ state: 'EDIT' })]);
     render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
-    expect(screen.getByText('HIV care')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /HIV Care/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'ART' })).toHaveAttribute('href', '/chart/hivCare?card=art');
+  });
+
+  it('names the card under HIV Care when the patient has only the teen club card', () => {
+    withCards([card({ key: 'teen-club', group: 'Teen Club Record', label: 'Teen Club eMastercard', state: 'EDIT' })]);
+    render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
+    expect(screen.getByRole('link', { name: 'Teen Club' })).toHaveAttribute('href', '/chart/hivCare?card=teen-club');
   });
 
   it('expands to a link for each card when the patient has several, e.g. ART and teen club', () => {
     withCards([card({ state: 'EDIT' }), card({ key: 'teen-club', group: 'Teen Club Record', label: 'Teen Club eMastercard', state: 'EDIT' })]);
     render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
-    expect(screen.getByRole('button', { name: /HIV care/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /HIV Care/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'ART' })).toHaveAttribute('href', '/chart/hivCare?card=art');
     expect(screen.getByRole('link', { name: 'Teen Club' })).toHaveAttribute('href', '/chart/hivCare?card=teen-club');
+  });
+
+  it('names the card under HIV Care when the patient has only another HIV card, e.g. exposed child', () => {
+    withCards([card({ key: 'exposed-child', group: 'Exposed Child Patient Card', label: 'Exposed Child eMastercard', state: 'EDIT' })]);
+    render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
+    expect(screen.getByRole('button', { name: /HIV Care/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Exposed Child' })).toHaveAttribute('href', '/chart/hivCare?card=exposed-child');
   });
 });

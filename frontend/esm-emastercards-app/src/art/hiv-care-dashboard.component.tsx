@@ -236,7 +236,7 @@ const Headline: React.FC<{ label: string; value: string | null; detail?: string 
  */
 const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title, tabs }) => {
   const { t } = useTranslation();
-  const pageTitle = title ?? t('hivCare', 'HIV care');
+  const pageTitle = title ?? t('hivCare', 'HIV Care');
   const { card, isLoading, error } = useArtCard(patientUuid);
   const { encounters: initials } = useArtEncounters(patientUuid, 'initial');
   const { encounters: visits } = useArtEncounters(patientUuid, 'visit');

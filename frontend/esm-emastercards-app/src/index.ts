@@ -176,6 +176,15 @@ export const tcVisitWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-v
 /** Records or edits a teen club intake survey natively */
 export const tcSurveyWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-survey.workspace'), options);
 
+/** Edits a section of the exposed child card header natively */
+export const ecHeaderWorkspace = getAsyncLifecycle(() => import('./exposed-child/ec-header.workspace'), options);
+
+/** Records or edits an exposed child visit natively */
+export const ecVisitWorkspace = getAsyncLifecycle(() => import('./exposed-child/ec-visit.workspace'), options);
+
+/** Records or edits an exposed child's EID test natively */
+export const ecEidWorkspace = getAsyncLifecycle(() => import('./exposed-child/ec-eid.workspace'), options);
+
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
 

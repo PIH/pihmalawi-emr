@@ -16,7 +16,8 @@ export const PATIENT_GUARDIAN_CONCEPTS: Record<PatientGuardianRole, Array<string
   patientPhone: ['65700e2c-977f-11e1-8993-905e29aff6c1', '6559ba14-977f-11e1-8993-905e29aff6c1'],
   guardianName: ['655bbc74-977f-11e1-8993-905e29aff6c1'],
   guardianPhone: ['6563d2c4-977f-11e1-8993-905e29aff6c1', '65600cd4-977f-11e1-8993-905e29aff6c1'],
-  guardianRelation: ['6558fd0e-977f-11e1-8993-905e29aff6c1'],
+  // the exposed child card keeps the guardian's relationship to the child under a concept of its own
+  guardianRelation: ['6558fd0e-977f-11e1-8993-905e29aff6c1', '655bbe86-977f-11e1-8993-905e29aff6c1'],
   agreesToFollowUp: ['655fc526-977f-11e1-8993-905e29aff6c1'],
 };
 

@@ -55,13 +55,13 @@ function withData(state: 'CREATE' | 'EDIT', data: Partial<Record<keyof typeof TC
 }
 
 const everything = { header: [tcHeader], visit: visits, survey: [survey] };
-const renderCard = () => render(<TcCard patientUuid="p1" title="HIV care" />);
+const renderCard = () => render(<TcCard patientUuid="p1" title="HIV Care" />);
 
 describe('TcCard', () => {
   it('names the card, with the state of its own treatment workflow', () => {
     withData('EDIT', everything);
     renderCard();
-    expect(screen.getByRole('heading', { name: 'HIV care' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'HIV Care' })).toBeInTheDocument();
     expect(screen.getByText('Teen club patient card · version 2 · On treatment since 10-Feb-2025 at Neno District Hospital')).toBeInTheDocument();
   });
 

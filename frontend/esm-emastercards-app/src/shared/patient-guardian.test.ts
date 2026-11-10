@@ -22,6 +22,13 @@ describe('pickPatientGuardian', () => {
       guardianName: { value: 'New', from: 'Mental Health eMastercard' },
     });
   });
+
+  it("carries the exposed child card's guardian relation, which it keeps under a concept of its own", () => {
+    const carried = pickPatientGuardian([
+      { card: 'Exposed Child eMastercard', encounter: header('e', '2026-03-02', [['655bbe86-977f-11e1-8993-905e29aff6c1', 'Mother']]) },
+    ]);
+    expect(carried).toEqual({ guardianRelation: { value: 'Mother', from: 'Exposed Child eMastercard' } });
+  });
 });
 
 describe('carryOver', () => {
