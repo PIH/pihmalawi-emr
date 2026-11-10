@@ -7,11 +7,15 @@ import { type EMastercardCard, launchFlowsheet } from '../emastercards.resource'
 import { visitDetails } from './visit-details';
 import styles from './emastercards.scss';
 
-/** The cards kept natively in O3, by key: the chart page each one opens */
-const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string }> = {
+/**
+ * The cards kept natively in O3, by key: the chart page each one opens. A retired card (existingOnly) opens there only
+ * for patients who already have it.
+ */
+const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string; existingOnly?: boolean }> = {
   art: { path: 'hivCare', labelKey: 'openHivCare', label: 'Open HIV care' },
   'teen-club': { path: 'hivCare?card=teen-club', labelKey: 'openTeenClub', label: 'Open teen club' },
   'exposed-child': { path: 'hivCare?card=exposed-child', labelKey: 'openExposedChild', label: 'Open exposed child' },
+  'pre-art': { path: 'hivCare?card=pre-art', labelKey: 'openPreArt', label: 'Open Pre-ART', existingOnly: true },
   'mental-health': { path: 'mentalHealth', labelKey: 'openMentalHealth', label: 'Open mental health' },
   epilepsy: { path: 'mentalHealth?card=epilepsy', labelKey: 'openEpilepsy', label: 'Open epilepsy' },
   'htn-dm': { path: 'chronicCare?card=htn-dm', labelKey: 'openHtnDm', label: 'Open hypertension and diabetes' },
@@ -47,7 +51,7 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
   // The ART, mental health and epilepsy cards are kept natively in O3, on their chart pages; their legacy flowsheets stay
   // reachable for the pilot
   const page = NATIVE_PAGES[card.key];
-  if (page) {
+  if (page && !(page.existingOnly && card.state === 'CREATE')) {
     return (
       <div className={styles.row}>
         <Button kind="ghost" size="sm" onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/${page.path}` })}>
@@ -57,11 +61,7 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
           {card.created ? visitDetails(card) : null}
           {readonlyNote}
         </span>
-        <Button
-          kind="ghost"
-          size="sm"
-          onClick={() => launchFlowsheet(card, patientUuid, card.state === 'CREATE' ? { encounterDate } : {})}
-        >
+        <Button kind="ghost" size="sm" onClick={() => launchFlowsheet(card, patientUuid, card.state === 'CREATE' ? { encounterDate } : {})}>
           {t('openLegacyCard', 'Open legacy card')}
         </Button>
         {card.state === 'VIEW' && card.message ? <span className={styles.note}>{card.message}</span> : null}
@@ -92,9 +92,7 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
   return (
     <div className={styles.row}>
       <Button kind="ghost" size="sm" onClick={() => launchFlowsheet(card, patientUuid)}>
-        {card.state === 'EDIT'
-          ? t('edit', 'Edit {{label}}', { label: card.label })
-          : t('view', 'View {{label}}', { label: card.label })}
+        {card.state === 'EDIT' ? t('edit', 'Edit {{label}}', { label: card.label }) : t('view', 'View {{label}}', { label: card.label })}
       </Button>
       <span className={styles.details}>
         {card.created ? visitDetails(card) : null}
