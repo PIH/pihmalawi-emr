@@ -84,7 +84,7 @@ describe('ScdCard', () => {
     expect(diagnosis.queryByText('Sickle cell disease')).not.toBeInTheDocument();
     const referral = within(screen.getByRole('region', { name: 'Reasons for Referral' }));
     expect(referral.getByText('OPD')).toBeInTheDocument();
-    expect(referral.getByText('School nurse')).toBeInTheDocument();
+    expect(referral.getByText('Other · School nurse')).toBeInTheDocument();
   });
 
   it('shows hospitalisation in red in the monitoring table, and records annual monitoring in its panel', async () => {

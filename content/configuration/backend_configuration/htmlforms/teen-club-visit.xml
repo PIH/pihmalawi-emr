@@ -23,7 +23,7 @@
         <macro key="nutrScreeningForMuac" value="0929A831-8B0D-4FEF-8738-A72F950A0566" />
         <macro key="nutrReferral" value="85F19F2E-EC7D-4F54-9C01-EB960AF2B315" />
         <macro key="sputumCollected" value="165252AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
-        <macro key="hospitalized" value="165252AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+        <macro key="hospitalized" value="655b3dc6-977f-11e1-8993-905e29aff6c1" />
         <macro key="scrSTI" value="B5983F8D-7253-4A37-8B70-514B7AD17BD0" />
         <macro key="stiReferral" value="CF05E412-2707-4850-87B0-08E117B66009" />
         <macro key="tbStatus" value="65770db2-977f-11e1-8993-905e29aff6c1" />

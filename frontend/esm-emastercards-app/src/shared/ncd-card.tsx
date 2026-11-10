@@ -6,6 +6,7 @@ import { type ArtField, displayValue, formatDay } from '../art/art-fields';
 import { sameDayValue } from '../art/art-rules';
 import { type ArtEncounter, encounterValues, obsValue } from '../art/art.resource';
 import { type FieldValue } from '../art/obs-diff';
+import { leaderOf } from '../mental-health/grouped-fields';
 import { type CardMedication, MedicationEntry, medicationChanges } from './medications';
 import styles from '../care-page.scss';
 
@@ -141,14 +142,22 @@ export const TableCard: React.FC<{ title: string; onRecord?: () => void; childre
  */
 export function sectionRows(fields: Array<ArtField>, header: ArtEncounter | null) {
   const values = encounterValues(fields, header);
-  const listed = fields
-    .filter((f) => f.checkbox && f.group && values[f.name])
-    .map((f) => ({ key: f.name, value: [f.label, formatDay(values[`${f.name}Date`] as string)].filter(Boolean).join(' · ') }));
+  const ticked = fields.filter((f) => f.checkbox && f.group);
+  // what a ticked answer's group also holds, e.g. its date, what an Other was, or an age at intake's number
+  const dependents = (f: ArtField) => fields.filter((d) => leaderOf(d, fields) === f);
+  const listed = ticked
+    .filter((f) => values[f.name])
+    .map((f) => {
+      const details = dependents(f)
+        .map((d) => (d.kind === 'date' ? formatDay(values[d.name] as string) : displayValue({ ...d, unit: undefined }, values[d.name])))
+        .filter(Boolean);
+      return { key: f.name, value: [f.label, ...details].join(' · ') };
+    });
   // the label the checkboxes are asked under, e.g. Complications
   const heading = fields.find((f) => f.checkbox && f.heading)?.heading ?? null;
-  const dated = new Set(fields.filter((f) => f.checkbox && f.group).map((f) => `${f.name}Date`));
+  const grouped = new Set(ticked.flatMap((f) => dependents(f).map((d) => d.name)));
   const labelled = fields
-    .filter((f) => !f.hidden && !(f.checkbox && f.group) && !dated.has(f.name))
+    .filter((f) => !f.hidden && !(f.checkbox && f.group) && !grouped.has(f.name))
     .map((f) => {
       const value = displayValue(f, values[f.name]);
       // what an Other answer was, e.g. an Other family planning method

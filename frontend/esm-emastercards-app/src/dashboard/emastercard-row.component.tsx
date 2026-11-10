@@ -10,6 +10,7 @@ import styles from './emastercards.scss';
 /** The cards kept natively in O3, by key: the chart page each one opens */
 const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string }> = {
   art: { path: 'hivCare', labelKey: 'openHivCare', label: 'Open HIV care' },
+  'teen-club': { path: 'hivCare?card=teen-club', labelKey: 'openTeenClub', label: 'Open teen club' },
   'mental-health': { path: 'mentalHealth', labelKey: 'openMentalHealth', label: 'Open mental health' },
   epilepsy: { path: 'mentalHealth?card=epilepsy', labelKey: 'openEpilepsy', label: 'Open epilepsy' },
   'htn-dm': { path: 'chronicCare?card=htn-dm', labelKey: 'openHtnDm', label: 'Open hypertension and diabetes' },

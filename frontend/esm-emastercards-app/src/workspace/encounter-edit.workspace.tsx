@@ -65,6 +65,10 @@ import { NCO_HEADER_SECTIONS, type NcoHeaderSection } from '../chronic-care/nco-
 import NcoHeaderWorkspace from '../chronic-care/nco-header.workspace';
 import NcoVisitWorkspace from '../chronic-care/nco-visit.workspace';
 import { NcoAnnualLabsWorkspace, NcoHospitalisationWorkspace, NcoQuarterlyLabsWorkspace } from '../chronic-care/nco-encounter-workspaces';
+import { tcPanelForEncounter } from '../teen-club/launch-tc-panel';
+import TcHeaderWorkspace from '../teen-club/tc-header.workspace';
+import TcVisitWorkspace from '../teen-club/tc-visit.workspace';
+import TcSurveyWorkspace from '../teen-club/tc-survey.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -85,7 +89,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other) are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other) and teen club card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>> = (props) => {
@@ -123,6 +127,16 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
   const scdPanel = encounter ? scdPanelForEncounter(encounter) : null;
   const [ncoSection, setNcoSection] = useState<NcoHeaderSection | null>(null);
   const ncoPanel = encounter ? ncoPanelForEncounter(encounter) : null;
+  const tcPanel = encounter ? tcPanelForEncounter(encounter) : null;
+
+  if (tcPanel && patientUuid) {
+    // the teen club header has one section, so it opens straight away
+    if (tcPanel === 'header') {
+      return <TcHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: 'patientGuardian' }} />;
+    }
+    const Panel = tcPanel === 'visit' ? TcVisitWorkspace : TcSurveyWorkspace;
+    return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+  }
 
   if (ncoPanel && patientUuid) {
     const encounterPanels = {
