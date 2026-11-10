@@ -27,7 +27,7 @@ vi.mock('../teen-club/tc-card.component', () => ({
   ),
 }));
 vi.mock('../exposed-child/ec-card.component', () => ({ default: ({ title }) => <div>Exposed child card: {title}</div> }));
-vi.mock('../shared/legacy-card-page.component', () => ({ default: ({ card: c }) => <div>Legacy page: {c.label}</div> }));
+vi.mock('../pre-art/pa-card.component', () => ({ default: ({ title }) => <div>Pre-ART card: {title}</div> }));
 
 const art = card({ state: 'EDIT' });
 const teenClub = card({ key: 'teen-club', group: 'Teen Club Record', label: 'Teen Club eMastercard', state: 'EDIT' });
@@ -52,10 +52,10 @@ describe('HivCarePage', () => {
     expect(screen.getByText('Teen club card: HIV Care')).toBeInTheDocument();
   });
 
-  it("shows a card that isn't native yet in its legacy flowsheet", () => {
+  it('shows the retired pre-ART card natively, view-only', () => {
     at('pre-art');
     render(<HivCarePage patientUuid="p1" />);
-    expect(screen.getByText('Legacy page: Pre-ART eMastercard')).toBeInTheDocument();
+    expect(screen.getByText('Pre-ART card: HIV Care')).toBeInTheDocument();
   });
 
   it('notes a card the patient has a state for that is not on treatment', () => {
@@ -74,16 +74,16 @@ describe('HivCarePage', () => {
     expect(screen.getByText('Exposed child card: HIV Care')).toBeInTheDocument();
   });
 
-  it('names the Enrolments state the ART, exposed child and pre-ART cards are for', () => {
+  it('names the Enrolments state the ART and exposed child cards are for', () => {
     const lapsed = (key: string, label: string) => card({ key, label, state: 'UNAVAILABLE', message: 'Not available: Inactive program state' });
     at(
       null,
       [card({ key: 'teen-club', group: 'Teen Club Record', label: 'Teen Club eMastercard', state: 'EDIT' })],
-      [lapsed('art', 'ART eMastercard'), lapsed('exposed-child', 'Exposed Child eMastercard'), lapsed('pre-art', 'Pre-ART eMastercard')],
+      [lapsed('art', 'ART eMastercard'), lapsed('exposed-child', 'Exposed Child eMastercard')],
     );
     render(<HivCarePage patientUuid="p1" />);
     expect(screen.getByText('ART shows only when it is a state on antiretrovirals in Enrolments')).toBeInTheDocument();
     expect(screen.getByText('Exposed Child shows only when it is a state Exposed Child (Continue) in Enrolments')).toBeInTheDocument();
-    expect(screen.getByText('Pre-ART shows only when it is a state Pre-ART (Continue) in Enrolments')).toBeInTheDocument();
+    expect(screen.queryByText(/Pre-ART shows only/)).not.toBeInTheDocument();
   });
 });

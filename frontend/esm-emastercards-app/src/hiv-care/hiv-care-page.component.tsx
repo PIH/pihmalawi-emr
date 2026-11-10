@@ -2,11 +2,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import HivCareDashboard from '../art/hiv-care-dashboard.component';
 import { CARD_PARAM, cardName, CardGroupTabs, selectedCard, useCurrentUrl } from '../shared/card-group';
-import LegacyCardPage from '../shared/legacy-card-page.component';
 import { TC_CARD_KEY } from '../teen-club/tc-concepts';
 import TcCard from '../teen-club/tc-card.component';
 import { EC_CARD_KEY } from '../exposed-child/ec-concepts';
 import EcCard from '../exposed-child/ec-card.component';
+import { PA_CARD_KEY } from '../pre-art/pa-concepts';
+import PaCard from '../pre-art/pa-card.component';
 import { useHivCards } from './hiv-cards';
 import styles from '../care-page.scss';
 
@@ -14,13 +15,12 @@ import styles from '../care-page.scss';
 const HIV_CARD_STATES: Record<string, string> = {
   art: 'on antiretrovirals',
   'teen-club': 'Patient transfer in or First time initiation',
-  'pre-art': 'Pre-ART (Continue)',
   'exposed-child': 'Exposed Child (Continue)',
 };
 
 /**
- * The HIV care page: the patient's HIV cards as tabs, the ART, teen club and exposed child cards natively and the
- * pre-ART card in its legacy flowsheet
+ * The HIV care page: the patient's HIV cards as tabs, natively: the ART, teen club and exposed child cards, and the
+ * retired pre-ART card, view-only
  */
 const HivCarePage: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   const { t } = useTranslation();
@@ -48,11 +48,11 @@ const HivCarePage: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   if (selected?.key === EC_CARD_KEY) {
     return <EcCard patientUuid={patientUuid} title={title} tabs={tabs} />;
   }
+  if (selected?.key === PA_CARD_KEY) {
+    return <PaCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  }
   if (selected?.key === TC_CARD_KEY) {
     return <TcCard patientUuid={patientUuid} title={title} tabs={tabs} />;
-  }
-  if (selected && selected.key !== 'art') {
-    return <LegacyCardPage card={selected} patientUuid={patientUuid} title={title} tabs={tabs} />;
   }
   return <HivCareDashboard patientUuid={patientUuid} title={title} tabs={tabs} />;
 };

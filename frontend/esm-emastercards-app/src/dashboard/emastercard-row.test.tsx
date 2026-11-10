@@ -41,9 +41,7 @@ describe('EMastercardRow', () => {
     );
 
     expect(screen.getByRole('button', { name: 'Edit Chronic Care eMastercard' })).toBeInTheDocument();
-    expect(
-      screen.getByText('Created: 05-Jan-2026, Visited: 05-Feb-2026 at Neno District Hospital, Appointment: 05-Mar-2026'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Created: 05-Jan-2026, Visited: 05-Feb-2026 at Neno District Hospital, Appointment: 05-Mar-2026')).toBeInTheDocument();
   });
 
   it('opens a card the user may only view read-only, and says why', async () => {
@@ -96,7 +94,12 @@ describe('EMastercardRow', () => {
   });
 
   it('the mental health row opens the Mental health page', async () => {
-    render(<EMastercardRow card={card({ key: 'mental-health', label: 'Mental Health eMastercard', state: 'EDIT', created: '2026-01-05' })} patientUuid="patient-uuid" />);
+    render(
+      <EMastercardRow
+        card={card({ key: 'mental-health', label: 'Mental Health eMastercard', state: 'EDIT', created: '2026-01-05' })}
+        patientUuid="patient-uuid"
+      />,
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Open mental health' }));
     expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/patient-uuid/chart/mentalHealth' });
     await userEvent.click(screen.getByRole('button', { name: 'Open legacy card' }));
@@ -104,8 +107,24 @@ describe('EMastercardRow', () => {
   });
 
   it('the epilepsy row opens the epilepsy card on the Mental health page', async () => {
-    render(<EMastercardRow card={card({ key: 'epilepsy', label: 'Epilepsy eMastercard', state: 'EDIT', created: '2026-01-05' })} patientUuid="patient-uuid" />);
+    render(
+      <EMastercardRow
+        card={card({ key: 'epilepsy', label: 'Epilepsy eMastercard', state: 'EDIT', created: '2026-01-05' })}
+        patientUuid="patient-uuid"
+      />,
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Open epilepsy' }));
     expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/patient-uuid/chart/mentalHealth?card=epilepsy' });
+  });
+
+  it('an existing Pre-ART card opens on the HIV Care page; a new one is not started there', async () => {
+    const preArt = (state: 'EDIT' | 'CREATE') =>
+      card({ key: 'pre-art', label: 'Pre-ART eMastercard', state, created: state === 'EDIT' ? '2015-03-02' : null });
+    render(<EMastercardRow card={preArt('EDIT')} patientUuid="patient-uuid" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open Pre-ART' }));
+    expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/patient-uuid/chart/hivCare?card=pre-art' });
+
+    render(<EMastercardRow card={preArt('CREATE')} patientUuid="patient-uuid" />);
+    expect(screen.getAllByRole('button', { name: 'Open Pre-ART' })).toHaveLength(1);
   });
 });
