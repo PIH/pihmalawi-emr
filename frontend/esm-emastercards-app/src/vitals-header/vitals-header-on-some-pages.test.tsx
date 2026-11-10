@@ -17,17 +17,10 @@ describe('VitalsHeaderOnSomePages', () => {
     mockExtensionSlot.mockImplementation(({ name }) => <div>slot {name}</div>);
   });
 
-  it('shows the vitals header on the patient summary and vitals pages', () => {
-    for (const page of ['patient-summary', 'vitals-and-biometrics', 'visits']) {
-      goTo(`/openmrs/spa/patient/patient-uuid/chart/${page}`);
-      const { unmount } = render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
-      expect(screen.getByText('slot pihmalawi-vitals-header-slot')).toBeInTheDocument();
-      unmount();
-    }
-  });
+  const pages = ['', 'Patient Summary', 'patient-summary', 'vitals-and-biometrics', 'Visits', 'programs', 'enrolments', 'hivCare', 'chronicCare'];
 
-  it('hides it on the Programs, Enrolments, eMastercards and card pages, as the cards show their own headlines', () => {
-    for (const page of ['programs', 'Programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare', 'chronicCare?card=ckd']) {
+  it('by default shows no vitals header on any page: the patient summary shows the vitals in a card of its own', () => {
+    for (const page of pages) {
       goTo(`/openmrs/spa/patient/patient-uuid/chart/${page}`);
       const { unmount } = render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
       expect(screen.queryByText('slot pihmalawi-vitals-header-slot')).not.toBeInTheDocument();
@@ -35,31 +28,31 @@ describe('VitalsHeaderOnSomePages', () => {
     }
   });
 
-  it('follows the user from page to page', () => {
-    goTo('/openmrs/spa/patient/patient-uuid/chart/patient-summary');
+  it("by default hides the banner's Show more / Show less button on every page, the chart's own address too", () => {
+    for (const page of pages) {
+      goTo(`/openmrs/spa/patient/patient-uuid/chart/${page}`);
+      const { unmount } = render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
+      expect(screen.getByTestId('hide-banner-details')).toHaveTextContent('[data-extension-slot-name="patient-header-slot"]');
+      unmount();
+    }
+  });
+
+  it('can still be configured page by page, following the user from page to page', () => {
+    mockUseConfig.mockReturnValue({ pagesWithoutVitalsHeader: ['enrolments'], pagesWithoutBannerDetails: ['enrolments'] } as never);
+    goTo('/openmrs/spa/patient/patient-uuid/chart/visits');
     render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
     expect(screen.getByText('slot pihmalawi-vitals-header-slot')).toBeInTheDocument();
+    expect(screen.queryByTestId('hide-banner-details')).not.toBeInTheDocument();
 
     act(() => {
       goTo('/openmrs/spa/patient/patient-uuid/chart/enrolments');
       window.dispatchEvent(new Event('single-spa:routing-event'));
     });
     expect(screen.queryByText('slot pihmalawi-vitals-header-slot')).not.toBeInTheDocument();
+    expect(screen.getByTestId('hide-banner-details')).toBeInTheDocument();
   });
 
-  it('hides the patient banner\'s Show more / Show less button on the programs, enrolments, eMastercards and card pages only', () => {
-    for (const page of ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare']) {
-      goTo(`/openmrs/spa/patient/patient-uuid/chart/${page}`);
-      const { unmount } = render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
-      expect(screen.getByTestId('hide-banner-details')).toHaveTextContent('[data-extension-slot-name="patient-header-slot"]');
-      unmount();
-    }
-    goTo('/openmrs/spa/patient/patient-uuid/chart/patient-summary');
-    render(<VitalsHeaderOnSomePages patientUuid="patient-uuid" />);
-    expect(screen.queryByTestId('hide-banner-details')).not.toBeInTheDocument();
-  });
-
-  it('the style hides only the banner\'s chevron button', () => {
+  it("the style hides only the banner's chevron button", () => {
     document.body.innerHTML = `
       <div data-extension-slot-name="patient-header-slot">
         <button id="toggle">Show more<svg><use href="#omrs-icon-chevron-down"></use></svg></button>
@@ -70,4 +63,3 @@ describe('VitalsHeaderOnSomePages', () => {
     expect(matched).toEqual(['toggle']);
   });
 });
-

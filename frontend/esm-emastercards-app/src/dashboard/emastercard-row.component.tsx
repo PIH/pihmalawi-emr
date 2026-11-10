@@ -11,7 +11,7 @@ import styles from './emastercards.scss';
  * The cards kept natively in O3, by key: the chart page each one opens. A retired card (existingOnly) opens there only
  * for patients who already have it.
  */
-const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string; existingOnly?: boolean }> = {
+export const NATIVE_PAGES: Record<string, { path: string; labelKey: string; label: string; existingOnly?: boolean }> = {
   art: { path: 'hivCare', labelKey: 'openHivCare', label: 'Open HIV care' },
   'teen-club': { path: 'hivCare?card=teen-club', labelKey: 'openTeenClub', label: 'Open teen club' },
   'exposed-child': { path: 'hivCare?card=exposed-child', labelKey: 'openExposedChild', label: 'Open exposed child' },

@@ -108,6 +108,21 @@
       "name": "pihmalawi-hiv-summary",
       "component": "hivSummary",
       "order": 1
+    },
+    {
+      "name": "pihmalawi-patient-summary",
+      "component": "patientSummary",
+      "order": 0
+    },
+    {
+      "name": "pihmalawi-banner-program-tags",
+      "slot": "patient-banner-tags-slot",
+      "component": "bannerProgramTags"
+    },
+    {
+      "name": "pihmalawi-banner-address",
+      "slot": "patient-banner-bottom-slot",
+      "component": "bannerAddress"
     }
   ],
   "workspaces2": [

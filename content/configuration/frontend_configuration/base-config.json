@@ -81,11 +81,12 @@
       },
       "patient-chart-summary-dashboard-slot": {
         "add": [
-          "programs-overview-widget"
+          "pihmalawi-patient-summary"
         ],
         "remove": [
           "vitals-overview-widget",
-          "biometrics-overview-widget"
+          "biometrics-overview-widget",
+          "programs-overview-widget"
         ]
       }
     }

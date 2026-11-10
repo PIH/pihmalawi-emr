@@ -35,7 +35,7 @@ function withUnit(obs: LatestObs | undefined) {
  * Opens the vitals app's own vitals and biometrics form, as its header does: after starting a visit, if the patient
  * has none. Saving refreshes the chart, this header included.
  */
-function useRecordVitals(patientUuid: string) {
+export function useRecordVitals(patientUuid: string) {
   const { patient, visitContext, mutateVisitContext } = usePatientChartStore(patientUuid);
   const { mutate } = useSWRConfig();
   const launch = useLaunchWorkspaceRequiringVisit(patientUuid, 'patient-vitals-biometrics-form-workspace');
