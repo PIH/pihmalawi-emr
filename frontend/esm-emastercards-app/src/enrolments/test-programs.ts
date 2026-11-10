@@ -56,3 +56,53 @@ export function chronicCareEnrolledInHtnDm(): QuickProgram {
     ],
   });
 }
+
+const neno = { uuid: 'neno', display: 'Neno District Hospital' };
+
+/** A single-workflow program, the HIV Program, with the patient on antiretrovirals */
+export function hivOnArt(overrides: Partial<QuickProgram> = {}): QuickProgram {
+  return {
+    key: 'hiv',
+    label: 'HIV Program',
+    available: true,
+    canEdit: true,
+    multipleWorkflows: false,
+    enrolment: { uuid: 'hiv-enrolment', dateEnrolled: '2019-02-18', location: neno },
+    lastEnrolment: null,
+    workflows: [
+      {
+        uuid: 'hiv-workflow',
+        name: 'Treatment status',
+        open: true,
+        currentState: { uuid: 'on-art', name: 'On antiretrovirals', startDate: '2019-02-18' },
+        enrolStates: [],
+        changeStates: [{ uuid: 'defaulted', name: 'Defaulted' }],
+      },
+    ],
+    enrolStates: [],
+    changeStates: [{ uuid: 'defaulted', name: 'Defaulted' }],
+    exitStates: [{ uuid: 'hiv-died', name: 'Patient died', workflow: 'Treatment status', kind: 'DIED' }],
+    ...overrides,
+  };
+}
+
+/** A program the patient was enrolled in and left: the TB Program, treatment complete */
+export function tbCompleted(): QuickProgram {
+  return {
+    ...hivOnArt(),
+    key: 'tb',
+    label: 'TB Program',
+    enrolment: null,
+    lastEnrolment: {
+      uuid: 'tb-old',
+      dateEnrolled: '2021-03-03',
+      dateCompleted: '2021-09-01',
+      location: neno,
+      exitState: { uuid: 'tb-complete', name: 'Treatment complete' },
+    },
+    workflows: [],
+    enrolStates: [{ uuid: 'tb-on-treatment', name: 'On treatment' }],
+    changeStates: [],
+    exitStates: [],
+  };
+}

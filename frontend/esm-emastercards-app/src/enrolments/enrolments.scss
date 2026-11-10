@@ -2,37 +2,86 @@
 @use '@carbon/type';
 @use '@openmrs/esm-styleguide/src/vars' as *;
 
-.dashboard {
-  background-color: $ui-02;
-  border: 1px solid $ui-03;
-  padding: layout.$spacing-05;
-}
-
-.title {
-  @include type.type-style('heading-compact-02');
-  margin-bottom: layout.$spacing-05;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+.page {
+  display: flex;
+  flex-direction: column;
   gap: layout.$spacing-05;
 }
 
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+}
+
+.title {
+  @include type.type-style('heading-04');
+}
+
+// two cards a row, as in the mockup; one on narrow screens
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: layout.$spacing-05;
+
+  @media (max-width: 66rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .card {
-  border: 1px solid $ui-03;
-  background-color: $ui-01;
-  padding: layout.$spacing-05;
   display: flex;
   flex-direction: column;
-  gap: layout.$spacing-02;
+  gap: layout.$spacing-03;
+  min-width: 0;
+  padding: layout.$spacing-05;
+  background-color: $ui-02;
+  border: 1px solid $ui-03;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+  padding-bottom: layout.$spacing-03;
+  border-bottom: 1px solid $ui-03;
 }
 
 .cardTitle {
-  @include type.type-style('heading-compact-01');
+  @include type.type-style('heading-compact-02');
 }
 
-.line {
+// a program the patient has left
+.ended {
+  color: $text-02;
+}
+
+// each label and value on its own row, a thin rule under each
+.fields {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  @include type.type-style('body-compact-01');
+
+  dt,
+  dd {
+    padding: layout.$spacing-03 0;
+    border-bottom: 1px solid $ui-03;
+  }
+
+  dt {
+    padding-right: layout.$spacing-04;
+    color: $text-02;
+  }
+
+  > :nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+.note {
   @include type.type-style('body-compact-01');
   color: $text-02;
 }
@@ -40,8 +89,29 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: layout.$spacing-03;
-  margin-top: layout.$spacing-03;
+  gap: layout.$spacing-02;
+  margin-left: -(layout.$spacing-05);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.notEnrolled {
+  @include type.type-style('body-compact-01');
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: layout.$spacing-03;
+    min-height: layout.$spacing-08;
+    border-bottom: 1px solid $ui-03;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
 }
 
 .panel {

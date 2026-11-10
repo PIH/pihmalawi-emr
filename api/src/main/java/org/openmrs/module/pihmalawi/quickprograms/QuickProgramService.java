@@ -33,6 +33,8 @@ import static org.openmrs.module.pihmalawi.PihMalawiConstants.TRANSFERRED_OUT_PR
 public class QuickProgramService {
 
 	public static final String TRANSFERRED_OUT_CONCEPT = "655b604e-977f-11e1-8993-905e29aff6c1";
+	public static final String ON_TREATMENT_CONCEPT = "65664784-977f-11e1-8993-905e29aff6c1";
+
 	public static final String PATIENT_DIED_CONCEPT = "655b5e46-977f-11e1-8993-905e29aff6c1";
 
 	public List<QuickProgramStatus> statusAll(Patient patient) {
@@ -72,10 +74,11 @@ public class QuickProgramService {
 				if (dead) {
 					continue;
 				}
+				boolean advancedCareOnly = qp.isAdvancedCareOnly(workflow.getUuid());
 				if (!open) {
-					ws.getEnrolStates().addAll(Helper.getProgramWorkflowStates(workflow, Boolean.TRUE, Boolean.FALSE));
+					ws.getEnrolStates().addAll(notOnTreatment(Helper.getProgramWorkflowStates(workflow, Boolean.TRUE, Boolean.FALSE), advancedCareOnly));
 				} else {
-					ws.getChangeStates().addAll(except(Helper.getProgramWorkflowStates(workflow, null, Boolean.FALSE), current));
+					ws.getChangeStates().addAll(notOnTreatment(except(Helper.getProgramWorkflowStates(workflow, null, Boolean.FALSE), current), advancedCareOnly));
 					status.getExitStates().addAll(except(Helper.getProgramWorkflowStates(workflow, null, Boolean.TRUE), current));
 				}
 			}
@@ -145,6 +148,9 @@ public class QuickProgramService {
 			pws.savePatientProgram(pp);
 		} else {
 			pp = enrolled.get(0);
+			for (ProgramWorkflowState state : states) {
+				checkNotRepeatedThatDay(pp, state, date);
+			}
 		}
 		for (ProgramWorkflowState state : states) {
 			pp.transitionToState(state, date);
@@ -185,6 +191,7 @@ public class QuickProgramService {
 				throw new QuickProgramException("Choose one state for " + workflowName(state.getProgramWorkflow()));
 			}
 			checkAfterCurrentState(pp, state.getProgramWorkflow(), date);
+			checkNotRepeatedThatDay(pp, state, date);
 		}
 		for (ProgramWorkflowState state : states) {
 			pp.transitionToState(state, date);
@@ -209,9 +216,16 @@ public class QuickProgramService {
 		// Legacy Quick Programs only carries a death across to the other workflows of per-condition programs
 		boolean diedAcrossWorkflows = kind == ExitKind.DIED && !qp.getWorkflowUuids().isEmpty();
 		checkAfterCurrentState(pp, state.getProgramWorkflow(), date);
+		checkNotRepeatedThatDay(pp, state, date);
 		if (diedAcrossWorkflows) {
 			for (ProgramWorkflow workflow : pp.getProgram().getWorkflows()) {
 				checkAfterCurrentState(pp, workflow, date);
+				for (ProgramWorkflowState other : workflow.getStates()) {
+					if (!workflow.equals(state.getProgramWorkflow())
+					        && other.getConcept().getUuid().equalsIgnoreCase(state.getConcept().getUuid())) {
+						checkNotRepeatedThatDay(pp, other, date);
+					}
+				}
 			}
 		}
 		if (kind == ExitKind.TRANSFER_OUT) {
@@ -276,6 +290,22 @@ public class QuickProgramService {
 		}
 	}
 
+	/**
+	 * Core lets a second, identical patient state (the same state starting the same day) save once, then refuses every
+	 * later save of the enrollment with "Found duplicate patient states with similar start dates"; so going back to a
+	 * state the workflow already had on that day is refused instead
+	 */
+	private void checkNotRepeatedThatDay(PatientProgram pp, ProgramWorkflowState state, Date date) {
+		for (PatientState ps : pp.getStates()) {
+			if (!ps.getVoided() && ps.getState().equals(state) && ps.getStartDate() != null
+			        && DateUtil.getStartOfDay(ps.getStartDate()).equals(DateUtil.getStartOfDay(date))) {
+				throw new QuickProgramException(workflowName(state.getProgramWorkflow()) + " was already " + stateName(state)
+				        + " on " + new java.text.SimpleDateFormat("dd-MMM-yyyy").format(date)
+				        + ", so it can't change to it again that day. Choose a later date.");
+			}
+		}
+	}
+
 	private String stateName(ProgramWorkflowState state) {
 		return state.getConcept().getName().getName();
 	}
@@ -321,6 +351,22 @@ public class QuickProgramService {
 
 	private List<ProgramWorkflowState> states(List<String> uuids) {
 		return Helper.getProgramWorkflowStatesFromCsvIds(StringUtils.join(uuids, ","));
+	}
+
+	/**
+	 * @return the states without On treatment, for a workflow whose patients are only ever in advanced care
+	 */
+	private List<ProgramWorkflowState> notOnTreatment(List<ProgramWorkflowState> states, boolean advancedCareOnly) {
+		if (!advancedCareOnly) {
+			return states;
+		}
+		List<ProgramWorkflowState> ret = new ArrayList<ProgramWorkflowState>();
+		for (ProgramWorkflowState state : states) {
+			if (!state.getConcept().getUuid().equalsIgnoreCase(ON_TREATMENT_CONCEPT)) {
+				ret.add(state);
+			}
+		}
+		return ret;
 	}
 
 	private List<ProgramWorkflowState> except(List<ProgramWorkflowState> states, PatientState current) {

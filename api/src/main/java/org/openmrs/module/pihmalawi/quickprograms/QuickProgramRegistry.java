@@ -30,6 +30,9 @@ public class QuickProgramRegistry {
 				.workflows("1A6C2438-99D7-41FF-8EB4-516DFCD1D199,4eda02b2-48ca-47dc-9166-483a6499bcbd,"
 				        + "9b571347-8dc3-40fe-9994-e82071fa8290,cc76c7c2-8760-4ff6-8ed7-617a7378915b,"
 				        + "62481c50-155c-45be-b4e9-39a38a9cbfda,319838b7-23cb-4e04-9b36-ad1e83cbeaaf")
+				// sickle cell disease, chronic kidney disease, chronic heart failure and NCD other: in advanced care only
+				.advancedCareOnly("1A6C2438-99D7-41FF-8EB4-516DFCD1D199,4eda02b2-48ca-47dc-9166-483a6499bcbd,"
+				        + "cc76c7c2-8760-4ff6-8ed7-617a7378915b,62481c50-155c-45be-b4e9-39a38a9cbfda")
 				.initialStates("66882650-977f-11e1-8993-905e29aff6c1,7c4d2e56-c8c2-11e8-9bc6-0242ac110001")
 				.states("66882650-977f-11e1-8993-905e29aff6c1,7c4d2e56-c8c2-11e8-9bc6-0242ac110001")
 				.terminalStates("6688275e-977f-11e1-8993-905e29aff6c1,6688297a-977f-11e1-8993-905e29aff6c1,"

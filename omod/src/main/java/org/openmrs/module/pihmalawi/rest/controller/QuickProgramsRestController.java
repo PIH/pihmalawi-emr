@@ -231,7 +231,8 @@ public class QuickProgramsRestController {
 	}
 
 	/**
-	 * @return the terminal state the enrollment was completed with, if any
+	 * @return how the enrollment ended: the terminal state it was completed with, else the outcome recorded when it was
+	 *         completed (e.g. from the Programs tab), if any
 	 */
 	private SimpleObject exitState(PatientProgram pp) {
 		PatientState last = null;
@@ -242,7 +243,13 @@ public class QuickProgramsRestController {
 				last = ps;
 			}
 		}
-		return last == null ? null : state(last.getState());
+		if (last != null) {
+			return state(last.getState());
+		}
+		if (pp.getOutcome() != null) {
+			return new SimpleObject().add("uuid", pp.getOutcome().getUuid()).add("name", pp.getOutcome().getName().getName());
+		}
+		return null;
 	}
 
 	private List<SimpleObject> states(List<ProgramWorkflowState> states) {
