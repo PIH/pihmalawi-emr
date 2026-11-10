@@ -33,6 +33,10 @@ import styles from '../care-page.scss';
 
 interface HivCareDashboardProps {
   patientUuid: string;
+  /** The chart page's title; HIV care */
+  title?: string;
+  /** The HIV care page's tabs, one per HIV card the patient has */
+  tabs?: React.ReactNode;
 }
 
 const regimenOf = (uuid: unknown) => REGIMENS.find((r) => r.uuid.toLowerCase() === String(uuid ?? '').toLowerCase()) ?? null;
@@ -230,8 +234,9 @@ const Headline: React.FC<{ label: string; value: string | null; detail?: string 
  * The ART patient card, natively in O3: the headline numbers, the card header's sections, the regimen history,
  * the viral load and follow-up test results and the ART visits, each edited in its own side panel
  */
-const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
+const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title, tabs }) => {
   const { t } = useTranslation();
+  const pageTitle = title ?? t('hivCare', 'HIV care');
   const { card, isLoading, error } = useArtCard(patientUuid);
   const { encounters: initials } = useArtEncounters(patientUuid, 'initial');
   const { encounters: visits } = useArtEncounters(patientUuid, 'visit');
@@ -252,8 +257,9 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
       <div className={styles.page}>
         <div className={styles.heading}>
           <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
-          <h3 className={styles.title}>{t('hivCare', 'HIV care')}</h3>
+          <h3 className={styles.title}>{pageTitle}</h3>
         </div>
+        {tabs}
         <InlineNotification
           kind="warning"
           lowContrast
@@ -336,11 +342,13 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid }) => {
       <div className={styles.pageHeader}>
         <div className={styles.heading}>
           <span className={styles.eyebrow}>{t('careAndTreatment', 'Care and treatment')}</span>
-          <h3 className={styles.title}>{t('hivCare', 'HIV care')}</h3>
+          <h3 className={styles.title}>{pageTitle}</h3>
           <span className={styles.description}>{cardDescription}</span>
         </div>
         {recordButton(t('recordArtVisit', 'Record ART visit'), () => launchNew('visit'), 'primary')}
       </div>
+
+      {tabs}
 
       {card.state === 'VIEW' && (
         <InlineNotification

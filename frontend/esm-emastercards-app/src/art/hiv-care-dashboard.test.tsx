@@ -8,6 +8,7 @@ import { launchArtPanel } from './launch-art-panel';
 import { followUpTests, initial, viralLoad, visits } from './test-art-data';
 import HivCareDashboard from './hiv-care-dashboard.component';
 import HivCareDashboardLink from './hiv-care-dashboard-link.component';
+import { useHivCards } from '../hiv-care/hiv-cards';
 
 vi.mock('./art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./art.resource')>()),
@@ -19,6 +20,10 @@ vi.mock('@openmrs/esm-framework', async (importOriginal) => ({
   DashboardExtension: ({ title }: { title: string }) => <a href="#hivCare">{title}</a>,
 }));
 vi.mock('./launch-art-panel', () => ({ launchArtPanel: vi.fn(), useLaunchArtPanel: () => vi.fn() }));
+vi.mock('../hiv-care/hiv-cards', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hiv-care/hiv-cards')>()),
+  useHivCards: vi.fn(),
+}));
 
 const mockUseArtCard = vi.mocked(useArtCard);
 const mockUseArtEncounters = vi.mocked(useArtEncounters);
@@ -221,21 +226,26 @@ describe('HivCareDashboard', () => {
 });
 
 describe('HivCareDashboardLink', () => {
-  it('the link is hidden when the patient has no ART card', () => {
-    mockUseArtCard.mockReturnValue({ card: null, systemLocationsTag: null, isLoading: false, error: undefined });
+  const withCards = (cards: Array<ReturnType<typeof card>>) =>
+    vi.mocked(useHivCards).mockReturnValue({ cards, inactive: [], isLoading: false });
+
+  it('the link is hidden when no HIV card is available to the patient', () => {
+    withCards([]);
     const { container } = render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('the link is hidden when the ART card is not available to the patient', () => {
-    withData('UNAVAILABLE', {}, 'Not available: Inactive program state (ART eMastercard)');
-    const { container } = render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it('shows the link when the patient has an ART card', () => {
-    withData('EDIT');
+  it('shows the link when the patient has one HIV card', () => {
+    withCards([card({ state: 'EDIT' })]);
     render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
     expect(screen.getByText('HIV care')).toBeInTheDocument();
+  });
+
+  it('expands to a link for each card when the patient has several, e.g. ART and teen club', () => {
+    withCards([card({ state: 'EDIT' }), card({ key: 'teen-club', group: 'Teen Club Record', label: 'Teen Club eMastercard', state: 'EDIT' })]);
+    render(<HivCareDashboardLink basePath="/chart" patientUuid="p1" />);
+    expect(screen.getByRole('button', { name: /HIV care/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'ART' })).toHaveAttribute('href', '/chart/hivCare?card=art');
+    expect(screen.getByRole('link', { name: 'Teen Club' })).toHaveAttribute('href', '/chart/hivCare?card=teen-club');
   });
 });

@@ -89,7 +89,7 @@ describe('NcoCard', () => {
     renderCard();
     const diagnoses = within(screen.getByRole('region', { name: 'Diagnoses and Comorbidities' }));
     expect(diagnoses.getByText('Cirrhosis · 01-Dec-2024')).toBeInTheDocument();
-    expect(diagnoses.getByText('Lupus')).toBeInTheDocument();
+    expect(diagnoses.getByText('Other · Lupus · 01-Mar-2023')).toBeInTheDocument();
     expect(within(screen.getByRole('region', { name: 'Patient History' })).getByText('01-Feb-2018')).toBeInTheDocument();
   });
 

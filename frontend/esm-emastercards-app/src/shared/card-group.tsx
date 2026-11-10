@@ -14,6 +14,10 @@ const CARD_NAMES: Record<string, string> = {
   'mental-health': 'Mental Health',
   epilepsy: 'Epilepsy',
   'htn-dm': 'Hypertension and Diabetes',
+  art: 'ART',
+  'teen-club': 'Teen Club',
+  'pre-art': 'Pre-ART',
+  'exposed-child': 'Exposed Child',
 };
 
 export const cardName = (card: EMastercardCard) => CARD_NAMES[card.key] ?? card.label.replace(/ eMastercard$/i, '');

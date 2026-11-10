@@ -335,6 +335,21 @@
       "name": "pihmalawi-nco-hospitalisation-workspace",
       "component": "ncoHospitalisationWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-tc-header-workspace",
+      "component": "tcHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-tc-visit-workspace",
+      "component": "tcVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-tc-survey-workspace",
+      "component": "tcSurveyWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [

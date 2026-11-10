@@ -5,14 +5,7 @@ import { Button, ButtonSet, InlineLoading, InlineNotification, Select, SelectIte
 import { usePatient, useSession, Workspace2 } from '@openmrs/esm-framework';
 import { type ArtField } from './art-fields';
 import { checkDuplicate, type RuleResult, sameDayValue } from './art-rules';
-import {
-  encounterValues,
-  useArtEncounter,
-  useCardEncounters,
-  useEMastercard,
-  useLocationsTagged,
-  useSameDayObs,
-} from './art.resource';
+import { encounterValues, useArtEncounter, useCardEncounters, useEMastercard, useLocationsTagged, useSameDayObs } from './art.resource';
 import { buildObsPayload, type CardForm, type FieldValue, saveEncounter } from './obs-diff';
 import { ArtFieldInput } from './fields';
 import { checkRecordDay, RecordDateInput, resolveVisit, usePastVisitType, useRecordDate } from '../shared/record-date';
@@ -80,7 +73,11 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const date = record.datetime;
   const day = record.day;
   const referenceFields = fields.filter((f) => f.reference);
-  const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(patientUuid, referenceFields.map((f) => f.concept), day);
+  const { obs: sameDay, isLoading: loadingSameDay } = useSameDayObs(
+    patientUuid,
+    referenceFields.map((f) => f.concept),
+    day,
+  );
   const references = useMemo(() => {
     const refs: Record<string, FieldValue> = {};
     referenceFields.forEach((f) => (refs[f.name] = sameDayValue((sameDay[f.concept] ?? []) as Array<any>, day, encounterUuid)));
@@ -123,7 +120,11 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const fieldRules = rules(values, date);
   const blocked = shownFields.some((f) => fieldRules[f.name]?.level === 'error');
   const dateRule = record.editable ? checkRecordDay(record.day, patient?.birthDate) : null;
-  const duplicate = checkDuplicate(date, encounters.filter((e) => e.uuid !== encounterUuid).map((e) => ({ date: e.encounterDatetime, encounterUuid: e.uuid })), encounterUuid);
+  const duplicate = checkDuplicate(
+    date,
+    encounters.filter((e) => e.uuid !== encounterUuid).map((e) => ({ date: e.encounterDatetime, encounterUuid: e.uuid })),
+    encounterUuid,
+  );
 
   const save = async () => {
     setSubmitted(true);
@@ -136,7 +137,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
       await saveEncounter(form, {
         patientUuid,
         encounterUuid,
-...(editing
+        ...(editing
           ? { datetime: date }
           : await resolveVisit(patientUuid, record.day, { visitContext: record.visitContext, locationUuid: location, visitTypeUuid: pastVisitType })),
         locationUuid: location,
@@ -175,20 +176,25 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
         {submitted && duplicate && <InlineNotification kind="error" lowContrast hideCloseButton title={duplicate.message} />}
 
         <section className={styles.section}>
-          {shownFields.filter((f) => !f.hidden).map((f) => (
-            <ArtFieldInput
-              key={f.name}
-              field={f}
-              value={values[f.name] ?? null}
-              reference={references[f.name]}
-              readOnly={readOnly}
-              rule={submitted || live.includes(f.name) || fieldRules[f.name]?.level === 'warning' ? (fieldRules[f.name] ?? null) : null}
-              onChange={(value) => {
-                setValues((v) => onFieldChange(f.name, { ...v, [f.name]: value }));
-                setDirty(true);
-              }}
-            />
-          ))}
+          {shownFields
+            .filter((f) => !f.hidden)
+            .map((f) => (
+              <React.Fragment key={f.name}>
+                {/* a form asked in parts, e.g. the teen club intake survey, heads each part */}
+                {f.heading && <h4 className={styles.sectionTitle}>{t(`heading_${f.heading}`, f.heading)}</h4>}
+                <ArtFieldInput
+                  field={f}
+                  value={values[f.name] ?? null}
+                  reference={references[f.name]}
+                  readOnly={readOnly}
+                  rule={submitted || live.includes(f.name) || fieldRules[f.name]?.level === 'warning' ? (fieldRules[f.name] ?? null) : null}
+                  onChange={(value) => {
+                    setValues((v) => onFieldChange(f.name, { ...v, [f.name]: value }));
+                    setDirty(true);
+                  }}
+                />
+              </React.Fragment>
+            ))}
         </section>
 
         {error && <InlineNotification kind="error" lowContrast hideCloseButton title={error} />}

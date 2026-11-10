@@ -42,7 +42,7 @@ export const mentalHealthDashboardLink = getSyncLifecycle(mentalHealthDashboardL
 export const mentalHealthDashboard = getAsyncLifecycle(() => import('./mental-health/mental-health-dashboard.component'), options);
 
 /** The ART patient card, natively: its header sections, regimens, results and ART visits */
-export const hivCareDashboard = getAsyncLifecycle(() => import('./art/hiv-care-dashboard.component'), options);
+export const hivCareDashboard = getAsyncLifecycle(() => import('./hiv-care/hiv-care-page.component'), options);
 
 /** Records or edits an ART visit natively */
 export const artVisitWorkspace = getAsyncLifecycle(() => import('./art/art-visit.workspace'), options);
@@ -166,6 +166,15 @@ const ncoPanel = (name: 'NcoQuarterlyLabsWorkspace' | 'NcoAnnualLabsWorkspace' |
 export const ncoQuarterlyLabsWorkspace = ncoPanel('NcoQuarterlyLabsWorkspace');
 export const ncoAnnualLabsWorkspace = ncoPanel('NcoAnnualLabsWorkspace');
 export const ncoHospitalisationWorkspace = ncoPanel('NcoHospitalisationWorkspace');
+
+/** Edits the teen club card header (its intake / referral form) natively */
+export const tcHeaderWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-header.workspace'), options);
+
+/** Records or edits a teen club visit natively */
+export const tcVisitWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-visit.workspace'), options);
+
+/** Records or edits a teen club intake survey natively */
+export const tcSurveyWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-survey.workspace'), options);
 
 /** The vitals and biometrics header, on every chart page but those in pagesWithoutVitalsHeader */
 export const vitalsHeaderOnSomePages = getAsyncLifecycle(() => import('./vitals-header/vitals-header-on-some-pages.extension'), options);
