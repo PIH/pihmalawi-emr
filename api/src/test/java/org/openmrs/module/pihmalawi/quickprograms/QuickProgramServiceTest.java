@@ -50,6 +50,11 @@ public class QuickProgramServiceTest extends BaseMalawiTest {
     private static final String MENTAL_HEALTH_DIED = "5FB84A00-8AEC-42F5-8CE0-6006A1B58653";
     private static final String EPILEPSY_ON_TREATMENT = "CB86C6FE-4263-4A4C-AF54-49D5308459D4";
     private static final String EPILEPSY_DIED = "FB0B61BD-A641-499B-BA87-421DC7E1CA2C";
+    private static final String ON_TREATMENT_CONCEPT = "65664784-977f-11e1-8993-905e29aff6c1";
+    private static final String IN_ADVANCED_CARE_CONCEPT = "9af03945-c8c1-11e8-9bc6-0242ac110001";
+    private static final String CKD_WORKFLOW = "4eda02b2-48ca-47dc-9166-483a6499bcbd";
+    private static final String CKD_IN_ADVANCED_CARE = "c5ddd2d0-33f3-4d1e-8f7d-f58beec5ece9";
+    private static final String CKD_ON_TREATMENT = "908552d7-2bb3-4e4f-9ba1-ec22c2c3f2b6";
     private static final String HTN_DM_IN_ADVANCED_CARE = "00be3c91-ecd2-482e-8c7a-7bdd49c997e7";
 
     @Autowired
@@ -124,6 +129,41 @@ public class QuickProgramServiceTest extends BaseMalawiTest {
             Assert.assertTrue(s.getTerminal());
             Assert.assertEquals(HTN_DM_WORKFLOW, s.getProgramWorkflow().getUuid());
         }
+    }
+
+    /**
+     * Sickle cell disease, chronic kidney disease, chronic heart failure and NCD other patients are never on
+     * treatment: they are enrolled, and change, only in advanced care
+     */
+    @Test
+    public void advancedCareOnlyConditionsNeverOfferOnTreatment() {
+        Patient p = basePatient().save();
+        QuickProgram qp = QuickProgramRegistry.get("chronic-care");
+        String[] advancedCareOnly = { "1A6C2438-99D7-41FF-8EB4-516DFCD1D199", "4eda02b2-48ca-47dc-9166-483a6499bcbd",
+                "cc76c7c2-8760-4ff6-8ed7-617a7378915b", "62481c50-155c-45be-b4e9-39a38a9cbfda" };
+        QuickProgramStatus status = quickProgramService.status(p, qp);
+        for (String uuid : advancedCareOnly) {
+            List<String> offered = new ArrayList<String>();
+            for (ProgramWorkflowState s : workflow(status, uuid).getEnrolStates()) {
+                offered.add(s.getConcept().getUuid());
+            }
+            Assert.assertEquals(uuid, Collections.singletonList(IN_ADVANCED_CARE_CONCEPT), offered);
+        }
+        // the others still offer both
+        Assert.assertEquals(2, workflow(status, HTN_DM_WORKFLOW).getEnrolStates().size());
+        Assert.assertEquals(2, workflow(status, ASTHMA_WORKFLOW).getEnrolStates().size());
+
+        quickProgramService.enrol(p, qp, states(CKD_IN_ADVANCED_CARE), DateUtil.getDateTime(2026, 1, 5), location);
+        for (ProgramWorkflowState s : workflow(quickProgramService.status(p, qp), CKD_WORKFLOW).getChangeStates()) {
+            Assert.assertNotEquals(ON_TREATMENT_CONCEPT, s.getConcept().getUuid());
+        }
+    }
+
+    @Test(expected = QuickProgramException.class)
+    public void advancedCareOnlyConditionRejectsEnrollingOnTreatment() {
+        Patient p = basePatient().save();
+        quickProgramService.enrol(p, QuickProgramRegistry.get("chronic-care"), states(CKD_ON_TREATMENT),
+            DateUtil.getDateTime(2026, 1, 5), location);
     }
 
     @Test
@@ -321,6 +361,50 @@ public class QuickProgramServiceTest extends BaseMalawiTest {
         catch (QuickProgramException e) {
             Assert.assertTrue(e.getMessage(), e.getMessage().contains("before"));
         }
+    }
+
+    /**
+     * Core lets a second, identical state (same state, same start date) save once, then refuses every later save of
+     * the enrollment with "Found duplicate patient states"; so going back to a state the workflow already had that
+     * day is refused, and nothing is saved
+     */
+    @Test
+    public void changeStateRejectsGoingBackToAStateTheWorkflowHadTheSameDay() {
+        Patient p = basePatient().save();
+        PatientProgram pp = enroll(p, "CHRONIC CARE PROGRAM", HTN_DM_ON_TREATMENT);
+        QuickProgram qp = QuickProgramRegistry.get("chronic-care");
+        Date day = DateUtil.getDateTime(2026, 2, 5);
+        quickProgramService.changeState(qp, pp, state(HTN_DM_IN_ADVANCED_CARE), day);
+        quickProgramService.changeState(qp, pp, state(HTN_DM_ON_TREATMENT), day);
+        try {
+            quickProgramService.changeState(qp, pp, state(HTN_DM_IN_ADVANCED_CARE), day);
+            Assert.fail("Expected a QuickProgramException");
+        }
+        catch (QuickProgramException e) {
+            Assert.assertTrue(e.getMessage(), e.getMessage().contains("already"));
+        }
+        PatientProgram saved = Context.getProgramWorkflowService().getPatientProgram(pp.getPatientProgramId());
+        int advanced = 0;
+        for (PatientState ps : saved.getStates()) {
+            if (!ps.getVoided() && ps.getState().getUuid().equals(HTN_DM_IN_ADVANCED_CARE)) {
+                advanced++;
+            }
+        }
+        Assert.assertEquals(1, advanced);
+        Assert.assertEquals(HTN_DM_ON_TREATMENT, workflow(quickProgramService.status(p, qp), HTN_DM_WORKFLOW).getCurrentState()
+                .getState().getUuid());
+    }
+
+    @Test
+    public void changeStateBackToAnEarlierStateOnALaterDay() {
+        Patient p = basePatient().save();
+        PatientProgram pp = enroll(p, "CHRONIC CARE PROGRAM", HTN_DM_ON_TREATMENT);
+        QuickProgram qp = QuickProgramRegistry.get("chronic-care");
+        quickProgramService.changeState(qp, pp, state(HTN_DM_IN_ADVANCED_CARE), DateUtil.getDateTime(2026, 2, 5));
+        quickProgramService.changeState(qp, pp, state(HTN_DM_ON_TREATMENT), DateUtil.getDateTime(2026, 2, 5));
+        quickProgramService.changeState(qp, pp, state(HTN_DM_IN_ADVANCED_CARE), DateUtil.getDateTime(2026, 2, 6));
+        Assert.assertEquals(HTN_DM_IN_ADVANCED_CARE, workflow(quickProgramService.status(p, qp), HTN_DM_WORKFLOW)
+                .getCurrentState().getState().getUuid());
     }
 
     @Test

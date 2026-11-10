@@ -27,6 +27,7 @@ public class QuickProgram {
 	private List<String> stateUuids = Collections.emptyList();
 	private List<String> terminalStateUuids = Collections.emptyList();
 	private List<String> workflowUuids = Collections.emptyList();
+	private List<String> advancedCareOnlyWorkflowUuids = Collections.emptyList();
 	private String requiredPrivilege = VIEW_CLINICAL_DATA;
 	private Display display = Display.ALWAYS;
 
@@ -75,6 +76,19 @@ public class QuickProgram {
 	}
 
 	/**
+	 * @return whether the per-condition workflow is never on treatment: its patients are enrolled, and changed, only in
+	 *         advanced care
+	 */
+	public boolean isAdvancedCareOnly(String workflowUuid) {
+		for (String uuid : advancedCareOnlyWorkflowUuids) {
+			if (uuid.equalsIgnoreCase(workflowUuid)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @return the privilege needed to see the program at all, or null when anyone can see it
 	 */
 	public String getRequiredPrivilege() {
@@ -111,6 +125,14 @@ public class QuickProgram {
 
 		public Builder workflows(String csv) {
 			p.workflowUuids = split(csv);
+			return this;
+		}
+
+		/**
+		 * The per-condition workflows whose patients are never on treatment, only in advanced care
+		 */
+		public Builder advancedCareOnly(String csv) {
+			p.advancedCareOnlyWorkflowUuids = split(csv);
 			return this;
 		}
 
