@@ -193,3 +193,12 @@ export const latestVitals = getAsyncLifecycle(() => import('./vitals-header/late
 
 /** The latest viral load and CD4 count, under the vitals header, for patients in the HIV program */
 export const hivSummary = getAsyncLifecycle(() => import('./vitals-header/hiv-summary.extension'), options);
+
+/** The patient summary, as in the mockup, on the chart's Patient summary page */
+export const patientSummary = getAsyncLifecycle(() => import('./patient-summary/patient-summary.extension'), options);
+
+/** Beside the patient's name in the chart's banner, a tag for each program they are enrolled in */
+export const bannerProgramTags = getAsyncLifecycle(() => import('./banner/program-tags.extension'), options);
+
+/** After the identifiers in the chart's banner, the patient's village and traditional authority */
+export const bannerAddress = getAsyncLifecycle(() => import('./banner/patient-address.extension'), options);

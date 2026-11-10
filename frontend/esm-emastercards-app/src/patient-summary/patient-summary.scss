@@ -1,0 +1,160 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-05;
+  padding: layout.$spacing-05;
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+}
+
+.title {
+  @include type.type-style('heading-04');
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: layout.$spacing-03;
+}
+
+.vitals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: layout.$spacing-05 layout.$spacing-07;
+}
+
+.stat,
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-01;
+}
+
+.statValue {
+  @include type.type-style('heading-03');
+}
+
+.statUnit {
+  @include type.type-style('body-compact-01');
+}
+
+.label {
+  @include type.type-style('label-01');
+  color: $text-02;
+}
+
+.detail {
+  @include type.type-style('helper-text-01');
+  color: $text-02;
+}
+
+// two cards a row, as in the mockup; one on narrow screens
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: layout.$spacing-05;
+
+  @media (max-width: 66rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-03;
+  min-width: 0;
+  padding: layout.$spacing-05;
+  background-color: $ui-02;
+  border: 1px solid $ui-03;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: layout.$spacing-03;
+  @include type.type-style('body-compact-01');
+}
+
+.cardTitle {
+  @include type.type-style('heading-compact-02');
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: layout.$spacing-05;
+}
+
+.factValue {
+  @include type.type-style('heading-compact-01');
+}
+
+.rows {
+  @include type.type-style('body-compact-01');
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: layout.$spacing-04;
+    padding: layout.$spacing-04 0;
+    border-bottom: 1px solid $ui-03;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+
+  // the Active, Completed, Today and Overdue tags keep their full width; the text beside them wraps
+  li > :global(.cds--tag) {
+    flex-shrink: 0;
+  }
+}
+
+.rowName {
+  flex: 1 1 40%;
+  font-weight: 600;
+}
+
+.ended {
+  color: $text-02;
+}
+
+.rowDetail {
+  display: flex;
+  flex: 1 1 60%;
+  flex-direction: column;
+  gap: layout.$spacing-01;
+  color: $text-02;
+}
+
+.visitTime {
+  display: block;
+  @include type.type-style('helper-text-01');
+  color: $text-02;
+  font-weight: 400;
+}
+
+.visitType {
+  @include type.type-style('helper-text-01');
+}
+
+.rowText {
+  flex-grow: 1;
+}
+
+.empty {
+  @include type.type-style('body-compact-01');
+  color: $text-02;
+}

@@ -5,15 +5,15 @@ export const configSchema = {
     _type: Type.Array,
     _elements: { _type: Type.String },
     _description:
-      "The patient chart pages (the part of the URL after /chart/) that don't show the vitals and biometrics header",
-    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare'],
+      "The patient chart pages (the part of the URL after /chart/) that don't show the vitals and biometrics header; '*' for every page",
+    _default: ['*'],
   },
   pagesWithoutBannerDetails: {
     _type: Type.Array,
     _elements: { _type: Type.String },
     _description:
-      "The patient chart pages (the part of the URL after /chart/) whose patient banner has no Show more / Show less button",
-    _default: ['programs', 'enrolments', 'eMastercards', 'hivCare', 'mentalHealth', 'chronicCare'],
+      "The patient chart pages (the part of the URL after /chart/) whose patient banner has no Show more / Show less button; '*' for every page",
+    _default: ['*'],
   },
   pastVisitTypeUuid: {
     _type: Type.UUID,

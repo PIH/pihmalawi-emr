@@ -1,0 +1,25 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+// beside the name: · 45 yrs · 15-Jun-1985
+.demographics {
+  @include type.type-style('body-compact-02');
+  margin-right: layout.$spacing-03;
+  color: $text-02;
+  white-space: nowrap;
+}
+
+// the line below the name: each identifier, then the address
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: layout.$spacing-02 layout.$spacing-06;
+  @include type.type-style('body-compact-01');
+  color: $text-02;
+}
+
+.identifier {
+  font-family: 'IBM Plex Mono', monospace;
+  color: #161616;
+}

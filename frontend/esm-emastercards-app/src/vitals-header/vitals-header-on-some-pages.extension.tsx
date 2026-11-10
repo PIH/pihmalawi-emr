@@ -33,13 +33,15 @@ export const HIDE_BANNER_DETAILS = ['down', 'up']
 
 /**
  * Shows the chart's vitals and biometrics header, which is configured into pihmalawi-vitals-header-slot, on every
- * page but those configured in pagesWithoutVitalsHeader; and on the pages configured in pagesWithoutBannerDetails
- * (Programs, Enrolments, eMastercards and the card pages), hides the patient banner's Show more / Show less button
+ * page but those configured in pagesWithoutVitalsHeader; and on the pages configured in pagesWithoutBannerDetails,
+ * hides the patient banner's Show more / Show less button. By default ('*') neither shows on any page: the patient
+ * summary shows the vitals in a card of its own.
  */
 const VitalsHeaderOnSomePages: React.FC<Record<string, unknown>> = (props) => {
   const { pagesWithoutVitalsHeader, pagesWithoutBannerDetails = [] } = useConfig<ConfigObject>();
   const page = useChartPage();
-  const on = (pages: Array<string>) => pages.some((p) => p.toLowerCase() === page);
+  // '*' is every page, the chart's own address (…/chart, no page) too
+  const on = (pages: Array<string>) => pages.some((p) => p === '*' || p.toLowerCase() === page);
   return (
     <>
       {on(pagesWithoutBannerDetails) && <style data-testid="hide-banner-details">{HIDE_BANNER_DETAILS}</style>}
