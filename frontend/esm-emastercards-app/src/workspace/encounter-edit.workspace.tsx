@@ -69,6 +69,11 @@ import { tcPanelForEncounter } from '../teen-club/launch-tc-panel';
 import TcHeaderWorkspace from '../teen-club/tc-header.workspace';
 import TcVisitWorkspace from '../teen-club/tc-visit.workspace';
 import TcSurveyWorkspace from '../teen-club/tc-survey.workspace';
+import { ecPanelForEncounter } from '../exposed-child/launch-ec-panel';
+import { EC_HEADER_SECTIONS, type EcHeaderSection } from '../exposed-child/ec-fields';
+import EcHeaderWorkspace from '../exposed-child/ec-header.workspace';
+import EcVisitWorkspace from '../exposed-child/ec-visit.workspace';
+import EcEidWorkspace from '../exposed-child/ec-eid.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
 import styles from './flowsheet.scss';
 
@@ -89,7 +94,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other) and teen club card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other), teen club and exposed child card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>> = (props) => {
@@ -128,6 +133,30 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
   const [ncoSection, setNcoSection] = useState<NcoHeaderSection | null>(null);
   const ncoPanel = encounter ? ncoPanelForEncounter(encounter) : null;
   const tcPanel = encounter ? tcPanelForEncounter(encounter) : null;
+  const [ecSection, setEcSection] = useState<EcHeaderSection | null>(null);
+  const ecPanel = encounter ? ecPanelForEncounter(encounter) : null;
+
+  if (ecPanel && patientUuid) {
+    if (ecPanel !== 'header') {
+      const Panel = ecPanel === 'visit' ? EcVisitWorkspace : EcEidWorkspace;
+      return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
+    }
+    if (ecSection) {
+      return <EcHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: ecSection }} />;
+    }
+    return (
+      <Workspace2 title={t('ecCardHeader', 'Exposed child card header')}>
+        <div className={styles.message}>
+          <p>{t('chooseEcHeaderSection', 'Which part of the exposed child card header should open?')}</p>
+          {(Object.keys(EC_HEADER_SECTIONS) as Array<EcHeaderSection>).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setEcSection(key)}>
+              {t(`ecSection_${key}`, EC_HEADER_SECTIONS[key].title)}
+            </Button>
+          ))}
+        </div>
+      </Workspace2>
+    );
+  }
 
   if (tcPanel && patientUuid) {
     // the teen club header has one section, so it opens straight away

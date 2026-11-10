@@ -350,6 +350,21 @@
       "name": "pihmalawi-tc-survey-workspace",
       "component": "tcSurveyWorkspace",
       "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ec-header-workspace",
+      "component": "ecHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ec-visit-workspace",
+      "component": "ecVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-ec-eid-workspace",
+      "component": "ecEidWorkspace",
+      "window": "pihmalawi-emastercard-window"
     }
   ],
   "workspaceWindows2": [
