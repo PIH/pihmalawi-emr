@@ -226,14 +226,20 @@ public class EMastercardService {
 	/**
 	 * @return the patient's current state in the card's own workflows: those of the states only this card lists.
 	 *         The mental health and epilepsy cards share the Chronic care treatment status workflow, but each has its
-	 *         own treatment workflow, whose state is the one that card's page shows.
+	 *         own treatment workflow, whose state is the one that card's page shows. A card with no workflow of its
+	 *         own, e.g. each PDC card, which all list the program's one treatment workflow, shows that workflow's.
 	 */
 	private PatientState treatmentState(Patient p, EMastercard m, List<ProgramWorkflowState> states) {
 		List<ProgramWorkflow> own = new ArrayList<ProgramWorkflow>();
+		List<ProgramWorkflow> shared = new ArrayList<ProgramWorkflow>();
 		for (ProgramWorkflowState state : states) {
-			if (!listedByAnotherCard(m, state.getUuid()) && !own.contains(state.getProgramWorkflow())) {
-				own.add(state.getProgramWorkflow());
+			List<ProgramWorkflow> list = listedByAnotherCard(m, state.getUuid()) ? shared : own;
+			if (!list.contains(state.getProgramWorkflow())) {
+				list.add(state.getProgramWorkflow());
 			}
+		}
+		if (own.isEmpty()) {
+			own = shared;
 		}
 		PatientState latest = null;
 		for (ProgramWorkflow workflow : own) {

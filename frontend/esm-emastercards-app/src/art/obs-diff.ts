@@ -20,6 +20,8 @@ export interface FieldSpec {
   comment?: string;
   /** For a question with several answers: the answer whose obs holds the comment, e.g. an Other family planning method */
   commentAnswer?: string;
+  /** For a question with several answers, several of them specified: each answer and the values key holding its comment */
+  comments?: Array<{ answer: string; key: string }>;
 }
 
 /** A form's encounter type and form, which every encounter it saves carries */
@@ -81,6 +83,20 @@ function commentOf(field: FieldSpec, values: Record<string, FieldValue>): string
 
 const sameComment = (a: string | null | undefined, b: string | undefined) => (a ?? '') === (b ?? '');
 
+/** The comment a multi question's answer is saved with, if that answer is one specified in a comment */
+function answerComment(field: FieldSpec, answer: string, values: Record<string, FieldValue>, comment: string | undefined) {
+  const a = answer.toLowerCase();
+  const own = field.comments?.find((c) => c.answer.toLowerCase() === a);
+  if (own) {
+    const value = values[own.key];
+    return { commented: true, comment: value === null || value === undefined || value === '' ? undefined : String(value) };
+  }
+  return field.commentAnswer?.toLowerCase() === a ? { commented: true, comment } : { commented: false, comment: undefined };
+}
+
+/** A multi question's answers, lower-cased */
+const answersOf = (value: FieldValue) => (Array.isArray(value) ? value : isEmpty(value) ? [] : [String(value)]).map((a) => String(a).toLowerCase());
+
 /** A new obs of a field, with its comment when it has one */
 function newObs(field: FieldSpec, value: string | number | boolean, comment: string | undefined): NewObs {
   return { concept: field.concept, value: toObsValue(field, value), ...(comment ? { comment } : {}) };
@@ -118,25 +134,29 @@ function diffField(
   reference: FieldValue,
   obs: Array<ExistingObs>,
   out: ObsPayload,
-  comment?: string,
+  comment: string | undefined,
+  values: Record<string, FieldValue>,
 ) {
   const mine = obs.filter((o) => o.concept.toLowerCase() === field.concept.toLowerCase());
   if (field.kind === 'multi') {
-    const answers = (Array.isArray(value) ? value : isEmpty(value) ? [] : [String(value)]).map((a) => a.toLowerCase());
-    const commented = field.commentAnswer?.toLowerCase();
-    // the answer holding the comment is replaced when its comment changes
-    const stale = (o: ExistingObs) =>
-      !answers.includes(normalize('multi', o.value)) || (commented === normalize('multi', o.value) && !sameComment(o.comment, comment));
+    const answers = answersOf(value);
+    // an answer holding a comment is replaced when its comment changes
+    const stale = (o: ExistingObs) => {
+      const a = normalize('multi', o.value);
+      const c = answerComment(field, a, values, comment);
+      return !answers.includes(a) || (c.commented && !sameComment(o.comment, c.comment));
+    };
     mine.filter(stale).forEach((o) => out.void.push(o.uuid));
     answers
       .filter((a) => !mine.some((o) => normalize('multi', o.value) === a && !stale(o)))
-      .forEach((a) =>
+      .forEach((a) => {
+        const c = answerComment(field, a, values, comment);
         out.add.push({
           concept: field.concept,
           value: (value as Array<string>).find((v) => v.toLowerCase() === a),
-          ...(a === commented && comment ? { comment } : {}),
-        }),
-      );
+          ...(c.comment ? { comment: c.comment } : {}),
+        });
+      });
     return;
   }
   const current = mine[0];
@@ -173,7 +193,13 @@ function findGroup(field: FieldSpec, obs: Array<ExistingObs>) {
   );
 }
 
-function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>, references: Record<string, FieldValue>, obs: Array<ExistingObs>, out: ObsPayload) {
+function diffGroup(
+  fields: Array<FieldSpec>,
+  values: Record<string, FieldValue>,
+  references: Record<string, FieldValue>,
+  obs: Array<ExistingObs>,
+  out: ObsPayload,
+) {
   if (fields.some((f) => f.reference === 'readonly' && !isEmpty(references[f.name]))) {
     return;
   }
@@ -183,6 +209,11 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
   const unchanged =
     existing &&
     fields.every((f) => {
+      if (f.kind === 'multi') {
+        const had = members.filter((m) => m.concept.toLowerCase() === f.concept.toLowerCase()).map((m) => normalize('multi', m.value));
+        const wantedAnswers = answersOf(values[f.name]);
+        return had.length === wantedAnswers.length && wantedAnswers.every((a) => had.includes(a));
+      }
       const member = members.find((m) => m.concept.toLowerCase() === f.concept.toLowerCase());
       return same(f, member?.value, values[f.name]) && (!member || !f.comment || sameComment(member.comment, commentOf(f, values)));
     });
@@ -214,11 +245,15 @@ function diffGroup(fields: Array<FieldSpec>, values: Record<string, FieldValue>,
     out.add.push({
       concept: fields[0].group.concept,
       groupMembers: [
-        ...filled.map((f) => {
+        ...filled.flatMap((f) => {
+          // a question with several answers has a member for each
+          if (f.kind === 'multi') {
+            return (values[f.name] as Array<string>).map((a) => ({ concept: f.concept, value: a }));
+          }
           const member = members.find((m) => m.concept.toLowerCase() === f.concept.toLowerCase());
           // a comment the panel doesn't ask about stays with an unchanged member
           const kept = member && same(f, member.value, values[f.name]) ? (member.comment ?? undefined) : undefined;
-          return newObs(f, values[f.name] as string | number | boolean, f.comment ? commentOf(f, values) : kept);
+          return [newObs(f, values[f.name] as string | number | boolean, f.comment ? commentOf(f, values) : kept)];
         }),
         ...kept,
       ],
@@ -243,13 +278,19 @@ export function buildObsPayload(
   const done = new Set<string>();
   fields.forEach((field) => {
     if (!field.group) {
-      diffField(field, values[field.name] ?? null, references[field.name] ?? null, topLevel, out, commentOf(field, values));
+      diffField(field, values[field.name] ?? null, references[field.name] ?? null, topLevel, out, commentOf(field, values), values);
       return;
     }
     const key = groupKey(field);
     if (!done.has(key)) {
       done.add(key);
-      diffGroup(fields.filter((f) => f.group && groupKey(f) === key), values, references, groups, out);
+      diffGroup(
+        fields.filter((f) => f.group && groupKey(f) === key),
+        values,
+        references,
+        groups,
+        out,
+      );
     }
   });
   return out;

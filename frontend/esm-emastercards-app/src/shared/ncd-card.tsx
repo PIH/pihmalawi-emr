@@ -151,7 +151,9 @@ export function sectionRows(fields: Array<ArtField>, header: ArtEncounter | null
       const details = dependents(f)
         .map((d) => (d.kind === 'date' ? formatDay(values[d.name] as string) : displayValue({ ...d, unit: undefined }, values[d.name])))
         .filter(Boolean);
-      return { key: f.name, value: [f.label, ...details].join(' · ') };
+      // what a ticked answer was specified as, e.g. a CNS infection's
+      const specified = f.comment ? (values[f.comment] as string | null) : null;
+      return { key: f.name, value: [specified ? `${f.label} (${specified})` : f.label, ...details].join(' · ') };
     });
   // the label the checkboxes are asked under, e.g. Complications
   const heading = fields.find((f) => f.checkbox && f.heading)?.heading ?? null;
@@ -159,6 +161,16 @@ export function sectionRows(fields: Array<ArtField>, header: ArtEncounter | null
   const labelled = fields
     .filter((f) => !f.hidden && !(f.checkbox && f.group) && !grouped.has(f.name))
     .map((f) => {
+      // each answer with what it was specified as, e.g. CNS infection (meningitis)
+      if (f.comments && Array.isArray(values[f.name])) {
+        const answers = (values[f.name] as Array<string>).map((v) => {
+          const label = displayValue(f, [v]);
+          const c = f.comments.find((x) => x.answer.toLowerCase() === v.toLowerCase());
+          const specified = c ? (values[c.key] as string | null) : null;
+          return specified ? `${label} (${specified})` : label;
+        });
+        return { key: f.name, label: f.label, value: answers.length ? answers.join(', ') : null };
+      }
       const value = displayValue(f, values[f.name]);
       // what an Other answer was, e.g. an Other family planning method
       const specify = f.comment ? (values[f.comment] as string | null) : null;

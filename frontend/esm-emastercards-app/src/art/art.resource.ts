@@ -218,6 +218,10 @@ export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounte
       found = (encounter?.obs ?? []).filter((o) => o.concept === f.concept.toLowerCase() && !o.groupMembers);
     }
     values[f.name] = f.kind === 'multi' ? found.map((o) => String(o.value)) : ((found[0]?.value as FieldValue) ?? null);
+    // each answer specified in its own comment, e.g. a CNS infection and an Other diagnosis
+    f.comments?.forEach((c) => {
+      values[c.key] = found.find((o) => String(o.value).toLowerCase() === c.answer.toLowerCase())?.comment ?? null;
+    });
     if (f.comment) {
       const commented = f.commentAnswer ? found.find((o) => String(o.value).toLowerCase() === f.commentAnswer.toLowerCase()) : found[0];
       values[f.comment] = commented?.comment ?? null;

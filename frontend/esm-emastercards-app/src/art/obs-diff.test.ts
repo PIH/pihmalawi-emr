@@ -368,3 +368,82 @@ describe('review fixes', () => {
     ]);
   });
 });
+
+describe('multi answers, each specified in its own comment', () => {
+  const dx: FieldSpec = {
+    name: 'dx',
+    concept: 'c-dx',
+    kind: 'multi',
+    comments: [
+      { answer: 'cns', key: 'cnsSpecify' },
+      { answer: 'other', key: 'otherSpecify' },
+    ],
+  };
+
+  it('saves each specified answer with its own comment', () => {
+    expect(buildObsPayload([dx], { dx: ['hie', 'cns', 'other'], cnsSpecify: 'meningitis', otherSpecify: 'rickets' }, [], {}).add).toEqual([
+      { concept: 'c-dx', value: 'hie' },
+      { concept: 'c-dx', value: 'cns', comment: 'meningitis' },
+      { concept: 'c-dx', value: 'other', comment: 'rickets' },
+    ]);
+  });
+
+  it('replaces only the answer whose comment changed', () => {
+    const existing = [
+      { uuid: 'o1', concept: 'c-dx', value: 'cns', comment: 'meningitis' },
+      { uuid: 'o2', concept: 'c-dx', value: 'other', comment: 'rickets' },
+    ];
+    expect(buildObsPayload([dx], { dx: ['cns', 'other'], cnsSpecify: 'meningitis', otherSpecify: 'anaemia' }, existing, {})).toEqual({
+      add: [{ concept: 'c-dx', value: 'other', comment: 'anaemia' }],
+      void: ['o2'],
+    });
+  });
+});
+
+describe('multi answers in a group', () => {
+  const feed: FieldSpec = { name: 'feed', concept: 'c-feed', kind: 'multi', group: { concept: 'c-feedset' } };
+
+  it('saves one member per answer', () => {
+    expect(buildObsPayload([feed], { feed: ['milk', 'solids'] }, [], {}).add).toEqual([
+      {
+        concept: 'c-feedset',
+        groupMembers: [
+          { concept: 'c-feed', value: 'milk' },
+          { concept: 'c-feed', value: 'solids' },
+        ],
+      },
+    ]);
+  });
+
+  it('leaves the group alone when the answers are the same, in any order', () => {
+    const existing = [
+      {
+        uuid: 'g1',
+        concept: 'c-feedset',
+        value: null,
+        groupMembers: [
+          { uuid: 'm1', concept: 'c-feed', value: 'solids' },
+          { uuid: 'm2', concept: 'c-feed', value: 'MILK' },
+        ],
+      },
+    ];
+    expect(buildObsPayload([feed], { feed: ['milk', 'solids'] }, existing, {})).toEqual({ add: [], void: [] });
+  });
+
+  it('rewrites the group when an answer is added, and voids it when all are cleared', () => {
+    const existing = [{ uuid: 'g1', concept: 'c-feedset', value: null, groupMembers: [{ uuid: 'm1', concept: 'c-feed', value: 'milk' }] }];
+    expect(buildObsPayload([feed], { feed: ['milk', 'solids'] }, existing, {})).toEqual({
+      add: [
+        {
+          concept: 'c-feedset',
+          groupMembers: [
+            { concept: 'c-feed', value: 'milk' },
+            { concept: 'c-feed', value: 'solids' },
+          ],
+        },
+      ],
+      void: ['g1'],
+    });
+    expect(buildObsPayload([feed], { feed: [] }, existing, {})).toEqual({ add: [], void: ['g1'] });
+  });
+});

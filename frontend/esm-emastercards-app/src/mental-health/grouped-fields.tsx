@@ -22,6 +22,9 @@ export function leaderOf(field: ArtField, fields: Array<ArtField>): ArtField | n
 const specified = (f: ArtField, value: FieldValue) =>
   f.commentAnswer ? Array.isArray(value) && value.some((v) => v.toLowerCase() === f.commentAnswer.toLowerCase()) : !!value;
 
+/** Whether a multi question's answers include the given one */
+const ticked = (value: FieldValue, answer: string) => Array.isArray(value) && value.some((v) => v.toLowerCase() === answer.toLowerCase());
+
 /** Changes one field, clearing what depends on it when a checkbox is unticked */
 export function changeField(fields: Array<ArtField>, values: Record<string, FieldValue>, field: ArtField, value: FieldValue) {
   const next = { ...values, [field.name]: value };
@@ -29,6 +32,8 @@ export function changeField(fields: Array<ArtField>, values: Record<string, Fiel
   if (field.commentAnswer && !(Array.isArray(value) && value.some((v) => v.toLowerCase() === field.commentAnswer.toLowerCase()))) {
     next[field.comment] = null;
   }
+  // each answer specified in its own comment loses it once unticked
+  field.comments?.filter((c) => !ticked(value, c.answer)).forEach((c) => (next[c.key] = null));
   if (field.checkbox && !value) {
     fields.filter((f) => leaderOf(f, fields) === field).forEach((f) => (next[f.name] = null));
     if (field.comment) {
@@ -77,6 +82,20 @@ export const GroupedFields: React.FC<GroupedFieldsProps> = ({ fields, values, on
                 onChange={(e) => onChange({ ...values, [f.comment]: e.target.value || null })}
               />
             )}
+            {f.comments
+              ?.filter((c) => ticked(values[f.name], c.answer))
+              .map((c) => (
+                <TextInput
+                  key={c.key}
+                  id={`mh-${c.key}`}
+                  labelText={t('specifyAnswer', 'Specify: {{answer}}', {
+                    answer: f.options?.find((o) => o.value.toLowerCase() === c.answer.toLowerCase())?.label ?? '',
+                  })}
+                  value={(values[c.key] as string) ?? ''}
+                  readOnly={readOnly}
+                  onChange={(e) => onChange({ ...values, [c.key]: e.target.value || null })}
+                />
+              ))}
           </div>
         );
       })}
