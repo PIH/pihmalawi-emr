@@ -288,7 +288,7 @@
         </globalProperty>
         <globalProperty>
             <property>patient.nameValidationRegex</property>
-            <value>^[a-zA-Z \-]+$</value>
+            <value>^[a-zA-Z \-']+$</value>
         </globalProperty>
         <globalProperty>
             <property>patient.viewingAttributeTypes</property>
