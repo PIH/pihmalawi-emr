@@ -95,6 +95,24 @@
       }
     },
     {
+      "name": "pdc-summary-dashboard",
+      "slot": "patient-chart-dashboard-slot",
+      "component": "pdcDashboardLink",
+      "meta": {
+        "slot": "pihmalawi-pdc-dashboard-slot",
+        "path": "pediatricDevelopment"
+      },
+      "order": 11
+    },
+    {
+      "name": "pdc-dashboard",
+      "slot": "pihmalawi-pdc-dashboard-slot",
+      "component": "pdcDashboard",
+      "meta": {
+        "fullWidth": true
+      }
+    },
+    {
       "name": "pihmalawi-vitals-header",
       "slot": "patient-info-slot",
       "component": "vitalsHeaderOnSomePages"
@@ -364,6 +382,11 @@
     {
       "name": "pihmalawi-tc-survey-workspace",
       "component": "tcSurveyWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-pdc-header-workspace",
+      "component": "pdcHeaderWorkspace",
       "window": "pihmalawi-emastercard-window"
     },
     {

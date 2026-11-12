@@ -171,6 +171,19 @@ public class EMastercardServiceTest extends BaseMalawiTest {
     }
 
     @Test
+    public void aCardWithoutAWorkflowOfItsOwnShowsTheStateOfTheWorkflowItShares() {
+        createForm("PDC eMastercard", "PDC_INITIAL");
+        PatientIdentifierType pdcId = Context.getPatientService().getPatientIdentifierTypeByName("PDC Identifier");
+        Patient p = basePatient().identifier(pdcId, "PDC-1", location).save();
+        enroll(p, "PEDIATRIC DEVELOPMENT CLINIC PROGRAM", PDC_ON_TREATMENT_STATE);
+
+        // every PDC card lists the program's one treatment workflow
+        EMastercardAccess access = emastercardService.evaluate(p, EMastercardRegistry.get("pdc"));
+        Assert.assertNotNull(access.getTreatmentState());
+        Assert.assertEquals(PDC_ON_TREATMENT_STATE, access.getTreatmentState().getState().getUuid());
+    }
+
+    @Test
     public void noEnrolmentWithoutTheProgram() {
         createForm("ART eMastercard", "ART_INITIAL");
         Patient p = basePatient().save();

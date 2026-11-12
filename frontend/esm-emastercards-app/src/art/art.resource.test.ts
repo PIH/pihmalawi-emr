@@ -66,4 +66,21 @@ describe('encounterValues', () => {
     ];
     expect(encounterValues(fields, encounter)).toEqual({ b: 'b', bDate: '2025-02-02', c: null, top: 'current', topComment: 'kachasu' });
   });
+
+  it('reads the comment of each specified answer of a multi question', () => {
+    const e = {
+      ...encounter,
+      obs: [o('d1', 'dx', 'CNS', undefined, 'meningitis'), o('d2', 'dx', 'other', undefined, 'rickets'), o('d3', 'dx', 'hie')],
+    };
+    const field = {
+      name: 'dx',
+      concept: 'dx',
+      kind: 'multi' as const,
+      comments: [
+        { answer: 'cns', key: 'cnsSpecify' },
+        { answer: 'other', key: 'otherSpecify' },
+      ],
+    };
+    expect(encounterValues([field], e)).toEqual({ dx: ['CNS', 'other', 'hie'], cnsSpecify: 'meningitis', otherSpecify: 'rickets' });
+  });
 });

@@ -4,6 +4,7 @@ import enrolmentsDashboardLinkComponent from './enrolments/enrolments-dashboard-
 import hivCareDashboardLinkComponent from './art/hiv-care-dashboard-link.component';
 import mentalHealthDashboardLinkComponent from './mental-health/mental-health-dashboard-link.component';
 import chronicCareDashboardLinkComponent from './chronic-care/chronic-care-dashboard-link.component';
+import pdcDashboardLinkComponent from './pdc/pdc-dashboard-link.component';
 import { configSchema } from './config-schema';
 
 const moduleName = '@pihmalawi/esm-emastercards-app';
@@ -175,6 +176,15 @@ export const tcVisitWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-v
 
 /** Records or edits a teen club intake survey natively */
 export const tcSurveyWorkspace = getAsyncLifecycle(() => import('./teen-club/tc-survey.workspace'), options);
+
+/** The Pediatric Development entry in the chart's navigation, for children with a PDC card */
+export const pdcDashboardLink = getSyncLifecycle(pdcDashboardLinkComponent, options);
+
+/** The Pediatric Development Clinic Record: the PDC card natively, the condition cards' flowsheets */
+export const pdcDashboard = getAsyncLifecycle(() => import('./pdc/pdc-dashboard.component'), options);
+
+/** Edits a section of the PDC card header natively */
+export const pdcHeaderWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-header.workspace'), options);
 
 /** Edits a section of the exposed child card header natively */
 export const ecHeaderWorkspace = getAsyncLifecycle(() => import('./exposed-child/ec-header.workspace'), options);

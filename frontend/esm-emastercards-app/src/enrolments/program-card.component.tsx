@@ -11,6 +11,7 @@ const PROGRAM_PAGES: Record<string, { path: string; title: string }> = {
   'teen-club': { path: 'hivCare?card=teen-club', title: 'HIV Care' },
   'chronic-care': { path: 'chronicCare', title: 'Chronic Care' },
   'mental-health': { path: 'mentalHealth', title: 'Mental Health' },
+  pdc: { path: 'pediatricDevelopment', title: 'Pediatric Development (PDC)' },
 };
 
 interface ProgramCardProps {
