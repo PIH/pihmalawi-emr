@@ -50,7 +50,7 @@ interface PdcConditionCardProps {
 }
 
 /**
- * A PDC condition card (e.g. HIE / developmental delay, trisomy 21), natively in O3: the headline, the card header's
+ * A PDC condition card (e.g. HIE / developmental delay, trisomy 21, cleft lip / palate), natively in O3: the headline, the card header's
  * sections, monitoring, laboratory tests and the visits, then the records every PDC condition card shares
  * (hospitalisations, complications, vision, hearing and radiology screening), each edited in its own side panel. Its
  * conditions at enrolment are the PDC card's.

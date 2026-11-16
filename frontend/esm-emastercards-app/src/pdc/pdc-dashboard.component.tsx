@@ -14,8 +14,8 @@ export const PDC_PATH = 'pediatricDevelopment';
 
 /**
  * The Pediatric Development Clinic Record page: the patient's PDC cards as tabs, the PDC card and the HIE /
- * developmental delay card natively and the other condition cards (trisomy 21, cleft lip / palate, other diagnosis)
- * in their legacy flowsheet
+ * developmental delay, trisomy 21 and cleft lip / palate cards natively and the other diagnosis card in its legacy
+ * flowsheet
  */
 const PdcDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   const { t } = useTranslation();

@@ -199,6 +199,11 @@ export const trisomyHeaderWorkspace = pdcConditionPanel('pdc-trisomy', 'header')
 export const trisomyVisitWorkspace = pdcConditionPanel('pdc-trisomy', 'visit');
 export const trisomyLabsWorkspace = pdcConditionPanel('pdc-trisomy', 'labs');
 
+/** Edits a section of the cleft lip / palate card header, records or edits its visits and lab tests natively */
+export const cleftHeaderWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'header');
+export const cleftVisitWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'visit');
+export const cleftLabsWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'labs');
+
 /** Records or edits the forms every PDC condition card shares (hospitalisations, complications, vision, hearing, radiology) natively */
 export const pdcSharedWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-shared.workspace'), options);
 

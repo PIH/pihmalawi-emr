@@ -420,6 +420,21 @@
       "window": "pihmalawi-emastercard-window"
     },
     {
+      "name": "pihmalawi-cleft-header-workspace",
+      "component": "cleftHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cleft-visit-workspace",
+      "component": "cleftVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-cleft-labs-workspace",
+      "component": "cleftLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
       "name": "pihmalawi-pdc-shared-workspace",
       "component": "pdcSharedWorkspace",
       "window": "pihmalawi-emastercard-window"
