@@ -11,7 +11,7 @@ import { EP_WORKSPACES } from '../epilepsy/launch-ep-panel';
 import { EC_WORKSPACES } from '../exposed-child/launch-ec-panel';
 import { MH_WORKSPACES } from '../mental-health/launch-mh-panel';
 import { TC_WORKSPACES } from '../teen-club/launch-tc-panel';
-import { HIE_WORKSPACES } from '../pdc/launch-hie-panel';
+import { NATIVE_PDC_CONDITIONS } from '../pdc/pdc-conditions';
 import { type EMastercardCard, launchFlowsheet } from '../emastercards.resource';
 
 /** Each native eMastercard's visit panel, by the card's key */
@@ -27,11 +27,13 @@ export const VISIT_WORKSPACES: Record<string, string> = {
   ckd: CKD_WORKSPACES.visit,
   scd: SCD_WORKSPACES.visit,
   'ncd-other': NCO_WORKSPACES.visit,
-  'pdc-developmental-delay': HIE_WORKSPACES.visit,
+  ...Object.fromEntries(NATIVE_PDC_CONDITIONS.map((c) => [c.key, c.workspaces.visit])),
 };
 
 /** The PDC condition cards not yet native, whose visits are recorded in their flowsheet */
-export const FLOWSHEET_VISIT_CARDS = ['pdc-trisomy', 'pdc-cleft-lip-palate', 'pdc-other-diagnosis'];
+export const FLOWSHEET_VISIT_CARDS = ['pdc-developmental-delay', 'pdc-trisomy', 'pdc-cleft-lip-palate', 'pdc-other-diagnosis'].filter(
+  (key) => !VISIT_WORKSPACES[key],
+);
 
 /**
  * The cards a visit can be recorded on: those the patient has started and may change, native ones and the PDC
@@ -58,7 +60,11 @@ export function useLaunchCardVisit(patientUuid: string) {
     ckd: useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES.ckd),
     scd: useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES.scd),
     'ncd-other': useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES['ncd-other']),
-    'pdc-developmental-delay': useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES['pdc-developmental-delay']),
+    // the native PDC condition cards, a fixed list, so the hooks are called in the same order every render
+    ...Object.fromEntries(
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      NATIVE_PDC_CONDITIONS.map((c) => [c.key, useLaunchWorkspaceRequiringVisit(patientUuid, c.workspaces.visit)]),
+    ),
   };
   return useCallback(
     (card: EMastercardCard) => (launchers[card.key] ? launchers[card.key]({ patientUuid }) : launchFlowsheet(card, patientUuid)),

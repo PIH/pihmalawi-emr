@@ -74,12 +74,10 @@ import { EC_HEADER_SECTIONS, type EcHeaderSection } from '../exposed-child/ec-fi
 import EcHeaderWorkspace from '../exposed-child/ec-header.workspace';
 import EcVisitWorkspace from '../exposed-child/ec-visit.workspace';
 import EcEidWorkspace from '../exposed-child/ec-eid.workspace';
-import { hiePanelForEncounter } from '../pdc/launch-hie-panel';
-import { HIE_HEADER_SECTIONS, type HieHeaderSection } from '../pdc/hie-fields';
-import HieHeaderWorkspace from '../pdc/hie-header.workspace';
-import HieVisitWorkspace from '../pdc/hie-visit.workspace';
-import HieLabsWorkspace from '../pdc/hie-labs.workspace';
-import { HIE_CARD_KEY } from '../pdc/hie-concepts';
+import { conditionPanelForEncounter } from '../pdc/launch-pdc-condition-panel';
+import { NATIVE_PDC_CONDITIONS } from '../pdc/pdc-conditions';
+import { capitalized } from '../pdc/pdc-condition';
+import { CONDITION_WORKSPACES } from '../pdc/pdc-condition-workspaces';
 import { pdcSharedFormOf } from '../pdc/pdc-shared-forms';
 import PdcSharedWorkspace from '../pdc/pdc-shared.workspace';
 import FlowsheetFrame from './flowsheet-frame.component';
@@ -102,7 +100,7 @@ interface Encounter {
 
 /**
  * Takes the place of the chart's form entry workspace, which "Edit this encounter" opens: ART, mental health, epilepsy and
- * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other), teen club, exposed child and HIE / developmental delay card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
+ * NCD card encounters (hypertension and diabetes, chronic lung disease, cardiac and vascular disease, chronic kidney disease, sickle cell disease, NCD other), teen club, exposed child and native PDC condition card encounters are edited in their native panel, and other Malawi encounters in the eMastercard they belong to, so this opens that
  * eMastercard's flowsheet
  */
 const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWorkspaceProps, object, EncounterEditGroupProps>> = (props) => {
@@ -143,32 +141,35 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
   const tcPanel = encounter ? tcPanelForEncounter(encounter) : null;
   const [ecSection, setEcSection] = useState<EcHeaderSection | null>(null);
   const ecPanel = encounter ? ecPanelForEncounter(encounter) : null;
-  const [hieSection, setHieSection] = useState<HieHeaderSection | null>(null);
-  const hiePanel = encounter ? hiePanelForEncounter(encounter) : null;
+  const [pdcSection, setPdcSection] = useState<string | null>(null);
+  const pdcPanel = encounter ? conditionPanelForEncounter(NATIVE_PDC_CONDITIONS, encounter) : null;
 
-  // the forms the PDC condition cards share open natively from the HIE / developmental delay card, the only one native
-  // so far; for a patient without it they open in the flowsheet of the condition card they have
+  // the forms the PDC condition cards share open natively from a native condition card the patient has; for a patient
+  // with none they open in the flowsheet of the condition card they have
   const pdcSharedForm = encounter ? pdcSharedFormOf(encounter) : null;
-  const hieCard = cards.find((c) => c.key === HIE_CARD_KEY && (c.state === 'EDIT' || c.state === 'VIEW'));
-  if (pdcSharedForm && hieCard && patientUuid) {
-    return <PdcSharedWorkspace {...props} workspaceProps={{ patientUuid, form: pdcSharedForm, cardKey: HIE_CARD_KEY, encounterUuid }} />;
+  const nativePdcCard = cards.find((c) => NATIVE_PDC_CONDITIONS.some((n) => n.key === c.key) && (c.state === 'EDIT' || c.state === 'VIEW'));
+  if (pdcSharedForm && nativePdcCard && patientUuid) {
+    return <PdcSharedWorkspace {...props} workspaceProps={{ patientUuid, form: pdcSharedForm, cardKey: nativePdcCard.key, encounterUuid }} />;
   }
 
-  if (hiePanel && patientUuid) {
-    if (hiePanel !== 'header') {
-      const Panel = { visit: HieVisitWorkspace, labs: HieLabsWorkspace }[hiePanel];
+  if (pdcPanel && patientUuid) {
+    const { condition, panel } = pdcPanel;
+    const panels = CONDITION_WORKSPACES[condition.key];
+    if (panel !== 'header') {
+      const Panel = panels[panel];
       return <Panel {...props} workspaceProps={{ patientUuid, encounterUuid }} />;
     }
-    if (hieSection) {
-      return <HieHeaderWorkspace {...props} workspaceProps={{ patientUuid, section: hieSection }} />;
+    if (pdcSection) {
+      const Header = panels.header;
+      return <Header {...props} workspaceProps={{ patientUuid, section: pdcSection }} />;
     }
     return (
-      <Workspace2 title={t('hieCardHeader', 'HIE / developmental delay card header')}>
+      <Workspace2 title={t(`${condition.prefix}CardHeader`, `${capitalized(condition.name)} card header`)}>
         <div className={styles.message}>
-          <p>{t('chooseHieHeaderSection', 'Which part of the HIE / developmental delay card header should open?')}</p>
-          {(Object.keys(HIE_HEADER_SECTIONS) as Array<HieHeaderSection>).map((key) => (
-            <Button key={key} kind="ghost" onClick={() => setHieSection(key)}>
-              {t(`hieSection_${key}`, HIE_HEADER_SECTIONS[key].title)}
+          <p>{t('choosePdcHeaderSection', 'Which part of the {{card}} card header should open?', { card: condition.name })}</p>
+          {Object.keys(condition.headerSections).map((key) => (
+            <Button key={key} kind="ghost" onClick={() => setPdcSection(key)}>
+              {t(`${condition.prefix}Section_${key}`, condition.headerSections[key].title)}
             </Button>
           ))}
         </div>

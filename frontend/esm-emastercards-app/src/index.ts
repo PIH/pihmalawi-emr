@@ -186,14 +186,18 @@ export const pdcDashboard = getAsyncLifecycle(() => import('./pdc/pdc-dashboard.
 /** Edits a section of the PDC card header natively */
 export const pdcHeaderWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-header.workspace'), options);
 
-/** Edits a section of the HIE / developmental delay card header natively */
-export const hieHeaderWorkspace = getAsyncLifecycle(() => import('./pdc/hie-header.workspace'), options);
+const pdcConditionPanel = (key: string, panel: 'header' | 'visit' | 'labs') =>
+  getAsyncLifecycle(() => import('./pdc/pdc-condition-workspaces').then((m) => ({ default: m.CONDITION_WORKSPACES[key][panel] })), options);
 
-/** Records or edits an HIE / developmental delay visit natively */
-export const hieVisitWorkspace = getAsyncLifecycle(() => import('./pdc/hie-visit.workspace'), options);
+/** Edits a section of the HIE / developmental delay card header, records or edits its visits and lab tests natively */
+export const hieHeaderWorkspace = pdcConditionPanel('pdc-developmental-delay', 'header');
+export const hieVisitWorkspace = pdcConditionPanel('pdc-developmental-delay', 'visit');
+export const hieLabsWorkspace = pdcConditionPanel('pdc-developmental-delay', 'labs');
 
-/** Records or edits the HIE / developmental delay card's laboratory tests natively */
-export const hieLabsWorkspace = getAsyncLifecycle(() => import('./pdc/hie-labs.workspace'), options);
+/** Edits a section of the trisomy 21 card header, records or edits its visits and lab tests natively */
+export const trisomyHeaderWorkspace = pdcConditionPanel('pdc-trisomy', 'header');
+export const trisomyVisitWorkspace = pdcConditionPanel('pdc-trisomy', 'visit');
+export const trisomyLabsWorkspace = pdcConditionPanel('pdc-trisomy', 'labs');
 
 /** Records or edits the forms every PDC condition card shares (hospitalisations, complications, vision, hearing, radiology) natively */
 export const pdcSharedWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-shared.workspace'), options);

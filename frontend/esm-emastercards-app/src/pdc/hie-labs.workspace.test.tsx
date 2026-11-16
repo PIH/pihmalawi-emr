@@ -9,7 +9,9 @@ import { saveEncounter } from '../art/obs-diff';
 import { HIE_FORMS, HIE_LABS } from './hie-concepts';
 import { YES } from './pdc-concepts';
 import { hieLabs } from './test-hie-data';
-import HieLabsWorkspace from './hie-labs.workspace';
+import { CONDITION_WORKSPACES } from './pdc-condition-workspaces';
+
+const HieLabsWorkspace = CONDITION_WORKSPACES['pdc-developmental-delay'].labs;
 
 vi.mock('../art/art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../art/art.resource')>()),

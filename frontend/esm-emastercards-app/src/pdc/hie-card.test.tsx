@@ -5,10 +5,11 @@ import { card } from '../test-cards';
 import { type ArtEncounter, useCardEncounters, useEMastercard, useObsOnDays } from '../art/art.resource';
 import { HIE_FORMS, HIE_VISIT } from './hie-concepts';
 import { PDC_FORMS } from './pdc-concepts';
-import { launchHiePanel } from './launch-hie-panel';
+import { launchConditionPanel } from './launch-pdc-condition-panel';
+import { HIE_CONDITION } from './hie-condition';
 import { hieHeader, hieLabs, hieVisit } from './test-hie-data';
 import { pdcHeader } from './test-pdc-data';
-import HieCard from './hie-card.component';
+import PdcConditionCard from './pdc-condition-card.component';
 
 vi.mock('../art/art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../art/art.resource')>()),
@@ -17,7 +18,7 @@ vi.mock('../art/art.resource', async (importOriginal) => ({
   useObsOnDays: vi.fn(),
 }));
 const mockLaunch = vi.fn();
-vi.mock('./launch-hie-panel', () => ({ launchHiePanel: vi.fn(), useLaunchHiePanel: () => mockLaunch }));
+vi.mock('./launch-pdc-condition-panel', () => ({ launchConditionPanel: vi.fn(), useLaunchConditionPanel: () => mockLaunch }));
 
 const visits = [
   hieVisit('v2', '2026-10-08', {
@@ -66,7 +67,7 @@ function withData(state: 'CREATE' | 'EDIT', data: Data = {}) {
 }
 
 const everything: Data = { header: [hieHeader], visit: visits, labs: [hieLabs], pdc: [pdcHeader] };
-const renderCard = () => render(<HieCard patientUuid="p1" title="Pediatric Development (PDC)" />);
+const renderCard = () => render(<PdcConditionCard condition={HIE_CONDITION} patientUuid="p1" title="Pediatric Development (PDC)" />);
 
 describe('HieCard', () => {
   it('names the card, with the state of the PDC treatment workflow', () => {
@@ -118,7 +119,7 @@ describe('HieCard', () => {
     await userEvent.click(tests.getByRole('button', { name: 'Record' }));
     expect(mockLaunch).toHaveBeenCalledWith('labs');
     await userEvent.click(tests.getByRole('button', { name: 'Edit' }));
-    expect(launchHiePanel).toHaveBeenCalledWith('labs', { patientUuid: 'p1', encounterUuid: hieLabs.uuid });
+    expect(launchConditionPanel).toHaveBeenCalledWith(HIE_CONDITION, 'labs', { patientUuid: 'p1', encounterUuid: hieLabs.uuid });
   });
 
   it('asks to start the card before anything can be recorded', async () => {
@@ -126,6 +127,6 @@ describe('HieCard', () => {
     renderCard();
     expect(screen.getByRole('button', { name: 'Record HIE / developmental delay visit' })).toBeDisabled();
     await userEvent.click(within(screen.getByRole('region', { name: 'Patient Overview' })).getByRole('button', { name: 'Start the card' }));
-    expect(launchHiePanel).toHaveBeenCalledWith('header', { patientUuid: 'p1', section: 'start' });
+    expect(launchConditionPanel).toHaveBeenCalledWith(HIE_CONDITION, 'header', { patientUuid: 'p1', section: 'start' });
   });
 });

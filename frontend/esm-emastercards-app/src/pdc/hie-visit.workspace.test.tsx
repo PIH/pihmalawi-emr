@@ -9,7 +9,9 @@ import { saveEncounter } from '../art/obs-diff';
 import { HIE_FORMS, HIE_VISIT, MODERATE_MALNUTRITION } from './hie-concepts';
 import { YES } from './pdc-concepts';
 import { hieHeader, hieVisit } from './test-hie-data';
-import HieVisitWorkspace from './hie-visit.workspace';
+import { CONDITION_WORKSPACES } from './pdc-condition-workspaces';
+
+const HieVisitWorkspace = CONDITION_WORKSPACES['pdc-developmental-delay'].visit;
 
 vi.mock('../art/art.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../art/art.resource')>()),
