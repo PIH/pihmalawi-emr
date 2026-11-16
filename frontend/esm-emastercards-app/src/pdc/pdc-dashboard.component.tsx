@@ -5,8 +5,8 @@ import { CARD_PARAM, CardGroupTabs, selectedCard, useCurrentUrl } from '../share
 import LegacyCardPage from '../shared/legacy-card-page.component';
 import { PDC_CARD_KEY } from './pdc-concepts';
 import PdcCard from './pdc-card.component';
-import { HIE_CARD_KEY } from './hie-concepts';
-import HieCard from './hie-card.component';
+import { nativePdcCondition } from './pdc-conditions';
+import PdcConditionCard from './pdc-condition-card.component';
 import styles from '../care-page.scss';
 
 /** The page's path in the patient chart */
@@ -34,8 +34,9 @@ const PdcDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
       />
     </div>
   );
-  if (selected?.key === HIE_CARD_KEY) {
-    return <HieCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  const condition = selected ? nativePdcCondition(selected.key) : null;
+  if (condition) {
+    return <PdcConditionCard condition={condition} patientUuid={patientUuid} title={title} tabs={tabs} />;
   }
   if (selected && selected.key !== PDC_CARD_KEY) {
     return <LegacyCardPage card={selected} patientUuid={patientUuid} title={title} tabs={tabs} />;

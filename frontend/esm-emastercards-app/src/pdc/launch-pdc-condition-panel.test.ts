@@ -1,7 +1,10 @@
 import { HIE_FORMS } from './hie-concepts';
-import { hiePanelForEncounter } from './launch-hie-panel';
+import { conditionPanelForEncounter } from './launch-pdc-condition-panel';
+import { HIE_CONDITION } from './hie-condition';
 
-describe('hiePanelForEncounter', () => {
+const hiePanelForEncounter = (e: { encounterType: { uuid: string } }) => conditionPanelForEncounter([HIE_CONDITION], e)?.panel ?? null;
+
+describe('conditionPanelForEncounter', () => {
   it('finds the panel by encounter type, whatever its case', () => {
     expect(hiePanelForEncounter({ encounterType: { uuid: HIE_FORMS.visit.encounterType.toUpperCase() } })).toBe('visit');
     expect(hiePanelForEncounter({ encounterType: { uuid: HIE_FORMS.labs.encounterType } })).toBe('labs');

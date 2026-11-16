@@ -405,6 +405,21 @@
       "window": "pihmalawi-emastercard-window"
     },
     {
+      "name": "pihmalawi-trisomy-header-workspace",
+      "component": "trisomyHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-trisomy-visit-workspace",
+      "component": "trisomyVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-trisomy-labs-workspace",
+      "component": "trisomyLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
       "name": "pihmalawi-pdc-shared-workspace",
       "component": "pdcSharedWorkspace",
       "window": "pihmalawi-emastercard-window"

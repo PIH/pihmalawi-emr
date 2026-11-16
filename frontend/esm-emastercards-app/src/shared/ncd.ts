@@ -165,6 +165,11 @@ export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolea
   // the HIE / developmental delay visit's W/A and W/H: its numeric value concept allows no decimals
   weightForAge: { whole: true },
   weightForHeight: { whole: true },
+  // the trisomy 21 lab tests: their concepts allow no decimals
+  rbc: { whole: true },
+  mcv: { whole: true },
+  platelets: { whole: true },
+  tsh: { whole: true },
 };
 
 /** A number outside its concept's limits, or with decimals the concept doesn't allow */
