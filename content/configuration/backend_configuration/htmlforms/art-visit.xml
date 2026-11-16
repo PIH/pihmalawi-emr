@@ -220,6 +220,21 @@ jq(function() {
     });
 
 
+    // TB Status: each answer is an obs tag of its own (so that editing a visit finds each saved answer), which
+    // htmlformentry renders as an independent checkbox. Allow only one of Suspected (No / Yes) and one of
+    // Confirmed (noRx / Rx).
+    var tbStatusPairs = [["tbNotSuspected", "tbSuspected"], ["tbConfirmedNoTx", "tbConfirmedTx"]];
+    tbStatusPairs.forEach(function(pair) {
+        pair.forEach(function(id, i) {
+            var other = pair[1 - i];
+            jq(document).on('change', "#" + id + " input[type='checkbox']", function() {
+                if (this.checked) {
+                    jq("#" + other + " input[type='checkbox']").prop("checked", false);
+                }
+            });
+        });
+    });
+
     var findNextApptDate = setInterval(function() {
         searchNextApptDate();
         clearInterval(findNextApptDate);
@@ -458,11 +473,11 @@ jq(function() {
                 <th>TB Status (Curr.)*</th>
                 <td>
                     <b>Suspected</b>
-                    <obs conceptId="$tbStatus" style="radio" answerConceptId="$tbNotSuspected" answerLabel="No"/>
-                    <obs conceptId="$tbStatus" style="radio" answerConceptId="$tbSuspected" answerLabel="Yes"/>
+                    <obs id="tbNotSuspected" conceptId="$tbStatus" style="radio" answerConceptId="$tbNotSuspected" answerLabel="No"/>
+                    <obs id="tbSuspected" conceptId="$tbStatus" style="radio" answerConceptId="$tbSuspected" answerLabel="Yes"/>
                     <b style="padding-left:30px;">Confirmed</b>
-                    <obs conceptId="$tbStatus" style="radio" answerConceptId="$tbConfirmedNoTx" answerLabel="noRx"/>
-                    <obs conceptId="$tbStatus" style="radio" answerConceptId="$tbConfirmedTx" answerLabel="Rx"/>
+                    <obs id="tbConfirmedNoTx" conceptId="$tbStatus" style="radio" answerConceptId="$tbConfirmedNoTx" answerLabel="noRx"/>
+                    <obs id="tbConfirmedTx" conceptId="$tbStatus" style="radio" answerConceptId="$tbConfirmedTx" answerLabel="Rx"/>
                 </td>
             </tr>
             <tr>
