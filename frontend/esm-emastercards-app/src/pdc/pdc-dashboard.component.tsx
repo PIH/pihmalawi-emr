@@ -5,14 +5,17 @@ import { CARD_PARAM, CardGroupTabs, selectedCard, useCurrentUrl } from '../share
 import LegacyCardPage from '../shared/legacy-card-page.component';
 import { PDC_CARD_KEY } from './pdc-concepts';
 import PdcCard from './pdc-card.component';
+import { HIE_CARD_KEY } from './hie-concepts';
+import HieCard from './hie-card.component';
 import styles from '../care-page.scss';
 
 /** The page's path in the patient chart */
 export const PDC_PATH = 'pediatricDevelopment';
 
 /**
- * The Pediatric Development Clinic Record page: the patient's PDC cards as tabs, the PDC card natively and the
- * condition cards (HIE / developmental delay, trisomy 21, cleft lip / palate, other diagnosis) in their legacy flowsheet
+ * The Pediatric Development Clinic Record page: the patient's PDC cards as tabs, the PDC card and the HIE /
+ * developmental delay card natively and the other condition cards (trisomy 21, cleft lip / palate, other diagnosis)
+ * in their legacy flowsheet
  */
 const PdcDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   const { t } = useTranslation();
@@ -31,6 +34,9 @@ const PdcDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
       />
     </div>
   );
+  if (selected?.key === HIE_CARD_KEY) {
+    return <HieCard patientUuid={patientUuid} title={title} tabs={tabs} />;
+  }
   if (selected && selected.key !== PDC_CARD_KEY) {
     return <LegacyCardPage card={selected} patientUuid={patientUuid} title={title} tabs={tabs} />;
   }

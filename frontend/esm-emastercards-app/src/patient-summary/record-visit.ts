@@ -11,7 +11,8 @@ import { EP_WORKSPACES } from '../epilepsy/launch-ep-panel';
 import { EC_WORKSPACES } from '../exposed-child/launch-ec-panel';
 import { MH_WORKSPACES } from '../mental-health/launch-mh-panel';
 import { TC_WORKSPACES } from '../teen-club/launch-tc-panel';
-import { type EMastercardCard } from '../emastercards.resource';
+import { HIE_WORKSPACES } from '../pdc/launch-hie-panel';
+import { type EMastercardCard, launchFlowsheet } from '../emastercards.resource';
 
 /** Each native eMastercard's visit panel, by the card's key */
 export const VISIT_WORKSPACES: Record<string, string> = {
@@ -26,14 +27,23 @@ export const VISIT_WORKSPACES: Record<string, string> = {
   ckd: CKD_WORKSPACES.visit,
   scd: SCD_WORKSPACES.visit,
   'ncd-other': NCO_WORKSPACES.visit,
+  'pdc-developmental-delay': HIE_WORKSPACES.visit,
 };
 
-/** The cards a visit can be recorded on: native ones the patient has started and may change */
-export const recordableCards = (cards: Array<EMastercardCard>) => cards.filter((c) => c.state === 'EDIT' && VISIT_WORKSPACES[c.key]);
+/** The PDC condition cards not yet native, whose visits are recorded in their flowsheet */
+export const FLOWSHEET_VISIT_CARDS = ['pdc-trisomy', 'pdc-cleft-lip-palate', 'pdc-other-diagnosis'];
+
+/**
+ * The cards a visit can be recorded on: those the patient has started and may change, native ones and the PDC
+ * condition cards (the PDC card itself is an intake, with no visits)
+ */
+export const recordableCards = (cards: Array<EMastercardCard>) =>
+  cards.filter((c) => c.state === 'EDIT' && (VISIT_WORKSPACES[c.key] || FLOWSHEET_VISIT_CARDS.includes(c.key)));
 
 /**
  * Opens a card's visit panel for a new visit, which is recorded in an O3 visit: when the patient has none, the chart
- * first asks to start one (or choose a past one), as each card's own Record visit does
+ * first asks to start one (or choose a past one), as each card's own Record visit does. A card not yet native opens
+ * its flowsheet.
  */
 export function useLaunchCardVisit(patientUuid: string) {
   const launchers: Record<string, (props: object) => void> = {
@@ -48,7 +58,11 @@ export function useLaunchCardVisit(patientUuid: string) {
     ckd: useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES.ckd),
     scd: useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES.scd),
     'ncd-other': useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES['ncd-other']),
+    'pdc-developmental-delay': useLaunchWorkspaceRequiringVisit(patientUuid, VISIT_WORKSPACES['pdc-developmental-delay']),
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useCallback((key: string) => launchers[key]?.({ patientUuid }), [patientUuid, ...Object.values(launchers)]);
+  return useCallback(
+    (card: EMastercardCard) => (launchers[card.key] ? launchers[card.key]({ patientUuid }) : launchFlowsheet(card, patientUuid)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [patientUuid, ...Object.values(launchers)],
+  );
 }

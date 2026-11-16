@@ -95,7 +95,28 @@ describe('PatientSummary', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Record visit' }));
     expect(screen.getAllByRole('menuitem').map((m) => m.textContent)).toEqual(['ART', 'Hypertension and Diabetes']);
     await userEvent.click(screen.getByRole('menuitem', { name: 'Hypertension and Diabetes' }));
-    expect(mockLaunchVisit).toHaveBeenCalledWith('htn-dm');
+    expect(mockLaunchVisit).toHaveBeenCalledWith(expect.objectContaining({ key: 'htn-dm' }));
+  });
+
+  it("shows the PDC card's intake, as its visits are on the condition cards, and records a visit on an active condition card", async () => {
+    withData();
+    vi.mocked(useEMastercards).mockReturnValue({
+      cards: [
+        card({ key: 'pdc', label: 'PDC eMastercard', state: 'EDIT', created: '2026-03-12' }),
+        card({ key: 'pdc-developmental-delay', label: 'PDC Developmental Delay eMastercard', state: 'EDIT', created: '2026-03-12', lastVisit: '2026-10-08' }),
+      ],
+    } as never);
+    render(<PatientSummary patientUuid="p1" />);
+
+    const care = within(screen.getByRole('region', { name: 'Care and treatment' }));
+    expect(care.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'PDC CardIntake 12-Mar-2026',
+      'HIE / Developmental DelayLast visit 08-Oct-2026',
+    ]);
+    await userEvent.click(screen.getByRole('button', { name: 'Record visit' }));
+    expect(screen.getAllByRole('menuitem').map((m) => m.textContent)).toEqual(['HIE / Developmental Delay']);
+    await userEvent.click(screen.getByRole('menuitem', { name: 'HIE / Developmental Delay' }));
+    expect(mockLaunchVisit).toHaveBeenCalledWith(expect.objectContaining({ key: 'pdc-developmental-delay' }));
   });
 
   it('shows the latest vitals and biometrics in one long card, with a link to their history', () => {

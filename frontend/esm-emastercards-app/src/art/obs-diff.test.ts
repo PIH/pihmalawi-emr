@@ -447,3 +447,47 @@ describe('multi answers in a group', () => {
     expect(buildObsPayload([feed], { feed: [] }, existing, {})).toEqual({ add: [], void: ['g1'] });
   });
 });
+
+describe('groups of one concept, told apart by the question they hold', () => {
+  const normal: FieldSpec = { name: 'normal', concept: 'c-normal', kind: 'coded', group: { concept: 'c-tone', match: { concept: 'c-normal' } } };
+  const hypo: FieldSpec = { name: 'hypo', concept: 'c-hypo', kind: 'coded', group: { concept: 'c-tone', match: { concept: 'c-hypo' } } };
+  const existing = [
+    { uuid: 'g1', concept: 'c-tone', value: null, groupMembers: [{ uuid: 'm1', concept: 'c-normal', value: 'yes' }] },
+    { uuid: 'g2', concept: 'c-tone', value: null, groupMembers: [{ uuid: 'm2', concept: 'c-hypo', value: 'no' }] },
+  ];
+
+  it('saves each question in a group of its own', () => {
+    expect(buildObsPayload([normal, hypo], { normal: 'yes', hypo: 'no' }, [], {}).add).toEqual([
+      { concept: 'c-tone', groupMembers: [{ concept: 'c-normal', value: 'yes' }] },
+      { concept: 'c-tone', groupMembers: [{ concept: 'c-hypo', value: 'no' }] },
+    ]);
+  });
+
+  it('replaces only the group whose answer changed, and voids the group whose answer was cleared', () => {
+    expect(buildObsPayload([normal, hypo], { normal: 'yes', hypo: 'yes' }, existing, {})).toEqual({
+      add: [{ concept: 'c-tone', groupMembers: [{ concept: 'c-hypo', value: 'yes' }] }],
+      void: ['g2'],
+    });
+    expect(buildObsPayload([normal, hypo], { normal: null, hypo: 'no' }, existing, {})).toEqual({ add: [], void: ['g1'] });
+  });
+});
+
+describe('an obs with its own date', () => {
+  const hb: FieldSpec = { name: 'hb', concept: 'c-hb', kind: 'number', obsDate: 'hbDate' };
+
+  it('saves the obs on its date', () => {
+    expect(buildObsPayload([hb], { hb: 11.2, hbDate: '2026-10-01' }, [], {}).add).toEqual([
+      { concept: 'c-hb', value: 11.2, obsDatetime: '2026-10-01' },
+    ]);
+    expect(buildObsPayload([hb], { hb: 11.2, hbDate: null }, [], {}).add).toEqual([{ concept: 'c-hb', value: 11.2 }]);
+  });
+
+  it('replaces the obs when only its date changed, and leaves it when neither did', () => {
+    const existing = [{ uuid: 'o1', concept: 'c-hb', value: 11.2, obsDatetime: '2026-10-01T00:00:00.000+0000' }];
+    expect(buildObsPayload([hb], { hb: 11.2, hbDate: '2026-10-01' }, existing, {})).toEqual({ add: [], void: [] });
+    expect(buildObsPayload([hb], { hb: 11.2, hbDate: '2026-10-03' }, existing, {})).toEqual({
+      add: [{ concept: 'c-hb', value: 11.2, obsDatetime: '2026-10-03' }],
+      void: ['o1'],
+    });
+  });
+});

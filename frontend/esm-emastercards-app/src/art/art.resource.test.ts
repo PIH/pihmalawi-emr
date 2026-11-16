@@ -83,4 +83,22 @@ describe('encounterValues', () => {
     };
     expect(encounterValues([field], e)).toEqual({ dx: ['CNS', 'other', 'hie'], cnsSpecify: 'meningitis', otherSpecify: 'rickets' });
   });
+
+  it('reads a group told apart by the question it holds, and the date an obs carries', () => {
+    const e = {
+      ...encounter,
+      obs: [
+        { uuid: 'g1', concept: 'tone', value: null, obsDatetime: '2026-01-01', groupMembers: [o('m1', 'normal', 'yes')] },
+        { uuid: 'g2', concept: 'tone', value: null, obsDatetime: '2026-01-01', groupMembers: [o('m2', 'hypo', 'no')] },
+        { ...o('h1', 'hb', 11.2), obsDatetime: '2026-10-01T00:00:00.000+0000' },
+      ],
+    };
+    const fields = [
+      { name: 'normal', concept: 'normal', kind: 'coded' as const, group: { concept: 'tone', match: { concept: 'normal' } } },
+      { name: 'hypo', concept: 'hypo', kind: 'coded' as const, group: { concept: 'tone', match: { concept: 'hypo' } } },
+      { name: 'hb', concept: 'hb', kind: 'number' as const, obsDate: 'hbDate' },
+    ];
+    expect(encounterValues(fields, e)).toEqual({ normal: 'yes', hypo: 'no', hb: 11.2, hbDate: '2026-10-01' });
+  });
 });
+

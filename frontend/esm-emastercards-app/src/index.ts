@@ -186,6 +186,18 @@ export const pdcDashboard = getAsyncLifecycle(() => import('./pdc/pdc-dashboard.
 /** Edits a section of the PDC card header natively */
 export const pdcHeaderWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-header.workspace'), options);
 
+/** Edits a section of the HIE / developmental delay card header natively */
+export const hieHeaderWorkspace = getAsyncLifecycle(() => import('./pdc/hie-header.workspace'), options);
+
+/** Records or edits an HIE / developmental delay visit natively */
+export const hieVisitWorkspace = getAsyncLifecycle(() => import('./pdc/hie-visit.workspace'), options);
+
+/** Records or edits the HIE / developmental delay card's laboratory tests natively */
+export const hieLabsWorkspace = getAsyncLifecycle(() => import('./pdc/hie-labs.workspace'), options);
+
+/** Records or edits the forms every PDC condition card shares (hospitalisations, complications, vision, hearing, radiology) natively */
+export const pdcSharedWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-shared.workspace'), options);
+
 /** Edits a section of the exposed child card header natively */
 export const ecHeaderWorkspace = getAsyncLifecycle(() => import('./exposed-child/ec-header.workspace'), options);
 

@@ -19,6 +19,8 @@ interface ArtEncounterPanelProps {
   patientUuid: string;
   encounterUuid?: string;
   title: { record: string; edit: string };
+  /** The label of the encounter's date, e.g. Date of admission; else Date */
+  dateLabel?: string;
   fields: Array<ArtField>;
   /** Whether the location is one of the Neno system locations (the form's encounterLocation tags) */
   taggedLocations: boolean;
@@ -45,6 +47,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   patientUuid,
   encounterUuid,
   title,
+  dateLabel,
   fields,
   taggedLocations,
   onFieldChange = (_, values) => values,
@@ -118,7 +121,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
   const readOnly = card?.state !== 'EDIT';
   const shownFields = fields.filter((f) => isShown(f, values));
   const fieldRules = rules(values, date);
-  const blocked = shownFields.some((f) => fieldRules[f.name]?.level === 'error');
+  const blocked = shownFields.some((f) => [f.name, f.obsDate].some((n) => n && fieldRules[n]?.level === 'error'));
   const dateRule = record.editable ? checkRecordDay(record.day, patient?.birthDate) : null;
   const duplicate = checkDuplicate(
     date,
@@ -156,7 +159,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
     <Workspace2 title={heading} hasUnsavedChanges={dirty}>
       <div className={styles.panel}>
         <div className={styles.row}>
-          <RecordDateInput id={`card-${form.encounterType}-date`} label={t('date', 'Date')} record={record} rule={dateRule} readOnly={readOnly} />
+          <RecordDateInput id={`card-${form.encounterType}-date`} label={dateLabel ?? t('date', 'Date')} record={record} rule={dateRule} readOnly={readOnly} />
           <Select
             id={`card-${form.encounterType}-location`}
             labelText={t('location', 'Location')}
@@ -193,6 +196,19 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
                     setDirty(true);
                   }}
                 />
+                {/* the date the result is from, when the form asks for one (its showDate), e.g. an HB result's */}
+                {f.obsDate && (
+                  <ArtFieldInput
+                    field={{ name: f.obsDate, concept: f.concept, kind: 'date', label: t('resultDate', '{{label}}: date', { label: f.label }) }}
+                    value={values[f.obsDate] ?? null}
+                    readOnly={readOnly}
+                    rule={submitted || live.includes(f.obsDate) ? (fieldRules[f.obsDate] ?? null) : null}
+                    onChange={(value) => {
+                      setValues((v) => onFieldChange(f.obsDate, { ...v, [f.obsDate]: value }));
+                      setDirty(true);
+                    }}
+                  />
+                )}
               </React.Fragment>
             ))}
         </section>

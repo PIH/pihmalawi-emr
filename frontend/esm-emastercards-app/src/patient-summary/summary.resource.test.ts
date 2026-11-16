@@ -56,9 +56,20 @@ describe('careCardRows', () => {
       card({ key: 'asthma', label: 'Chronic Lung Disease eMastercard', state: 'CREATE' }),
     ];
     expect(careCardRows(cards, '2026-11-10')).toEqual([
-      { key: 'art', name: 'ART', lastVisit: '2026-08-05', appointment: '2026-12-02', overdue: false },
-      { key: 'htn-dm', name: 'Hypertension and Diabetes', lastVisit: null, appointment: '2026-10-01', overdue: true },
-      { key: 'pre-art', name: 'Pre-ART', lastVisit: null, appointment: '2015-12-02', overdue: false },
+      { key: 'art', name: 'ART', lastVisit: '2026-08-05', appointment: '2026-12-02', overdue: false, intake: null },
+      { key: 'htn-dm', name: 'Hypertension and Diabetes', lastVisit: null, appointment: '2026-10-01', overdue: true, intake: null },
+      { key: 'pre-art', name: 'Pre-ART', lastVisit: null, appointment: '2015-12-02', overdue: false, intake: null },
+    ]);
+  });
+
+  it('gives the PDC card, which has no visits of its own, its intake date in place of a last visit', () => {
+    const cards = [
+      card({ key: 'pdc', label: 'PDC eMastercard', state: 'EDIT', created: '2026-03-12' }),
+      card({ key: 'pdc-developmental-delay', label: 'PDC Developmental Delay eMastercard', state: 'EDIT', created: '2026-03-12', lastVisit: '2026-10-08' }),
+    ];
+    expect(careCardRows(cards, '2026-11-10').map((r) => [r.key, r.lastVisit, r.intake])).toEqual([
+      ['pdc', null, '2026-03-12'],
+      ['pdc-developmental-delay', '2026-10-08', null],
     ]);
   });
 });
@@ -126,5 +137,15 @@ describe('recordableCards', () => {
       card({ key: 'ckd', state: 'EDIT' }),
     ];
     expect(recordableCards(cards).map((c) => c.key)).toEqual(['art', 'ckd']);
+  });
+
+  it('offers a visit on each active PDC condition card, natively or in its flowsheet, never on the PDC card itself', () => {
+    const cards = [
+      card({ key: 'pdc', state: 'EDIT' }),
+      card({ key: 'pdc-developmental-delay', state: 'EDIT' }),
+      card({ key: 'pdc-trisomy', state: 'EDIT' }),
+      card({ key: 'pdc-cleft-lip-palate', state: 'VIEW' }),
+    ];
+    expect(recordableCards(cards).map((c) => c.key)).toEqual(['pdc-developmental-delay', 'pdc-trisomy']);
   });
 });

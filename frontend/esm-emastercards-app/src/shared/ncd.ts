@@ -162,6 +162,9 @@ export const LIMITS: Record<string, { min?: number; max?: number; whole?: boolea
   directBilirubin: { whole: true },
   indirectBilirubin: { whole: true },
   haemoglobin: { whole: true },
+  // the HIE / developmental delay visit's W/A and W/H: its numeric value concept allows no decimals
+  weightForAge: { whole: true },
+  weightForHeight: { whole: true },
 };
 
 /** A number outside its concept's limits, or with decimals the concept doesn't allow */

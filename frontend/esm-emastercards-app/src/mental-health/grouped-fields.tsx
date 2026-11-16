@@ -7,7 +7,8 @@ import { type FieldValue } from '../art/obs-diff';
 import { ArtFieldInput } from '../art/fields';
 import styles from '../art/art-panel.scss';
 
-const groupKey = (f: ArtField) => (f.group ? `${f.group.concept}|${f.group.match?.value ?? ''}`.toLowerCase() : null);
+const groupKey = (f: ArtField) =>
+  f.group ? `${f.group.concept}|${f.group.match?.concept ?? ''}|${f.group.match?.value ?? ''}`.toLowerCase() : null;
 
 /**
  * The checkbox a field depends on: the forms show a diagnosis's date, a drug's dose and an "Other" answer's text only
