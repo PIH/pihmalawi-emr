@@ -91,7 +91,12 @@ export interface CareCardRow {
   lastVisit: string | null;
   appointment: string | null;
   overdue: boolean;
+  /** For a card with no visits of its own, e.g. the PDC card, when it was started; else null */
+  intake: string | null;
 }
+
+/** Cards that are an intake alone, with no follow-up visits: the PDC card's visits are on its condition cards (HIE, ...) */
+export const INTAKE_ONLY_CARDS = ['pdc'];
 
 /** Each eMastercard the patient has, with its last visit and next appointment; overdue when that has passed */
 export function careCardRows(cards: Array<EMastercardCard>, today: string): Array<CareCardRow> {
@@ -103,6 +108,7 @@ export function careCardRows(cards: Array<EMastercardCard>, today: string): Arra
       lastVisit: c.lastVisit,
       appointment: c.appointment,
       overdue: c.state === 'EDIT' && Boolean(c.appointment) && day(c.appointment) < today,
+      intake: INTAKE_ONLY_CARDS.includes(c.key) ? c.created : null,
     }));
 }
 

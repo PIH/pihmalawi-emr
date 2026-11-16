@@ -210,7 +210,9 @@ export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounte
         (g) =>
           !match ||
           g.groupMembers.some(
-            (m) => m.concept === match.concept.toLowerCase() && String(m.value).toLowerCase() === match.value.toLowerCase(),
+            (m) =>
+              m.concept === match.concept.toLowerCase() &&
+              (match.value === undefined || String(m.value).toLowerCase() === match.value.toLowerCase()),
           ),
       );
       found = (group?.groupMembers ?? []).filter((m) => m.concept === f.concept.toLowerCase());
@@ -218,6 +220,10 @@ export function encounterValues(fields: Array<FieldSpec>, encounter: ArtEncounte
       found = (encounter?.obs ?? []).filter((o) => o.concept === f.concept.toLowerCase() && !o.groupMembers);
     }
     values[f.name] = f.kind === 'multi' ? found.map((o) => String(o.value)) : ((found[0]?.value as FieldValue) ?? null);
+    // the date the obs was recorded on, e.g. an HB result's
+    if (f.obsDate) {
+      values[f.obsDate] = found[0]?.obsDatetime ? found[0].obsDatetime.slice(0, 10) : null;
+    }
     // each answer specified in its own comment, e.g. a CNS infection and an Other diagnosis
     f.comments?.forEach((c) => {
       values[c.key] = found.find((o) => String(o.value).toLowerCase() === c.answer.toLowerCase())?.comment ?? null;

@@ -390,6 +390,26 @@
       "window": "pihmalawi-emastercard-window"
     },
     {
+      "name": "pihmalawi-hie-header-workspace",
+      "component": "hieHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-hie-visit-workspace",
+      "component": "hieVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-hie-labs-workspace",
+      "component": "hieLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-pdc-shared-workspace",
+      "component": "pdcSharedWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
       "name": "pihmalawi-ec-header-workspace",
       "component": "ecHeaderWorkspace",
       "window": "pihmalawi-emastercard-window"

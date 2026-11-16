@@ -14,14 +14,19 @@ export interface FieldSpec {
    * value the clinician enters or changes is saved. 'override' lets them change a shown value; 'readonly' doesn't.
    */
   reference?: 'override' | 'readonly';
-  /** The obs group the field belongs to; groups of the same concept are told apart by one member's value */
-  group?: { concept: string; match?: { concept: string; value: string } };
+  /**
+   * The obs group the field belongs to; groups of the same concept are told apart by one member's value or, without
+   * a value, by the question they hold (e.g. the Tone set's Normal, Hypo and Hyper, each in a group of its own)
+   */
+  group?: { concept: string; match?: { concept: string; value?: string } };
   /** The values key holding this obs's comment, for an answer the forms "specify" in a comment field */
   comment?: string;
   /** For a question with several answers: the answer whose obs holds the comment, e.g. an Other family planning method */
   commentAnswer?: string;
   /** For a question with several answers, several of them specified: each answer and the values key holding its comment */
   comments?: Array<{ answer: string; key: string }>;
+  /** The values key holding the obs's own date, when the form asks for one (its showDate), e.g. an HB result's */
+  obsDate?: string;
 }
 
 /** A form's encounter type and form, which every encounter it saves carries */
@@ -36,6 +41,7 @@ export interface ExistingObs {
   concept: string;
   value: string | number | boolean | null;
   comment?: string | null;
+  obsDatetime?: string;
   groupMembers?: Array<ExistingObs>;
 }
 
@@ -43,6 +49,8 @@ export interface NewObs {
   concept: string;
   value?: string | number | boolean;
   comment?: string;
+  /** The obs's own date, when it isn't the encounter's */
+  obsDatetime?: string;
   groupMembers?: Array<NewObs>;
 }
 
@@ -168,12 +176,20 @@ function diffField(
     mine.forEach((o) => out.void.push(o.uuid));
     return;
   }
+  // the obs's own date, when the form asks for one; left empty, the obs is on the encounter's date
+  const date = field.obsDate && !isEmpty(values[field.obsDate]) ? String(values[field.obsDate]).slice(0, 10) : undefined;
   // an obs's comment only counts when the panel asks for it; otherwise it stays as it is
-  if (current && mine.length === 1 && same(field, current.value, desired) && (!field.comment || sameComment(current.comment, comment))) {
+  if (
+    current &&
+    mine.length === 1 &&
+    same(field, current.value, desired) &&
+    (!field.comment || sameComment(current.comment, comment)) &&
+    (!date || normalize('date', current.obsDatetime) === date)
+  ) {
     return;
   }
   mine.forEach((o) => out.void.push(o.uuid));
-  out.add.push(newObs(field, desired as string | number | boolean, comment));
+  out.add.push({ ...newObs(field, desired as string | number | boolean, comment), ...(date ? { obsDatetime: date } : {}) });
 }
 
 function groupKey(field: FieldSpec) {
@@ -188,7 +204,9 @@ function findGroup(field: FieldSpec, obs: Array<ExistingObs>) {
       o.concept.toLowerCase() === concept.toLowerCase() &&
       (!match ||
         (o.groupMembers ?? []).some(
-          (m) => m.concept.toLowerCase() === match.concept.toLowerCase() && normalize('coded', m.value) === match.value.toLowerCase(),
+          (m) =>
+            m.concept.toLowerCase() === match.concept.toLowerCase() &&
+            (match.value === undefined || normalize('coded', m.value) === match.value.toLowerCase()),
         )),
   );
 }

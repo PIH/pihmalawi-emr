@@ -139,7 +139,7 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
           {recordable.length > 0 && (
             <MenuButton label={t('recordVisit', 'Record visit')} kind="primary" size="md" menuAlignment="bottom-end">
               {recordable.map((c) => (
-                <MenuItem key={c.key} label={t(`cardName_${c.key}`, cardName(c))} onClick={() => launchVisit(c.key)} />
+                <MenuItem key={c.key} label={t(`cardName_${c.key}`, cardName(c))} onClick={() => launchVisit(c)} />
               ))}
             </MenuButton>
           )}
@@ -161,7 +161,11 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
                   <li key={c.key}>
                     <span className={styles.rowName}>{path ? <ConfigurableLink to={page(path)}>{c.name}</ConfigurableLink> : c.name}</span>
                     <span className={styles.rowDetail}>
-                      {c.lastVisit ? t('lastVisitOn', 'Last visit {{date}}', { date: when(c.lastVisit) }) : t('noVisitYet', 'No visit yet')}
+                      {c.intake
+                        ? t('intakeOn', 'Intake {{date}}', { date: when(c.intake) })
+                        : c.lastVisit
+                          ? t('lastVisitOn', 'Last visit {{date}}', { date: when(c.lastVisit) })
+                          : t('noVisitYet', 'No visit yet')}
                       {c.appointment ? ` · ${t('nextOn', 'Next {{date}}', { date: when(c.appointment) })}` : ''}
                     </span>
                     {c.overdue && (
