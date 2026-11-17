@@ -20,18 +20,19 @@ export function useLaunchConditionPanel(patientUuid: string, condition: PdcCondi
 
 /**
  * The condition card and native panel an encounter is edited in, by its encounter type, whatever form saved it; else
- * null. By encounter type: the cleft lip / palate visit form's UUID is the HIE visit's encounter type.
+ * null. By encounter type: the cleft lip / palate visit form's UUID is the HIE visit's encounter type. A lab test
+ * encounter the cleft lip / palate and other diagnosis cards share opens on the first of the patient's cards
+ * (cardKeys, e.g. those they may change) it belongs to, else on the first card it belongs to.
  */
 export function conditionPanelForEncounter(
   conditions: Array<PdcCondition>,
   encounter: { encounterType?: { uuid: string } | null },
+  cardKeys: Array<string> = [],
 ): { condition: PdcCondition; panel: PdcConditionForm } | null {
   const type = encounter.encounterType?.uuid?.toLowerCase();
-  for (const condition of conditions) {
+  const matches = conditions.flatMap((condition) => {
     const panel = (Object.keys(condition.forms) as Array<PdcConditionForm>).find((p) => condition.forms[p].encounterType === type);
-    if (panel) {
-      return { condition, panel };
-    }
-  }
-  return null;
+    return panel ? [{ condition, panel }] : [];
+  });
+  return matches.find((m) => cardKeys.includes(m.condition.key)) ?? matches[0] ?? null;
 }

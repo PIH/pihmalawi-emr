@@ -44,7 +44,7 @@ describe('PdcCard', () => {
   it('names the card, with the state of its treatment workflow', () => {
     withData('EDIT');
     renderCard();
-    expect(screen.getByText('PDC patient card · version 2 · On treatment since 12-Mar-2026 at Neno District Hospital')).toBeInTheDocument();
+    expect(screen.getByText('PDC initial patient card · version 2 · On treatment since 12-Mar-2026 at Neno District Hospital')).toBeInTheDocument();
   });
 
   it('shows the headline: conditions at enrolment, reasons for referral, age at intake and treatment status', () => {

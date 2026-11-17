@@ -16,6 +16,19 @@ describe('conditionPanelForEncounter', () => {
   });
 });
 
+describe('conditionPanelForEncounter on the lab tests the cleft lip / palate and other diagnosis cards share', () => {
+  it("opens them on the patient's card, else on the first card they belong to", async () => {
+    const { NATIVE_PDC_CONDITIONS } = await import('./pdc-conditions');
+    const labs = { encounterType: { uuid: '366e8c89-2ad0-4fdc-a8fe-e39435b11331' } };
+    expect(conditionPanelForEncounter(NATIVE_PDC_CONDITIONS, labs, ['pdc-other-diagnosis'])).toMatchObject({
+      condition: { key: 'pdc-other-diagnosis' },
+      panel: 'labs',
+    });
+    expect(conditionPanelForEncounter(NATIVE_PDC_CONDITIONS, labs, ['pdc-cleft-lip-palate'])?.condition.key).toBe('pdc-cleft-lip-palate');
+    expect(conditionPanelForEncounter(NATIVE_PDC_CONDITIONS, labs)?.condition.key).toBe('pdc-cleft-lip-palate');
+  });
+});
+
 describe('pdcSharedFormOf', () => {
   it('finds the shared PDC form an encounter was saved by, by its encounter type', async () => {
     const { pdcSharedFormOf, PDC_SHARED_FORMS } = await import('./pdc-shared-forms');

@@ -142,7 +142,13 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
   const [ecSection, setEcSection] = useState<EcHeaderSection | null>(null);
   const ecPanel = encounter ? ecPanelForEncounter(encounter) : null;
   const [pdcSection, setPdcSection] = useState<string | null>(null);
-  const pdcPanel = encounter ? conditionPanelForEncounter(NATIVE_PDC_CONDITIONS, encounter) : null;
+  const pdcPanel = encounter
+    ? conditionPanelForEncounter(
+        NATIVE_PDC_CONDITIONS,
+        encounter,
+        cards.filter((c) => c.state === 'EDIT').map((c) => c.key),
+      )
+    : null;
 
   // the forms the PDC condition cards share open natively from a native condition card the patient has; for a patient
   // with none they open in the flowsheet of the condition card they have
@@ -166,7 +172,10 @@ const EncounterEditWorkspace: React.FC<Workspace2DefinitionProps<EncounterEditWo
     return (
       <Workspace2 title={t(`${condition.prefix}CardHeader`, `${capitalized(condition.name)} card header`)}>
         <div className={styles.message}>
-          <p>{t('choosePdcHeaderSection', 'Which part of the {{card}} card header should open?', { card: condition.name })}</p>
+          <p>{t('choosePdcHeaderSection', 'Which part of the {{card}} card header should open?', {
+            card: condition.name,
+            interpolation: { escapeValue: false },
+          })}</p>
           {Object.keys(condition.headerSections).map((key) => (
             <Button key={key} kind="ghost" onClick={() => setPdcSection(key)}>
               {t(`${condition.prefix}Section_${key}`, condition.headerSections[key].title)}
