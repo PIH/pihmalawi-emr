@@ -272,6 +272,7 @@ const TcCard: React.FC<TcCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={canEdit ? (v) => launchTcPanel('visit', { patientUuid, encounterUuid: v.uuid }) : undefined}
           empty={t('noTcVisits', 'No teen club visits recorded yet')}
         />

@@ -328,6 +328,7 @@ const ScdCard: React.FC<ScdCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={onEdit('visit')}
           empty={t('noScdVisits', 'No sickle cell disease visits recorded yet')}
         />

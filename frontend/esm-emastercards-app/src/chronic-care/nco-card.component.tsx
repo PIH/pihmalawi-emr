@@ -341,6 +341,7 @@ const NcoCard: React.FC<NcoCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={onEdit('visit')}
           empty={t('noNcoVisits', 'No NCD other visits recorded yet')}
         />

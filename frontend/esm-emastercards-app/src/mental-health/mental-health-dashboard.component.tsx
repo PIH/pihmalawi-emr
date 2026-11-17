@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePatient } from '@openmrs/esm-framework';
 import {
   Button,
   InlineLoading,
@@ -18,6 +19,7 @@ import { type ArtEncounter, encounterValues, memberValue, obsGroups, obsValue, u
 import { CURRENT, EXPOSURE, MH_CARD_KEY, MH_CARD_VERSION, MH_FORMS, MH_HEADER, MH_VISIT } from './mh-concepts';
 import { MedicationEntry, medicationChanges, medicationsOf, medicationText } from '../shared/medications';
 import { MEDICATIONS, MH_HEADER_SECTIONS, MH_SCREENING_FIELDS, MH_VISIT_FIELDS, MSE_FINDINGS, type MhHeaderSection } from './mh-fields';
+import { flaggedHeight, flaggedRow, visitFlags, VisitFlagsNotice } from '../shared/visit-flags';
 import { mseState } from './mh-rules';
 import { launchMhPanel, useLaunchMhPanel } from './launch-mh-panel';
 import { enrolmentText } from '../emastercards.resource';
@@ -127,6 +129,8 @@ const Headline: React.FC<{ label: string; value: string | null; detail?: string 
  */
 const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.ReactNode }> = ({ patientUuid, tabs }) => {
   const { t } = useTranslation();
+  // the patient's birth date, to judge each height by age at the visit
+  const birthDate = usePatient(patientUuid)?.patient?.birthDate;
   const { card, isLoading, error } = useEMastercard(patientUuid, MH_CARD_KEY);
   const { encounters: headers } = useCardEncounters(patientUuid, MH_FORMS.header);
   const { encounters: visits } = useCardEncounters(patientUuid, MH_FORMS.visit);
@@ -288,7 +292,11 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
     columns: Array<{ key: string; header: string }>,
     rows: Array<{ uuid: string; cells: Record<string, string | null> }>,
     onEdit: (uuid: string) => void,
+    // as the legacy flowsheet: encounters on the same day and, for the visits, heights far from the patient's others
+    flags: { encounters: Array<ArtEncounter>; flags: ReturnType<typeof visitFlags> },
   ) => (
+    <>
+    <VisitFlagsNotice encounters={flags.encounters} flags={flags.flags} />
     <div className={styles.tableWrapper}>
       <Table aria-label={name} size="sm">
         <TableHead>
@@ -301,9 +309,11 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
         </TableHead>
         <TableBody>
           {rows.map((r) => (
-            <TableRow key={r.uuid}>
+            <TableRow key={r.uuid} {...flaggedRow(flags.flags, r.uuid)}>
               {columns.map((c) => (
-                <TableCell key={c.key}>{r.cells[c.key] ?? ''}</TableCell>
+                <TableCell key={c.key}>
+                  {c.key === 'height' ? flaggedHeight(flags.flags, r.uuid, r.cells[c.key] ?? '') : (r.cells[c.key] ?? '')}
+                </TableCell>
               ))}
               {canEdit && <TableCell>{editButton(() => onEdit(r.uuid))}</TableCell>}
             </TableRow>
@@ -311,6 +321,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
         </TableBody>
       </Table>
     </div>
+    </>
   );
 
   return (
@@ -463,6 +474,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
           visitColumns,
           visits.map((v) => ({ uuid: v.uuid, cells: visitCells(v) })),
           (uuid) => launchMhPanel('visit', { patientUuid, encounterUuid: uuid }),
+          { encounters: visits, flags: visitFlags(visits, (v) => obsValue(v, MH_VISIT_FIELDS.height.concept), birthDate) },
         )}
         {!visits.length && <p className={styles.empty}>{t('noMentalHealthVisits', 'No mental health visits recorded yet')}</p>}
       </section>
@@ -476,6 +488,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
           screeningColumns,
           screenings.map((e) => ({ uuid: e.uuid, cells: screeningCells(e) })),
           (uuid) => launchMhPanel('screening', { patientUuid, encounterUuid: uuid }),
+          { encounters: screenings, flags: visitFlags(screenings) },
         )}
         {!screenings.length && <p className={styles.empty}>{t('noScreenings', 'No screenings recorded yet')}</p>}
       </section>
