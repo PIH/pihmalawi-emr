@@ -127,12 +127,12 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, CLD_VISIT.nextAppointment) as string);
   const description = [
     t('cldPatientCard', 'Chronic lung disease patient card'),
-    t('cardVersion', 'version {{version}}', { version: CLD_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: CLD_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const onRecord = (panel: 'peakFlow' | 'hospitalisation') => (canRecord ? () => launch(panel) : undefined);
 
   const section = (key: CldHeaderSection) => (
@@ -243,7 +243,7 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
       <section aria-label={t('cldAtAGlance', 'Chronic lung disease at a glance')} className={styles.headlines}>
         <Headline
           label={t('daySlashNightSymptoms', 'Day / night symptoms')}
-          value={withSymptoms ? t('timesPerWeek', '{{times}} per week', { times: symptoms(withSymptoms) }) : null}
+          value={withSymptoms ? t('timesPerWeek', '{{times}} per week', { times: symptoms(withSymptoms), interpolation: { escapeValue: false } }) : null}
           detail={withSymptoms ? on(withSymptoms) : null}
         />
         <Headline
@@ -254,7 +254,7 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('peakFlow', 'Peak flow')}
           value={peakFlow ? shown(peakFlow, CLD_PEAK_FLOW_FIELDS[0]) : null}
-          detail={peakFlow ? t('measured', 'Measured {{date}}', { date: formatDay(peakFlow.encounterDatetime) }) : null}
+          detail={peakFlow ? t('measured', 'Measured {{date}}', { date: formatDay(peakFlow.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         {conditions.asthma && (
           <Headline
@@ -270,7 +270,7 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
           detail={
             [
               medicationDetail(meds),
-              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime) }) : null,
+              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null,
             ]
               .filter(Boolean)
               .join(' · ') || null
@@ -279,7 +279,7 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

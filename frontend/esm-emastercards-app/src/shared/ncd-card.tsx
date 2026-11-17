@@ -243,7 +243,7 @@ export const MonitoringCard: React.FC<{ visits: Array<ArtEncounter>; count: numb
     <section aria-label={t('monitoring', 'Monitoring')} className={styles.card}>
       <div className={styles.cardHeader}>
         <h4 className={styles.cardTitle}>{t('monitoring', 'Monitoring')}</h4>
-        {recent.length > 0 && <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count })}</span>}
+        {recent.length > 0 && <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count, interpolation: { escapeValue: false } })}</span>}
       </div>
       {recent.length ? (
         <div className={styles.tableWrapper}>

@@ -97,12 +97,12 @@ const TcCard: React.FC<TcCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, TC_VISIT.nextAppointment) as string);
   const description = [
     t('tcPatientCard', 'Teen club patient card'),
-    t('cardVersion', 'version {{version}}', { version: TC_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: TC_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const plain = (field: ArtField) => (v: ArtEncounter) => shown(v, field, referenced) ?? '–';
   const red = (field: ArtField, raised: (v: ArtEncounter) => boolean) => (v: ArtEncounter) => (
     <RedIf value={shown(v, field, referenced)} raised={raised(v)} />
@@ -239,7 +239,7 @@ const TcCard: React.FC<TcCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

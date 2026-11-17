@@ -191,9 +191,11 @@ const ArtInitialWorkspace: React.FC<Workspace2DefinitionProps<ArtInitialWorkspac
                 ? t('patientGuardianWillBeCopied', 'Patient and guardian details from {{cards}} will be saved with this card: {{fields}}.', {
                     cards: copied.from.join(', '),
                     fields: copied.fields.map((f) => f.label).join(', '),
+                    interpolation: { escapeValue: false },
                   })
                 : t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
                     cards: copied.from.join(', '),
+                    interpolation: { escapeValue: false },
                   })
             }
           />

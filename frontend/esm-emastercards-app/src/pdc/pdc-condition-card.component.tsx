@@ -113,12 +113,12 @@ const PdcConditionCard: React.FC<PdcConditionCardProps> = ({ condition, patientU
   const conditions = displayValue(CONDITIONS, encounterValues([CONDITIONS], pdcHeaders[0]).conditions);
   const description = [
     t(k('{p}PatientCard'), `${capitalized(condition.name)} patient card`),
-    t('cardVersion', 'version {{version}}', { version: condition.version }),
+    t('cardVersion', 'version {{version}}', { version: condition.version, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const onEdit = (panel: 'visit' | 'labs') =>
     canEdit ? (e: ArtEncounter) => launchConditionPanel(condition, panel, { patientUuid, encounterUuid: e.uuid }) : undefined;
 
@@ -205,7 +205,7 @@ const PdcConditionCard: React.FC<PdcConditionCardProps> = ({ condition, patientU
             // a result with its own date, when it was from another day than the tests were recorded
             const own = field.obsDate ? (values[field.obsDate] as string | null) : null;
             const ownDay = own && own !== day(e.encounterDatetime) ? formatDay(own) : null;
-            const shownValue = prefix ? t(`pdcLabPrefix_${field.name}`, `${prefix}: {{answer}}`, { answer: value }) : value;
+            const shownValue = prefix ? t(`pdcLabPrefix_${field.name}`, `${prefix}: {{answer}}`, { answer: value, interpolation: { escapeValue: false } }) : value;
             return [shownValue, ownDay].filter(Boolean);
           });
           return [c.key, parts.join(' · ') || null];
@@ -218,7 +218,7 @@ const PdcConditionCard: React.FC<PdcConditionCardProps> = ({ condition, patientU
     ? [
         a(withGrowth, F.weight) && a(withGrowth, F.height) && `${t('height', 'Height')} ${a(withGrowth, F.height)}`,
         a(withGrowth, F.muac) && `${t('muac', 'MUAC')} ${a(withGrowth, F.muac)}`,
-        t('measured', 'Measured {{date}}', { date: formatDay(withGrowth.encounterDatetime) }),
+        t('measured', 'Measured {{date}}', { date: formatDay(withGrowth.encounterDatetime), interpolation: { escapeValue: false } }),
       ]
         .filter(Boolean)
         .join(' · ')
@@ -281,7 +281,7 @@ const PdcConditionCard: React.FC<PdcConditionCardProps> = ({ condition, patientU
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

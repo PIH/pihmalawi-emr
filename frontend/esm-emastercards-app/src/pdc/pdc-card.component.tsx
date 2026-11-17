@@ -63,7 +63,7 @@ const PdcCard: React.FC<PdcCardProps> = ({ patientUuid, title, tabs }) => {
   const values = encounterValues(PDC_HEADER_FIELDS, header);
   const description = [
     t('pdcPatientCard', 'PDC initial patient card'),
-    t('cardVersion', 'version {{version}}', { version: PDC_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: PDC_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -74,9 +74,9 @@ const PdcCard: React.FC<PdcCardProps> = ({ patientUuid, title, tabs }) => {
   const conditions = displayValue(byName('conditions'), values.conditions);
   const age =
     values.ageAtIntake_weeksUnit && values.ageAtIntake_weeks !== null
-      ? t('ageInWeeks', '{{count}} weeks', { count: Number(values.ageAtIntake_weeks) })
+      ? t('ageInWeeks', '{{count}} weeks', { count: Number(values.ageAtIntake_weeks), interpolation: { escapeValue: false } })
       : values.ageAtIntake_monthsUnit && values.ageAtIntake_months !== null
-        ? t('ageInMonths', '{{count}} months', { count: Number(values.ageAtIntake_months) })
+        ? t('ageInMonths', '{{count}} months', { count: Number(values.ageAtIntake_months), interpolation: { escapeValue: false } })
         : null;
   const state = card.enrolment?.state;
 
@@ -127,12 +127,12 @@ const PdcCard: React.FC<PdcCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('ageAtIntake', 'Age at intake')}
           value={age}
-          detail={header ? t('intakeOn', 'Intake {{date}}', { date: formatDay(header.encounterDatetime) }) : null}
+          detail={header ? t('intakeOn', 'Intake {{date}}', { date: formatDay(header.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         <Headline
           label={t('treatmentStatus', 'Treatment status')}
           value={state?.name ?? null}
-          detail={state?.startDate ? t('sinceDate', 'Since {{date}}', { date: formatDay(state.startDate) }) : null}
+          detail={state?.startDate ? t('sinceDate', 'Since {{date}}', { date: formatDay(state.startDate), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

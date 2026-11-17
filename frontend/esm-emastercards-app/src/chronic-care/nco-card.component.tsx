@@ -123,7 +123,7 @@ const NcoCard: React.FC<NcoCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, NCO_VISIT.nextAppointment) as string);
   const description = [
     t('ncoPatientCard', 'NCD other patient card'),
-    t('cardVersion', 'version {{version}}', { version: NCO_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: NCO_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -260,25 +260,25 @@ const NcoCard: React.FC<NcoCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('bloodPressure', 'Blood pressure')}
           value={bp ? `${bp.bp.text} mmHg` : null}
-          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime) }) : null}
+          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime), interpolation: { escapeValue: false } }) : null}
           alert={bp?.bp.raised}
         />
         <Headline
           label={t('currentMedication', 'Current medication')}
           value={medicationVisit ? medicationsText(medicationVisit) : null}
-          detail={medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime) }) : null}
+          detail={medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         <Headline
           label={t('hospitalisations', 'Hospitalisations')}
           value={String(hospitalisations.length)}
-          detail={lastDischarge ? t('lastDischarged', 'Last discharged {{date}}', { date: formatDay(lastDischarge.encounterDatetime) }) : null}
+          detail={lastDischarge ? t('lastDischarged', 'Last discharged {{date}}', { date: formatDay(lastDischarge.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
           detail={
             next
-              ? [shown(latest, F.nextAppointmentLocation), t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) })]
+              ? [shown(latest, F.nextAppointmentLocation), t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } })]
                   .filter(Boolean)
                   .join(' · ')
               : null

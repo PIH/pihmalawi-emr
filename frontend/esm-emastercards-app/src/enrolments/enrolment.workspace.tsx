@@ -57,12 +57,12 @@ const EnrolmentWorkspace: React.FC<Workspace2DefinitionProps<EnrolmentWorkspaceP
   const chosenExit = program.exitStates.find((s) => s.uuid === exitState);
   const title = {
     enrol: !program.enrolment
-      ? t('enrolIn', 'Enrol in {{program}}', { program: program.label })
+      ? t('enrolIn', 'Enrol in {{program}}', { program: program.label, interpolation: { escapeValue: false } })
       : program.multipleWorkflows
-        ? t('addConditionTo', 'Add a condition to {{program}}', { program: program.label })
-        : t('setStateIn', 'Set the state in {{program}}', { program: program.label }),
-    change: t('changeStateIn', 'Change state in {{program}}', { program: program.label }),
-    exit: t('exitFrom', 'Exit from {{program}}', { program: program.label }),
+        ? t('addConditionTo', 'Add a condition to {{program}}', { program: program.label, interpolation: { escapeValue: false } })
+        : t('setStateIn', 'Set the state in {{program}}', { program: program.label, interpolation: { escapeValue: false } }),
+    change: t('changeStateIn', 'Change state in {{program}}', { program: program.label, interpolation: { escapeValue: false } }),
+    exit: t('exitFrom', 'Exit from {{program}}', { program: program.label, interpolation: { escapeValue: false } }),
   }[mode];
 
   const save = async () => {
@@ -73,7 +73,7 @@ const EnrolmentWorkspace: React.FC<Workspace2DefinitionProps<EnrolmentWorkspaceP
         const ticked = enrolWorkflows.filter((w) => checked[w.uuid]);
         const withoutState = ticked.find((w) => !chosen[w.uuid]);
         if (program.multipleWorkflows && withoutState) {
-          throw new Error(t('chooseStateFor', 'Choose a state for {{workflow}}', { workflow: withoutState.name }));
+          throw new Error(t('chooseStateFor', 'Choose a state for {{workflow}}', { workflow: withoutState.name, interpolation: { escapeValue: false } }));
         }
         const states = program.multipleWorkflows
           ? ticked.map((w) => chosen[w.uuid])
@@ -135,7 +135,7 @@ const EnrolmentWorkspace: React.FC<Workspace2DefinitionProps<EnrolmentWorkspaceP
                   checked={Boolean(checked[w.uuid])}
                   onChange={(_, { checked: isChecked }) => setChecked({ ...checked, [w.uuid]: isChecked })}
                 />
-                {stateSelect(w.uuid, t('workflowStateLabel', '{{workflow}} state', { workflow: w.name }), w.enrolStates, t('chooseAState', 'Choose a state'))}
+                {stateSelect(w.uuid, t('workflowStateLabel', '{{workflow}} state', { workflow: w.name, interpolation: { escapeValue: false } }), w.enrolStates, t('chooseAState', 'Choose a state'))}
               </div>
             ))
           ) : (
@@ -146,7 +146,7 @@ const EnrolmentWorkspace: React.FC<Workspace2DefinitionProps<EnrolmentWorkspaceP
           (program.multipleWorkflows
             ? changeWorkflows.map((w) => (
                 <div key={w.uuid}>
-                  {stateSelect(w.uuid, t('workflowStateLabel', '{{workflow}} state', { workflow: w.name }), w.changeStates, t('noChange', 'No change'))}
+                  {stateSelect(w.uuid, t('workflowStateLabel', '{{workflow}} state', { workflow: w.name, interpolation: { escapeValue: false } }), w.changeStates, t('noChange', 'No change'))}
                 </div>
               ))
             : stateSelect(program.key, t('changeTo', 'Change to'), program.changeStates, t('chooseAState', 'Choose a state')))}
@@ -172,7 +172,7 @@ const EnrolmentWorkspace: React.FC<Workspace2DefinitionProps<EnrolmentWorkspaceP
                 kind="warning"
                 lowContrast
                 hideCloseButton
-                title={t('endsWholeEnrolment', 'This ends the whole {{program}} enrolment.', { program: program.label })}
+                title={t('endsWholeEnrolment', 'This ends the whole {{program}} enrolment.', { program: program.label, interpolation: { escapeValue: false } })}
               />
             )}
           </>

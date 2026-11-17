@@ -124,12 +124,12 @@ const ScdCard: React.FC<ScdCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, SCD_VISIT.nextAppointment) as string);
   const description = [
     t('scdPatientCard', 'Sickle cell disease patient card'),
-    t('cardVersion', 'version {{version}}', { version: SCD_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: SCD_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const onRecord = (panel: Exclude<ScdPanel, 'header' | 'visit'>) => (canRecord ? () => launch(panel) : undefined);
   const onEdit = (panel: Exclude<ScdPanel, 'header'>) =>
     canEdit ? (e: ArtEncounter) => launchScdPanel(panel, { patientUuid, encounterUuid: e.uuid }) : undefined;
@@ -273,7 +273,7 @@ const ScdCard: React.FC<ScdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('hospitalisations', 'Hospitalisations')}
           value={String(hospitalisations.length)}
-          detail={lastDischarge ? t('lastDischarged', 'Last discharged {{date}}', { date: formatDay(lastDischarge.encounterDatetime) }) : null}
+          detail={lastDischarge ? t('lastDischarged', 'Last discharged {{date}}', { date: formatDay(lastDischarge.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         <Headline
           label={t('currentMedication', 'Current medication')}
@@ -281,7 +281,7 @@ const ScdCard: React.FC<ScdCardProps> = ({ patientUuid, title, tabs }) => {
           detail={
             [
               medicationDetail(meds),
-              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime) }) : null,
+              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null,
             ]
               .filter(Boolean)
               .join(' · ') || null
@@ -290,7 +290,7 @@ const ScdCard: React.FC<ScdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

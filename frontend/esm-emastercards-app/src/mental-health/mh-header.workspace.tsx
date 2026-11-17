@@ -169,6 +169,7 @@ const MhHeaderWorkspace: React.FC<Workspace2DefinitionProps<MhHeaderWorkspacePro
             hideCloseButton
             title={t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
               cards: copiedFrom.join(', '),
+              interpolation: { escapeValue: false },
             })}
           />
         )}

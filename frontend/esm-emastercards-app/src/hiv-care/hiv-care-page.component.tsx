@@ -37,9 +37,11 @@ const HivCarePage: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
             ? t('cardShowsWhenState', '{{card}} shows only when it is a state {{state}} in Enrolments', {
                 card: t(`cardName_${c.key}`, cardName(c)),
                 state: t(`cardState_${c.key}`, HIV_CARD_STATES[c.key]),
+                interpolation: { escapeValue: false },
               })
             : t('cardShowsWhen', '{{card}} shows only when it is a state on treatment/in advanced care in Enrolments', {
                 card: t(`cardName_${c.key}`, cardName(c)),
+                interpolation: { escapeValue: false },
               })}
         </span>
       ))}

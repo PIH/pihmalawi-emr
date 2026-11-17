@@ -131,12 +131,12 @@ const CvdCard: React.FC<CvdCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, CVD_VISIT.nextAppointment) as string);
   const description = [
     t('cvdPatientCard', 'Cardiac and vascular disease patient card'),
-    t('cardVersion', 'version {{version}}', { version: CVD_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: CVD_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const onRecord = (panel: Exclude<CvdPanel, 'header' | 'visit'>) => (canRecord ? () => launch(panel) : undefined);
   const onEdit = (panel: Exclude<CvdPanel, 'header'>) =>
     canEdit ? (e: ArtEncounter) => launchCvdPanel(panel, { patientUuid, encounterUuid: e.uuid }) : undefined;
@@ -285,7 +285,7 @@ const CvdCard: React.FC<CvdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('bloodPressure', 'Blood pressure')}
           value={bp ? `${bp.bp.text} mmHg` : null}
-          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime) }) : null}
+          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime), interpolation: { escapeValue: false } }) : null}
           alert={bp?.bp.raised}
         />
         <Headline
@@ -305,7 +305,7 @@ const CvdCard: React.FC<CvdCardProps> = ({ patientUuid, title, tabs }) => {
           detail={
             [
               medicationDetail(meds),
-              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime) }) : null,
+              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null,
             ]
               .filter(Boolean)
               .join(' · ') || null
@@ -314,7 +314,7 @@ const CvdCard: React.FC<CvdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

@@ -177,6 +177,7 @@ const EpHeaderWorkspace: React.FC<Workspace2DefinitionProps<EpHeaderWorkspacePro
             hideCloseButton
             title={t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
               cards: copiedFrom.join(', '),
+              interpolation: { escapeValue: false },
             })}
           />
         )}

@@ -79,12 +79,12 @@ const PaCard: React.FC<PaCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, PA_VISIT.nextAppointment) as string);
   const description = [
     t('paPatientCard', 'Pre-ART patient card'),
-    t('cardVersion', 'version {{version}}', { version: PA_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: PA_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const plain = (field: ArtField) => (v: ArtEncounter) => shown(v, field) ?? '–';
 
   const section = (key: PaHeaderSection) => (
@@ -150,7 +150,7 @@ const PaCard: React.FC<PaCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

@@ -65,7 +65,7 @@ const EnrolmentsDashboard: React.FC<EnrolmentsDashboardProps> = ({ patientUuid }
                     <Button
                       size="sm"
                       kind="ghost"
-                      aria-label={t('enrolIn', 'Enrol in {{program}}', { program: p.label })}
+                      aria-label={t('enrolIn', 'Enrol in {{program}}', { program: p.label, interpolation: { escapeValue: false } })}
                       onClick={() => launchEnrolmentPanel(p, 'enrol', patientUuid)}
                     >
                       {t('enrol', 'Enrol')}

@@ -101,12 +101,12 @@ const EcCard: React.FC<EcCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, EC_VISIT.nextAppointment) as string);
   const description = [
     t('ecPatientCard', 'Exposed child patient card'),
-    t('cardVersion', 'version {{version}}', { version: EC_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: EC_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const plain = (field: ArtField) => (v: ArtEncounter) => shown(v, field, referenced) ?? '–';
 
   const section = (key: EcHeaderSection) => (
@@ -217,7 +217,7 @@ const EcCard: React.FC<EcCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('latestEidResult', 'Latest EID result')}
           value={latestTest ? (fieldCells(EC_EID_FIELDS, latestTest).result as string) : null}
-          detail={latestTest ? t('sampleTaken', 'Sample taken {{date}}', { date: formatDay(latestTest.encounterDatetime) }) : null}
+          detail={latestTest ? t('sampleTaken', 'Sample taken {{date}}', { date: formatDay(latestTest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
           alert={latestTest ? positiveResult(latestTest) : false}
         />
         <Headline
@@ -228,7 +228,7 @@ const EcCard: React.FC<EcCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 
