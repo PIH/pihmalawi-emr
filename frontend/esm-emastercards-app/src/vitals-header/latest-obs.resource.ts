@@ -78,6 +78,15 @@ export function useLatestBloodPressure(patientUuid: string, systolicUuid: string
   return { bloodPressure: pair, isLoading, error };
 }
 
+/** All of the patient's observations of one concept, newest first, e.g. every weight for the one-year weight loss */
+export function useObsHistory(patientUuid: string, conceptUuid: string, count = 200) {
+  const { data, isLoading, error } = useSWR(
+    patientUuid && conceptUuid ? observationsUrl(patientUuid, [conceptUuid], count) : null,
+    fetchObservations,
+  );
+  return { observations: data ?? [], isLoading, error };
+}
+
 export function formatObsDate(date: string) {
   return dayjs(date).format('DD-MMM-YYYY');
 }

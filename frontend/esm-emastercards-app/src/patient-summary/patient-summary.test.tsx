@@ -1,12 +1,13 @@
 import React from 'react';
 import dayjs from 'dayjs';
+import { useConfig, usePatient } from '@openmrs/esm-framework';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEMastercards } from '../emastercards.resource';
 import { useQuickPrograms } from '../enrolments/enrolments.resource';
 import { hivOnArt, tbCompleted } from '../enrolments/test-programs';
 import { card } from '../test-cards';
-import { useLatestBloodPressure, useLatestObs } from '../vitals-header/latest-obs.resource';
+import { useLatestBloodPressure, useLatestObs, useObsHistory } from '../vitals-header/latest-obs.resource';
 import { useHivSummary, useRecentVisits } from './summary.resource';
 import PatientSummary from './patient-summary.extension';
 
@@ -17,6 +18,7 @@ vi.mock('../vitals-header/latest-obs.resource', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../vitals-header/latest-obs.resource')>()),
   useLatestObs: vi.fn(),
   useLatestBloodPressure: vi.fn(),
+  useObsHistory: vi.fn(),
 }));
 vi.mock('./record-visit', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./record-visit')>()),
@@ -44,6 +46,7 @@ const hiv = {
   artStart: '2019-02-18',
   yearsOnArt: 7,
   latestViralLoad: { date: '2025-09-02', result: 'LDL' },
+  tbStatus: { value: 'TB not suspected', date: '2025-09-02' },
   cd4: { value: 540, date: '2025-09-02' },
   adherence: 98,
   nextAppointment: today,
@@ -80,6 +83,7 @@ function withData({ withHiv = true } = {}) {
     isLoading: false,
   } as never);
   vi.mocked(useLatestObs).mockReturnValue({ latest: new Map(), isLoading: false } as never);
+  vi.mocked(useObsHistory).mockReturnValue({ observations: [], isLoading: false } as never);
 }
 
 describe('PatientSummary', () => {
@@ -128,6 +132,44 @@ describe('PatientSummary', () => {
     expect(vitals.getByText('Today')).toBeInTheDocument();
     expect(vitals.getAllByText('--')).toHaveLength(8);
     expect(vitals.getByRole('link', { name: 'Vitals history' })).toHaveAttribute('href', expect.stringContaining('chart/vitals-and-biometrics'));
+  });
+
+  it("flags a one-year weight loss of 10 % or more, an adult's BMI below 19, and a height never recorded", () => {
+    withData();
+    vi.mocked(useConfig).mockReturnValue({ concepts: { weightUuid: 'weight', heightUuid: 'height' } } as never);
+    vi.mocked(usePatient).mockReturnValue({ patient: { birthDate: '1988-04-12' } } as never);
+    const weight = { code: 'weight', value: 50, unit: 'kg', date: '2026-11-01T09:00:00.000+0200', encounter: 'e1' };
+    vi.mocked(useLatestObs).mockReturnValue({ latest: new Map([['weight', weight]]), isLoading: false } as never);
+    vi.mocked(useObsHistory).mockReturnValue({
+      observations: [weight, { ...weight, value: 62.5, date: '2025-10-01T09:00:00.000+0200' }],
+      isLoading: false,
+    } as never);
+    render(<PatientSummary patientUuid="p1" />);
+
+    const vitals = within(screen.getByRole('region', { name: 'Vitals and biometrics' }));
+    expect(vitals.getByText('Lost 20 % in a year')).toBeInTheDocument();
+    expect(vitals.getByText('Not recorded yet')).toBeInTheDocument();
+  });
+
+  it('flags a BMI below 19 for an adult', () => {
+    withData();
+    vi.mocked(useConfig).mockReturnValue({ concepts: { weightUuid: 'weight', heightUuid: 'height' } } as never);
+    vi.mocked(usePatient).mockReturnValue({ patient: { birthDate: '1988-04-12' } } as never);
+    const at = (code: string, value: number) => ({ code, value, unit: null, date: '2026-11-01T09:00:00.000+0200', encounter: 'e1' });
+    vi.mocked(useLatestObs).mockReturnValue({ latest: new Map([['weight', at('weight', 45)], ['height', at('height', 165)]]), isLoading: false } as never);
+    render(<PatientSummary patientUuid="p1" />);
+
+    const vitals = within(screen.getByRole('region', { name: 'Vitals and biometrics' }));
+    expect(vitals.getByText('16.5')).toBeInTheDocument();
+    expect(vitals.getByText('Below 19')).toBeInTheDocument();
+  });
+
+  it('says when an HIV patient has no viral load, CD4 count or TB status recorded', () => {
+    withData();
+    vi.mocked(useHivSummary).mockReturnValue({ ...hiv, latestViralLoad: null, cd4: null, tbStatus: null } as never);
+    render(<PatientSummary patientUuid="p1" />);
+
+    expect(within(screen.getByRole('region', { name: 'HIV Care' })).getAllByText('Not recorded yet')).toHaveLength(3);
   });
 
   it('shows no alerts for now', () => {
