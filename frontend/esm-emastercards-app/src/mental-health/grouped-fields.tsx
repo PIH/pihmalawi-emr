@@ -91,6 +91,7 @@ export const GroupedFields: React.FC<GroupedFieldsProps> = ({ fields, values, on
                   id={`mh-${c.key}`}
                   labelText={t('specifyAnswer', 'Specify: {{answer}}', {
                     answer: f.options?.find((o) => o.value.toLowerCase() === c.answer.toLowerCase())?.label ?? '',
+                    interpolation: { escapeValue: false },
                   })}
                   value={(values[c.key] as string) ?? ''}
                   readOnly={readOnly}

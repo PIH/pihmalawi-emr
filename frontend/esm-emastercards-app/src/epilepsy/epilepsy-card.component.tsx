@@ -127,7 +127,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
   const canEdit = card.state === 'CREATE' || card.state === 'EDIT';
   const header = headers.find((e) => e.uuid === card.initialEncounterUuid) ?? (headers.length === 1 ? headers[0] : null);
   const latest = visits[0];
-  const assessed = (value: string | null) => (value ? t('assessed', 'Assessed {{date}}', { date: formatDay(latest.encounterDatetime) }) : null);
+  const assessed = (value: string | null) => (value ? t('assessed', 'Assessed {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null);
   const seizures = yesNoValue(latest, EP_VISIT.anySeizures);
   const count = obsValue(latest, EP_VISIT.numberOfSeizures);
   const anyTriggers = yesNoValue(latest, EP_VISIT.anyTriggers);
@@ -139,7 +139,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
   const recent = visits.slice(0, RECENT_VISITS);
   const description = [
     t('epilepsyPatientCard', 'Epilepsy patient card'),
-    t('cardVersion', 'version {{version}}', { version: EP_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: EP_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ].filter(Boolean).join(' · ');
 
@@ -259,7 +259,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
           value={seizures}
           detail={
             seizures
-              ? [count !== null && count !== undefined ? t('seizureCount', '{{count}} seizures', { count: Number(count) }) : null, assessed(seizures)]
+              ? [count !== null && count !== undefined ? t('seizureCount', '{{count}} seizures', { count: Number(count), interpolation: { escapeValue: false } }) : null, assessed(seizures)]
                   .filter(Boolean)
                   .join(' · ')
               : null
@@ -276,7 +276,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 
@@ -295,7 +295,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
           <div className={styles.cardHeader}>
             <h4 className={styles.cardTitle}>{t('seizureActivity', 'Seizure Activity')}</h4>
             {recent.length > 0 && (
-              <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count: RECENT_VISITS })}</span>
+              <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count: RECENT_VISITS, interpolation: { escapeValue: false } })}</span>
             )}
           </div>
           {recent.length ? (

@@ -151,7 +151,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, HTN_VISIT.nextAppointment) as string);
   const description = [
     t('htnPatientCard', 'Hypertension and diabetes patient card'),
-    t('cardVersion', 'version {{version}}', { version: HTN_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: HTN_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -349,6 +349,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
             bp
               ? t('measured', 'Measured {{date}}', {
                   date: formatDay(bp.v.encounterDatetime),
+                  interpolation: { escapeValue: false },
                 })
               : null
           }
@@ -364,6 +365,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
                     sugar.hbA1c ? sugar.glucose : null,
                     t('measured', 'Measured {{date}}', {
                       date: formatDay(sugar.v.encounterDatetime),
+                      interpolation: { escapeValue: false },
                     }),
                   ]
                     .filter(Boolean)
@@ -382,6 +384,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
               medicationVisit
                 ? t('dispensed', 'Dispensed {{date}}', {
                     date: formatDay(medicationVisit.encounterDatetime),
+                    interpolation: { escapeValue: false },
                   })
                 : null,
             ]
@@ -396,6 +399,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
             lastDischarge
               ? t('lastDischarged', 'Last discharged {{date}}', {
                   date: formatDay(lastDischarge.encounterDatetime),
+                  interpolation: { escapeValue: false },
                 })
               : null
           }
@@ -407,6 +411,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
             next
               ? t('booked', 'Booked {{date}}', {
                   date: formatDay(latest.encounterDatetime),
+                  interpolation: { escapeValue: false },
                 })
               : null
           }

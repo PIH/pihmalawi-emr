@@ -164,7 +164,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
   const canEdit = card.state === 'CREATE' || card.state === 'EDIT';
   const header = headers.find((e) => e.uuid === card.initialEncounterUuid) ?? (headers.length === 1 ? headers[0] : null);
   const latest = visits[0];
-  const assessed = (value: string | null) => (value ? t('assessed', 'Assessed {{date}}', { date: formatDay(latest.encounterDatetime) }) : null);
+  const assessed = (value: string | null) => (value ? t('assessed', 'Assessed {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null);
   const stable = latest ? yesNoValue(latest, MH_VISIT.stable) : null;
   const suicideRisk = latest ? yesNoValue(latest, MH_VISIT.suicideRisk) : null;
   const daily = latest ? yesNoValue(latest, MH_VISIT.dailyActivities) : null;
@@ -174,7 +174,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
   const mseVisits = visits.slice(0, MSE_VISITS);
   const description = [
     t('mentalHealthPatientCard', 'Mental health patient card'),
-    t('cardVersion', 'version {{version}}', { version: MH_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: MH_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -357,7 +357,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 
@@ -372,7 +372,7 @@ const MentalHealthCard: React.FC<MentalHealthDashboardProps & { tabs?: React.Rea
           <div className={styles.cardHeader}>
             <h4 className={styles.cardTitle}>{t('mentalStatusExamination', 'Mental Status Examination')}</h4>
             {mseVisits.length > 0 && (
-              <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count: MSE_VISITS })}</span>
+              <span className={styles.detail}>{t('lastVisits', 'Last {{count}} visits', { count: MSE_VISITS, interpolation: { escapeValue: false } })}</span>
             )}
           </div>
           {mseVisits.length ? (
@@ -507,6 +507,7 @@ const MentalHealthDashboard: React.FC<MentalHealthDashboardProps> = ({ patientUu
         <span key={c.key} className={styles.detail}>
           {t('cardShowsWhen', '{{card}} shows only when it is a state on treatment/in advanced care in Enrolments', {
             card: t(`cardName_${c.key}`, cardName(c)),
+            interpolation: { escapeValue: false },
           })}
         </span>
       ))}

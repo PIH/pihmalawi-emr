@@ -240,7 +240,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
   const nextAppointment = formatDay(obsValue(latestVisit, ART_VISIT.nextAppointment) as string);
   const cardDescription = [
     t('artPatientCard', 'ART patient card'),
-    t('cardVersion', 'version {{version}}', { version: ART_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: ART_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
@@ -324,7 +324,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
           value={regimen?.regimen?.label ?? null}
           detail={
             regimen
-              ? [regimen.regimen?.drugs, t('since', 'since {{date}}', { date: formatDay(regimen.since) })].filter(Boolean).join(' · ')
+              ? [regimen.regimen?.drugs, t('since', 'since {{date}}', { date: formatDay(regimen.since), interpolation: { escapeValue: false } })].filter(Boolean).join(' · ')
               : null
           }
         />
@@ -342,12 +342,12 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
         <Headline
           label={t('tbStatus', 'TB status')}
           value={tbStatus}
-          detail={tbStatus ? t('screened', 'Screened {{date}}', { date: formatDay(latestVisit.encounterDatetime) }) : null}
+          detail={tbStatus ? t('screened', 'Screened {{date}}', { date: formatDay(latestVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={nextAppointment}
-          detail={nextAppointment ? t('booked', 'Booked {{date}}', { date: formatDay(latestVisit.encounterDatetime) }) : null}
+          detail={nextAppointment ? t('booked', 'Booked {{date}}', { date: formatDay(latestVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 
@@ -372,7 +372,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
               return (
                 <React.Fragment key={slot.name}>
                   <dt>{slot.label}</dt>
-                  <dd>{label ? [label, since && t('since', 'since {{date}}', { date: since })].filter(Boolean).join(' · ') : '–'}</dd>
+                  <dd>{label ? [label, since && t('since', 'since {{date}}', { date: since, interpolation: { escapeValue: false } })].filter(Boolean).join(' · ') : '–'}</dd>
                 </React.Fragment>
               );
             })}

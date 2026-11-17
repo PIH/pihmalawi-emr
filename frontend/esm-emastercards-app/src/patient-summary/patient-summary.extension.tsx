@@ -162,11 +162,11 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
                     <span className={styles.rowName}>{path ? <ConfigurableLink to={page(path)}>{c.name}</ConfigurableLink> : c.name}</span>
                     <span className={styles.rowDetail}>
                       {c.intake
-                        ? t('intakeOn', 'Intake {{date}}', { date: when(c.intake) })
+                        ? t('intakeOn', 'Intake {{date}}', { date: when(c.intake), interpolation: { escapeValue: false } })
                         : c.lastVisit
-                          ? t('lastVisitOn', 'Last visit {{date}}', { date: when(c.lastVisit) })
+                          ? t('lastVisitOn', 'Last visit {{date}}', { date: when(c.lastVisit), interpolation: { escapeValue: false } })
                           : t('noVisitYet', 'No visit yet')}
-                      {c.appointment ? ` · ${t('nextOn', 'Next {{date}}', { date: when(c.appointment) })}` : ''}
+                      {c.appointment ? ` · ${t('nextOn', 'Next {{date}}', { date: when(c.appointment), interpolation: { escapeValue: false } })}` : ''}
                     </span>
                     {c.overdue && (
                       <Tag type="red" size="sm">
@@ -264,12 +264,12 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
               <Fact
                 label={t('currentRegimen', 'Current regimen')}
                 value={hiv.regimen?.regimen ? [hiv.regimen.regimen.label, hiv.regimen.regimen.drugs].filter(Boolean).join(' · ') : null}
-                detail={hiv.regimen ? t('sinceDate', 'Since {{date}}', { date: formatDay(hiv.regimen.since) }) : null}
+                detail={hiv.regimen ? t('sinceDate', 'Since {{date}}', { date: formatDay(hiv.regimen.since), interpolation: { escapeValue: false } }) : null}
               />
               <Fact
                 label={t('artStartDate', 'ART start date')}
                 value={formatDay(hiv.artStart)}
-                detail={hiv.yearsOnArt != null ? t('yearsOnArt', '{{count}} years on ART', { count: hiv.yearsOnArt }) : null}
+                detail={hiv.yearsOnArt != null ? t('yearsOnArt', '{{count}} years on ART', { count: hiv.yearsOnArt, interpolation: { escapeValue: false } }) : null}
               />
               <Fact
                 label={t('lastViralLoad', 'Last viral load')}

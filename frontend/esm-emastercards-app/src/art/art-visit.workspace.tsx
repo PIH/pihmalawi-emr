@@ -279,7 +279,7 @@ const ArtVisitWorkspace: React.FC<Workspace2DefinitionProps<ArtVisitWorkspacePro
             {field(F.pillCount)}
             {field(F.dosesMissed)}
           </div>
-          {adherence !== null && <span className={styles.hint}>{t('adherencePercent', 'Adherence: {{percent}}%', { percent: adherence })}</span>}
+          {adherence !== null && <span className={styles.hint}>{t('adherencePercent', 'Adherence: {{percent}}%', { percent: adherence, interpolation: { escapeValue: false } })}</span>}
         </section>
 
         <section className={styles.section}>

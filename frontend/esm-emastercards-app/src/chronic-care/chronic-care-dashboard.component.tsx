@@ -42,6 +42,7 @@ const ChronicCareDashboard: React.FC<{ patientUuid: string }> = ({ patientUuid }
         <span key={c.key} className={styles.detail}>
           {t('cardShowsWhen', '{{card}} shows only when it is a state on treatment/in advanced care in Enrolments', {
             card: t(`cardName_${c.key}`, cardName(c)),
+            interpolation: { escapeValue: false },
           })}
         </span>
       ))}

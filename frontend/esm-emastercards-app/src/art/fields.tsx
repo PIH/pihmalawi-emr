@@ -40,7 +40,7 @@ export const ArtFieldInput: React.FC<ArtFieldInputProps> = ({ field, value, onCh
   const shown = hasReference && field.reference === 'readonly' ? reference : value;
   const label = field.required ? `${field.label} *` : field.label;
   const helper = hasReference
-    ? t('fromSameDay', 'Recorded today in another form: {{value}}', { value: displayValue(field, reference) })
+    ? t('fromSameDay', 'Recorded today in another form: {{value}}', { value: displayValue(field, reference), interpolation: { escapeValue: false } })
     : field.unit;
   const message = rule ? <span className={rule.level === 'error' ? styles.error : styles.warning}>{rule.message}</span> : null;
 

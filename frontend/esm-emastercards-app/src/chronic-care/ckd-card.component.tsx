@@ -125,12 +125,12 @@ const CkdCard: React.FC<CkdCardProps> = ({ patientUuid, title, tabs }) => {
   const next = formatDay(obsValue(latest, CKD_VISIT.nextAppointment) as string);
   const description = [
     t('ckdPatientCard', 'Chronic kidney disease patient card'),
-    t('cardVersion', 'version {{version}}', { version: CKD_CARD_VERSION }),
+    t('cardVersion', 'version {{version}}', { version: CKD_CARD_VERSION, interpolation: { escapeValue: false } }),
     enrolmentText(card, t, formatDay),
   ]
     .filter(Boolean)
     .join(' · ');
-  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime) });
+  const on = (v: ArtEncounter) => t('assessed', 'Assessed {{date}}', { date: formatDay(v.encounterDatetime), interpolation: { escapeValue: false } });
   const onRecord = (panel: Exclude<CkdPanel, 'header' | 'visit'>) => (canRecord ? () => launch(panel) : undefined);
   const onEdit = (panel: Exclude<CkdPanel, 'header'>) =>
     canEdit ? (e: ArtEncounter) => launchCkdPanel(panel, { patientUuid, encounterUuid: e.uuid }) : undefined;
@@ -277,7 +277,7 @@ const CkdCard: React.FC<CkdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('bloodPressure', 'Blood pressure')}
           value={bp ? `${bp.bp.text} mmHg` : null}
-          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime) }) : null}
+          detail={bp ? t('measured', 'Measured {{date}}', { date: formatDay(bp.v.encounterDatetime), interpolation: { escapeValue: false } }) : null}
           alert={bp?.bp.raised}
         />
         <Headline
@@ -306,7 +306,7 @@ const CkdCard: React.FC<CkdCardProps> = ({ patientUuid, title, tabs }) => {
           detail={
             [
               medicationDetail(meds),
-              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime) }) : null,
+              medicationVisit ? t('dispensed', 'Dispensed {{date}}', { date: formatDay(medicationVisit.encounterDatetime), interpolation: { escapeValue: false } }) : null,
             ]
               .filter(Boolean)
               .join(' · ') || null
@@ -315,7 +315,7 @@ const CkdCard: React.FC<CkdCardProps> = ({ patientUuid, title, tabs }) => {
         <Headline
           label={t('nextAppointment', 'Next appointment')}
           value={next}
-          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime) }) : null}
+          detail={next ? t('booked', 'Booked {{date}}', { date: formatDay(latest.encounterDatetime), interpolation: { escapeValue: false } }) : null}
         />
       </section>
 

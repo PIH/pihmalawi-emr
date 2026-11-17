@@ -228,7 +228,7 @@ export const NcdHeaderPanel: React.FC<
             hideCloseButton
             title={
               config.diagnosisNames
-                ? t('tickOneDiagnosisOf', 'Tick at least one diagnosis: {{diagnoses}}.', { diagnoses: config.diagnosisNames })
+                ? t('tickOneDiagnosisOf', 'Tick at least one diagnosis: {{diagnoses}}.', { diagnoses: config.diagnosisNames, interpolation: { escapeValue: false } })
                 : t('tickOneDiagnosis', 'Tick at least one diagnosis.')
             }
           />

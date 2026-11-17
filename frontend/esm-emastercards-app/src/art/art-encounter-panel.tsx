@@ -199,7 +199,7 @@ export const ArtEncounterPanel: React.FC<ArtEncounterPanelProps> = ({
                 {/* the date the result is from, when the form asks for one (its showDate), e.g. an HB result's */}
                 {f.obsDate && (
                   <ArtFieldInput
-                    field={{ name: f.obsDate, concept: f.concept, kind: 'date', label: t('resultDate', '{{label}}: date', { label: f.label }) }}
+                    field={{ name: f.obsDate, concept: f.concept, kind: 'date', label: t('resultDate', '{{label}}: date', { label: f.label, interpolation: { escapeValue: false } }) }}
                     value={values[f.obsDate] ?? null}
                     readOnly={readOnly}
                     rule={submitted || live.includes(f.obsDate) ? (fieldRules[f.obsDate] ?? null) : null}

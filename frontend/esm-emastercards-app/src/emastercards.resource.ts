@@ -92,13 +92,13 @@ export function enrolmentText(
   }
   const location = enrolment.location?.display;
   if (enrolment.state?.startDate) {
-    const options = { state: enrolment.state.name, date: formatDay(enrolment.state.startDate), location };
+    const values = { state: enrolment.state.name, date: formatDay(enrolment.state.startDate), location };
     return location
-      ? t('stateSinceAt', '{{state}} since {{date}} at {{location}}', options)
-      : t('stateSince', '{{state}} since {{date}}', options);
+      ? t('stateSinceAt', '{{state}} since {{date}} at {{location}}', { ...values, interpolation: { escapeValue: false } })
+      : t('stateSince', '{{state}} since {{date}}', { ...values, interpolation: { escapeValue: false } });
   }
   const date = formatDay(enrolment.dateEnrolled);
   return enrolment.location?.display
-    ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date, location: enrolment.location.display })
-    : t('enrolled', 'enrolled {{date}}', { date });
+    ? t('enrolledAt', 'enrolled {{date}} at {{location}}', { date, location: enrolment.location.display, interpolation: { escapeValue: false } })
+    : t('enrolled', 'enrolled {{date}}', { date, interpolation: { escapeValue: false } });
 }
