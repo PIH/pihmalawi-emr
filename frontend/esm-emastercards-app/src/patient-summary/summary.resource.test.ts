@@ -45,6 +45,14 @@ describe('dueItems', () => {
       { key: 'art', label: 'ART appointment', status: 'today' },
     ]);
   });
+  it('puts a routine viral load first when one is due', () => {
+    const cards = [card({ key: 'art', state: 'EDIT', appointment: '2026-11-10' })];
+    expect(dueItems(cards, today, { viralLoadDue: true })).toEqual([
+      { key: 'viral-load', label: 'Routine viral load', status: 'due' },
+      { key: 'art', label: 'ART appointment', status: 'today' },
+    ]);
+    expect(dueItems(cards, today, { viralLoadDue: false })).toHaveLength(1);
+  });
 });
 
 describe('careCardRows', () => {

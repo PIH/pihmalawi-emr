@@ -151,7 +151,9 @@ describe('PatientSummary', () => {
       expect.stringContaining('chart/chronicCare?card=htn-dm'),
     );
     const due = within(screen.getByRole('region', { name: 'Due at this visit' }));
+    // the ART card's last viral load is over 12 months old
     expect(due.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Routine viral loadDue',
       'Hypertension and Diabetes appointment · 01-Oct-2026Overdue',
       'ART appointmentToday',
     ]);

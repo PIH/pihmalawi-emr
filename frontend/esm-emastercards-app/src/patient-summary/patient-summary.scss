@@ -158,3 +158,9 @@
   @include type.type-style('body-compact-01');
   color: $text-02;
 }
+
+// a worrying value, e.g. a viral load of 1000 copies/mL or more
+.raised {
+  color: $danger;
+  font-weight: 600;
+}
