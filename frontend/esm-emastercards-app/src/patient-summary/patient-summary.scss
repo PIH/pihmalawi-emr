@@ -164,3 +164,10 @@
   color: $danger;
   font-weight: 600;
 }
+
+// the legacy patient summary's alerts under a value: not recorded, a one-year weight loss, a BMI below 19
+.alert {
+  @include type.type-style('helper-text-01');
+  color: $danger;
+  font-weight: 600;
+}

@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import dayjs from 'dayjs';
 import { openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 import { ART_VISIT, FOLLOW_UP_TESTING, ART_INITIAL } from '../art/art-concepts';
-import { formatDay } from '../art/art-fields';
+import { ART_VISIT_FIELDS, displayValue, formatDay } from '../art/art-fields';
 import { adherencePercent, viralLoadDue } from '../art/art-rules';
 import { currentRegimen, lineStart, viralLoadResult } from '../art/art-summary';
 import { type ArtEncounter, obsValue, useArtCard, useArtEncounters } from '../art/art.resource';
@@ -160,6 +160,11 @@ export function summarizeArt(
     cd4: cd4Test ? { value: obsValue(cd4Test, FOLLOW_UP_TESTING.cd4Count), date: cd4Test.encounterDatetime } : null,
     adherence,
     nextAppointment: (obsValue(latest, ART_VISIT.nextAppointment) as string | null) ?? null,
+    // the TB status at the latest ART visit that recorded one, as the legacy summary's Last TB Status
+    tbStatus: (() => {
+      const screened = visits.find((v) => obsValue(v, ART_VISIT.tbStatus) !== null);
+      return screened ? { value: displayValue(ART_VISIT_FIELDS.tbStatus, obsValue(screened, ART_VISIT.tbStatus)), date: screened.encounterDatetime } : null;
+    })(),
     viralLoadDue: viralLoadDue({ lineStart: lineStart(initial, visits), lastViralLoad: viralLoads[0]?.encounterDatetime ?? null, today }),
   };
 }

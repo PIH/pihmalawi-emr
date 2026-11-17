@@ -2,13 +2,14 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Button, MenuButton, MenuItem, Tag } from '@carbon/react';
-import { ConfigurableLink, useConfig } from '@openmrs/esm-framework';
+import { ConfigurableLink, useConfig, usePatient } from '@openmrs/esm-framework';
 import { formatDay } from '../art/art-fields';
 import { NATIVE_PAGES } from '../dashboard/emastercard-row.component';
 import { cardName } from '../shared/card-group';
 import { useEMastercards } from '../emastercards.resource';
 import { useQuickPrograms } from '../enrolments/enrolments.resource';
-import { formatObsDate, type LatestObs, useLatestBloodPressure, useLatestObs } from '../vitals-header/latest-obs.resource';
+import { formatObsDate, type LatestObs, useLatestBloodPressure, useLatestObs, useObsHistory } from '../vitals-header/latest-obs.resource';
+import { lowBmi, oneYearWeightLoss } from './summary-alerts';
 import { useRecordVitals } from '../vitals-header/latest-vitals.extension';
 import { recordableCards, useLaunchCardVisit } from './record-visit';
 import { highViralLoad } from '../art/art-summary';
@@ -19,11 +20,18 @@ const today = () => dayjs().format('YYYY-MM-DD');
 /** A date as the summary shows it: Today, else e.g. 05-Aug-2026 */
 const when = (date: string | null) => (!date ? null : String(date).slice(0, 10) === today() ? 'Today' : formatDay(date));
 
-const Fact: React.FC<{ label: string; value: string | null; detail?: string | null; raised?: boolean }> = ({ label, value, detail, raised }) => (
+const Fact: React.FC<{ label: string; value: string | null; detail?: string | null; raised?: boolean; alert?: string | null }> = ({
+  label,
+  value,
+  detail,
+  raised,
+  alert,
+}) => (
   <div className={styles.fact}>
     <span className={styles.label}>{label}</span>
     <span className={raised ? `${styles.factValue} ${styles.raised}` : styles.factValue}>{value ?? '–'}</span>
     {value && detail ? <span className={styles.detail}>{detail}</span> : null}
+    {alert ? <span className={styles.alert}>{alert}</span> : null}
   </div>
 );
 
@@ -49,14 +57,26 @@ interface VitalsConcepts {
   midUpperArmCircumferenceUuid: string;
 }
 
-const Stat: React.FC<{ label: string; value: string | null; unit?: string; detail?: string | null }> = ({ label, value, unit, detail }) => (
+/**
+ * One measure: its value and when; an alert (e.g. a one-year weight loss, or that it was never recorded) under it in
+ * red, the value in red too when it is itself worrying (raised)
+ */
+const Stat: React.FC<{ label: string; value: string | null; unit?: string; detail?: string | null; alert?: string | null; raised?: boolean }> = ({
+  label,
+  value,
+  unit,
+  detail,
+  alert,
+  raised,
+}) => (
   <div className={styles.stat}>
     <span className={styles.label}>{label}</span>
-    <span>
+    <span className={raised ? styles.raised : undefined}>
       <span className={styles.statValue}>{value ?? '--'}</span>
       {value != null && unit ? <span className={styles.statUnit}> {unit}</span> : null}
     </span>
     {value != null && detail ? <span className={styles.detail}>{detail}</span> : null}
+    {alert ? <span className={styles.alert}>{alert}</span> : null}
   </div>
 );
 
@@ -84,6 +104,13 @@ const VitalsCard: React.FC<{ patientUuid: string; vitalsPage: string }> = ({ pat
     weight && height && typeof weight.value === 'number' && typeof height.value === 'number' && height.value > 0
       ? (weight.value / (height.value / 100) ** 2).toFixed(1)
       : null;
+  // the legacy patient summary's alerts: no height or weight recorded, a one-year weight loss of 10 % or more, a BMI below 19
+  const { observations: weights, isLoading: loadingWeights } = useObsHistory(patientUuid, c?.weightUuid);
+  const { patient } = usePatient(patientUuid) ?? {};
+  const age = patient?.birthDate && weight?.date ? dayjs(weight.date).diff(dayjs(patient.birthDate), 'year') : null;
+  const weightLoss = oneYearWeightLoss(weights);
+  const bmiLow = lowBmi(bmi === null ? null : Number(bmi), age);
+  const notRecorded = (o: LatestObs | undefined) => (!o && !loadingWeights && c ? t('notRecorded', 'Not recorded yet') : null);
   const stat = (label: string, uuid: string, unit: string) => <Stat label={label} value={value(obs(uuid))} unit={unit} detail={dated(obs(uuid))} />;
   return (
     <Card
@@ -101,9 +128,26 @@ const VitalsCard: React.FC<{ patientUuid: string; vitalsPage: string }> = ({ pat
         {stat(t('respiratoryRate', 'R. rate'), c?.respiratoryRateUuid, '/min')}
         {stat(t('spo2', 'SpO2'), c?.oxygenSaturationUuid, '%')}
         {stat(t('temperature', 'Temp'), c?.temperatureUuid, '°C')}
-        {stat(t('weight', 'Weight'), c?.weightUuid, 'kg')}
-        {stat(t('height', 'Height'), c?.heightUuid, 'cm')}
-        <Stat label={t('bmi', 'BMI')} value={bmi} unit="kg/m²" detail={bmi ? t('calculated', 'Calculated') : null} />
+        <Stat
+          label={t('weight', 'Weight')}
+          value={value(weight)}
+          unit="kg"
+          detail={dated(weight)}
+          alert={
+            weightLoss !== null
+              ? t('oneYearWeightLoss', 'Lost {{percent}} % in a year', { percent: weightLoss, interpolation: { escapeValue: false } })
+              : notRecorded(weight)
+          }
+        />
+        <Stat label={t('height', 'Height')} value={value(height)} unit="cm" detail={dated(height)} alert={notRecorded(height)} />
+        <Stat
+          label={t('bmi', 'BMI')}
+          value={bmi}
+          unit="kg/m²"
+          detail={bmi ? t('calculated', 'Calculated') : null}
+          alert={bmiLow ? t('bmiBelow19', 'Below 19') : null}
+          raised={bmiLow}
+        />
         {stat(t('muac', 'MUAC'), c?.midUpperArmCircumferenceUuid, 'cm')}
       </div>
     </Card>
@@ -279,11 +323,19 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
                   .filter(Boolean)
                   .join(' · ')}
                 raised={highViralLoad(hiv.latestViralLoad?.result)}
+                alert={hiv.latestViralLoad ? null : t('notRecorded', 'Not recorded yet')}
               />
               <Fact
                 label={t('cd4Count', 'CD4 count')}
                 value={hiv.cd4 ? `${hiv.cd4.value} cells/µL` : null}
                 detail={hiv.cd4 ? formatDay(hiv.cd4.date) : null}
+                alert={hiv.cd4 ? null : t('notRecorded', 'Not recorded yet')}
+              />
+              <Fact
+                label={t('tbStatus', 'TB status')}
+                value={hiv.tbStatus?.value ?? null}
+                detail={hiv.tbStatus ? formatDay(hiv.tbStatus.date) : null}
+                alert={hiv.tbStatus ? null : t('notRecorded', 'Not recorded yet')}
               />
               <Fact
                 label={t('adherencePillCount', 'Adherence (pill count)')}
