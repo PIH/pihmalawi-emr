@@ -42,6 +42,17 @@ export function lineStart(initial: ArtEncounter | null, visits: Array<ArtEncount
 }
 
 /** A viral load test's result as the card writes it: the number, "<" a limit, or LDL */
+/**
+ * Whether a viral load result is high, as the legacy patient summary (PrintableSummaryPageController) flags it: a
+ * numeric result of 1000 copies/mL or more; never a "<" result or LDL
+ */
+export function highViralLoad(result: string | null | undefined): boolean {
+  if (!result || result === 'LDL' || result.startsWith('<')) {
+    return false;
+  }
+  return Number(result) >= 1000;
+}
+
 export function viralLoadResult(encounter: ArtEncounter): string | null {
   const group = obsGroups(encounter, VIRAL_LOAD.group)[0];
   const ldl = memberValue(group, VIRAL_LOAD.ldl);

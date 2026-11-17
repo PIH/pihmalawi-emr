@@ -27,7 +27,7 @@ import {
   VIRAL_LOAD_FIELDS,
 } from './art-fields';
 import { viralLoadDue } from './art-rules';
-import { currentRegimen, lineStart, regimenOf, regimenText, viralLoadResult } from './art-summary';
+import { currentRegimen, highViralLoad, lineStart, regimenOf, regimenText, viralLoadResult } from './art-summary';
 import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters } from './art.resource';
 import { flaggedHeight, flaggedRow, visitFlags, VisitFlagsNotice } from '../shared/visit-flags';
 import { launchArtPanel, useLaunchArtPanel } from './launch-art-panel';
@@ -66,6 +66,8 @@ interface TestRow {
   test: string;
   result: string;
   reason: string;
+  /** A viral load of 1000 copies/mL or more, shown in red */
+  high?: boolean;
 }
 
 const field = (fields: Array<ArtField>, name: string) => fields.find((f) => f.name === name);
@@ -88,6 +90,7 @@ function testRows(viralLoads: Array<ArtEncounter>, followUps: Array<ArtEncounter
             ? result
             : `${result.startsWith('<') ? `<${number(result.slice(1))}` : number(result)} copies/mL`,
       reason: displayValue(field(VIRAL_LOAD_FIELDS, 'testingReason'), memberValue(group, VIRAL_LOAD.testingReason)) ?? '–',
+      high: highViralLoad(result),
     };
   });
   const fuRows: Array<TestRow> = followUps.flatMap((e) => {
@@ -170,15 +173,16 @@ function visitCells(v: ArtEncounter): Record<string, string | null> {
   };
 }
 
-const Headline: React.FC<{ label: string; value: string | null; detail?: string | null; alert?: boolean }> = ({
+const Headline: React.FC<{ label: string; value: string | null; detail?: string | null; alert?: boolean; raised?: boolean }> = ({
   label,
   value,
   detail,
   alert,
+  raised,
 }) => (
   <div className={styles.headline}>
     <span className={styles.label}>{label}</span>
-    <span className={styles.value}>{value ?? '–'}</span>
+    <span className={raised ? `${styles.value} ${styles.present}` : styles.value}>{value ?? '–'}</span>
     {detail && <span className={alert ? styles.due : styles.detail}>{detail}</span>}
   </div>
 );
@@ -242,6 +246,8 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
       today: dayjs().format('YYYY-MM-DD'),
     });
   const latestVlDate = latestViralLoad ? formatDay(latestViralLoad.e.encounterDatetime) : null;
+  // as the legacy patient summary: a last viral load of 1000 copies/mL or more
+  const highVl = highViralLoad(latestViralLoad?.result);
   const tbStatus = displayValue(ART_VISIT_FIELDS.tbStatus, obsValue(latestVisit, ART_VISIT.tbStatus));
   const nextAppointment = formatDay(obsValue(latestVisit, ART_VISIT.nextAppointment) as string);
   const cardDescription = [
@@ -337,8 +343,11 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
         <Headline
           label={t('viralLoad', 'Viral load')}
           value={latestViralLoad?.result ?? null}
-          detail={vlDue ? [latestVlDate, t('dueNow', 'due now')].filter(Boolean).join(' · ') : latestVlDate}
-          alert={vlDue}
+          detail={
+            [latestVlDate, highVl && t('highViralLoad', 'high viral load'), vlDue && t('dueNow', 'due now')].filter(Boolean).join(' · ') || null
+          }
+          alert={vlDue || highVl}
+          raised={highVl}
         />
         <Headline
           label={t('cd4Count', 'CD4 count')}
@@ -423,7 +432,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
                   <TableRow key={r.key}>
                     <TableCell>{formatDay(r.encounter.encounterDatetime)}</TableCell>
                     <TableCell>{r.test}</TableCell>
-                    <TableCell>{r.result}</TableCell>
+                    <TableCell>{r.high ? <span className={styles.present}>{r.result}</span> : r.result}</TableCell>
                     <TableCell>{r.reason}</TableCell>
                     {canEdit && (
                       <TableCell>{editButton(() => launchArtPanel(r.kind, { patientUuid, encounterUuid: r.encounter.uuid }))}</TableCell>

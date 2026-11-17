@@ -153,6 +153,20 @@ describe('HivCareDashboard', () => {
     expect(within(screen.getByRole('region', { name: 'HIV at a glance' })).getByText('<40')).toBeInTheDocument();
   });
 
+  it('says a last viral load of 1000 copies/mL or more is high', () => {
+    withData('EDIT', { ...everything, viralLoad: [viralLoad('vl-4', '2026-06-01', { numeric: 2300 }), ...everything.viralLoad] });
+    render(<HivCareDashboard patientUuid="p1" />);
+    const headline = within(screen.getByRole('region', { name: 'HIV at a glance' }));
+    expect(headline.getByText('2300')).toBeInTheDocument();
+    expect(headline.getByText('01-Jun-2026 · high viral load')).toBeInTheDocument();
+  });
+
+  it('does not call a low or suppressed viral load high', () => {
+    withData('EDIT', { ...everything, viralLoad: [viralLoad('vl-4', '2026-06-01', { numeric: 400 }), ...everything.viralLoad] });
+    render(<HivCareDashboard patientUuid="p1" />);
+    expect(within(screen.getByRole('region', { name: 'HIV at a glance' })).queryByText(/high viral load/)).not.toBeInTheDocument();
+  });
+
   it("shows each header card's values", () => {
     withData('EDIT', everything);
     render(<HivCareDashboard patientUuid="p1" />);

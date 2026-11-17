@@ -11,6 +11,7 @@ import { useQuickPrograms } from '../enrolments/enrolments.resource';
 import { formatObsDate, type LatestObs, useLatestBloodPressure, useLatestObs } from '../vitals-header/latest-obs.resource';
 import { useRecordVitals } from '../vitals-header/latest-vitals.extension';
 import { recordableCards, useLaunchCardVisit } from './record-visit';
+import { highViralLoad } from '../art/art-summary';
 import { careCardRows, dueItems, programRows, useHivSummary, useRecentVisits, visitGroups } from './summary.resource';
 import styles from './patient-summary.scss';
 
@@ -18,10 +19,10 @@ const today = () => dayjs().format('YYYY-MM-DD');
 /** A date as the summary shows it: Today, else e.g. 05-Aug-2026 */
 const when = (date: string | null) => (!date ? null : String(date).slice(0, 10) === today() ? 'Today' : formatDay(date));
 
-const Fact: React.FC<{ label: string; value: string | null; detail?: string | null }> = ({ label, value, detail }) => (
+const Fact: React.FC<{ label: string; value: string | null; detail?: string | null; raised?: boolean }> = ({ label, value, detail, raised }) => (
   <div className={styles.fact}>
     <span className={styles.label}>{label}</span>
-    <span className={styles.factValue}>{value ?? '–'}</span>
+    <span className={raised ? `${styles.factValue} ${styles.raised}` : styles.factValue}>{value ?? '–'}</span>
     {value && detail ? <span className={styles.detail}>{detail}</span> : null}
   </div>
 );
@@ -124,7 +125,7 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
   const { visits } = useRecentVisits(patientUuid);
   const careCards = careCardRows(cards, today());
   const recordable = recordableCards(cards);
-  const due = dueItems(cards, today());
+  const due = dueItems(cards, today(), hiv);
   const rows = programRows(programs);
   const page = (path: string) => `\${openmrsSpaBase}/patient/${patientUuid}/chart/${path}`;
 
@@ -246,9 +247,9 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
             <ul className={styles.rows}>
               {due.map((d) => (
                 <li key={d.key}>
-                  <span className={styles.rowText}>{d.label}</span>
-                  <Tag type={d.status === 'today' ? 'blue' : 'red'} size="sm">
-                    {d.status === 'today' ? t('today', 'Today') : t('overdue', 'Overdue')}
+                  <span className={styles.rowText}>{d.key === 'viral-load' ? t('routineViralLoad', 'Routine viral load') : d.label}</span>
+                  <Tag type={d.status === 'overdue' ? 'red' : d.status === 'due' ? 'purple' : 'blue'} size="sm">
+                    {d.status === 'today' ? t('today', 'Today') : d.status === 'due' ? t('due', 'Due') : t('overdue', 'Overdue')}
                   </Tag>
                 </li>
               ))}
@@ -274,7 +275,10 @@ const PatientSummary: React.FC<{ patientUuid: string }> = ({ patientUuid }) => {
               <Fact
                 label={t('lastViralLoad', 'Last viral load')}
                 value={hiv.latestViralLoad?.result ?? null}
-                detail={formatDay(hiv.latestViralLoad?.date)}
+                detail={[formatDay(hiv.latestViralLoad?.date), highViralLoad(hiv.latestViralLoad?.result) && t('highViralLoad', 'high viral load')]
+                  .filter(Boolean)
+                  .join(' · ')}
+                raised={highViralLoad(hiv.latestViralLoad?.result)}
               />
               <Fact
                 label={t('cd4Count', 'CD4 count')}

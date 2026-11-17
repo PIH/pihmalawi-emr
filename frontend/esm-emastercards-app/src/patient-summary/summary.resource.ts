@@ -167,11 +167,19 @@ export function summarizeArt(
 export interface DueItem {
   key: string;
   label: string;
-  status: 'today' | 'overdue';
+  status: 'today' | 'overdue' | 'due';
 }
 
-/** Each card the patient can be seen on whose next appointment is today or has passed, the longest overdue first */
-export function dueItems(cards: Array<EMastercardCard>, today: string): Array<DueItem> {
+/**
+ * What is due at this visit: a routine viral load when one is due (as the HIV care page says it), then each card the
+ * patient can be seen on whose next appointment is today or has passed, the longest overdue first
+ */
+export function dueItems(cards: Array<EMastercardCard>, today: string, hiv?: { viralLoadDue: boolean } | null): Array<DueItem> {
+  const viralLoad: Array<DueItem> = hiv?.viralLoadDue ? [{ key: 'viral-load', label: 'Routine viral load', status: 'due' }] : [];
+  return [...viralLoad, ...appointmentsDue(cards, today)];
+}
+
+function appointmentsDue(cards: Array<EMastercardCard>, today: string): Array<DueItem> {
   return cards
     .filter((c) => c.state === 'EDIT' && c.appointment && day(c.appointment) <= today)
     .sort((a, b) => (day(a.appointment) < day(b.appointment) ? -1 : 1))
