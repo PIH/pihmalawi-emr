@@ -24,7 +24,15 @@ export const NATIVE_PAGES: Record<string, { path: string; labelKey: string; labe
   ckd: { path: 'chronicCare?card=ckd', labelKey: 'openCkd', label: 'Open chronic kidney disease' },
   scd: { path: 'chronicCare?card=scd', labelKey: 'openScd', label: 'Open sickle cell disease' },
   'ncd-other': { path: 'chronicCare?card=ncd-other', labelKey: 'openNco', label: 'Open NCD other' },
-  pdc: { path: 'pediatricDevelopment', labelKey: 'openPdc', label: 'Open PDC card' },
+  pdc: { path: 'pediatricDevelopment', labelKey: 'openPdc', label: 'Open PDC initial' },
+  'pdc-developmental-delay': {
+    path: 'pediatricDevelopment?card=pdc-developmental-delay',
+    labelKey: 'openPdcDevelopmentalDelay',
+    label: 'Open HIE / developmental delay',
+  },
+  'pdc-trisomy': { path: 'pediatricDevelopment?card=pdc-trisomy', labelKey: 'openPdcTrisomy', label: 'Open trisomy 21' },
+  'pdc-cleft-lip-palate': { path: 'pediatricDevelopment?card=pdc-cleft-lip-palate', labelKey: 'openPdcCleft', label: 'Open cleft lip / palate' },
+  'pdc-other-diagnosis': { path: 'pediatricDevelopment?card=pdc-other-diagnosis', labelKey: 'openPdcOtherDiagnosis', label: 'Open other diagnosis' },
 };
 
 interface EMastercardRowProps {
@@ -49,12 +57,11 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
     );
   }
 
-  // The ART, mental health and epilepsy cards are kept natively in O3, on their chart pages; their legacy flowsheets stay
-  // reachable for the pilot
+  // The cards kept natively in O3 open on their chart pages; their legacy flowsheets stay reachable for the pilot
   const page = NATIVE_PAGES[card.key];
   if (page && !(page.existingOnly && card.state === 'CREATE')) {
     return (
-      <div className={styles.row}>
+      <div className={styles.nativeRow}>
         <Button kind="ghost" size="sm" onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/${page.path}` })}>
           {t(page.labelKey, page.label)}
         </Button>
@@ -74,7 +81,7 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
     return (
       <div className={styles.row}>
         <Button kind="ghost" size="sm" onClick={() => launchFlowsheet(card, patientUuid, { encounterDate })}>
-          {t('createNew', 'Create new {{label}}', { label: card.label })}
+          {t('createNew', 'Create new {{label}}', { label: card.label, interpolation: { escapeValue: false } })}
         </Button>
         <TextInput
           id={`encounter-date-${card.key}`}
@@ -93,7 +100,9 @@ const EMastercardRow: React.FC<EMastercardRowProps> = ({ card, patientUuid }) =>
   return (
     <div className={styles.row}>
       <Button kind="ghost" size="sm" onClick={() => launchFlowsheet(card, patientUuid)}>
-        {card.state === 'EDIT' ? t('edit', 'Edit {{label}}', { label: card.label }) : t('view', 'View {{label}}', { label: card.label })}
+        {card.state === 'EDIT'
+          ? t('edit', 'Edit {{label}}', { label: card.label, interpolation: { escapeValue: false } })
+          : t('view', 'View {{label}}', { label: card.label, interpolation: { escapeValue: false } })}
       </Button>
       <span className={styles.details}>
         {card.created ? visitDetails(card) : null}

@@ -204,6 +204,11 @@ export const cleftHeaderWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'h
 export const cleftVisitWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'visit');
 export const cleftLabsWorkspace = pdcConditionPanel('pdc-cleft-lip-palate', 'labs');
 
+/** Edits the other diagnosis card header, records or edits its visits and lab tests natively */
+export const otherDiagnosisHeaderWorkspace = pdcConditionPanel('pdc-other-diagnosis', 'header');
+export const otherDiagnosisVisitWorkspace = pdcConditionPanel('pdc-other-diagnosis', 'visit');
+export const otherDiagnosisLabsWorkspace = pdcConditionPanel('pdc-other-diagnosis', 'labs');
+
 /** Records or edits the forms every PDC condition card shares (hospitalisations, complications, vision, hearing, radiology) natively */
 export const pdcSharedWorkspace = getAsyncLifecycle(() => import('./pdc/pdc-shared.workspace'), options);
 

@@ -52,7 +52,7 @@ const PdcCard: React.FC<PdcCardProps> = ({ patientUuid, title, tabs }) => {
           kind="warning"
           lowContrast
           hideCloseButton
-          title={card?.message ?? t('noPdcCard', 'This patient has no PDC patient card.')}
+          title={card?.message ?? t('noPdcCard', 'This patient has no PDC initial card.')}
         />
       </div>
     );
@@ -62,7 +62,7 @@ const PdcCard: React.FC<PdcCardProps> = ({ patientUuid, title, tabs }) => {
   const header = headers.find((e) => e.uuid === card.initialEncounterUuid) ?? (headers.length === 1 ? headers[0] : null);
   const values = encounterValues(PDC_HEADER_FIELDS, header);
   const description = [
-    t('pdcPatientCard', 'PDC patient card'),
+    t('pdcPatientCard', 'PDC initial patient card'),
     t('cardVersion', 'version {{version}}', { version: PDC_CARD_VERSION }),
     enrolmentText(card, t, formatDay),
   ]

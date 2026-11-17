@@ -435,6 +435,21 @@
       "window": "pihmalawi-emastercard-window"
     },
     {
+      "name": "pihmalawi-other-diagnosis-header-workspace",
+      "component": "otherDiagnosisHeaderWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-other-diagnosis-visit-workspace",
+      "component": "otherDiagnosisVisitWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
+      "name": "pihmalawi-other-diagnosis-labs-workspace",
+      "component": "otherDiagnosisLabsWorkspace",
+      "window": "pihmalawi-emastercard-window"
+    },
+    {
       "name": "pihmalawi-pdc-shared-workspace",
       "component": "pdcSharedWorkspace",
       "window": "pihmalawi-emastercard-window"

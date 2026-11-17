@@ -108,7 +108,7 @@ export const NcdHeaderPanel: React.FC<
             kind="warning"
             lowContrast
             hideCloseButton
-            title={card?.message ?? t('multipleCardHeaders', 'Multiple {{card}} forms found', { card: config.cardName })}
+            title={card?.message ?? t('multipleCardHeaders', 'Multiple {{card}} forms found', { card: config.cardName, interpolation: { escapeValue: false } })}
           />
         </div>
       </Workspace2>
@@ -205,6 +205,7 @@ export const NcdHeaderPanel: React.FC<
             hideCloseButton
             title={t('patientGuardianCopied', 'Patient and guardian details were filled in from {{cards}}. Check them, then save.', {
               cards: copiedFrom.join(', '),
+              interpolation: { escapeValue: false },
             })}
           />
         )}

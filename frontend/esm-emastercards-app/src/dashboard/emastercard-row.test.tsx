@@ -73,6 +73,20 @@ describe('EMastercardRow', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('a PDC condition card opens on the Pediatric Development page, its legacy card still offered', async () => {
+    render(
+      <EMastercardRow
+        card={card({ key: 'pdc-cleft-lip-palate', label: 'PDC Cleft Lip / Palate eMastercard', state: 'EDIT', created: '2026-01-05' })}
+        patientUuid="patient-uuid"
+      />,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Open cleft lip / palate' }));
+    expect(navigate).toHaveBeenCalledWith({ to: '${openmrsSpaBase}/patient/patient-uuid/chart/pediatricDevelopment?card=pdc-cleft-lip-palate' });
+    await userEvent.click(screen.getByRole('button', { name: 'Open legacy card' }));
+    expect(mockLaunchWorkspace2).toHaveBeenCalledWith('pihmalawi-emastercard-flowsheet-workspace', expect.anything());
+  });
+
   it('the ART row opens the HIV care page and offers Open legacy card', async () => {
     render(<EMastercardRow card={card({ state: 'EDIT', created: '2026-01-05' })} patientUuid="patient-uuid" />);
 

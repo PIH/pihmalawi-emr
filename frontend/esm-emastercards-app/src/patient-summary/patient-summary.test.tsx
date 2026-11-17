@@ -110,7 +110,7 @@ describe('PatientSummary', () => {
 
     const care = within(screen.getByRole('region', { name: 'Care and treatment' }));
     expect(care.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
-      'PDC CardIntake 12-Mar-2026',
+      'PDC InitialIntake 12-Mar-2026',
       'HIE / Developmental DelayLast visit 08-Oct-2026',
     ]);
     await userEvent.click(screen.getByRole('button', { name: 'Record visit' }));
