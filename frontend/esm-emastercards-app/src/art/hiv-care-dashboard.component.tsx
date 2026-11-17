@@ -1,6 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { usePatient } from '@openmrs/esm-framework';
 import {
   Button,
   InlineLoading,
@@ -28,6 +29,7 @@ import {
 import { viralLoadDue } from './art-rules';
 import { currentRegimen, lineStart, regimenOf, regimenText, viralLoadResult } from './art-summary';
 import { type ArtEncounter, memberValue, obsGroups, obsValue, useArtCard, useArtEncounters } from './art.resource';
+import { flaggedHeight, flaggedRow, visitFlags, VisitFlagsNotice } from '../shared/visit-flags';
 import { launchArtPanel, useLaunchArtPanel } from './launch-art-panel';
 import { enrolmentText } from '../emastercards.resource';
 import styles from '../care-page.scss';
@@ -187,6 +189,8 @@ const Headline: React.FC<{ label: string; value: string | null; detail?: string 
  */
 const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title, tabs }) => {
   const { t } = useTranslation();
+  // the patient's birth date, to judge each height by age at the visit
+  const birthDate = usePatient(patientUuid)?.patient?.birthDate;
   const pageTitle = title ?? t('hivCare', 'HIV Care');
   const { card, isLoading, error } = useArtCard(patientUuid);
   const { encounters: initials } = useArtEncounters(patientUuid, 'initial');
@@ -228,6 +232,8 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
   const latestVisit = visits[0];
   const latestViralLoad = viralLoads.map((e) => ({ e, result: viralLoadResult(e) })).find((x) => x.result);
   const latestCd4 = followUps.find((e) => obsValue(e, FOLLOW_UP_TESTING.cd4Count) !== null);
+  // as the legacy flowsheet: heights far from the patient's others and visits on the same day
+  const visitTableFlags = visitFlags(visits, (v) => obsValue(v, ART_VISIT_FIELDS.height.concept), birthDate);
   const vlDue =
     card.state !== 'VIEW' &&
     viralLoadDue({
@@ -439,6 +445,7 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
         <div className={styles.cardHeader}>
           <h4 className={styles.cardTitle}>{t('artVisits', 'ART Visits')}</h4>
         </div>
+        <VisitFlagsNotice encounters={visits} flags={visitTableFlags} />
         <div className={styles.tableWrapper}>
           <Table aria-label={t('artVisits', 'ART Visits')} size="sm">
             <TableHead>
@@ -453,9 +460,11 @@ const HivCareDashboard: React.FC<HivCareDashboardProps> = ({ patientUuid, title,
               {visits.map((v) => {
                 const cells = visitCells(v);
                 return (
-                  <TableRow key={v.uuid}>
+                  <TableRow key={v.uuid} {...flaggedRow(visitTableFlags, v.uuid)}>
                     {columns.map((c) => (
-                      <TableCell key={c.key}>{cells[c.key] ?? ''}</TableCell>
+                      <TableCell key={c.key}>
+                        {c.key === 'height' ? flaggedHeight(visitTableFlags, v.uuid, cells[c.key] ?? '') : (cells[c.key] ?? '')}
+                      </TableCell>
                     ))}
                     {canEdit && (
                       <TableCell>{editButton(() => launchArtPanel('visit', { patientUuid, encounterUuid: v.uuid }))}</TableCell>

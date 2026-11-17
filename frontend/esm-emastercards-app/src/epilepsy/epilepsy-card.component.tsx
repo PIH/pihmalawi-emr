@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePatient } from '@openmrs/esm-framework';
 import {
   Button,
   InlineLoading,
@@ -19,6 +20,7 @@ import { enrolmentText } from '../emastercards.resource';
 import { MedicationEntry, medicationChanges, medicationDetail, medicationsOf, medicationText } from '../shared/medications';
 import { EP_CARD_KEY, EP_CARD_VERSION, EP_FORMS, EP_VISIT } from './ep-concepts';
 import { EP_HEADER_SECTIONS, EP_MEDICATIONS, EP_VISIT_FIELDS, type EpHeaderSection } from './ep-fields';
+import { flaggedHeight, flaggedRow, visitFlags, VisitFlagsNotice } from '../shared/visit-flags';
 import { launchEpPanel, useLaunchEpVisit } from './launch-ep-panel';
 import styles from '../care-page.scss';
 
@@ -98,6 +100,8 @@ interface EpilepsyCardProps {
  */
 const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs }) => {
   const { t } = useTranslation();
+  // the patient's birth date, to judge each height by age at the visit
+  const birthDate = usePatient(patientUuid)?.patient?.birthDate;
   const { card, isLoading, error } = useEMastercard(patientUuid, EP_CARD_KEY);
   const { encounters: headers } = useCardEncounters(patientUuid, EP_FORMS.header);
   const { encounters: visits } = useCardEncounters(patientUuid, EP_FORMS.visit);
@@ -204,6 +208,8 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
     { key: 'silentMarkers', label: t('silentMarkers', 'Silent markers'), cell: (v) => show(v, EP_VISIT_FIELDS.silentMarkers) ?? '–' },
   ];
 
+  // as the legacy flowsheet: heights far from the patient's others and visits on the same day
+  const visitTableFlags = visitFlags(visits, (v) => obsValue(v, EP_VISIT_FIELDS.height.concept), birthDate);
   const visitColumns = [
     { key: 'date', header: t('visitDate', 'Visit date') },
     { key: 'location', header: t('location', 'Location') },
@@ -362,6 +368,7 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
         <div className={styles.cardHeader}>
           <h4 className={styles.cardTitle}>{t('epilepsyVisits', 'Epilepsy Visits')}</h4>
         </div>
+        <VisitFlagsNotice encounters={visits} flags={visitTableFlags} />
         <div className={styles.tableWrapper}>
           <Table aria-label={t('epilepsyVisits', 'Epilepsy Visits')} size="sm">
             <TableHead>
@@ -376,9 +383,11 @@ const EpilepsyCard: React.FC<EpilepsyCardProps> = ({ patientUuid, title, tabs })
               {visits.map((v) => {
                 const cells = visitCells(v);
                 return (
-                  <TableRow key={v.uuid}>
+                  <TableRow key={v.uuid} {...flaggedRow(visitTableFlags, v.uuid)}>
                     {visitColumns.map((c) => (
-                      <TableCell key={c.key}>{cells[c.key] ?? ''}</TableCell>
+                      <TableCell key={c.key}>
+                        {c.key === 'height' ? flaggedHeight(visitTableFlags, v.uuid, cells[c.key] ?? '') : (cells[c.key] ?? '')}
+                      </TableCell>
                     ))}
                     {canEdit && <TableCell>{editButton(() => launchEpPanel('visit', { patientUuid, encounterUuid: v.uuid }))}</TableCell>}
                   </TableRow>

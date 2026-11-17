@@ -256,6 +256,7 @@ const EcCard: React.FC<EcCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={canEdit ? (v) => launchEcPanel('visit', { patientUuid, encounterUuid: v.uuid }) : undefined}
           empty={t('noEcVisits', 'No exposed child visits recorded yet')}
         />

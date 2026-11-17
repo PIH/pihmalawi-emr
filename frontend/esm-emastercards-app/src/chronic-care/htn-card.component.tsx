@@ -502,6 +502,7 @@ const HtnCard: React.FC<HtnCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={
             canEdit
               ? (v) =>

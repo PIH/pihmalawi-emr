@@ -16,6 +16,7 @@ import {
   type Referenced,
   shown,
   TableCard,
+  valueOf,
 } from '../shared/ncd-card';
 import { capitalized, conditionKey, type PdcCondition, type PdcSummaryItem } from './pdc-condition';
 import { launchConditionPanel, useLaunchConditionPanel } from './launch-pdc-condition-panel';
@@ -312,6 +313,7 @@ const PdcConditionCard: React.FC<PdcConditionCardProps> = ({ condition, patientU
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={onEdit('visit')}
           empty={t(k('no{P}Visits'), `No ${condition.name} visits recorded yet`)}
         />

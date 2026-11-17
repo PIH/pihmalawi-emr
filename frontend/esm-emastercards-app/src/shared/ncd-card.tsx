@@ -1,6 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { usePatient } from '@openmrs/esm-framework';
 import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tag } from '@carbon/react';
 import { type ArtField, displayValue, formatDay } from '../art/art-fields';
 import { sameDayValue } from '../art/art-rules';
@@ -8,6 +9,7 @@ import { type ArtEncounter, encounterValues, obsValue } from '../art/art.resourc
 import { type FieldValue } from '../art/obs-diff';
 import { leaderOf } from '../mental-health/grouped-fields';
 import { type CardMedication, MedicationEntry, medicationChanges } from './medications';
+import { flaggedHeight, flaggedRow, visitFlags, VisitFlagsNotice } from './visit-flags';
 import styles from '../care-page.scss';
 
 /** The NCD card pages' shared parts: headlines, header section cards, tables of encounters, monitoring, medications */
@@ -70,7 +72,10 @@ export interface Column {
   header: string;
 }
 
-/** A form's encounters as a table, each row edited in the form's panel */
+/**
+ * A form's encounters as a table, each row edited in the form's panel. As the legacy flowsheet does, encounters of
+ * the form on the same day are flagged, and for a form recording height (heightOf), heights far from the others.
+ */
 export const EncounterTable: React.FC<{
   label: string;
   columns: Array<Column>;
@@ -78,12 +83,18 @@ export const EncounterTable: React.FC<{
   cells: (e: ArtEncounter) => Record<string, React.ReactNode>;
   onEdit?: (e: ArtEncounter) => void;
   empty: string;
-}> = ({ label, columns, encounters, cells, onEdit, empty }) => {
+  heightOf?: (e: ArtEncounter) => unknown;
+}> = ({ label, columns, encounters, cells, onEdit, empty, heightOf }) => {
   const { t } = useTranslation();
+  // the chart's patient's birth date, to judge each height by age at the visit
+  const birthDate = usePatient()?.patient?.birthDate;
   if (!encounters.length) {
     return <p className={styles.empty}>{empty}</p>;
   }
+  const flags = visitFlags(encounters, heightOf, birthDate);
   return (
+    <>
+    <VisitFlagsNotice encounters={encounters} flags={flags} />
     <div className={styles.tableWrapper}>
       <Table aria-label={label} size="sm">
         <TableHead>
@@ -98,9 +109,9 @@ export const EncounterTable: React.FC<{
           {encounters.map((e) => {
             const row = cells(e);
             return (
-              <TableRow key={e.uuid}>
+              <TableRow key={e.uuid} {...flaggedRow(flags, e.uuid)}>
                 {columns.map((c) => (
-                  <TableCell key={c.key}>{row[c.key] ?? ''}</TableCell>
+                  <TableCell key={c.key}>{c.key === 'height' ? flaggedHeight(flags, e.uuid, row[c.key] ?? '') : (row[c.key] ?? '')}</TableCell>
                 ))}
                 {onEdit && (
                   <TableCell>
@@ -115,6 +126,7 @@ export const EncounterTable: React.FC<{
         </TableBody>
       </Table>
     </div>
+    </>
   );
 };
 

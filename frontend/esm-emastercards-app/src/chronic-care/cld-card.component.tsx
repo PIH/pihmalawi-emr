@@ -329,6 +329,7 @@ const CldCard: React.FC<CldCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height, referenced)}
           onEdit={canEdit ? (v) => launchCldPanel('visit', { patientUuid, encounterUuid: v.uuid }) : undefined}
           empty={t('noCldVisits', 'No chronic lung disease visits recorded yet')}
         />

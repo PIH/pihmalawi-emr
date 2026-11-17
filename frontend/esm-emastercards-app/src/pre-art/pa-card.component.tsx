@@ -167,6 +167,7 @@ const PaCard: React.FC<PaCardProps> = ({ patientUuid, title, tabs }) => {
           columns={visitColumns}
           encounters={visits}
           cells={visitCells}
+          heightOf={(v) => valueOf(v, F.height)}
           empty={t('noPaVisits', 'No Pre-ART visits recorded')}
         />
       </TableCard>

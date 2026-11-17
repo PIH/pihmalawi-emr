@@ -221,3 +221,25 @@
   padding: layout.$spacing-03 0;
   color: $text-02;
 }
+
+// what the legacy flowsheet flags on saved encounters: an outlying height, encounters on the same day
+.flagsNotice {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-03;
+  margin-bottom: layout.$spacing-03;
+
+  :global(.cds--inline-notification) {
+    max-width: none;
+  }
+}
+
+.flaggedRow td {
+  background-color: rgba($danger, 0.08);
+}
+
+.flaggedValue {
+  color: $danger;
+  font-weight: 600;
+  text-decoration: underline wavy;
+}
