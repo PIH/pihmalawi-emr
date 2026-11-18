@@ -112,8 +112,7 @@
       },
       "top-nav-actions-slot": {
         "remove": [
-          "implementer-tools-button",
-          "patient-search-icon"
+          "implementer-tools-button"
         ]
       },
       "top-nav-app-menu-slot": {

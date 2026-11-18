@@ -76,4 +76,14 @@
         <description>Allows access to the CHW Management App</description>
     </privilege>
 
+    <!-- Plain patient searches (the O3 patient search) find patients as the Find Patient page does -->
+    <filter>
+        <filter-name>pihmalawiPatientSearchFilter</filter-name>
+        <filter-class>org.openmrs.module.pihmalawi.web.filter.MalawiPatientSearchFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>pihmalawiPatientSearchFilter</filter-name>
+        <url-pattern>/ws/rest/v1/patient</url-pattern>
+    </filter-mapping>
+
 </module>
